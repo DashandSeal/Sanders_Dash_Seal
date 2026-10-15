@@ -1,0 +1,23 @@
+{
+  "platform": "Sanders Dash & Seal",
+  "artifact": "tests/test_twin_gate.py",
+  "status": "DEVELOPMENT_ONLY_NOT_EXECUTION_AUTHORIZED",
+  "cryptographic_binding": {
+    "algorithm": "sha256",
+    "payload_hash": "PENDING_REPRODUCIBLE_BUILD_HASH"
+  },
+  "governance_signatures": {
+    "it_manager": null,
+    "minotaur": null
+  },
+  "scope_locks": {
+    "network_access": false,
+    "allowed_operations": [
+      "OFFLINE_UNIT_TEST"
+    ]
+  },
+  "enforcement": {
+    "fail_closed": true,
+    "unsigned_manifest_executable": false
+  }
+}
