@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/glass_box_audit.py",
-    "payload_hash": "ed354d1cae42b7fa1ea406ac814acaa6fe47466ad478f33166197b8af6ee7500",
+    "payload_hash": "387ee460cf83fbe04d535da95f542a78e98b6c9b6d0efbed22186e34635fa500",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

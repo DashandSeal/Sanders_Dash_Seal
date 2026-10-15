@@ -4,6 +4,8 @@ Adapters are trusted host components, not arbitrary uploaded scripts.
 No network or shell executor is provided by this development foundation.
 """
 from .security import Denied, digest, verify
+from .protocol import utc
+from .artifacts import DevelopmentArtifactRunner
 
 class QualityAgent:
     def __init__(self, trusted_public_key):
@@ -59,21 +61,27 @@ class GovernedLifecycle:
         self.vault, self.validator, self.audit = vault, validator, audit
         self.quality, self.manager, self.minotaur, self.shield = quality, manager, minotaur, shield
 
-    def run(self, lease_id, scope, payload, proof, artifact, manifest, adapter,
+    def run(self, lease_id, scope, payload, proof, artifact, runner,
             quality_check, reconcile_check, integrity_check):
         body = None
         result = None
         status = 'DENIED'
         receipt = None
+        execution_receipt = None
+        started = utc(self.vault.clock())
         try:
             # Consumed authority can never be reused, including after process failure.
             body = self.vault.claim(lease_id, scope, payload, proof)
-            self.shield.check(body['agent_key'])
-            self.validator.validate(payload, artifact, scope, manifest)
+            self.shield.check(body['execution_binding']['agent_public_key'])
+            if type(runner) is not DevelopmentArtifactRunner or runner.validator is not self.validator:
+                raise Denied('Unapproved execution runner')
+            runner.validate(artifact, scope)
+            if digest(artifact.source) != body['execution_binding']['artifact_hash']:
+                raise Denied('Executable differs from the lease-bound artifact')
             # Persist intent before any side effect. Audit failure prevents adapter entry.
             self.audit.preserve({'lease_id': lease_id, 'stage': 'EXECUTION_INTENT',
-                                 'artifact': artifact, 'payload_hash': digest(payload)})
-            result = adapter(scope, payload)
+                                 'artifact': artifact.name, 'artifact_hash': digest(artifact.source), 'payload_hash': digest(payload)})
+            result = runner.execute(artifact, scope, payload)
             if not isinstance(result, bytes):
                 raise Denied('Adapter result must be bytes')
             quality = quality_check(lease_id, result)
@@ -86,21 +94,31 @@ class GovernedLifecycle:
             status = 'VERIFIED'
         except BaseException:
             if body:
-                self.shield.contain(body['agent_key'])
+                self.shield.contain(body['execution_binding']['agent_public_key'])
             raise
         finally:
             # Authority was already consumed. Revoke even when evidence preservation fails.
             try:
                 try:
-                    self.audit.preserve({'lease_id': lease_id, 'stage': 'EXECUTION_RESULT',
-                        'status': status, 'attestations': receipt,
-                        'result_hash': digest(result) if isinstance(result, bytes) else None})
+                    execution_receipt = {
+                        'execution_metadata': {'lease_id': lease_id,
+                            'executed_by': body['agent_identity']['requesting_agent'] if body else None,
+                            'started_at_utc': started, 'completed_at_utc': utc(self.vault.clock())},
+                        'functional_telemetry': {'http_status_returned': None,
+                            'payload_bytes_transferred': None, 'execution_result': status,
+                            'post_condition_verified': status == 'VERIFIED'},
+                        'post_execution_clearance': {
+                            'quality_agent_synthetic_validation': receipt['quality'] if receipt else None,
+                            'it_manager_state_reconciliation': receipt['reconciliation'] if receipt else None,
+                            'minotaur_integrity_seal': receipt['integrity'] if receipt else None}}
+                    execution_receipt = self.audit.preserve_execution(execution_receipt)
                 finally:
                     self.vault.revoke(lease_id)
                 self.audit.preserve({'lease_id': lease_id, 'stage': 'AUTHORITY_REVOKED'})
             except BaseException:
                 # Evidence and authority cleanup are required parts of completion.
                 if body:
-                    self.shield.contain(body['agent_key'])
+                    self.shield.contain(body['execution_binding']['agent_public_key'])
                 raise
-        return {'lease_id': lease_id, 'status': status, 'authority': 'REVOKED'}
+        return {'lease_id': lease_id, 'status': status, 'authority': 'REVOKED',
+                'execution_receipt': execution_receipt}

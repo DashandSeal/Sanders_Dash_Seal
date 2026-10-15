@@ -38,3 +38,10 @@ class GlassBoxAudit:
                 raise Denied('Audit chain changed')
             previous = block_hash
         return previous
+
+    def preserve_execution(self, receipt):
+        # The digest addresses the stored record; it cannot be included in its own preimage.
+        block_hash = self.preserve({'stage': 'EXECUTION_RESULT', 'execution_receipt': receipt})
+        return {**receipt, 'immutable_audit_trail': {
+            'glass_box_block_id': 'GB-' + block_hash,
+            'immutable_audit_hash': 'sha256:' + block_hash}}

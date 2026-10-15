@@ -24,3 +24,5 @@ Original sample gateway names are examples, not established integrations or proo
 ## Standing source precedence
 
 Owner-confirmed precedence (October 15, 2026): **Sanders_Dash_Seal_Actual_Build_Design_MASTER_2026-10-11.md always controls wherever an earlier original protocol or example conflicts with it.** Apply this standing decision without asking again. Earlier material supplies detail only where consistent with MASTER. Assistant interpretations do not amend MASTER. Escalate only genuine ambiguities within MASTER or requirements MASTER does not resolve.
+
+Additional implementation mapping: `core_platform/protocol.py` preserves MASTER section 9 field groups; `core_platform/artifacts.py` addresses section 13 executable pairing in the explicit development runner; lifecycle receipts address section 19. Production conformance limitations remain in SPEC_CONFORMANCE.md.

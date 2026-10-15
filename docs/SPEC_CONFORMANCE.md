@@ -5,6 +5,18 @@ Scope: all 15 files of the initial build against the four source documents alrea
 
 **Overall: NOT fully conformant. Production remains blocked.** The original specifications remain requirements; incomplete implementation does not amend them.
 
+## Current correction status — subsequent implementation
+
+The original audit below remains as historical evidence. These findings have now changed:
+
+- Flat lease fields were replaced with the MASTER section 9 nested metadata, identity, bounds and gate names. UTC timestamps, nonce, requesting-agent identity, commanding authority, verb/IP lists and one-use limit are present. An explicit signed `execution_binding` holds concrete public key, operation, request hash, executable hash and token class required to enforce the symbolic signature bindings; it is documented rather than hidden.
+- Universal 60-second policy was removed. Vault requires an explicit deployment lifetime policy. Development tests exercise both 60-second and five-minute leases; this does not set production policy.
+- Execution receipts now contain the MASTER's named metadata, telemetry, clearance and audit-trail groups. Unknown HTTP/transfer telemetry stays null. SQLite still does not meet immutability.
+- The unrelated callback path was removed. A development runner verifies a signed source snapshot and the lease binds its executable hash. Altering even independently signed source under the same lease is rejected. Full production isolation, dependency closure and bootstrap enforcement remain pending.
+- 30 distinct tests pass. Independent-signature checking also rejects equivalent authority keys written with different hex letter case.
+
+**Overall remains NOT fully conformant for production.** No real synthetic-AI authority services, runtime isolation, network jail, immutable sink, provider integrations or human identity services have been created by these changes.
+
 ## Corrections made in this audit
 
 | Finding | Original requirement | Correction and evidence |
@@ -62,3 +74,10 @@ This resolves source hierarchy. In particular, MASTER section 11 governs emergen
 20 distinct local tests pass after corrections (16 existing, 4 additional). They verify the listed mechanics, not the missing operational infrastructure. Separate audit storage is tested; evidence-write failures produce no successful completion. Unit tests use disposable keys and do not establish real MINOTAUR, manager or Quality Agent approval.
 
 Before further feature building: apply the confirmed MASTER precedence and resolve only remaining ambiguities within it; restore the approved original schemas and file topology; build a real artifact enforcement boundary; then implement the missing roles and infrastructure with source-linked acceptance tests. Do not merge or deploy this foundation as fully conformant.
+
+## Next implementation acceptance criteria — MASTER sections 9, 13, 19
+
+- Restore original nested lease field names, explicit UTC timestamps, nonce, commanding authority, verb/IP lists and one-operation bound. Bind agent identity and the exact operation payload cryptographically; preserve proof validation and durable replay rejection.
+- Do not impose a universal duration inferred from an example. Require an explicit deployment lease-duration policy; tests provide their own policy.
+- Preserve all named execution-receipt groups; record observed outcomes and signed postcondition evidence rather than simulated success.
+- Separate executable artifact bytes from request payload bytes. A governed execution interface must accept a verified artifact, not an unrelated callable. Full production execution remains unavailable until an enforceable runtime boundary exists.

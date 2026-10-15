@@ -17,12 +17,12 @@ This foundation authenticates **operational agents**, not customer browser sessi
 
 ## Request flow
 
-1. Prepare a request with a random lease ID, agent public key, exact endpoint/method/IP/operation, payload hash, tier and expiry.
-2. External authorities independently sign the same canonical request. Minting requires both trusted signatures.
+1. Prepare the MASTER section 9 nested lease with UTC issue/expiry, random lease ID and nonce, named agent, commanding authority, permitted verbs/IPs, single-operation limit and explicit execution binding. The binding contains the agent public key, request hash, executable hash, operation and token class.
+2. The agent supplies its identity assertion. External authorities independently sign the same canonical request material. Minting requires all three proofs and an explicit class-specific lifetime policy. No production policy is invented from example timestamps.
 3. The agent signs that lease using its own private key. An intercepted lease ID alone grants no execution.
 4. Vault compares the supplied request with the approved request, verifies possession and atomically consumes the lease.
-5. The lifecycle checks containment and the signed manifest, then records intent before entering the trusted adapter.
-6. Independent check adapters produce signed Quality Agent, manager reconciliation and MINOTAUR integrity attestations tied to the actual result hash.
+5. The lifecycle checks containment, verifies the executable manifest and compares the executable hash to the lease. It records intent before compiling the verified source snapshot. Unrelated callbacks are rejected. The available runner requires explicit development opt-in.
+6. Independent check adapters produce signed Quality Agent, manager reconciliation and MINOTAUR integrity attestations tied to the actual result hash. Each is verified before the next stage proceeds.
 7. The lifecycle records the outcome, revokes the lease even on failure, and records revocation. Failure after a valid claim enters humanitarian containment mode.
 
 A returned HTTP success is never sufficient for `VERIFIED`.
@@ -39,9 +39,11 @@ SQLite state must remain on a protected persistent host. Restoring an old databa
 
 ## Trust boundary and limits
 
-The functions run on a trusted host. Python does not sandbox the adapter, enforce network egress, bind a DNS resolution to a socket, or protect itself from a hostile administrator. Endpoint/IP checks compare declared scope only. Production needs an enforced egress proxy, workload identity, isolated authority services and an external manifest-verifying bootstrap covering imports and dependencies.
+The functions run on a trusted host. Python does not sandbox the adapter, enforce network egress, bind a DNS resolution to a socket, or protect itself from a hostile administrator. Endpoint/IP checks compare declared scope only. The development runner can execute arbitrary trusted signed Python and provides no import, runtime or OS sandbox. Never treat it as a production execution boundary. Production needs an enforced egress proxy, workload identity, isolated authority services and an external manifest-verifying bootstrap covering imports and dependencies.
 
 Hash chaining detects ordinary record alterations but does not make a database immutable. An administrator can rewrite a chain or remove its suffix. Production needs independently anchored checkpoints and append-only external storage. Revocation is logical invalidation, not assured memory erasure.
+
+Receipt groups preserve the MASTER names. HTTP status and transferred-byte counts remain null when not observed; they are never invented. The audit hash addresses the stored record excluding its own hash field. The field name `immutable_audit_trail` preserves the MASTER structure but does not certify SQLite as immutable.
 
 No customer login, passwords, cookies, OAuth sessions, payment credentials, SignWell credentials or BlueNotary credentials are implemented or collected here. Provider integrations and human authentication are future work.
 

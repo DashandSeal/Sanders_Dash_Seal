@@ -4,7 +4,7 @@
 
 ## Implemented and locally tested
 
-Development security library: dual cryptographic gates, one-use proof-of-possession leases, exact scope checks, paired manifest validation, integrity scanning, signed postconditions, containment state and linked receipts. Twenty distinct automated tests cover valid lifecycle, denied approvals, tampering, expiry, wrong agent, scope drift, durable revocation, concurrent replay, manifest failure, adapter failure, unverifiable quality and audit tampering.
+Development security library (updated): nested MASTER lease fields, explicit duration policy, source-snapshot execution bound to the lease, original receipt groups, dual cryptographic gates, one-use proof-of-possession leases, exact scope checks, paired manifest validation, integrity scanning, signed postconditions, containment state and linked receipts. Thirty distinct automated tests cover valid lifecycle, denied approvals, tampering, expiry, wrong agent, scope drift, durable revocation, concurrent replay, manifest failure, adapter failure, unverifiable quality and audit tampering.
 
 All executable source files have paired **unsigned** manifests. These deliberately fail production signature validation. No fake production approvals were generated. Source-level tests run in a trusted development harness with disposable keys.
 
@@ -21,3 +21,5 @@ All executable source files have paired **unsigned** manifests. These deliberate
 - Global confidentiality, disclosure-control and invention-record workflows from day one; no jurisdictional legal or patent rights are created by the software.
 
 L15/L15+ and Platinum Blue Diamond remain the owner's architectural requirements. The complete platform is not finished by this first implementation.
+
+Existing production infrastructure has not yet been verified or connected through this session: hosting/runtime, independently administered signing authorities and immutable evidence storage are required to implement the remaining enforcement layers. No placeholder credentials or service endpoints are used.

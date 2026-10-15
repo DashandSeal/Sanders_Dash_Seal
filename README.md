@@ -8,11 +8,11 @@ Legal entity: Sanders Legal Helpers LLC; platform identity: **Sanders Dash & Sea
 This development foundation implements selected mechanics from the October 11, 2026 actual build design. It is **not fully specification-conformant**; see [the audit](docs/SPEC_CONFORMANCE.md):
 
 - Independent IT AI Manager and MINOTAUR Ed25519 approval verification.
-- Agent proof of possession, exact payload/scope binding, maximum 60-second leases.
+- MASTER-shaped nested leases, UTC timestamps, explicit nonce, agent assertion, permitted verb/IP lists and deployment-supplied lifetime policy.
 - Persistent atomic one-use claims, explicit revocation, and replay rejection.
 - PBD manifest preparation/validation and integrity scanning, including `pbd_` files.
-- Independent signed Quality Agent, reconciliation, and integrity evidence.
-- Execution intent, result, and revocation records in a hash-linked audit chain.
+- Independent signed Quality Agent, reconciliation, and integrity evidence in MASTER-shaped receipt groups.
+- Execution intent, result, and revocation records in a separate hash-linked audit store.
 - Separate Labyrinth Shield containment state and MINOTAUR verification roles.
 
 This is development source, not a deployed notarial service or the complete synthetic-AI platform.
@@ -29,6 +29,10 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
 ```
+
+The development runner executes the exact independently signed source snapshot and binds its hash into the lease. It rejects unrelated callbacks and source substitution. It is not an OS sandbox or a production runtime.
+
+**30 distinct local tests pass.**
 
 See [authentication](docs/AUTHENTICATION.md), [build status](docs/BUILD_STATUS.md),
 [source mapping](docs/SOURCE_MAPPING.md), and [governance](docs/GOVERNANCE.md).
