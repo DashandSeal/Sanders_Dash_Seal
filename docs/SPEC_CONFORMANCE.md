@@ -1,5 +1,22 @@
 # Original-specification conformance audit
 
+## Clearance handoff — October 15, 2026
+
+Source: MASTER sections 8–10, with section 20 role separation. Acceptance criteria:
+validate the requesting agent's assertion before contacting either authority;
+request IT AI Manager necessity approval, verify it, then request independent
+MINOTAUR clearance for exactly the same signing material; mint only after both
+proofs verify and lifetime is rechecked; no retries, broadened scope, fallback
+signatures, or token on a rejection or unavailable service. Preserve the nested
+section 9 record and existing domain-separated signature format.
+
+Implementation scope: a transport-neutral clearance coordinator using separately
+injected authority clients and the existing Vault. This is not a new authority,
+a signer implementation, a production transport, or deployment authorization.
+Authenticated service adapters, production public trust keys and independent
+key custody remain external integration requirements. Tests use generated keys
+only. Production release remains blocked until all required controls are real.
+
 Date: October 15, 2026. Initial build audited: `6027aefdb239a7e4e5471b698cb3c8b2a97089b5`.
 Scope: all 15 files of the initial build against the four source documents already read in this conversation. This is a source review and targeted local test result, not a certification of the full platform.
 
@@ -81,3 +98,4 @@ Before further feature building: apply the confirmed MASTER precedence and resol
 - Do not impose a universal duration inferred from an example. Require an explicit deployment lease-duration policy; tests provide their own policy.
 - Preserve all named execution-receipt groups; record observed outcomes and signed postcondition evidence rather than simulated success.
 - Separate executable artifact bytes from request payload bytes. A governed execution interface must accept a verified artifact, not an unrelated callable. Full production execution remains unavailable until an enforceable runtime boundary exists.
+
