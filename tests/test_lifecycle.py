@@ -16,7 +16,7 @@ class LifecycleTests(unittest.TestCase):
         flow = GovernedLifecycle(self.vault, PBDScriptValidationEngine(self.gate),
             QualityAgent(public_hex(quality_key.public_key())),
             ITAIManager(self.gate.keys['IT_AI_Manager_v15.0']),
-            Minotaur(self.gate.keys['MINOTAUR']), shield)
+            Minotaur(self.gate.keys['MINOTAUR']), shield, self.audit)
         def attester(key, domain, field):
             def attest(lease, result):
                 body = {'lease_id': lease, 'result_hash': digest(result), field: True}
@@ -37,7 +37,7 @@ class LifecycleTests(unittest.TestCase):
         result = flow.run(*args, lambda scope, payload: b'checked-state', *checks)
         self.assertEqual(result['status'], 'VERIFIED')
         self.assertEqual(self.vault.state(args[0]), 'REVOKED')
-        self.vault.verify_audit()
+        self.audit.verify_audit()
 
     def test_adapter_failure_revokes_and_contains(self):
         flow, args, checks = self.setup_flow()
@@ -60,3 +60,41 @@ class LifecycleTests(unittest.TestCase):
             flow.run(*args, lambda *args: calls.append(1), *checks)
         self.assertEqual(calls, [])
         self.assertEqual(self.vault.state(args[0]), 'REVOKED')
+
+    def test_each_verification_is_a_gate(self):
+        flow, args, checks = self.setup_flow()
+        calls = []
+        checks[0] = lambda *args: {'body': {}, 'signature': ''}
+        checks[1] = lambda *args: calls.append('reconciliation')
+        checks[2] = lambda *args: calls.append('integrity')
+        with self.assertRaises(Denied): flow.run(*args, lambda *args: b'ok', *checks)
+        self.assertEqual(calls, [])
+
+    def test_result_audit_failure_contains_and_revokes(self):
+        flow, args, checks = self.setup_flow()
+        preserve = self.audit.preserve
+        def broken(event):
+            if event['stage'] == 'EXECUTION_RESULT': raise OSError('storage unavailable')
+            return preserve(event)
+        self.audit.preserve = broken
+        with self.assertRaises(OSError): flow.run(*args, lambda *args: b'ok', *checks)
+        self.assertEqual(self.vault.state(args[0]), 'REVOKED')
+        self.assertEqual(flow.shield.mode, 'HUMANITARIAN')
+
+    def test_revocation_receipt_failure_contains(self):
+        flow, args, checks = self.setup_flow()
+        preserve = self.audit.preserve
+        def broken(event):
+            if event['stage'] == 'AUTHORITY_REVOKED': raise OSError('storage unavailable')
+            return preserve(event)
+        self.audit.preserve = broken
+        with self.assertRaises(OSError): flow.run(*args, lambda *args: b'ok', *checks)
+        self.assertEqual(self.vault.state(args[0]), 'REVOKED')
+        self.assertEqual(flow.shield.mode, 'HUMANITARIAN')
+
+    def test_audit_and_vault_are_separate(self):
+        self.assertFalse(hasattr(self.vault, 'preserve'))
+        self.assertNotEqual(self.vault.path, self.audit.path)
+        with self.vault.connect() as db:
+            tables = {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+        self.assertNotIn('receipts', tables)

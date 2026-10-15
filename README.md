@@ -5,7 +5,7 @@ Legal entity: Sanders Legal Helpers LLC; platform identity: **Sanders Dash & Sea
 
 ## Current build
 
-The first security foundation implements the October 11, 2026 actual build design:
+This development foundation implements selected mechanics from the October 11, 2026 actual build design. It is **not fully specification-conformant**; see [the audit](docs/SPEC_CONFORMANCE.md):
 
 - Independent IT AI Manager and MINOTAUR Ed25519 approval verification.
 - Agent proof of possession, exact payload/scope binding, maximum 60-second leases.

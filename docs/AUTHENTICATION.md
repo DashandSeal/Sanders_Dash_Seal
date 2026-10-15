@@ -6,6 +6,7 @@ This foundation authenticates **operational agents**, not customer browser sessi
 |---|---|
 | TwinGate | Verify separate IT AI Manager and MINOTAUR signatures using configured public keys |
 | Vault | Store approved leases; enforce expiry, exact request matching, proof of possession, one-use claims and revocation |
+| GlassBoxAudit | Separate evidence store and chain verification; not part of Vault |
 | PBDManifestGenerator | Prepare unsigned payload and scope bindings |
 | PBDScriptValidationEngine | Verify matching artifact bytes, scope and both approvals |
 | QualityAgent | Verify signed result-hash-specific functional attestation |
@@ -43,3 +44,5 @@ The functions run on a trusted host. Python does not sandbox the adapter, enforc
 Hash chaining detects ordinary record alterations but does not make a database immutable. An administrator can rewrite a chain or remove its suffix. Production needs independently anchored checkpoints and append-only external storage. Revocation is logical invalidation, not assured memory erasure.
 
 No customer login, passwords, cookies, OAuth sessions, payment credentials, SignWell credentials or BlueNotary credentials are implemented or collected here. Provider integrations and human authentication are future work.
+
+The original-specification audit in SPEC_CONFORMANCE.md records unauthorized simplifications and pending decisions. This document describes current code, not amendments to the original specifications.

@@ -1,8 +1,10 @@
+**Conformance audit: NOT fully conformant. See [the original-specification audit](SPEC_CONFORMANCE.md).**
+
 # Build status — October 15, 2026
 
 ## Implemented and locally tested
 
-Development security library: dual cryptographic gates, one-use proof-of-possession leases, exact scope checks, paired manifest validation, integrity scanning, signed postconditions, containment state and linked receipts. Sixteen distinct automated tests cover valid lifecycle, denied approvals, tampering, expiry, wrong agent, scope drift, durable revocation, concurrent replay, manifest failure, adapter failure, unverifiable quality and audit tampering.
+Development security library: dual cryptographic gates, one-use proof-of-possession leases, exact scope checks, paired manifest validation, integrity scanning, signed postconditions, containment state and linked receipts. Twenty distinct automated tests cover valid lifecycle, denied approvals, tampering, expiry, wrong agent, scope drift, durable revocation, concurrent replay, manifest failure, adapter failure, unverifiable quality and audit tampering.
 
 All executable source files have paired **unsigned** manifests. These deliberately fail production signature validation. No fake production approvals were generated. Source-level tests run in a trusted development harness with disposable keys.
 

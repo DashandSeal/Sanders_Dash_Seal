@@ -70,7 +70,7 @@ class PBDScriptValidationEngine:
         return expected
 
 class Vault:
-    """Durable one-use leases and chained receipts on one trusted SQLite host.
+    """Durable one-use leases on one trusted SQLite host.
 
     No private signing keys are held here. SQLite is not an immutable store.
     """
@@ -80,8 +80,6 @@ class Vault:
             db.executescript('''
             CREATE TABLE IF NOT EXISTS leases (
               id TEXT PRIMARY KEY, body TEXT NOT NULL, state TEXT NOT NULL);
-            CREATE TABLE IF NOT EXISTS receipts (
-              seq INTEGER PRIMARY KEY AUTOINCREMENT, body TEXT NOT NULL, hash TEXT NOT NULL);
             ''')
 
     def connect(self):
@@ -160,28 +158,6 @@ class Vault:
             row = db.execute('SELECT state FROM leases WHERE id=?', (lease_id,)).fetchone()
         return row[0] if row else None
 
-    def preserve(self, event):
-        """Chained evidence; no secrets or business document payloads are included."""
-        with self.connect() as db:
-            db.execute('BEGIN IMMEDIATE')
-            previous = db.execute('SELECT hash FROM receipts ORDER BY seq DESC LIMIT 1').fetchone()
-            body = {'previous_hash': previous[0] if previous else '0' * 64,
-                    'timestamp': self.clock(), 'event': event}
-            encoded = canonical(body)
-            block_hash = digest(encoded)
-            db.execute('INSERT INTO receipts(body, hash) VALUES (?, ?)', (encoded.decode(), block_hash))
-        return block_hash
-
-    def verify_audit(self):
-        previous = '0' * 64
-        with self.connect() as db:
-            rows = db.execute('SELECT body, hash FROM receipts ORDER BY seq').fetchall()
-        for raw, block_hash in rows:
-            body = json.loads(raw)
-            if body.get('previous_hash') != previous or digest(canonical(body)) != block_hash:
-                raise Denied('Audit chain changed')
-            previous = block_hash
-        return previous
 
 class GlobalPBDSentinel:
     """Read-only integrity scanner. Containment requires a separate deployment adapter."""

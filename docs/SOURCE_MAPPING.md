@@ -14,7 +14,9 @@ The saved source documents are preserved unchanged. This repository implements s
 | MASTER 8–11: Twin Gate, bounded authority, denial, one-use leases | `core_platform/security.py`: TwinGate, Vault |
 | MASTER 13–15: paired files, manifest gate, Sentinel | security.py: PBDManifestGenerator, PBDScriptValidationEngine, GlobalPBDSentinel |
 | MASTER 5–8, 19–20: role separation and verified completion | `core_platform/lifecycle.py` |
-| Routing version 2: independent verification, revocation, proof of possession | GovernedLifecycle and result-hash-bound signed attestations |
+| MASTER 8–9: independent verification, revocation, agent identity assertion | GovernedLifecycle and result-hash-bound signed attestations |
 | MASTER 18: device not root of trust | injected authority public keys; remote key custody remains deployment work |
 
-Original sample gateway names are examples, not established integrations or proof of notarial authority. The sample simulated HTTP 200 and hard-coded verification success are not used as live evidence. Internal priority cannot override third-party access controls. No external bypass behavior is implemented.
+The original user-authored requirements control. Assistant-authored versions are preserved reference material, not approved amendments. See SPEC_CONFORMANCE.md for unresolved differences.
+
+Original sample gateway names are examples, not established integrations or proof of notarial authority. The sample simulated HTTP 200 and hard-coded verification success are not used as live evidence. External routing is unimplemented; the original external-priority language and available receiving-service mechanisms require an explicit decision.

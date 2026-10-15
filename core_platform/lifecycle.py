@@ -50,13 +50,13 @@ class LabyrinthShield:
             raise Denied('Shelter in place; human clearance required')
 
 class GovernedLifecycle:
-    def __init__(self, vault, validator, quality, manager, minotaur, shield):
+    def __init__(self, vault, validator, quality, manager, minotaur, shield, audit):
         if len({quality.key, manager.key, minotaur.key}) != 3:
             raise ValueError('Independent verification requires three distinct keys')
         if (manager.key != vault.gate.keys['IT_AI_Manager_v15.0'] or
                 minotaur.key != vault.gate.keys['MINOTAUR']):
             raise ValueError('Authority keys must match the Vault trust configuration')
-        self.vault, self.validator = vault, validator
+        self.vault, self.validator, self.audit = vault, validator, audit
         self.quality, self.manager, self.minotaur, self.shield = quality, manager, minotaur, shield
 
     def run(self, lease_id, scope, payload, proof, artifact, manifest, adapter,
@@ -71,16 +71,16 @@ class GovernedLifecycle:
             self.shield.check(body['agent_key'])
             self.validator.validate(payload, artifact, scope, manifest)
             # Persist intent before any side effect. Audit failure prevents adapter entry.
-            self.vault.preserve({'lease_id': lease_id, 'stage': 'EXECUTION_INTENT',
+            self.audit.preserve({'lease_id': lease_id, 'stage': 'EXECUTION_INTENT',
                                  'artifact': artifact, 'payload_hash': digest(payload)})
             result = adapter(scope, payload)
             if not isinstance(result, bytes):
                 raise Denied('Adapter result must be bytes')
             quality = quality_check(lease_id, result)
-            reconciliation = reconcile_check(lease_id, result)
-            integrity = integrity_check(lease_id, result)
             self.quality.verify_result(lease_id, result, quality)
+            reconciliation = reconcile_check(lease_id, result)
             self.manager.reconcile(lease_id, result, reconciliation)
+            integrity = integrity_check(lease_id, result)
             self.minotaur.reseal(lease_id, result, integrity)
             receipt = {'quality': quality, 'reconciliation': reconciliation, 'integrity': integrity}
             status = 'VERIFIED'
@@ -91,10 +91,16 @@ class GovernedLifecycle:
         finally:
             # Authority was already consumed. Revoke even when evidence preservation fails.
             try:
-                self.vault.preserve({'lease_id': lease_id, 'stage': 'EXECUTION_RESULT',
-                    'status': status, 'attestations': receipt,
-                    'result_hash': digest(result) if isinstance(result, bytes) else None})
-            finally:
-                self.vault.revoke(lease_id)
-            self.vault.preserve({'lease_id': lease_id, 'stage': 'AUTHORITY_REVOKED'})
+                try:
+                    self.audit.preserve({'lease_id': lease_id, 'stage': 'EXECUTION_RESULT',
+                        'status': status, 'attestations': receipt,
+                        'result_hash': digest(result) if isinstance(result, bytes) else None})
+                finally:
+                    self.vault.revoke(lease_id)
+                self.audit.preserve({'lease_id': lease_id, 'stage': 'AUTHORITY_REVOKED'})
+            except BaseException:
+                # Evidence and authority cleanup are required parts of completion.
+                if body:
+                    self.shield.contain(body['agent_key'])
+                raise
         return {'lease_id': lease_id, 'status': status, 'authority': 'REVOKED'}

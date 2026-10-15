@@ -8,6 +8,8 @@ from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from core_platform.security import (Denied, ROLES, TwinGate, Vault, sign, public_hex,
     PBDManifestGenerator, PBDScriptValidationEngine, GlobalPBDSentinel)
 
+from core_platform.glass_box_audit import GlassBoxAudit
+
 class SecurityTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -16,6 +18,7 @@ class SecurityTests(unittest.TestCase):
         self.gate = TwinGate({r: public_hex(k.public_key()) for r, k in self.keys.items()})
         self.agent = Ed25519PrivateKey.generate()
         self.now = 1000
+        self.audit = GlassBoxAudit(Path(self.tmp.name) / 'audit.db', lambda: self.now)
         self.vault = Vault(Path(self.tmp.name) / 'vault.db', self.gate, lambda: self.now)
         self.scope = {'endpoint': 'https://service.internal/status', 'method': 'GET',
                       'ip': '10.0.0.1', 'operation': 'READ_STATUS'}
@@ -106,11 +109,11 @@ class SecurityTests(unittest.TestCase):
         self.assertEqual(scanner.scan(root, self.scope)[0]['status'], 'BLOCKED')
 
     def test_audit_tamper(self):
-        self.vault.preserve({'result': 'DENIED'})
-        self.vault.preserve({'result': 'REVOKED'})
-        self.vault.verify_audit()
-        with self.vault.connect() as db:
+        self.audit.preserve({'result': 'DENIED'})
+        self.audit.preserve({'result': 'REVOKED'})
+        self.audit.verify_audit()
+        with self.audit.connect() as db:
             db.execute("UPDATE receipts SET body='{}' WHERE seq=1")
-        with self.assertRaises((Denied, KeyError)): self.vault.verify_audit()
+        with self.assertRaises((Denied, KeyError)): self.audit.verify_audit()
 
 if __name__ == '__main__': unittest.main()
