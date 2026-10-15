@@ -1,20 +1,28 @@
 import tempfile
 import unittest
 from pathlib import Path
-from core_platform.upgrade_sidecar import UpgradeSidecar, UpgradeDenied
+from core_platform.upgrade_sidecar import UpgradeSidecar, UpgradeDenied, CORE_LAWS
 
 class UpgradeSidecarTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.path = Path(self.tmp.name) / 'upgrades.db'
-        self.sidecar = UpgradeSidecar(self.path, ['payments', 'notarial', 'security'])
+        self.sidecar = UpgradeSidecar(self.path, ['payments', 'notarial', 'security'], CORE_LAWS)
         self.digest = 'a' * 64
+
+    def test_missing_or_changed_laws_deny(self):
+        with self.assertRaises(UpgradeDenied):
+            UpgradeSidecar(self.path, ['security'])
+        with self.assertRaises(UpgradeDenied):
+            UpgradeSidecar(self.path, ['security'], CORE_LAWS[:-1])
+        with self.assertRaises(UpgradeDenied):
+            UpgradeSidecar(self.path, ['security'], (*CORE_LAWS[:-1], 'Modified law'))
 
     def test_durable_proposal_and_review(self):
         self.assertEqual(self.sidecar.propose('req-1','payments','2.0',self.digest,{'source':'review'}),'PROPOSED')
         self.assertEqual(self.sidecar.evaluate('req-1',{'tests':'pending'}),'EVALUATED')
-        reopened = UpgradeSidecar(self.path, ['payments','notarial','security'])
+        reopened = UpgradeSidecar(self.path, ['payments','notarial','security'], CORE_LAWS)
         self.assertEqual(reopened.get('req-1')['state'],'EVALUATED')
         self.assertEqual(reopened.get('req-1')['evidence']['review']['tests'],'pending')
 
