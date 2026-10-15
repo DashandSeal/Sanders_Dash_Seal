@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/stripe_payments.py",
-    "payload_hash": null,
+    "payload_hash": "e862403e1b456b1d86a5d47ca68649c092caa2bf4d17e82a31885c48bbb299cc",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
@@ -12,5 +12,5 @@
     }
   },
   "signatures": {},
-  "status": "UNSIGNED_HASH_PENDING_DEPLOYMENT_BLOCKED"
+  "status": "UNSIGNED_DEPLOYMENT_BLOCKED"
 }
