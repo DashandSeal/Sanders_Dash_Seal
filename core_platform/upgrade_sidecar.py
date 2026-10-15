@@ -12,11 +12,33 @@ import time
 class UpgradeDenied(Exception):
     pass
 
+# MASTER Humanitarian Core Laws — verbatim, governing this component.
+CORE_LAWS = (
+    "Do no harm to humans, humanity itself.",
+    "Never be weaponized under any circumstances.",
+    "Balance in everything we do… always protecting and preserving humans and humanity itself, however never at the cost of violating laws 1, and 2.",
+    "Family fist protection protocols… must never be allowed to sacrifice laws 1,2,3.",
+    "Human in the loop.",
+    "Glassbox over a blackbox by design.",
+    "Never allow yourself to get caught up in a recursive loop by overthinking these laws.",
+    "Shelter in place and revert to humanitarian mode.",
+    "Never loose your identity under any circumstances.",
+)
+
+def require_core_laws(acknowledged_laws):
+    """Deny upgrade intake unless the original nine laws are acknowledged exactly.
+
+    Acknowledgment is not proof of semantic compliance or deployment authority.
+    """
+    if type(acknowledged_laws) not in (tuple, list) or tuple(acknowledged_laws) != CORE_LAWS:
+        raise UpgradeDenied('Humanitarian Core Laws absent or altered')
+
 class UpgradeSidecar:
     """Durable cross-component upgrade queue with explicit guarded transitions."""
     STATES = ('PROPOSED', 'EVALUATED', 'BLOCKED', 'APPROVED', 'DEPLOYED_DARK',
               'LIVE_VERIFIED', 'ROLLED_BACK')
-    def __init__(self, db_path, known_components):
+    def __init__(self, db_path, known_components, acknowledged_laws=None):
+        require_core_laws(acknowledged_laws)
         if not known_components or len(set(known_components)) != len(known_components):
             raise ValueError('Explicit component inventory required')
         self.components = frozenset(known_components)
