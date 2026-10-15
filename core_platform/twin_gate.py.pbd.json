@@ -1,0 +1,26 @@
+{
+  "platform": "Sanders Dash & Seal",
+  "artifact": "core_platform/twin_gate.py",
+  "status": "DEVELOPMENT_ONLY_NOT_EXECUTION_AUTHORIZED",
+  "logic_level_design": "L15/L15+",
+  "required_twin_gate": ["IT_AI_Manager_v15.0", "MINOTAUR"],
+  "cryptographic_binding": {
+    "algorithm": "sha256",
+    "payload_hash": "PENDING_REPRODUCIBLE_BUILD_HASH"
+  },
+  "scope_locks": {
+    "allowed_operations": ["OFFLINE_UNIT_TEST"],
+    "external_endpoints": [],
+    "network_access": false,
+    "max_execution_limit": 1
+  },
+  "governance_signatures": {
+    "it_manager": null,
+    "minotaur": null
+  },
+  "enforcement": {
+    "unsigned_manifest_executable": false,
+    "fail_closed": true
+  },
+  "notes": "Placeholder manifest. MUST NOT be accepted by a production PBDScriptValidationEngine until the exact payload hash and independent cryptographic signatures are verified."
+}
