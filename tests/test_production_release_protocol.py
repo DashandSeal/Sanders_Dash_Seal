@@ -1,4 +1,4 @@
-"""Static fail-closed checks for the production release entrypoint."""
+"""Static release-policy checks: deployment separate from privileged Twin-Gate."""
 import pathlib
 import unittest
 
@@ -15,9 +15,12 @@ class ProductionReleaseProtocolTests(unittest.TestCase):
         self.assertIn('contents: read', self.workflow)
         self.assertIn('environment: production', self.workflow)
 
-    def test_no_unguarded_deployment(self):
-        self.assertIn('DENIED: independent production authorization not provisioned', self.workflow)
+    def test_deployment_checks_without_privileged_twin_gate(self):
+        self.assertNotIn('DENIED: independent production authorization not provisioned', self.workflow)
         self.assertIn('hashlib.sha256(path.read_bytes()).hexdigest()', self.workflow)
+        self.assertIn("sys.exit('DENIED: paired manifest absent')", self.workflow)
+        self.assertIn("sys.exit('DENIED: release evidence absent')", self.workflow)
+        self.assertIn('no deployment performed', self.workflow)
         self.assertNotIn('kubectl apply', self.workflow)
         self.assertNotIn('docker push', self.workflow)
         self.assertNotIn('stripe trigger', self.workflow)
