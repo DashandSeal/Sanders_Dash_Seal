@@ -2,12 +2,14 @@
 
 The owner's original technical specifications control this repository. Preserve the exact platform identity **Sanders Dash & Seal**. The original saved files are identified in `docs/SOURCE_MAPPING.md`; the actual build design is authoritative, not a concept or brainstorming note.
 
+Owner-confirmed precedence (October 15, 2026): **Sanders_Dash_Seal_Actual_Build_Design_MASTER_2026-10-11.md always controls wherever an earlier original protocol or example conflicts with it.** Apply this standing decision without asking again. Earlier material supplies detail only where consistent with MASTER. Assistant interpretations do not amend MASTER. Escalate only genuine ambiguities within MASTER or requirements MASTER does not resolve.
+
 Before implementing or modifying a requirement:
 
 1. Identify its original source section and record its acceptance criteria in `docs/SPEC_CONFORMANCE.md`.
 2. Preserve the original requirement. Assistant-authored interpretations are reference material, not owner-approved amendments.
 3. Do not silently merge components, weaken a gate, simplify a protocol/schema, introduce a global policy from a single example, or claim compliance based on a placeholder.
-4. Where original sources conflict or lack implementation details, document the precise conflict and obtain the owner's decision before selecting a behavior. Keep the affected production capability blocked.
+4. Resolve conflicts between MASTER and earlier sources in favor of MASTER and document the resolution. Ask the owner only when MASTER itself leaves a material ambiguity unresolved. Keep affected production capabilities blocked until requirements are satisfied.
 5. Distinguish implemented mechanics, tested development behavior, incomplete requirements and production blockers. Passing unit tests does not prove full specification compliance.
 6. Preserve Humanitarian Core Laws verbatim. MINOTAUR and Sanders Labyrinth Shield 🛡️ are separate. Vault and Glass-Box Audit are separate. Follow all other role boundaries in MASTER section 20.
 7. Pair every executable source change with its `.pbd.json` hash update. Never fabricate authority signatures. An unsigned pair is a production blocker, not authorization.

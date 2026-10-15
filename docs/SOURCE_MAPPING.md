@@ -20,3 +20,7 @@ The saved source documents are preserved unchanged. This repository implements s
 The original user-authored requirements control. Assistant-authored versions are preserved reference material, not approved amendments. See SPEC_CONFORMANCE.md for unresolved differences.
 
 Original sample gateway names are examples, not established integrations or proof of notarial authority. The sample simulated HTTP 200 and hard-coded verification success are not used as live evidence. External routing is unimplemented; the original external-priority language and available receiving-service mechanisms require an explicit decision.
+
+## Standing source precedence
+
+Owner-confirmed precedence (October 15, 2026): **Sanders_Dash_Seal_Actual_Build_Design_MASTER_2026-10-11.md always controls wherever an earlier original protocol or example conflicts with it.** Apply this standing decision without asking again. Earlier material supplies detail only where consistent with MASTER. Assistant interpretations do not amend MASTER. Escalate only genuine ambiguities within MASTER or requirements MASTER does not resolve.
