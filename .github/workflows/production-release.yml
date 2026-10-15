@@ -1,0 +1,54 @@
+name: Sanders Dash & Seal gated production release
+on:
+  workflow_dispatch:
+    inputs:
+      artifact_path:
+        description: Exact executable path
+        required: true
+        type: string
+      release_evidence:
+        description: Independent approval evidence reference
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: sanders-production-release
+  cancel-in-progress: false
+jobs:
+  production-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate artifact identity and deny unprovisioned production
+        env:
+          ARTIFACT_PATH: ${{ inputs.artifact_path }}
+          RELEASE_EVIDENCE: ${{ inputs.release_evidence }}
+        run: |
+          python - <<'PY'
+          import hashlib, json, os, pathlib, sys
+          path = pathlib.Path(os.environ['ARTIFACT_PATH'])
+          if path.is_absolute() or '..' in path.parts or path.suffix not in ('.py', '.js') or not path.is_file():
+              sys.exit('DENIED: artifact path invalid')
+          manifest_path = pathlib.Path(str(path) + '.pbd.json')
+          if not manifest_path.is_file():
+              sys.exit('DENIED: paired manifest absent')
+          manifest = json.loads(manifest_path.read_text())
+          if manifest.get('body', {}).get('artifact') != path.as_posix():
+              sys.exit('DENIED: artifact identity mismatch')
+          if manifest['body'].get('payload_hash') != hashlib.sha256(path.read_bytes()).hexdigest():
+              sys.exit('DENIED: source hash mismatch')
+          if not os.environ.get('RELEASE_EVIDENCE', '').strip():
+              sys.exit('DENIED: release evidence absent')
+          # An evidence reference alone does not validate a release signature.
+          # Independent production Twin-Gate, trust roots, runtime containment,
+          # immutable Glass-Box audit, and deployment target remain unprovisioned.
+          sys.exit('DENIED: independent production authorization not provisioned')
+          PY
