@@ -1,13 +1,14 @@
 """Sanders Dash & Seal real-time synthetic-AI upgrade sidecar (development).
 
-An always-on *proposal intake*, not autonomous production modification.
-The MASTER Twin-Gate/PBD, human release, Glass-Box, and rollback controls remain
-authoritative. The sidecar cannot deploy, execute code, or create credentials.
+A guarded proposal-to-deployment controller with pluggable owner authorization,
+artifact staging, health verification and rollback. Production execution requires
+separately supplied, independently validated adapters; no credentials are created.
 """
 import hashlib
 import json
 import sqlite3
 import time
+from pathlib import Path
 
 class UpgradeDenied(Exception):
     pass
@@ -37,11 +38,13 @@ class UpgradeSidecar:
     """Durable cross-component upgrade queue with explicit guarded transitions."""
     STATES = ('PROPOSED', 'EVALUATED', 'BLOCKED', 'APPROVED', 'DEPLOYED_DARK',
               'LIVE_VERIFIED', 'ROLLED_BACK')
-    def __init__(self, db_path, known_components, acknowledged_laws=None):
+    def __init__(self, db_path, known_components, acknowledged_laws=None, executor=None, authorizer=None):
         require_core_laws(acknowledged_laws)
         if not known_components or len(set(known_components)) != len(known_components):
             raise ValueError('Explicit component inventory required')
         self.components = frozenset(known_components)
+        self.executor = executor
+        self.authorizer = authorizer
         self.db_path = str(db_path)
         with self._connect() as db:
             db.execute('''CREATE TABLE IF NOT EXISTS upgrade_requests
@@ -112,9 +115,97 @@ class UpgradeSidecar:
                        ('BLOCKED', json.dumps(evidence, sort_keys=True), request_id))
         return 'BLOCKED'
 
-    def approve_or_deploy(self, *args, **kwargs):
-        """Production promotion is deliberately unavailable without real authority."""
-        raise UpgradeDenied('Twin-Gate PBD and human production release required')
+    def _transition(self, request_id, expected, target, field, value):
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            row = db.execute(
+                'SELECT state,evidence FROM upgrade_requests WHERE request_id=?',
+                (request_id,)).fetchone()
+            if not row or row[0] != expected:
+                raise UpgradeDenied('Invalid upgrade state transition')
+            evidence = json.loads(row[1])
+            evidence[field] = value
+            db.execute('UPDATE upgrade_requests SET state=?,evidence=? WHERE request_id=?',
+                       (target, json.dumps(evidence, sort_keys=True), request_id))
+        return target
 
-    def apply_upgrade(self, *args, **kwargs):
-        raise UpgradeDenied('Sidecar cannot execute or deploy an upgrade')
+    def approve_or_deploy(self, request_id, authorization=None):
+        """Owner-authorized, scope-bound promotion to an approved staging state.
+
+        The injected authorizer must verify an external approval; a caller-supplied
+        boolean, role label, or unsigned statement never grants authority.
+        """
+        if self.authorizer is None or not callable(self.authorizer):
+            raise UpgradeDenied('Verified owner authorization adapter required')
+        record = self.get(request_id)
+        if record['state'] != 'EVALUATED':
+            raise UpgradeDenied('Evaluation required before approval')
+        if not self.authorizer(request_id, record, authorization):
+            raise UpgradeDenied('Owner authorization rejected')
+        return self._transition(request_id, 'EVALUATED', 'APPROVED',
+                                'authorization', {'verified': True})
+
+    def apply_upgrade(self, request_id, artifact_path=None):
+        """Stage a verified artifact using an injected, isolated deployment adapter.
+
+        This never evaluates arbitrary source or imports a submitted artifact.
+        The adapter is responsible for sandboxing, PBD/Twin-Gate checks,
+        containment and the atomic staging transaction.
+        """
+        if self.executor is None:
+            raise UpgradeDenied('Verified deployment executor required')
+        record = self.get(request_id)
+        if record['state'] != 'APPROVED':
+            raise UpgradeDenied('Upgrade must be approved before execution')
+        if artifact_path is None:
+            raise UpgradeDenied('Artifact required')
+        path = Path(artifact_path)
+        if not path.is_file() or path.is_symlink():
+            raise UpgradeDenied('Regular artifact file required')
+        actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual_hash != record['artifact_hash']:
+            raise UpgradeDenied('Artifact integrity mismatch')
+        try:
+            receipt = self.executor.stage(record, str(path))
+        except Exception as exc:
+            self._transition(request_id, 'APPROVED', 'BLOCKED',
+                             'execution_error', type(exc).__name__)
+            raise UpgradeDenied('Upgrade staging failed') from exc
+        if not isinstance(receipt, dict) or not receipt.get('staged'):
+            self._transition(request_id, 'APPROVED', 'BLOCKED',
+                             'execution_error', 'Missing staging receipt')
+            raise UpgradeDenied('Verified staging receipt required')
+        return self._transition(request_id, 'APPROVED', 'DEPLOYED_DARK',
+                                'stage_receipt', receipt)
+
+    def verify_live(self, request_id):
+        """Promote only after the deployment adapter independently verifies health."""
+        if self.executor is None:
+            raise UpgradeDenied('Verified deployment executor required')
+        record = self.get(request_id)
+        if record['state'] != 'DEPLOYED_DARK':
+            raise UpgradeDenied('Staged upgrade required')
+        try:
+            receipt = self.executor.verify(record)
+        except Exception as exc:
+            raise UpgradeDenied('Live verification failed; rollback required') from exc
+        if not isinstance(receipt, dict) or not receipt.get('healthy'):
+            raise UpgradeDenied('Live verification failed; rollback required')
+        return self._transition(request_id, 'DEPLOYED_DARK', 'LIVE_VERIFIED',
+                                'verification_receipt', receipt)
+
+    def rollback(self, request_id):
+        """Use the injected executor to restore the prior verified baseline."""
+        if self.executor is None:
+            raise UpgradeDenied('Verified deployment executor required')
+        record = self.get(request_id)
+        if record['state'] not in ('DEPLOYED_DARK', 'LIVE_VERIFIED'):
+            raise UpgradeDenied('No staged or live upgrade to roll back')
+        try:
+            receipt = self.executor.rollback(record)
+        except Exception as exc:
+            raise UpgradeDenied('Rollback failed; isolate component') from exc
+        if not isinstance(receipt, dict) or not receipt.get('restored'):
+            raise UpgradeDenied('Verified rollback receipt required')
+        return self._transition(request_id, record['state'], 'ROLLED_BACK',
+                                'rollback_receipt', receipt)
