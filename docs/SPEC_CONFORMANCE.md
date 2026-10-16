@@ -99,3 +99,28 @@ Before further feature building: apply the confirmed MASTER precedence and resol
 - Preserve all named execution-receipt groups; record observed outcomes and signed postcondition evidence rather than simulated success.
 - Separate executable artifact bytes from request payload bytes. A governed execution interface must accept a verified artifact, not an unrelated callable. Full production execution remains unavailable until an enforceable runtime boundary exists.
 
+
+## October 16 owner-requested continuity and startup changes
+
+Sources: MASTER Humanitarian Core Law 9 (identity), section 20 (separate roles),
+section 22.24 upgrade mandate; owner's supplied screenshots preserving the agreed
+Twin-Gate diagnostic-startup separation. This addition does not replace MASTER.
+
+Acceptance: diagnostic readiness must not require consequential-operation grants;
+unknown/sensitive operations deny on missing authorization or owner halt. A shared
+upgrade guard must reject identity, role, or authority-boundary changes and loss
+of recorded capabilities/protections before staging, while retaining existing
+executor checks. Caller declarations alone are not independent identity evidence.
+Tests must run under the repository's unittest runner; executable pairs must match.
+
+Limits: this is development policy enforcement, not restored historical AI runtime,
+cryptographic identity issuance, production deployment, or a replacement for the
+previously approved Twin-Gate design. Production adapters must independently attest
+artifact-bound identity records against owner-controlled baselines.
+
+Validation: 100 unittest cases pass locally after adding the missing startup
+module and shared IdentityPreservingExecutor adapter. The adapter composes with
+UpgradeSidecar's existing executor interface but is not yet wired to a production
+identity verifier. Existing executor policy failures propagate; rollback delegates
+to the existing recovery adapter. Missing/stale Python manifest pairs repaired
+with unsigned development manifests; no signatures or production approval created.
