@@ -31,17 +31,22 @@ class PaymentLedger:
     def connect(self):
         return sqlite3.connect(self.path, timeout=10, isolation_level='IMMEDIATE')
 
-    def register_checkout(self, case_id, session_id, amount, currency):
+    def register_checkout(self, case_id, session_id, amount, currency, *, connection=None):
         if (not all(isinstance(v, str) and v for v in (case_id, session_id))
                 or type(amount) is not int or amount < 1
                 or not isinstance(currency, str) or not re.fullmatch('[a-z]{3}', currency)):
             raise PaymentDenied('Invalid checkout registration')
-        with self.connect() as db:
+        def insert(db):
             try:
                 db.execute('INSERT INTO stripe_cases VALUES (?, ?, ?, ?, ?)',
                            (case_id, session_id, amount, currency, 'PENDING'))
             except sqlite3.IntegrityError as exc:
                 raise PaymentDenied('Case or session already registered') from exc
+        if connection is not None:
+            insert(connection)
+        else:
+            with self.connect() as db:
+                insert(db)
 
     def record_event(self, event, now=None):
         if (not isinstance(event, dict) or

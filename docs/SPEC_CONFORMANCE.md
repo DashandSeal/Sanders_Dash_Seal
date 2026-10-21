@@ -128,3 +128,27 @@ with unsigned development manifests; no signatures or production approval create
 ## October 20 mobile service acceptance
 
 See [MOBILE_SERVICE_READINESS.md](MOBILE_SERVICE_READINESS.md) for MASTER-linked acceptance criteria, findings, changes and unresolved live connections. Mobile intake retains independent authority review; payment confirmation never authorizes an act. Validation: 108 local unittest tests pass. No production release or signatures created.
+
+## Customer appointment workflow acceptance — October 20
+
+Source: MASTER sections 1–3 (identity, human capacity and human review), 13–14
+(executable pairing), 19–20 (evidence and separate roles), and the existing
+END_TO_END_PRODUCTION_ACCEPTANCE.md payment/case acceptance contract.
+
+Build an appointment-request interface connected to durable cases. Appointment
+requests must never claim a confirmed time, current notarial authority or payment.
+Authenticate reads and writes with an independent session adapter; no browser
+identity headers, roles, price or paid flags are trusted. Reject cross-origin
+writes, malformed inputs and another customer's case access. Preserve idempotent
+request submission and pending human review. Quote approval is a separate trusted
+operator operation and must verify fee eligibility before any Checkout call.
+Use the existing payment ledger and raw signed webhook; redirects never mark paid.
+No new identity provider, production keys, real charges or deployment approvals
+are invented. Live release remains subject to the existing independent gates.
+
+Customer-flow implementation evidence: see CUSTOMER_APPOINTMENTS.md. The operator
+queue requires separately verified operator authority; quote approval additionally
+requires independent fee verification. 128 local tests pass with fake identities
+and a fake StripeClient; webhook verification uses signed test events. Browser QA
+and production connections remain incomplete. Unsigned development manifests do
+not authorize deployment. No live charge or notarial execution occurred.

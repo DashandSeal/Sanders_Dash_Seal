@@ -34,3 +34,11 @@ Added the missing unsigned manifest for the existing l15_repair_engine.py so eve
 
 No production keys, customer records, payment, release or deployment was created. Production readiness is not established.
 
+
+## Customer-flow continuation
+
+The same branch now includes the customer appointment page, operator quote review,
+transactional case/request storage and StripeClient handoff described in
+CUSTOMER_APPOINTMENTS.md. Local suite: 128 tests pass. This supersedes the absence
+of customer UI in the earlier source snapshot; deployed authentication, hosting,
+independent release controls and real payment configuration remain unconnected.
