@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/stripe_payments.py",
-    "payload_hash": "e862403e1b456b1d86a5d47ca68649c092caa2bf4d17e82a31885c48bbb299cc",
+    "payload_hash": "69ab0e5799fd753df2d538b7c41dd16304f94facc7908f046e646a87ab0d77cd",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

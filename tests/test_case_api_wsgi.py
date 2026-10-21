@@ -34,6 +34,18 @@ class APITests(unittest.TestCase):
     def test_unauthenticated_denied(self):
         self.assertEqual(self.request('GET','/v1/cases/c-1',auth=False)[0],'401 Unauthorized')
 
+    def test_mobile_intake_remains_pending_and_private(self):
+        status, body = self.request('POST', '/v1/cases', {
+            'case_id': 'mobile-1', 'jurisdiction': 'CO', 'service': 'MOBILE_NOTARY'})
+        self.assertEqual(status, '201 Created')
+        self.assertEqual(body['case']['status'], 'AWAITING_HUMAN_AUTHORITY_REVIEW')
+        other = create_app(self.registry, lambda env: 'another-human')
+        result = []
+        response = other({'PATH_INFO': '/v1/cases/mobile-1', 'REQUEST_METHOD': 'GET'},
+                         lambda status, headers: result.append(status))
+        self.assertEqual(result, ['404 Not Found'])
+        self.assertNotIn(b'MOBILE_NOTARY', b''.join(response))
+
     def test_no_requester_spoofing(self):
         self.assertEqual(self.request('POST','/v1/cases',{'case_id':'c-2','jurisdiction':'CO',
             'service':'RON','requester':'another'})[0],'400 Bad Request')
