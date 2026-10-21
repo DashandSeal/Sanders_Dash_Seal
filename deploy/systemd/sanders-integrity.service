@@ -1,0 +1,11 @@
+[Unit]
+Description=Sanders Dash & Seal deployed-source integrity check
+
+[Service]
+Type=oneshot
+TimeoutStartSec=5min
+ExecStart=/usr/bin/python3 /opt/sanders-dash-seal/deploy/host_integrity.py check /opt/sanders-dash-seal /var/lib/sanders-dash-seal/integrity.json
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true

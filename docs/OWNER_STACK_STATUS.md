@@ -85,3 +85,11 @@ The added repository tripwire and optional verified SQLite ledger utility are
 documented in FORENSIC_SECURITY.md. They do not change the selected Node/Python
 transport, dependency pin or Compose layout. SMTP delivery and scheduled
 activation have not been verified; production signatures are not fabricated.
+
+
+## Host bootstrap extension
+
+The owner-requested deployment, Compose maintenance override, certificate
+staging/renewal and host integrity timers are documented in ORACLE_BOOTSTRAP.md.
+Their source is prepared for the approved OL9 host; no host installation or DNS
+cutover has been executed in this session.

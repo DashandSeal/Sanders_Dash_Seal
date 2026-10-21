@@ -1,0 +1,69 @@
+#!/bin/bash
+# ==============================================================================
+# SANDERS DASH & SEAL - PRODUCTION BLUE DIAMOND DEPLOYMENT INITIALIZER
+# SYSTEM SPECIFICATION: ORACLE LINUX 9 (X86_64 / AARCH64)
+# ==============================================================================
+set -Eeuo pipefail
+
+# 1. Enforce Root Privileges for Core Infrastructure Mapping
+if [ "$EUID" -ne 0 ]; then
+    echo "🚨 [FATAL] This deployment engine requires root authorization to adjust system firewalls."
+    exit 1
+fi
+
+TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M:%S UTC')
+echo "======================================================================"
+echo "Initializing Production Execution Framework: $TIMESTAMP"
+echo "Target Host Instance: sanders-dash-seal"
+echo "======================================================================"
+
+# 2. Hardened Native Oracle Linux 9 Firewall Configuration (Firewalld)
+echo "[1/5] Configuring system firewalld public zones..."
+if systemctl is-active --quiet firewalld; then
+    sudo firewall-cmd --permanent --zone=public --add-service=http
+    sudo firewall-cmd --permanent --zone=public --add-service=https
+    sudo firewall-cmd --reload
+    echo "✅ Native firewalld services successfully refreshed."
+else
+    echo "⚠️  Firewalld service inactive. Starting system firewall..."
+    sudo systemctl enable --now firewalld
+    sudo firewall-cmd --permanent --zone=public --add-service=http
+    sudo firewall-cmd --permanent --zone=public --add-service=https
+    sudo firewall-cmd --reload
+fi
+
+# 3. Microservice Directory Topology Construction
+echo "[2/5] Constructing infrastructure directories..."
+PROJECT_DIR="/opt/sanders-dash-seal"
+mkdir -p "$PROJECT_DIR/worker/src"
+mkdir -p "$PROJECT_DIR/backend/data"
+mkdir -p "$PROJECT_DIR/nginx"
+mkdir -p "$PROJECT_DIR/certbot/conf"
+mkdir -p "$PROJECT_DIR/certbot/www"
+
+# 4. Engine Runtime Dependency Resolution (Docker CE)
+echo "[3/5] Verifying system container runtime engines..."
+if ! command -v docker &>/dev/null; then
+    sudo dnf config-manager --add-repo https://docker.com -y
+    sudo dnf install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+    sudo systemctl enable --now docker
+fi
+echo "✅ Docker container runtimes operational."
+
+# 5. Lock Down Folder Access Rights
+echo "[4/5] Enforcing operational access control lists..."
+# Assign internal container user ID 1000 (node user context) permissions over storage volumes
+sudo chown -R 1000:1000 "$PROJECT_DIR/worker"
+sudo chmod 755 "$PROJECT_DIR/backend/data"
+
+# 6. Full-Stack Production Container Orchestration
+echo "[5/5] Launching multi-stage container topology..."
+cd "$PROJECT_DIR"
+
+# Instantiate the full network stack in detached mode, verifying image shasums
+sudo docker compose down --remove-orphans || true
+sudo docker compose up -d --build
+
+echo "======================================================================"
+echo "Deployment Successful: Sanders Dash & Seal is Live on Ports 80 / 443"
+echo "======================================================================"

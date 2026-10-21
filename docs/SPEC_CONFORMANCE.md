@@ -315,3 +315,32 @@ and 8 real-signature receipt regressions. An isolated clean snapshot containing
 Unsigned source pairs remain explicitly unsigned; this is not signature approval.
 SMTP secret inventory is unavailable through the connector, no email was sent,
 and the scheduled workflow is not active while it remains on the review branch.
+
+
+## October 21 Oracle host bootstrap acceptance
+
+Source: owner's deploy.sh/Compose v2/firewalld/integrity monitor/Let's Encrypt
+proposal and MASTER 13–14, 19–20. Preserve the Node/Python/SQLite topology,
+existing free Oracle host, domains and public-IP context. Supply actual
+Compose maintenance services, initial HTTP ACME staging, renewal and graceful
+Nginx reload, host integrity monitoring and readiness validation. Correct the
+non-repository Docker URL, fixed-zone assumption, missing source staging,
+missing certbot service, incomplete IP test and premature success message.
+
+Do not stop the entire running stack before replacement, delete volumes,
+overwrite deployment credentials or manufacture source/signing authority. A
+real independently installed release-authorizer and runtime adapter configuration
+must precede production host changes. Scripts must not report live from an Up
+process alone or promise zero downtime from one instance. Keep operational
+changes explicit and test failure paths. Save on GitHub; this session has no
+Oracle SSH/session access and cannot write the instance's home directory.
+
+
+Bootstrap preparation evidence: all 177 Python tests pass, including mocked
+active-zone rules, zone refusal, missing authorizer, OS rejection, host source
+integrity drift and conditional certificate renewal/reload. bash -n passes;
+systemd accepts the twice-daily UTC calendar. A clean 229-file source snapshot
+passes the forensic audit and all 95 paired artifact hashes match. Production
+Compose/HTTP ACME syntax and Certbot container checks are added to CI. No live
+ACME request, Oracle operation, DNS cutover or authenticated public socket test
+was run. Existing ws audit findings are unchanged.

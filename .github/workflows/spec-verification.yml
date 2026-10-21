@@ -134,6 +134,15 @@ jobs:
           review_dir=$(mktemp -d)
           openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=sandersdashandseal.com -keyout "$review_dir/privkey.pem" -out "$review_dir/fullchain.pem"
           docker run --rm --entrypoint nginx --add-host pipeline-worker:127.0.0.1 --add-host wsgi-backend:127.0.0.1 -v "$PWD/nginx.conf:/etc/nginx/nginx.conf:ro" -v "$review_dir:/etc/letsencrypt/live/sandersdashandseal.com:ro" nginx:1.25-alpine -t
+      - name: Validate production override and certificate staging tools
+        run: |
+          runtime_config=$(mktemp)
+          printf 'SANDERS_RUNTIME_FACTORY=fixture:factory\n' > "$runtime_config"
+          SDS_RUNTIME_ENV_FILE="$runtime_config" docker compose -p sds-review -f docker-compose.yml -f deploy/compose.production.yml config --quiet
+          bash -n deploy.sh deploy/renew-certificates.sh
+          systemd-analyze calendar '*-*-* 00,12:30:00 UTC'
+          docker run --rm --entrypoint nginx -v "$PWD/deploy/nginx.acme.conf:/etc/nginx/nginx.conf:ro" nginx:1.25-alpine -t
+          docker run --rm certbot/certbot:v5.8.0 --version
       - name: Clean disposable CI container
         if: always()
         run: docker rm -f sds-backend-review || true
