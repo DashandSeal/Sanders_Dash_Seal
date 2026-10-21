@@ -239,3 +239,33 @@ different implementation. Previous 157-test evidence applies only to that
 previous implementation. The supplied Dockerfile copies no lockfile before
 npm ci; record this limitation without silently editing the owner's file.
 No Oracle or DNS changes or production authorization are implied.
+
+
+## October 21 complete selected design assembly acceptance
+
+Owner instruction: add the entire supplied design to GitHub. Sources: the
+complete earlier worker and subsequent transaction/session/heartbeat/shutdown
+revision, owner-selected Compose/Docker/package files, MASTER 13–14 and 19–20.
+Keep the supplied latest JavaScript helper and shutdown bodies verbatim; assemble
+only missing imports, HTTP/upgrade/session/message setup around them. Identify
+this connecting code explicitly. Add /api/auth/verify and
+/api/transactions/process over independently supplied Python authentication and
+transaction processing, durable SQLite receipts, Nginx HTTP/WebSocket routing and
+backend container context. Generic transactions must not be replaced with an
+appointment-only transport. No supplied version or Compose setting is changed.
+
+Validation must separate source assembly from successful production build.
+Maintain denial when real authentication, processing and release adapters are
+absent. Session data is credential input, never trusted as an identity assertion.
+Tests must exercise successful recording, rejected authentication, revocation,
+failed processing, replay conflicts and default denial. No paid resource,
+production credentials or authority signatures are invented.
+
+
+Selected-stack assembly evidence: 152 Python tests pass. The actual selected
+index.js process passes its integration test against the real Python pipeline
+API/SQLite store using disposable credentials. All 79 paired artifact hashes
+match. The selected ws 8.16.0 dependency audit reports one affected package with
+high severity; no version substitution was made. Full stack build, backend
+container and actual root Nginx syntax have separate CI checks. No prior clean
+build/audit result is transferred to this selected stack.

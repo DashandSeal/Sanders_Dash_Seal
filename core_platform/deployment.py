@@ -4,12 +4,13 @@ Default startup serves existing assets and diagnostics only. Trusted production
 adapters are supplied by the administrator, behind an external verified bootstrap.
 Neither environment configuration nor an HTTP request grants production authority.
 """
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import importlib
 import json
 import re
 
 from .customer_app import create_customer_app
+from .pipeline_api import create_pipeline_app, TransactionStore
 
 
 CANONICAL_HOST = 'sandersdashandseal.com'
@@ -31,6 +32,8 @@ class RuntimeBindings:
     auth_app: object
     release_verifier: object
     webhook_app: object = None
+    transaction_processor: object = None
+    transaction_store: object = None
 
 
 def _response(start, status, payload, extra=()):
@@ -63,12 +66,18 @@ def create_application(bindings=None):
                 or (bindings.webhook_app is not None and not callable(bindings.webhook_app))):
             raise DeploymentConfigurationError('Independent runtime bindings required')
         verifier = bindings.release_verifier
+        if bindings.transaction_processor is not None and not callable(bindings.transaction_processor):
+            raise DeploymentConfigurationError('Trusted transaction processor required')
         customer = create_customer_app(bindings.appointments, bindings.authenticate,
             bindings.payments, bindings.auth_app, ORIGIN, release_verifier=verifier)
     else:
         verifier = _denied
         customer = create_customer_app(None, lambda env: None, None,
             _unavailable, ORIGIN, release_verifier=verifier)
+
+    pipeline = create_pipeline_app(bindings.authenticate if bindings else None,
+        bindings.transaction_processor if bindings else None, verifier,
+        bindings.transaction_store if bindings else None)
 
     def ready():
         try:
@@ -83,6 +92,9 @@ def create_application(bindings=None):
         if not isinstance(host, str):
             return _response(start, '421 Misdirected Request', {'error': 'host_denied'})
         host = host.lower()
+        path = env.get('PATH_INFO', '')
+        if host == 'wsgi-backend:8000' and path in ('/api/auth/verify', '/api/transactions/process'):
+            return pipeline(env, start)
         if host.endswith(':443'):
             host = host[:-4]
         if host not in (CANONICAL_HOST, *ALIAS_HOSTS):
@@ -111,11 +123,13 @@ def create_application(bindings=None):
             if bindings is None or bindings.webhook_app is None or not ready():
                 return _unavailable(env, start)
             return bindings.webhook_app(env, start)
+        if path in ('/api/auth/verify', '/api/transactions/process'):
+            return pipeline(env, start)
         return customer(env, start)
     return application
 
 
-def load_application(factory_reference=None):
+def load_application(factory_reference=None, *, transaction_db=None):
     """Load a trusted, administrator-installed adapter factory, not HTTP input.
 
     Do not set this value from a request or an untrusted configuration file.
@@ -133,4 +147,7 @@ def load_application(factory_reference=None):
     bindings = factory()
     if not isinstance(bindings, RuntimeBindings):
         raise DeploymentConfigurationError('Configured factory must return runtime bindings')
+    if (transaction_db is not None and bindings.transaction_processor is not None
+            and bindings.transaction_store is None):
+        bindings = replace(bindings, transaction_store=TransactionStore(transaction_db))
     return create_application(bindings)

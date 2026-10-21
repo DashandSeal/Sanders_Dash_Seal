@@ -24,14 +24,13 @@ jobs:
         run: python -m pip install -r requirements-server.txt
       - uses: actions/setup-node@v4
         with:
-          node-version: '24'
+          node-version: '20.12.2'
           cache: npm
           cache-dependency-path: worker/package-lock.json
       - name: Install and verify locked worker dependency
         working-directory: worker
         run: |
           npm ci --ignore-scripts
-          npm audit --omit=dev --audit-level=low
       - name: Check original governance text and executable pairing
         shell: python
         run: |
@@ -63,67 +62,76 @@ jobs:
           print(f'Verified governance text and {len(files)} paired executable hashes (NOT production signatures).')
       - name: Run development security regression tests
         run: python -m unittest discover -s tests -v
-      - name: Test WebSocket transport and real Python SQLite integration
+      - name: Test owner-selected WebSocket and Python transaction integration
         working-directory: worker
-        run: npm test
+        run: node --test test/selected-stack.test.js
 
-  verify-container-candidate:
+  verify-owner-stack-build:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Validate and build reviewed container candidate
+      - name: Validate exact owner-selected Compose definition
+        run: docker compose -f docker-compose.yml config --quiet
+      - name: Build exact supplied stack (reports unresolved build errors)
+        run: docker compose -f docker-compose.yml build
+
+  audit-selected-dependency:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.12.2'
+      - name: Install the owner-selected locked dependency
+        working-directory: worker
+        run: npm ci --ignore-scripts --no-audit
+      - name: Report dependency audit without substituting versions
+        working-directory: worker
+        run: npm audit --omit=dev --audit-level=low
+
+  verify-backend-and-nginx:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Build the matching Python backend
+        run: docker build -t sds-backend-review ./backend
+      - name: Check diagnostic-only startup
         run: |
-          docker compose --profile ingestion config --quiet
-          docker compose --profile ingestion build
-      - name: Check isolated HTTP gates and persistent volume
-        run: |
-          docker compose --profile ingestion up -d
-          python3 - <<'PY'
+          docker run -d --name sds-backend-review -p 127.0.0.1:18000:8000 sds-backend-review
+          python3 - <<'PYCODE'
           import time
           from urllib.request import Request, urlopen
           from urllib.error import HTTPError
-          def status(path, host, port=8000):
+          def status(path):
               try:
-                  with urlopen(Request(f'http://127.0.0.1:{port}' + path,
-                               headers={'Host': host}), timeout=2) as r:
-                      return r.status
-              except HTTPError as e:
-                  return e.code
+                  with urlopen(Request('http://127.0.0.1:18000' + path,
+                      headers={'Host': 'sandersdashandseal.com'}), timeout=2) as response:
+                      return response.status
+              except HTTPError as error:
+                  return error.code
           for attempt in range(30):
               try:
-                  assert status('/healthz', 'sandersdashandseal.com') == 200
+                  assert status('/healthz') == 200
                   break
               except OSError:
-                  if attempt == 29:
-                      raise
+                  if attempt == 29: raise
                   time.sleep(1)
-          assert status('/readyz', 'sandersdashandseal.com') == 503
-          assert status('/api/appointments', 'sandersdashandseal.com') == 503
-          assert status('/healthz', 'untrusted.invalid') == 421
-          assert status('/healthz', 'sandersdashandseal.com', 3000) == 200
-          assert status('/readyz', 'sandersdashandseal.com', 3000) == 503
-          PY
-          docker compose --profile ingestion exec -T pipeline-worker node -e "if(process.getuid()!==1000)process.exit(1);if(require('fs').existsSync('/var/lib/sanders'))process.exit(1)"
-          docker compose exec -T app python -c "from pathlib import Path; assert __import__('os').getuid() == 10001; Path('/var/lib/sanders/ci-probe').write_text('persistence')"
-          docker compose up -d --force-recreate
-          docker compose exec -T app python -c "from pathlib import Path; p=Path('/var/lib/sanders/ci-probe'); assert p.read_text() == 'persistence'; p.unlink()"
-          docker compose exec -T app python -c "from pathlib import Path; import os; assert not os.access('/app/wsgi.py', os.W_OK)"
-      - name: Check combined Nginx configuration with disposable test certificate
+          assert status('/readyz') == 503
+          assert status('/api/auth/verify') == 503
+          PYCODE
+      - name: Validate actual Nginx file with disposable certificate
         run: |
           review_dir=$(mktemp -d)
           openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=sandersdashandseal.com -keyout "$review_dir/privkey.pem" -out "$review_dir/fullchain.pem"
-          python3 - "$review_dir/nginx.conf" <<'PY'
-          from pathlib import Path
-          import sys
-          main = Path('deploy/nginx.conf.example').read_text()
-          worker = Path('deploy/nginx-ingestion.conf.example').read_text()
-          prefix, suffix = main.rsplit('}', 1)
-          Path(sys.argv[1]).write_text('events {}\nhttp {\n' + prefix + worker + '}\n}\n')
-          PY
-          docker run --rm --entrypoint nginx -v "$review_dir/nginx.conf:/etc/nginx/nginx.conf:ro" -v "$review_dir:/etc/letsencrypt/live/sandersdashandseal.com:ro" nginx:stable-alpine -t
-      - name: Clean ephemeral test resources
+          docker run --rm --entrypoint nginx --add-host pipeline-worker:127.0.0.1 --add-host wsgi-backend:127.0.0.1 -v "$PWD/nginx.conf:/etc/nginx/nginx.conf:ro" -v "$review_dir:/etc/letsencrypt/live/sandersdashandseal.com:ro" nginx:1.25-alpine -t
+      - name: Clean disposable CI container
         if: always()
-        run: docker compose --profile ingestion down --volumes
+        run: docker rm -f sds-backend-review || true

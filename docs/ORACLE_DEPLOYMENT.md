@@ -1,3 +1,10 @@
+# Oracle deployment history and selected stack
+
+The current owner-selected stack is documented in OWNER_STACK_STATUS.md.
+The older packaging instructions below are historical and do not override the
+owner's selected docker-compose.yml, generic worker or Python endpoints.
+No Oracle or DNS deployment has been performed.
+
 # Oracle deployment candidate — existing Sanders Dash & Seal
 
 This packages the existing Python/WSGI application with an optional Node
