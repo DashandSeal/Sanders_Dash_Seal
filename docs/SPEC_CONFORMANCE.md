@@ -152,3 +152,33 @@ requires independent fee verification. 128 local tests pass with fake identities
 and a fake StripeClient; webhook verification uses signed test events. Browser QA
 and production connections remain incomplete. Unsigned development manifests do
 not authorize deployment. No live charge or notarial execution occurred.
+
+## October 21 deployment entry point acceptance
+
+Sources: MASTER sections 1–3 (platform identity and human authority), 13–14
+(paired executables), 19–20 (evidence and distinct roles), and the October 16
+owner-approved separation of diagnostic startup from consequential operations.
+Owner request: deploy the existing platform and connect sandersdashandseal.com
+and sanderslegalhelpersllc.com without a new hosting purchase.
+
+Acceptance: provide a conventional WSGI entry point over the existing customer
+application, not a replacement website. Missing production adapters must leave
+all service operations unavailable. Readiness must never report success from
+process liveness alone. Reject unrecognized Host values; ignore forwarded-host
+claims. Use the Dash & Seal domain as the canonical service origin and redirect
+safe reads from the Legal Helpers alias; never replay an alias write. Production
+bindings must share the existing appointment/payment objects and canonical
+Checkout origin. Webhook routing must retain independent release checks and the
+existing raw signature-verifying handler. Load adapters only from trusted server
+configuration, never from HTTP input. Pair every new executable with an unsigned
+development manifest; do not fabricate production credentials or signatures.
+
+This entry point supplies composition/startup mechanics. It does not supply a
+hosting entitlement, production authentication/signing services, trusted adapter
+implementation, external bootstrap validation or deployment authority. A local
+diagnostic response is not a live or production-ready platform.
+
+Validation: 140 unittest cases pass, including 12 new deployment boundary tests.
+All 51 Python/JavaScript source-manifest hashes match, including both root WSGI
+entry points. No production signatures, live charge, deployment or DNS change
+was created by this source change.
