@@ -60,6 +60,8 @@ jobs:
               assert isinstance(data, dict), f'Invalid manifest object: {path}'
               assert data['body']['payload_hash'] == sha256(path.read_bytes()).hexdigest(), f'Hash mismatch: {path}'
           print(f'Verified governance text and {len(files)} paired executable hashes (NOT production signatures).')
+      - name: Audit checked-out source integrity without mail credentials
+        run: python3 scripts/forensic_audit.py --output "$RUNNER_TEMP/sds-forensics"
       - name: Run development security regression tests
         run: python -m unittest discover -s tests -v
       - name: Test owner-selected WebSocket and Python transaction integration

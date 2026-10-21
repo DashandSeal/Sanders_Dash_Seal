@@ -77,3 +77,11 @@ Oracle access, ARM execution, host firewall checks, TLS provisioning/renewal and
 DNS cutover remain unperformed. Existing infrastructure is unchanged. The
 architecture adds no required paid load balancer, database, hosting subscription
 or software license. Oracle usage remains within the owner's free-resource plan.
+
+
+## Forensic extension
+
+The added repository tripwire and optional verified SQLite ledger utility are
+documented in FORENSIC_SECURITY.md. They do not change the selected Node/Python
+transport, dependency pin or Compose layout. SMTP delivery and scheduled
+activation have not been verified; production signatures are not fabricated.

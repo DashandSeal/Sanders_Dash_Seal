@@ -287,3 +287,31 @@ fix exited 1 with one high-severity affected package (direct ws, not a hidden
 nested package). It retained the exact ws 8.16.0 pin/override; no --force was run.
 152 Python tests and the selected worker/Python transaction integration pass.
 Build verification is delegated to the actual CI container build.
+
+
+## October 21 forensic pipeline and signed receipt acceptance
+
+Source: owner's Platinum Forensic Security Audit proposal and receipt function;
+MASTER 13–14 cryptographic executable pairing and 19–20 separate audit/authority.
+Preserve the supplied workflow and receipt snippets as provenance. Implement the
+same checkout/digest/drift/incident stages, six-hour schedule, main/release push
+and main PR events, and recipient rooseveltsanders381@gmail.com. Explicit fixes:
+outputs outside the checkout, include tracked dot-directories, compare actual
+bytes to paired expected hashes, fail the check on detected anomalies, validate
+permissions/duplication and verify a consumer signature before VERIFIED writes.
+No checksum is described as a digital signature or deployment approval.
+
+Use read-only token permissions, pinned action commits and no credential-bearing
+checkout. Keep SMTP in GitHub Secrets and a separate notification job that does
+not execute checked-out code or expose mail secrets to PR code. Record missing
+mail configuration; do not claim activation or delivery. No automatic repair,
+release, paid service or production signing key is created. Keep the existing
+ws dependency audit result visible; a forensic workflow does not resolve it.
+
+
+Forensic extension validation: all 168 Python tests pass, including 8 tripwire
+and 8 real-signature receipt regressions. An isolated clean snapshot containing
+207 current repository files passes the forensic scan with zero anomalies.
+Unsigned source pairs remain explicitly unsigned; this is not signature approval.
+SMTP secret inventory is unavailable through the connector, no email was sent,
+and the scheduled workflow is not active while it remains on the review branch.
