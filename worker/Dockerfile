@@ -1,15 +1,26 @@
-FROM node:24-alpine AS dependencies
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --omit=dev --ignore-scripts && npm cache clean --force
+# --- Stage 1: Dependency Verification & Compilation ---
+FROM node:20.12.2-alpine AS build_env
 
-FROM node:24-alpine
-ENV NODE_ENV=production PORT=3000
-WORKDIR /app
-COPY --from=dependencies --chown=node:node /app/node_modules ./node_modules
-COPY --chown=node:node package.json package-lock.json ./
-COPY --chown=node:node src ./src
+WORKDIR /usr/src/app
+
+COPY package.json ./
+RUN npm ci --only=production
+
+# --- Stage 2: Hardened Sandbox Runtime Environment ---
+FROM node:20.12.2-alpine
+
+WORKDIR /usr/src/app
+
+# Enforce secure least-privilege principles by discarding root execution scopes
 USER node
+
+# Selectively pull verified code artifacts and production dependencies 
+COPY --chown=node:node --from=build_env /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node ./src ./src
+
+ENV NODE_ENV=production
+ENV PORT=3000
+
 EXPOSE 3000
-STOPSIGNAL SIGTERM
-CMD ["node", "--max-old-space-size=256", "src/index.js"]
+
+CMD ["node", "src/index.js"]

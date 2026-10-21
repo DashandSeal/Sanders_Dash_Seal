@@ -224,3 +224,18 @@ including real loopback WSGI/SQLite integration using disposable fake identities
 The locked worker dependency audit reported zero known vulnerabilities at this
 check. Container and combined Nginx syntax verification are added to CI, which
 does not deploy. See INGESTION_WORKER.md for supported behavior and limits.
+
+
+## October 21 owner-selected stack
+
+The owner explicitly selects the latest supplied stack AS IS. Its exact
+package.json, worker/Dockerfile and docker-compose.yml supersede the assistant's
+appointment-only transport choices. Preserve supplied versions, endpoints and
+service definitions without substituting assistant preferences.
+
+The latest index.js submission begins inside a message handler. The complete
+file is still needed; do not invent a prefix or combine it with the earlier,
+different implementation. Previous 157-test evidence applies only to that
+previous implementation. The supplied Dockerfile copies no lockfile before
+npm ci; record this limitation without silently editing the owner's file.
+No Oracle or DNS changes or production authorization are implied.
