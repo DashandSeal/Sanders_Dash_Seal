@@ -5,9 +5,13 @@
   "description": "Hardened Real-Time Data Ingestion Subsystem for Sanders Dash & Seal",
   "main": "src/index.js",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
   },
   "dependencies": {
+    "ws": "8.16.0"
+  },
+  "overrides": {
     "ws": "8.16.0"
   }
 }

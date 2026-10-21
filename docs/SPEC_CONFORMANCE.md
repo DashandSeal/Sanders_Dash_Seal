@@ -269,3 +269,21 @@ match. The selected ws 8.16.0 dependency audit reports one affected package with
 high severity; no version substitution was made. Full stack build, backend
 container and actual root Nginx syntax have separate CI checks. No prior clean
 build/audit result is transferred to this selected stack.
+
+
+## October 21 owner-directed Docker lockfile correction
+
+Source: owner's hardened Dockerfile fix, exact manifest guardrail and lockfile/
+audit commands. Acceptance: copy package.json and package-lock.json together
+before npm ci; retain Node 20.12.2, npm >=10, direct ws 8.16.0 and the requested
+matching override. Regenerate the lockfile and run the requested non-forced audit
+fix. Do not claim an audit passes merely because a vulnerable version is pinned.
+Push the updated paired hashes to PR #3 and verify actual CI results. No
+production deployment, credentials, paid resources or version substitutions.
+
+
+Correction validation: lockfile generation completed, and the requested audit
+fix exited 1 with one high-severity affected package (direct ws, not a hidden
+nested package). It retained the exact ws 8.16.0 pin/override; no --force was run.
+152 Python tests and the selected worker/Python transaction integration pass.
+Build verification is delegated to the actual CI container build.

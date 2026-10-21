@@ -57,11 +57,13 @@ app and SQLite store with disposable test credentials. Tests verify recording,
 repeat receipt, conflicting retry, invalid operation/frame, denied credentials,
 revocation, release denial and rollback. These checks do not prove throughput.
 
-The supplied worker Dockerfile still copies only package.json before npm ci;
-its build therefore lacks the required lockfile at that step. The definition is
-preserved, and CI reports the real build result rather than silently changing it.
-The selected dependency audit is a separate visible CI job. No clean audit or
-successful full-stack build is claimed from previous test results.
+The owner's subsequent Dockerfile correction now copies package.json and
+package-lock.json together before npm ci. The manifest also records npm >=10
+and the exact requested ws 8.16.0 override. The lockfile was regenerated and
+npm audit fix --production was run. That command retained ws 8.16.0 and reported
+one high-severity affected package; its suggested fix is outside the exact pin.
+No forced version change was applied. CI separately checks the corrected build
+and reports the selected dependency audit; pinning does not clear advisories.
 
 Real production authentication, authorized operation processors and source
 signatures must come from the existing independent authority setup. The named
