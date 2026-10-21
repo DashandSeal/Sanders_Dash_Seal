@@ -1,5 +1,37 @@
 name: sanders-dash-seal
 services:
+  pipeline-worker:
+    profiles: [ingestion]
+    build: ./worker
+    image: sanders-dash-seal-worker:review
+    init: true
+    user: "1000:1000"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      PYTHON_BACKEND_URL: http://app:8000
+    ports:
+      - "127.0.0.1:3000:3000"
+    mem_limit: 512m
+    pids_limit: 64
+    cpus: 0.50
+    stop_signal: SIGTERM
+    stop_grace_period: 10s
+    restart: "no"
+    depends_on: [app]
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get({host:'127.0.0.1',port:3000,path:'/readyz',headers:{Host:'sandersdashandseal.com'}},r=>{r.resume();process.exitCode=r.statusCode===200?0:1}).on('error',()=>{process.exitCode=1})"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
   app:
     build: .
     image: sanders-dash-seal:review

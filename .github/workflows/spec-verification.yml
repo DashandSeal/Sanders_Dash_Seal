@@ -22,6 +22,16 @@ jobs:
           python-version: '3.12'
       - name: Install locked development dependency
         run: python -m pip install -r requirements-server.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: worker/package-lock.json
+      - name: Install and verify locked worker dependency
+        working-directory: worker
+        run: |
+          npm ci --ignore-scripts
+          npm audit --omit=dev --audit-level=low
       - name: Check original governance text and executable pairing
         shell: python
         run: |
@@ -42,15 +52,20 @@ jobs:
               'Never loose your identity under any circumstances.',
           ]
           assert all(governance.count('“' + law + '”') == 1 for law in original), 'Original nine laws not preserved verbatim'
-          files = [p for ext in ('*.py', '*.js') for p in root.rglob(ext) if '.git' not in p.parts]
+          files = [p for ext in ('*.py', '*.js') for p in root.rglob(ext)
+                   if not {'.git', 'node_modules', '.venv'}.intersection(p.parts)]
           for path in files:
               manifest_path = Path(str(path) + '.pbd.json')
               assert manifest_path.is_file(), f'Missing paired manifest: {path}'
               data = json.loads(manifest_path.read_text())
               assert isinstance(data, dict), f'Invalid manifest object: {path}'
-          print(f'Verified governance text and {len(files)} paired executable manifests (presence only; NOT production signatures).')
+              assert data['body']['payload_hash'] == sha256(path.read_bytes()).hexdigest(), f'Hash mismatch: {path}'
+          print(f'Verified governance text and {len(files)} paired executable hashes (NOT production signatures).')
       - name: Run development security regression tests
         run: python -m unittest discover -s tests -v
+      - name: Test WebSocket transport and real Python SQLite integration
+        working-directory: worker
+        run: npm test
 
   verify-container-candidate:
     runs-on: ubuntu-latest
@@ -61,18 +76,18 @@ jobs:
           persist-credentials: false
       - name: Validate and build reviewed container candidate
         run: |
-          docker compose config --quiet
-          docker compose build
+          docker compose --profile ingestion config --quiet
+          docker compose --profile ingestion build
       - name: Check isolated HTTP gates and persistent volume
         run: |
-          docker compose up -d
+          docker compose --profile ingestion up -d
           python3 - <<'PY'
           import time
           from urllib.request import Request, urlopen
           from urllib.error import HTTPError
-          def status(path, host):
+          def status(path, host, port=8000):
               try:
-                  with urlopen(Request('http://127.0.0.1:8000' + path,
+                  with urlopen(Request(f'http://127.0.0.1:{port}' + path,
                                headers={'Host': host}), timeout=2) as r:
                       return r.status
               except HTTPError as e:
@@ -88,11 +103,27 @@ jobs:
           assert status('/readyz', 'sandersdashandseal.com') == 503
           assert status('/api/appointments', 'sandersdashandseal.com') == 503
           assert status('/healthz', 'untrusted.invalid') == 421
+          assert status('/healthz', 'sandersdashandseal.com', 3000) == 200
+          assert status('/readyz', 'sandersdashandseal.com', 3000) == 503
           PY
+          docker compose --profile ingestion exec -T pipeline-worker node -e "if(process.getuid()!==1000)process.exit(1);if(require('fs').existsSync('/var/lib/sanders'))process.exit(1)"
           docker compose exec -T app python -c "from pathlib import Path; assert __import__('os').getuid() == 10001; Path('/var/lib/sanders/ci-probe').write_text('persistence')"
           docker compose up -d --force-recreate
           docker compose exec -T app python -c "from pathlib import Path; p=Path('/var/lib/sanders/ci-probe'); assert p.read_text() == 'persistence'; p.unlink()"
           docker compose exec -T app python -c "from pathlib import Path; import os; assert not os.access('/app/wsgi.py', os.W_OK)"
+      - name: Check combined Nginx configuration with disposable test certificate
+        run: |
+          review_dir=$(mktemp -d)
+          openssl req -x509 -newkey rsa:2048 -nodes -days 1 -subj /CN=sandersdashandseal.com -keyout "$review_dir/privkey.pem" -out "$review_dir/fullchain.pem"
+          python3 - "$review_dir/nginx.conf" <<'PY'
+          from pathlib import Path
+          import sys
+          main = Path('deploy/nginx.conf.example').read_text()
+          worker = Path('deploy/nginx-ingestion.conf.example').read_text()
+          prefix, suffix = main.rsplit('}', 1)
+          Path(sys.argv[1]).write_text('events {}\nhttp {\n' + prefix + worker + '}\n}\n')
+          PY
+          docker run --rm --entrypoint nginx -v "$review_dir/nginx.conf:/etc/nginx/nginx.conf:ro" -v "$review_dir:/etc/letsencrypt/live/sandersdashandseal.com:ro" nginx:stable-alpine -t
       - name: Clean ephemeral test resources
         if: always()
-        run: docker compose down --volumes
+        run: docker compose --profile ingestion down --volumes

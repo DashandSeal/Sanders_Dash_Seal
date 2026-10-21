@@ -1,7 +1,8 @@
 # Oracle deployment candidate — existing Sanders Dash & Seal
 
-This is packaging for the existing Python/WSGI application, not a new Node.js
-pipeline. It has not been installed on the Oracle server. No production approval,
+This packages the existing Python/WSGI application with an optional Node
+ingestion transport (see INGESTION_WORKER.md). It has not been installed on
+the Oracle server. No production approval,
 credentials, DNS changes or live charges are supplied by this package.
 
 ## Reviewed source and actual host evidence
@@ -14,12 +15,12 @@ Keep the existing network. Do not recreate it because a quick-action card remain
 Earlier Cloud Agent messages included auth endpoint timeouts and Run Command IAM
 guidance; their current status and the actual host firewall remain unverified.
 
-The reviewed source contains no Node pipeline index.js, package.json, Dockerfile
-or Compose definition predating this packaging change. The pasted Node fragment
-starts inside an unfinished function; socket ownership, authentication, message
-limits, TLS/proxy assumptions and cleanup cannot be audited from that fragment.
-Do not overwrite a manifest or introduce ws, PM2 or NATS as an assumed dependency.
-The existing Python app has not become a WebSocket server through this package.
+The owner subsequently supplied a complete Node/Python role proposal. The new
+optional worker preserves Python as the transactional authority. It forwards
+authenticated appointment requests to the existing API, with bounded transport
+and no shared document/Vault volume. Generic dispatch_transaction behavior,
+PM2 and NATS are not implemented. See INGESTION_WORKER.md for the exact contract
+and separate readiness, identity and deployment requirements.
 
 ## Packaging and storage
 

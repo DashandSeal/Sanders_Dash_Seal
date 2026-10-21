@@ -6,3 +6,5 @@ __pycache__/
 *.key
 *.db
 *.db-*
+node_modules/
+.env.*

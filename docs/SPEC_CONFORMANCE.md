@@ -199,3 +199,28 @@ HTTP/SIGTERM runtime test supplements the application regressions. Container,
 ARM, TLS and host configuration are separate validation requirements. No source
 approvals, production identities or signatures are fabricated; all new executable
 pairs remain UNSIGNED_DEPLOYMENT_BLOCKED. No Oracle or DNS mutations occur here.
+
+## October 21 Node ingestion integration acceptance
+
+Source: owner's complete Node/Python architecture proposal, MASTER 13–14 and
+19–20, and the existing appointment request contract. Node owns transport;
+Python retains authentication, release verification, transactional storage,
+idempotency, auditing and human review. Do not create an alternative transaction
+store, share document/Vault files with Node or treat receipt as approval.
+
+Acceptance: exact canonical Host/Origin and socket path, independently verified
+Python session before upgrade, Python reauthorization on every submission,
+bounded connections/payloads/rates/in-flight work/response buffers/timeouts,
+heartbeat and bounded SIGTERM drainage. Acknowledge only Python's successful
+appointment request receipt; errors and uncertain timeouts never return success.
+Retry uses the same request ID and Python's existing idempotency checks. No
+generic dispatch_transaction authority or fabricated production session adapter.
+Use an optional isolated container profile, current supported Node LTS and a
+locked dependency. Test real HTTP/WebSocket denial and lifecycle paths. Keep
+missing production bindings, signatures, ARM/host/TLS checks explicit blockers.
+
+Implementation evidence: 141 Python tests and 16 Node tests pass locally,
+including real loopback WSGI/SQLite integration using disposable fake identities.
+The locked worker dependency audit reported zero known vulnerabilities at this
+check. Container and combined Nginx syntax verification are added to CI, which
+does not deploy. See INGESTION_WORKER.md for supported behavior and limits.
