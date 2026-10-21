@@ -1,0 +1,32 @@
+name: sanders-dash-seal
+services:
+  app:
+    build: .
+    image: sanders-dash-seal:review
+    init: true
+    user: "10001:10001"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    ports:
+      - "127.0.0.1:8000:8000"
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m,mode=1777
+    volumes:
+      - platform-data:/var/lib/sanders
+    stop_signal: SIGTERM
+    stop_grace_period: 40s
+    restart: "no"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/readyz', headers={'Host':'sandersdashandseal.com'}), timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: local
+      options:
+        max-size: "10m"
+        max-file: "3"
+volumes:
+  platform-data:

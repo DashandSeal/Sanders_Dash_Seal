@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install locked development dependency
-        run: python -m pip install -r requirements.txt
+        run: python -m pip install -r requirements-server.txt
       - name: Check original governance text and executable pairing
         shell: python
         run: |
@@ -51,3 +51,48 @@ jobs:
           print(f'Verified governance text and {len(files)} paired executable manifests (presence only; NOT production signatures).')
       - name: Run development security regression tests
         run: python -m unittest discover -s tests -v
+
+  verify-container-candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate and build reviewed container candidate
+        run: |
+          docker compose config --quiet
+          docker compose build
+      - name: Check isolated HTTP gates and persistent volume
+        run: |
+          docker compose up -d
+          python3 - <<'PY'
+          import time
+          from urllib.request import Request, urlopen
+          from urllib.error import HTTPError
+          def status(path, host):
+              try:
+                  with urlopen(Request('http://127.0.0.1:8000' + path,
+                               headers={'Host': host}), timeout=2) as r:
+                      return r.status
+              except HTTPError as e:
+                  return e.code
+          for attempt in range(30):
+              try:
+                  assert status('/healthz', 'sandersdashandseal.com') == 200
+                  break
+              except OSError:
+                  if attempt == 29:
+                      raise
+                  time.sleep(1)
+          assert status('/readyz', 'sandersdashandseal.com') == 503
+          assert status('/api/appointments', 'sandersdashandseal.com') == 503
+          assert status('/healthz', 'untrusted.invalid') == 421
+          PY
+          docker compose exec -T app python -c "from pathlib import Path; assert __import__('os').getuid() == 10001; Path('/var/lib/sanders/ci-probe').write_text('persistence')"
+          docker compose up -d --force-recreate
+          docker compose exec -T app python -c "from pathlib import Path; p=Path('/var/lib/sanders/ci-probe'); assert p.read_text() == 'persistence'; p.unlink()"
+          docker compose exec -T app python -c "from pathlib import Path; import os; assert not os.access('/app/wsgi.py', os.W_OK)"
+      - name: Clean ephemeral test resources
+        if: always()
+        run: docker compose down --volumes

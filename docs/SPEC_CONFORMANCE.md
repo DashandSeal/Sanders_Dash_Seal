@@ -182,3 +182,20 @@ Validation: 140 unittest cases pass, including 12 new deployment boundary tests.
 All 51 Python/JavaScript source-manifest hashes match, including both root WSGI
 entry points. No production signatures, live charge, deployment or DNS change
 was created by this source change.
+
+## October 21 Oracle runtime packaging acceptance
+
+Sources: MASTER 13–14 executable/dependency pairing and 19–20 verified evidence
+and separate authority roles; existing deployment-entrypoint acceptance above.
+Preserve the existing Python/WSGI application. Add non-root container packaging,
+loopback-only host publication, persistent storage, bounded SIGTERM handling and
+an HTTPS proxy include without granting missing release or customer authority.
+Keep secrets and customer databases outside build contexts and source control.
+Readiness must stay denied when real runtime adapters are absent. Do not infer
+a Node worker or pipeline implementation from an incomplete pasted fragment.
+
+Acceptance evidence and external limits are in ORACLE_DEPLOYMENT.md. A real
+HTTP/SIGTERM runtime test supplements the application regressions. Container,
+ARM, TLS and host configuration are separate validation requirements. No source
+approvals, production identities or signatures are fabricated; all new executable
+pairs remain UNSIGNED_DEPLOYMENT_BLOCKED. No Oracle or DNS mutations occur here.
