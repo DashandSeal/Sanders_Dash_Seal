@@ -7,6 +7,7 @@ or live customer data is stored in source control.
 import hashlib
 import hmac
 import json
+import re
 import sqlite3
 import time
 from pathlib import Path
@@ -31,7 +32,9 @@ class PaymentLedger:
         return sqlite3.connect(self.path, timeout=10, isolation_level='IMMEDIATE')
 
     def register_checkout(self, case_id, session_id, amount, currency):
-        if not case_id or not session_id or type(amount) is not int or amount < 1:
+        if (not all(isinstance(v, str) and v for v in (case_id, session_id))
+                or type(amount) is not int or amount < 1
+                or not isinstance(currency, str) or not re.fullmatch('[a-z]{3}', currency)):
             raise PaymentDenied('Invalid checkout registration')
         with self.connect() as db:
             try:
@@ -41,10 +44,14 @@ class PaymentLedger:
                 raise PaymentDenied('Case or session already registered') from exc
 
     def record_event(self, event, now=None):
-        if not isinstance(event, dict) or not isinstance(event.get('id'), str):
+        if (not isinstance(event, dict) or
+                not all(isinstance(event.get(k), str) and event[k] for k in ('id', 'type'))):
             raise PaymentDenied('Invalid event')
         event_id, event_type = event['id'], event.get('type')
-        obj = event.get('data', {}).get('object', {})
+        data = event.get('data')
+        if not isinstance(data, dict):
+            raise PaymentDenied('Invalid event data')
+        obj = data.get('object')
         if not isinstance(obj, dict):
             raise PaymentDenied('Invalid event object')
         with self.connect() as db:
@@ -54,6 +61,11 @@ class PaymentLedger:
             case_id = obj.get('client_reference_id')
             payment_id = obj.get('payment_intent')
             if event_type in ('checkout.session.completed', 'checkout.session.async_payment_succeeded'):
+                if (not isinstance(case_id, str) or not case_id
+                        or type(obj.get('amount_total')) is not int
+                        or not isinstance(obj.get('id'), str)
+                        or not isinstance(obj.get('currency'), str)):
+                    raise PaymentDenied('Invalid payment association')
                 row = db.execute('SELECT session_id, amount, currency, state FROM stripe_cases WHERE case_id=?',
                                  (case_id,)).fetchone()
                 if (not row or obj.get('id') != row[0] or

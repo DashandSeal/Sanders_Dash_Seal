@@ -21,7 +21,7 @@ class CaseRegistry:
     def create(self, case_id, jurisdiction, service, requester):
         if (not all(isinstance(x, str) and re.fullmatch(r'[A-Za-z0-9_.-]{1,128}', x)
                     for x in (case_id, jurisdiction, requester))
-                or service not in ('E_NOTARY', 'RON', 'AUTHORIZED_DOCUMENT_SERVICE')):
+                or service not in ('MOBILE_NOTARY', 'E_NOTARY', 'RON', 'AUTHORIZED_DOCUMENT_SERVICE')):
             raise CaseDenied('Invalid case identity, jurisdiction or service')
         with sqlite3.connect(self.db_path) as db:
             try:

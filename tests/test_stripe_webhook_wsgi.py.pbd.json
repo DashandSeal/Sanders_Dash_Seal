@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "tests/test_stripe_webhook_wsgi.py",
-    "payload_hash": "77e4883caee5b17a1b21fad153ec351dab6daccf19fdb0c493d0d36d928eb2ef",
+    "payload_hash": "e4e88ff60c21642e3042fdde4f9ca96336264449a13804d100be8930bca3ce33",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

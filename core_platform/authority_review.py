@@ -14,7 +14,7 @@ class AuthorityDenied(Exception):
     pass
 
 IDENT = re.compile(r'^[A-Za-z0-9_.-]{1,128}$')
-SERVICE_PROVIDER = {'E_NOTARY':'SignWell', 'RON':'BlueNotary',
+SERVICE_PROVIDER = {'MOBILE_NOTARY':None, 'E_NOTARY':'SignWell', 'RON':'BlueNotary',
                     'AUTHORIZED_DOCUMENT_SERVICE':None}
 
 class AuthorityReview:

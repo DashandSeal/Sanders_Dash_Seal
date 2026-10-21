@@ -124,3 +124,7 @@ UpgradeSidecar's existing executor interface but is not yet wired to a productio
 identity verifier. Existing executor policy failures propagate; rollback delegates
 to the existing recovery adapter. Missing/stale Python manifest pairs repaired
 with unsigned development manifests; no signatures or production approval created.
+
+## October 20 mobile service acceptance
+
+See [MOBILE_SERVICE_READINESS.md](MOBILE_SERVICE_READINESS.md) for MASTER-linked acceptance criteria, findings, changes and unresolved live connections. Mobile intake retains independent authority review; payment confirmation never authorizes an act. Validation: 108 local unittest tests pass. No production release or signatures created.
