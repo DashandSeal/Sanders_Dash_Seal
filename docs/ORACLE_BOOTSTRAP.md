@@ -134,3 +134,9 @@ Implementation references:
 - https://docs.docker.com/engine/install/rhel/
 - https://docs.oracle.com/en/operating-systems/oracle-linux/9/firewall/firewall-ConfiguringfirewalldZones.html
 - https://eff-certbot.readthedocs.io/en/stable/using.html
+
+Ledger recovery copies are prepared separately in [LEDGER_BACKUPS.md](LEDGER_BACKUPS.md).
+The host bootstrap copies the backup units but does not enable their timer.
+Perform a real successful backup/restore check before enabling the schedule.
+Optional separate ARM/serverless proposals and verified cost constraints are
+recorded in [OCI_NEAR_ZERO_OPTIONS.md](OCI_NEAR_ZERO_OPTIONS.md).

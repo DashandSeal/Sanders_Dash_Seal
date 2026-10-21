@@ -1,0 +1,13 @@
+[Unit]
+Description=Sanders Dash & Seal verified private ledger backup
+After=docker.service network-online.target
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/sanders-dash-seal
+ExecStart=/bin/bash /opt/sanders-dash-seal/deploy_backup.sh
+UMask=0077
+TimeoutStartSec=30min

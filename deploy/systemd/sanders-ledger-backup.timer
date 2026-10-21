@@ -1,0 +1,10 @@
+[Unit]
+Description=Sanders Dash & Seal daily UTC ledger backup
+
+[Timer]
+OnCalendar=*-*-* 00:00:00 UTC
+Persistent=true
+Unit=sanders-ledger-backup.service
+
+[Install]
+WantedBy=timers.target

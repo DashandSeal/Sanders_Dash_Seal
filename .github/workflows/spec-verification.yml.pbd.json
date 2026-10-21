@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": ".github/workflows/spec-verification.yml",
-    "payload_hash": "6c397302c2aeb9091c212c348f13fb8cc9550f041fd73ddfa6dfc474df39301c",
+    "payload_hash": "f14df6a7f350f8fbc3b779c2c85a3ab64feb06d3d5ff68f6f0e37c6268adcd52",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

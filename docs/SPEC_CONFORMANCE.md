@@ -344,3 +344,30 @@ passes the forensic audit and all 95 paired artifact hashes match. Production
 Compose/HTTP ACME syntax and Certbot container checks are added to CI. No live
 ACME request, Oracle operation, DNS cutover or authenticated public socket test
 was run. Existing ws audit findings are unchanged.
+
+## October 21 ledger backups and near-zero architecture acceptance
+
+Source: owner's private sds-ledger-backups bucket, Instance Principals upload,
+midnight backup proposal, separate ARM worker and API Gateway/Functions/Streaming
+proposal; MASTER 13–14 and 19–20. Preserve these proposals as source material.
+Implement an online SQLite backup from the actual backend named volume, integrity
+and restore verification, private temporary files, checksum-verified OCI upload,
+explicit instance-principal authentication, bounded dedicated-bucket allocation,
+no overwrite/deletion and a separately enabled midnight UTC timer. A hash is not
+a signature. Verify prerequisites rather than assume IAM, bucket or second host.
+Do not create paid services, silently replace the chosen VM topology, claim
+account-wide billing enforcement, or activate a schedule before a real successful
+backup. Document remote-worker syntax and serverless persistence/cost limits.
+
+Backup preparation evidence: 190 Python tests pass, including 13 new real-WAL,
+container-helper streaming, committed/uncommitted state, source absence, size,
+privacy/versioning, IAM/Docker/upload failure cleanup, restore corruption and
+changed-content regressions. Shell syntax and the midnight UTC calendar pass.
+An isolated 243-file candidate snapshot passes forensic checks with zero issues;
+all 100 source/config pairs match and remain unsigned. OCI CLI syntax was checked
+against official documentation; OCI/Docker boundaries in upload tests are mocked.
+No real bucket, IAM policy, upload, schedule, extra VM or managed service was
+created. Existing ws audit findings remain unresolved. Oracle's Streaming FAQ
+explicitly excludes it from the free tier; Functions has finite free allowances
+and API Gateway is metered. Preserve the optional proposal without claiming $0
+active managed-service usage or migrating the durable SQLite/WebSocket design.
