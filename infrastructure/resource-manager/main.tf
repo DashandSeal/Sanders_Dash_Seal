@@ -27,6 +27,7 @@ locals {
   nsg_id = var.create_network ? oci_core_network_security_group.edge[0].id : var.existing_nsg_ocid
   image_id = var.image_ocid != "" ? var.image_ocid : try(local.ol9_images[0], null)
   availability_domain = try(data.oci_identity_availability_domains.available.availability_domains[var.availability_domain_index].name, null)
+  policy_scope = var.compartment_ocid == var.tenancy_ocid ? "tenancy" : "compartment id ${var.compartment_ocid}"
   deployment_id = substr(md5("${var.compartment_ocid}:${var.deployment_name}"), 0, 12)
   user_data = var.create_instance ? templatefile("${path.module}/cloud-init-application.yaml.tftpl", { release_config = jsonencode({
     commit = local.approved_commit,
@@ -208,10 +209,10 @@ resource "oci_identity_policy" "bootstrap" {
   name = "SDSBootstrap${local.deployment_id}"
   description = "Scoped read-only release retrieval and primary VNIC metadata"
   statements = [
-    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read objects in compartment id ${var.compartment_ocid} where all {target.bucket.name='${oci_objectstorage_bucket.release[0].name}', request.permission='OBJECT_READ'}",
-    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect instance-family in compartment id ${var.compartment_ocid}",
-    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read vnics in compartment id ${var.compartment_ocid}",
-    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect all-resources in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read objects in ${local.policy_scope} where all {target.bucket.name='${oci_objectstorage_bucket.release[0].name}', request.permission='OBJECT_READ'}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect instance-family in ${local.policy_scope}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read vnics in ${local.policy_scope}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect all-resources in ${local.policy_scope}",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect compartments in tenancy",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect tenancies in tenancy"
   ]

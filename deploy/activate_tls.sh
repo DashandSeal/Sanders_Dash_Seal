@@ -8,7 +8,9 @@ check_dns
 # The running HTTP frontend already serves the ACME challenge volume.
 compose run --rm --no-deps certbot certonly --non-interactive --keep-until-expiring --webroot --webroot-path=/var/www/certbot --cert-name sandersdashandseal.com -d sandersdashandseal.com -d www.sandersdashandseal.com -d sanderslegalhelpersllc.com -d www.sanderslegalhelpersllc.com -m rooseveltsanders381@gmail.com --agree-tos --no-eff-email
 # Atomic configuration file rename requires container recreation to remount it.
-install -m 0644 "$SDS_PROJECT_DIR/nginx.conf" "$SDS_STATE_DIR/nginx.active.conf"
-compose up -d --no-deps --force-recreate reverse-proxy
+if ! cmp -s "$SDS_PROJECT_DIR/nginx.conf" "$SDS_STATE_DIR/nginx.active.conf"; then
+    install -m 0644 "$SDS_PROJECT_DIR/nginx.conf" "$SDS_STATE_DIR/nginx.active.conf"
+    compose up -d --no-deps --force-recreate reverse-proxy
+fi
 validate_live
 printf 'TLS_ACTIVATED: trusted certificates and HTTPS process checks passed.\n'
