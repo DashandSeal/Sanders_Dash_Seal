@@ -56,3 +56,13 @@ live API key and matching webhook signing secret still belong in the protected
 `sds-runtime-provider-config` Oracle secret, never in the source ZIP. GitHub
 deployment authentication and the application's Stripe credentials are separate.
 No live payment round trip or Oracle Apply is claimed by these source changes.
+
+### Existing owner stack
+
+GitOps defaults to the owner-supplied Phoenix Resource Manager stack
+`ocid1.ormstack.oc1.phx.amaaaaaaftib4xqaggduipcxfh7oscxgqq4276qzr3u25dynr3vzs3hiadqa`.
+An `OCI_STACK_OCID` Actions secret overrides the repository variable of the same
+name, which overrides this default. The identifier is not a signing key. OCI
+authentication still uses the configured tenancy, user, fingerprint and private
+key. This addition targets the existing stack; it does not create another stack
+or establish that Apply, application installation or business integrations ran.

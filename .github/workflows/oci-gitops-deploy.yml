@@ -68,7 +68,7 @@ jobs:
           OCI_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
           OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
           OCI_REGION: ${{ secrets.OCI_REGION || 'us-phoenix-1' }}
-          OCI_STACK_OCID: ${{ secrets.OCI_STACK_OCID }}
+          OCI_STACK_OCID: ${{ secrets.OCI_STACK_OCID || vars.OCI_STACK_OCID || 'ocid1.ormstack.oc1.phx.amaaaaaaftib4xqaggduipcxfh7oscxgqq4276qzr3u25dynr3vzs3hiadqa' }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
           STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
           STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}

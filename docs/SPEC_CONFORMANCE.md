@@ -707,3 +707,13 @@ Primary API references checked October 22: https://developers.signwell.com/refer
 Credential-transfer acceptance for the same request: read the owner's STRIPE_SECRET_KEY (or STRIPE_API_KEY), STRIPE_WEBHOOK_SECRET, SIGNWELL_API_KEY and BLUENOTARY_API_KEY only from the GitHub runner environment; merge them into the single existing ACTIVE sds-runtime-provider-config Vault secret after Apply and before dispatching installation. Use an etag, CURRENT stage and a root-private temporary CLI input file; never put secret content in Terraform state, user-data, command arguments, artifacts or logs. No supplied provider fields means preserve existing Vault configuration. Identical content must not create another secret version. Missing/ambiguous destination, invalid values, failed transfer or failed installation cannot be reported as connected. Provisioning the designated Vault/key/secret itself remains an external setup gap in this increment; no arbitrary existing vault is silently chosen.
 
 Completion-increment validation: all 325 local Python tests pass, zero skipped. The 12 new provider/credential tests exercise actual WSGI authentication and case binding, SQLite persistence/restart, documented POST construction, uncertain-outcome duplicate rejection, redaction/redirect boundaries, matching standard/restricted Stripe keys, private temporary handoff, merge/concurrency/current-bundle behavior, and configured GitOps hook wiring. HTTP provider responses and OCI APIs are test doubles; no real signing invitation, notarial session, cloud write or payment was executed. JavaScript syntax passes. A search for earlier sidecar packages returned no results; that search is not proof that earlier work never existed. It supplies no missing runnable independent services to this checkout.
+
+## October 22 supplied Oracle stack binding
+
+Source: owner's existing Resource Manager stack and instruction to add to the
+current deployment, without replacing its infrastructure or reducing MASTER scope.
+Acceptance: main GitOps uses the actual supplied Phoenix stack when no override
+is configured; an existing Actions secret or variable takes precedence. The OCID
+is a resource identifier, not an API signing credential. No fake credentials,
+new stack, automatic account upgrade or production-success claim is introduced.
+All 17 unfinished workstreams remain in scope.
