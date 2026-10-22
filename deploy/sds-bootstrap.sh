@@ -37,6 +37,17 @@ apply_kernel_profile() {
     python3 "$SDS_SOURCE_DIR/deploy/kernel_profile.py" --apply
 }
 
+verify_bootstrap_source() {
+    # Verify with independently provisioned code BEFORE sourcing repository code
+    # as root. The deployment script repeats runtime/release checks afterward.
+    local authorizer=/etc/sanders-dash-seal/authorize-release
+    [[ -x "$authorizer" && ! -L "$authorizer" ]] \
+        || bootstrap_fail 'Independent release authorizer required before loading source.'
+    [[ "$(stat -c %u "$authorizer")" == 0 ]] || bootstrap_fail 'Authorizer must be root-owned.'
+    (( (8#$(stat -c %a "$authorizer") & 0022) == 0 )) || bootstrap_fail 'Authorizer is group/world writable.'
+    "$authorizer" "$SDS_SOURCE_DIR" "$SDS_BOOTSTRAP_COMMIT"
+}
+
 stage_node() {
     check_source "$SDS_SOURCE_DIR"
     check_host
@@ -70,6 +81,7 @@ bootstrap_main() {
         python3 -c 'import ipaddress,sys; ipaddress.IPv4Address(sys.argv[1])' "$SDS_PUBLIC_IPV4"
     fi
     prepare_checkout
+    verify_bootstrap_source
     # Reuse the same external authority, firewall and readiness controls.
     source "$SDS_SOURCE_DIR/deploy.sh"
     if [[ "$SDS_BOOTSTRAP_MODE" == stage ]]; then

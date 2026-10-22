@@ -146,6 +146,19 @@ bootstrap_main
         self.assertNotEqual(result.returncode, 0)
         self.assertNotIn('CHECKOUT', result.stdout)
 
+    def test_repository_source_is_not_loaded_before_independent_verification(self):
+        with tempfile.TemporaryDirectory() as directory:
+            (Path(directory) / 'deploy.sh').write_text('echo REPOSITORY_CODE_EXECUTED\n')
+            result = self.shell('''
+SDS_BOOTSTRAP_MODE=stage
+SDS_SOURCE_DIR="$2"
+prepare_checkout() { :; }
+verify_bootstrap_source() { echo DENIED; return 9; }
+bootstrap_main
+'''.replace('"$2"', "'" + directory + "'"))
+            self.assertEqual(result.returncode, 9)
+            self.assertNotIn('REPOSITORY_CODE_EXECUTED', result.stdout)
+
     def profile_runner(self, *, fail=False):
         values = {key: '0' for key in kernel_profile.PROFILE}
         calls = []
