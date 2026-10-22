@@ -505,3 +505,19 @@ Do not grant IAM, provision resources, silently repair routes, send external mai
 claim full tenancy visibility, or treat inventory as billing/transaction/readiness
 verification. Search is eventually consistent and permission-filtered. No actual
 OCI query or timer installation is possible without authenticated host access.
+
+## October 22 production automation profile integration acceptance
+
+Source: owner's staged multi-node instance_init.sh and six-hour inventory cron
+proposal. Preserve the submitted script verbatim as provenance, including its
+incomplete final conditional. Provide a runnable instance_init.sh entrypoint
+using the existing release-authorized bootstrap; require a full commit SHA,
+separate stage/activate invocations and a verified per-node public IP for
+activation. Preserve failure exit status and do not turn a successful worker
+build/test into production authority. Retain the existing six-hour systemd
+inventory timer rather than installing a duplicate cron job or nonexistent scan
+script. Do not issue malformed IMDS requests, run a missing npm test script,
+claim a Node test runs the whole Python suite, pull uncontrolled images, remove
+orphans or rewrite the current production stack. Clarify that current inventory
+observes selected identity/state metadata, not IAM policy or bucket-setting
+contents, and that passing development CI is not complete live verification.
