@@ -29,6 +29,8 @@ The validation images include tests and their actual locked dependencies:
 Each test container is nonroot, uses a read-only filesystem and private temporary
 space, and has no production volumes, secrets, published ports or external
 runtime network. Local loopback remains available for integration fixtures.
+The private temporary filesystem permits execution of the suite's fake CLI
+fixtures; the source filesystem stays read-only and production volumes stay absent.
 Build-time dependency resolution still needs registry/package access. Node tests
 and Python tests run sequentially under memory/CPU limits. Cleanup removes only
 the unique test project's containers/images and temporary source. Failed tests
