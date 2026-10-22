@@ -24,8 +24,8 @@ variable "region" {
 }
 variable "create_instance" {
   type = bool
-  default = true
-  description = "Enable one NEW 1-OCPU/6-GB A1 instance after reviewing remaining tenancy capacity. Does not update the existing VM."
+  default = false
+  description = "Optional: enable one NEW 1-OCPU/6-GB A1 instance after reviewing remaining tenancy capacity. Does not update the existing VM."
 }
 variable "create_network" {
   type = bool

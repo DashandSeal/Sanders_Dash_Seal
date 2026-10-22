@@ -613,3 +613,14 @@ and automatic DNS-dependent TLS activation. Report installed application health
 separately from still-unconfigured business integrations; never turn a 503
 service-authority result into a claim that authentication/payments are operational.
 No actual cloud Apply or live readiness is asserted from local checks.
+
+## October 22 explicit owner spending restriction
+
+Owner reiterates sole control of spending and strict $0 Oracle Free Tier scope.
+No OCI Apply or cloud resource creation has been executed. Disable additional
+instance/artifact provisioning by default; do not present assumed free capacity
+as verified billing eligibility, upgrade an account or add paid services. The
+new-node installer does not yet automate installation onto the existing VM and
+must not be labeled a completed full production deployment. Preserve removal
+of the imposed authorizer/runtime-factory prerequisites. Actual OCI session
+access, remaining allowance and application integrations have not been verified.

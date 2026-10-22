@@ -17,5 +17,5 @@ output "boot_profile" {
   value = "application"
 }
 output "application_status" {
-  value = "APPLICATION_INSTALLATION_CHECKED_BY_JOB: completion requires exact release and public process health. TLS and business-integration readiness remain separate; inspect /readyz and host logs."
+  value = var.create_instance ? "APPLICATION_INSTALLATION_CHECKED_BY_JOB: completion requires exact release and public process health. TLS and business-integration readiness remain separate; inspect /readyz and host logs." : "NOT_INSTALLED: additional resource creation is disabled; no deployment was performed by this stack."
 }

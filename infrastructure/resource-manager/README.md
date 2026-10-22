@@ -2,10 +2,13 @@
 
 This replaces the earlier audit-only ZIP. Upload the ZIP to OCI Resource Manager,
 select Terraform 1.5.x, provide your actual tenancy/compartment and existing
-Phoenix public subnet/NSG OCIDs, then Plan and Apply. Default create_instance=true
-launches ONE NEW A1 node (1 OCPU, 6 GB, 50 GB boot). create_network=false reuses
+Phoenix public subnet/NSG OCIDs, then Plan and Apply. Default create_instance=false creates no VM or private artifact bucket and does
+not deploy the application. If explicitly selected after reviewing actual free
+capacity, create_instance=true launches ONE NEW A1 node (1 OCPU, 6 GB, 50 GB boot). create_network=false reuses
 the supplied network; true creates a separate network. The original VM is not
-modified, imported, stopped or deleted. Check remaining tenancy allowance first.
+modified, imported, stopped or deleted. This stack does not yet automate an
+in-place installation on the existing VM. The contained installer can start the
+application on a fresh node, but this is not an already completed deployment. Check remaining tenancy allowance first.
 The documented original 1/6 node plus this 1/6 node totals 2 OCPUs/12 GB before
 any other instances. Standard Object Storage uses a small private source archive
 within your shared storage allowance. No paid Streaming, Functions, custom image,
