@@ -1,14 +1,14 @@
 """Fail-closed Stripe webhook ingress for Sanders Dash & Seal.
 
-Development-only WSGI adapter. No Stripe calls, no automatic notarial release.
-Do not deploy until the PBD runtime and external audit requirements are met.
+Verifies signed Stripe events before recording payment state.
+Payment confirmation does not authorize or execute a notarial act.
 """
 import os
 from core_platform.stripe_payments import PaymentDenied, PaymentLedger, verify_stripe_webhook
 
 MAX_BODY = 65536
 
-def make_app(ledger, signing_secret, *, enabled=False):
+def make_app(ledger, signing_secret, *, enabled=False, expected_livemode=None):
     """Return a narrow WSGI endpoint; caller must supply protected secret and ledger."""
     def app(environ, start_response):
         def respond(code, message):
@@ -18,7 +18,7 @@ def make_app(ledger, signing_secret, *, enabled=False):
                                   ('Cache-Control', 'no-store')])
             return [data]
         if not enabled:
-            return respond('503 Service Unavailable', 'Deployment authorization required')
+            return respond('503 Service Unavailable', 'Payment webhook is not configured')
         if environ.get('PATH_INFO') != '/stripe/webhook':
             return respond('404 Not Found', 'Not found')
         if environ.get('REQUEST_METHOD') != 'POST':
@@ -37,6 +37,8 @@ def make_app(ledger, signing_secret, *, enabled=False):
         try:
             event = verify_stripe_webhook(body, environ.get('HTTP_STRIPE_SIGNATURE'),
                                           signing_secret)
+            if expected_livemode is not None and event.get("livemode") is not expected_livemode:
+                raise PaymentDenied("Payment environment mismatch")
             ledger.record_event(event)
         except PaymentDenied:
             return respond('400 Bad Request', 'Rejected')

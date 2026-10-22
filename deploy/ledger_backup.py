@@ -107,7 +107,9 @@ def preflight(config, *, runner=subprocess.run):
     return used
 
 
-def backup(config, *, runner=subprocess.run, temp_root=None):
+def backup(config, *, runner=subprocess.run, temp_root=None, database_name='sds_production.db'):
+    if database_name not in ('sds_production.db','sds_audit.db'):
+        raise ValueError('Unknown platform database')
     used = preflight(config, runner=runner)
     with tempfile.TemporaryDirectory(prefix='sds-backup-', dir=temp_root) as directory:
         local = Path(directory) / 'ledger.db'
@@ -117,7 +119,7 @@ def backup(config, *, runner=subprocess.run, temp_root=None):
                    '-f', '/opt/sanders-dash-seal/docker-compose.yml',
                    '-f', '/opt/sanders-dash-seal/deploy/compose.production.yml',
                    'exec', '-T', 'wsgi-backend', 'python', '-c', helper,
-                   '--stream', '/app/data/sds_production.db',
+                   '--stream', '/app/data/'+database_name,
                    '--max-bytes', str(config['max_snapshot_bytes'])]
         with local.open('xb') as output:
             os.chmod(local, 0o600)
@@ -125,7 +127,7 @@ def backup(config, *, runner=subprocess.run, temp_root=None):
         digest = verify_snapshot(local, config['max_snapshot_bytes'])
         if used + local.stat().st_size > config['budget_bytes']:
             raise ValueError('Backup allocation exhausted')
-        name = ('ledger_snapshots/sds_production_' +
+        name = ('ledger_snapshots/'+Path(database_name).stem+'_' +
                 datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ_') + uuid.uuid4().hex + '.db')
         oci(config, ['object', 'put', '--bucket-name', config['bucket'], '--file', str(local),
             '--name', name, '--no-overwrite', '--no-multipart', '--verify-checksum',
@@ -146,6 +148,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=Path, default=Path('/etc/sanders-dash-seal/backup.json'))
     parser.add_argument('--check', action='store_true')
+    parser.add_argument('--database', choices=('sds_production.db','sds_audit.db'), default='sds_production.db')
     parser.add_argument('--stream', type=Path)
     parser.add_argument('--max-bytes', type=int)
     args = parser.parse_args()
@@ -164,7 +167,7 @@ def main():
             preflight(config)
             print('Private bucket access and configured allocation verified; no backup performed')
         else:
-            backup(config)
+            backup(config,database_name=args.database)
 
 
 if __name__ == '__main__':

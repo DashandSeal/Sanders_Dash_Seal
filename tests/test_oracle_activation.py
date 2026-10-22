@@ -75,7 +75,7 @@ class OracleActivationTests(unittest.TestCase):
         result=subprocess.run(['bash','-n'],input=text,text=True,capture_output=True)
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertIn('exec sudo -n /bin/bash "$0"',text)
-        self.assertIn('activate_on_oracle.py',files)
+        self.assertNotIn('activate_on_oracle.py',files)
         self.assertIn('free-platform.tf',files)
         self.assertNotIn('https://github.com .',text)
 

@@ -12,7 +12,11 @@ from .appointments import AppointmentDenied, IDENT
 from .cases import CaseDenied
 from .stripe_payments import PaymentDenied
 
-ASSETS = {'/resources': ('resources.html', 'text/html; charset=utf-8'),
+ASSETS = {'/auth/login': ('auth.html', 'text/html; charset=utf-8'),
+          '/auth/register': ('auth.html', 'text/html; charset=utf-8'),
+          '/auth/setup': ('auth.html', 'text/html; charset=utf-8'),
+          '/auth/logout': ('auth.html', 'text/html; charset=utf-8'),
+          '/assets/auth.js': ('auth.js', 'application/javascript; charset=utf-8'), '/resources': ('resources.html', 'text/html; charset=utf-8'),
           '/assets/resources.js': ('resources.js', 'application/javascript; charset=utf-8'),
           '/': ('index.html', 'text/html; charset=utf-8'),
           '/appointments': ('index.html', 'text/html; charset=utf-8'),

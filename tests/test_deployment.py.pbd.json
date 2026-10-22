@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "tests/test_deployment.py",
-    "payload_hash": "6095e8912aa56b59143db5297cef66f34437d9a217191f1e15c62ca91d36060c",
+    "payload_hash": "8b009464603f4f111f84b9f4117c60b3f0654f9df269bc69ed20fe6946a35e37",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

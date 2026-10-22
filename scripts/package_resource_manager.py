@@ -74,7 +74,6 @@ def contents(commit, *, root=ROOT, source_names=None, direct=False):
         files['README.md'] = (root / 'infrastructure/resource-manager/DIRECT_INSTALL.md').read_text()
     files['release.tf'] = 'locals {\n  approved_commit = "' + commit + '"\n}\n'
     files['application.tgz'] = application_bundle(commit, root, source_names)
-    files['activate_on_oracle.py'] = (root / 'deploy/activate_on_oracle.py').read_text()
     files['wait_application.py'] = (root / 'deploy/wait_application.py').read_text()
     install = (root / 'deploy/install_application.sh').read_text()
     fetch = (root / 'deploy/fetch_release.py').read_text()

@@ -42,7 +42,7 @@ class DeploymentTests(unittest.TestCase):
         self.assertEqual(json.loads(ready['body']), {'service_ready': False})
 
     def test_default_operations_are_unavailable(self):
-        for path in ('/api/session', '/auth/login', '/api/appointments', '/stripe/webhook'):
+        for path in ('/api/session', '/api/appointments', '/stripe/webhook'):
             with self.subTest(path=path):
                 self.assertEqual(self.request(create_application(), path)['status'],
                                  '503 Service Unavailable')

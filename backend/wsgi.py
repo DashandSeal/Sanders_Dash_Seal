@@ -1,6 +1,4 @@
-"""Owner-selected Python transactional service, composed with existing platform."""
-import os
-from core_platform.deployment import load_application
+"""Container entry point for persistent Sanders Dash & Seal services."""
+from core_platform.native_runtime import create_native_application
 
-application = load_application(None,
-    transaction_db=os.environ.get('SQLITE_DB_PATH', '/app/data/sds_production.db'))
+application = create_native_application()

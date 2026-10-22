@@ -88,7 +88,8 @@ def main():
         subprocess.run(['systemctl','enable','--now','sanders-resource-check.timer','sanders-ledger-backup.timer'],check=True)
     if args.backup:
         try:
-            subprocess.run(['/bin/bash','/opt/sanders-dash-seal/deploy_backup.sh'],check=True,timeout=1800)
+            for database in ('sds_production.db','sds_audit.db'):
+                subprocess.run(['/bin/bash','/opt/sanders-dash-seal/deploy_backup.sh','--database',database],check=True,timeout=1800)
         except (subprocess.SubprocessError,OSError):
             metric(config,'BackupVerified',0)
             raise

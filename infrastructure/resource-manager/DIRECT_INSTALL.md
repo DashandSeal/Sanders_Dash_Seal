@@ -1,6 +1,6 @@
 # Sanders Dash & Seal direct installation
 
-Upload **sds-direct-install.zip** to Oracle Resource Manager, create the stack
+Upload **sds-unified-production-stack.zip** to Oracle Resource Manager, create the stack
 with Terraform 1.5.x, and run Plan then Apply. The ZIP defaults to one NEW
 VM.Standard.A1.Flex node with 1 OCPU, 6 GB RAM and a 50-GB boot volume. It leaves
 the original `sanders-dash-seal` VM running. It does not resize it or select E4.
@@ -22,9 +22,9 @@ persistent SQLite, binds the created private backup and monitoring resources,
 and enables background maintenance. The job waits for an exact-release health
 marker written only after installation and the first verified backup complete.
 
-The existing-VM variant is still available as **sds-automation-stack.zip**; it
-uses Oracle Run Command and the included Cloud Shell launcher rather than
-allocating a new VM. These are alternatives, not two stacks to apply together.
+This is the single upload artifact for this deployment. All application code,
+container definitions, generated cloud-init, infrastructure definitions, checks
+and maintenance scripts are included. There is no separate launcher to run.
 
 Apply provisions private Standard release/backup storage, scoped IAM, a notification
 topic, and heartbeat/backup alarms. The application then uses the real bucket
@@ -42,3 +42,19 @@ TLS issuance; the certificate activation timer handles issuance automatically
 when DNS is ready. It preserves mail records. HTTP initially serves public assets
 and health only. /readyz separately reports unfinished business integrations.
 No live deployment has been completed from the development workspace.
+
+Default WSGI now connects persistent customer accounts, secure sessions,
+appointment intake, operator itemized quote review, authenticated ingestion,
+and the existing payment Checkout/webhook boundaries. A single-use owner setup
+secret is generated at first boot in the root-only
+`/etc/sanders-dash-seal/owner-setup.txt`; it is never included in source or logs.
+Use it at `/auth/setup` to establish the owner account. Public signups always
+create customer accounts. Account access is distinct from notarial identity.
+
+Runtime settings are generated automatically under `/etc/sanders-dash-seal/runtime`.
+Existing provider keys must be supplied through protected Oracle secret custody;
+this artifact contains no provider private keys. Credentials and actual provider
+service availability remain distinct from code being included in the archive.
+`/api/platform/status` explicitly reports which business integrations are configured.
+`/readyz` reports basic service readiness separately from complete-build readiness.
+The complete MASTER independent-AI and live notarial requirements remain unmet.

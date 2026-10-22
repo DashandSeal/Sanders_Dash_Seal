@@ -1,2 +1,4 @@
-"""Passenger entry point for a compatible Python hosting environment."""
-from wsgi import application
+"""Passenger entry point for persistent Sanders Dash & Seal services."""
+from core_platform.native_runtime import create_native_application
+
+application = create_native_application()

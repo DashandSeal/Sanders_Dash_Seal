@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "deploy/ledger_backup.py",
-    "payload_hash": "62f356c6a7893f6e16135ab5deef802b24715ed2867ef75184e69be55ee6cefb",
+    "payload_hash": "75e2c57d2d461ef52b77fb78376f8f5140a3c0795444063fba742874e853f91e",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

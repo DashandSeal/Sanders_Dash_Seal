@@ -35,6 +35,8 @@ stage_authorized_source "$source_dir" "$commit"
 # Regressions use an isolated project, no production volumes, ports or secrets.
 bash "$source_dir/run_preflight_checks.sh" --commit "$commit"
 install -d -m 0755 "$SDS_STATE_DIR/public"
+python3 "$source_dir/deploy/init_runtime.py"
+python3 "$source_dir/deploy/refresh_provider_secrets.py" || echo 'Provider credential refresh unavailable; customer intake remains available.'
 compose config --quiet
 compose build pipeline-worker wsgi-backend
 if [[ ! -s "$SDS_STATE_DIR/nginx.active.conf" ]]; then
@@ -49,6 +51,20 @@ for attempt in {1..30}; do
     (( attempt < 30 ))
     sleep 2
 done
+compose exec -T wsgi-backend python - <<'RUNTIME'
+import json,urllib.request,urllib.error
+base='http://127.0.0.1:8000'
+def get(path):
+    req=urllib.request.Request(base+path,headers={'Host':'sandersdashandseal.com'})
+    return urllib.request.urlopen(req,timeout=5)
+with get('/readyz') as response:
+    assert json.load(response)['service_ready'] is True
+with get('/auth/login') as response:
+    assert response.status==200
+try:get('/api/session')
+except urllib.error.HTTPError as error:assert error.code==401
+else:raise SystemExit('Unauthenticated session was not rejected')
+RUNTIME
 compose exec -T reverse-proxy nginx -t
 python3 - <<'INVENTORY'
 import json,urllib.request
@@ -63,6 +79,11 @@ record={'schema':1,'tenancy_id':cfg['tenancy_id'],'compartment_id':cfg['compartm
 p=Path('/etc/sanders-dash-seal/inventory.json');p.write_text(json.dumps(record));p.chmod(0o600)
 INVENTORY
 install_monitors
+for unit in sanders-provider-secrets.service sanders-provider-secrets.timer; do
+    install -m 0644 "$SDS_PROJECT_DIR/deploy/systemd/$unit" /etc/systemd/system/
+done
+systemctl daemon-reload
+systemctl enable --now sanders-provider-secrets.timer
 python3 - <<'BIND'
 import json,urllib.request
 from pathlib import Path

@@ -250,6 +250,8 @@ resource "oci_identity_policy" "bootstrap" {
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to use instance-agent-command-execution in ${local.policy_scope}",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read buckets in ${local.policy_scope} where target.bucket.name='${oci_objectstorage_bucket.ledger[0].name}'",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to manage objects in ${local.policy_scope} where all {target.bucket.name='${oci_objectstorage_bucket.ledger[0].name}', any {request.permission='OBJECT_CREATE',request.permission='OBJECT_READ',request.permission='OBJECT_INSPECT'}}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect secrets in ${local.policy_scope}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read secret-bundles in ${local.policy_scope} where target.secret.name='sds-runtime-provider-config'",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read ons-topics in ${local.policy_scope}",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to use metrics in ${local.policy_scope} where target.metrics.namespace='sds_platform'"
   ]

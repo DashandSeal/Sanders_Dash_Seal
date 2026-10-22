@@ -1,5 +1,4 @@
-"""WSGI server entry point; default service APIs remain unavailable."""
-import os
-from core_platform.deployment import load_application
+"""Persistent Sanders Dash & Seal application server entry point."""
+from core_platform.native_runtime import create_native_application
 
-application = load_application(None)
+application = create_native_application()
