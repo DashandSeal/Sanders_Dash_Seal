@@ -84,6 +84,9 @@ Default **stage** mode builds the worker/backend and installs the source
 integrity timer, but starts no application containers. It refuses existing SDS
 containers or an existing integrity baseline instead of blessing host drift.
 It does not enable certificate issuance or backup timers on a staged node.
+It also installs the six-hour read-only OCI inventory timer. Configure actual
+expected identities and Instance Principals inspection access as described in
+`docs/OCI_AUTOMATED_INVENTORY.md`; missing configuration yields a failed report.
 
 Optional `--tune-kernel` preserves the owner's exact three values persistently
 in `/etc/sysctl.d/90-sanders-dash-seal.conf`. Application is verified and kernel

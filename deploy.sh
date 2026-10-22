@@ -154,8 +154,18 @@ install_integrity_monitor() {
     systemctl enable --now sanders-integrity.timer
 }
 
+install_inventory_monitor() {
+    local unit
+    for unit in "$SDS_PROJECT_DIR"/deploy/systemd/sanders-oci-inventory.service "$SDS_PROJECT_DIR"/deploy/systemd/sanders-oci-inventory.timer; do
+        install -m 0644 "$unit" /etc/systemd/system/
+    done
+    systemctl daemon-reload
+    systemctl enable --now sanders-oci-inventory.timer
+}
+
 install_monitors() {
     install_integrity_monitor
+    install_inventory_monitor
     local unit
     for unit in "$SDS_PROJECT_DIR"/deploy/systemd/sanders-certbot-* "$SDS_PROJECT_DIR"/deploy/systemd/sanders-ledger-backup.*; do
         [[ "$unit" == *.service || "$unit" == *.timer ]] || continue

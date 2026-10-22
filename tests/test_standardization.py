@@ -107,6 +107,7 @@ docker() { :; }; install_engine() { echo engine; }; configure_firewall() { echo 
 stage_authorized_source() { echo source_staged; }
 compose() { echo "compose $*"; }
 apply_kernel_profile() { :; }; install_integrity_monitor() { echo monitored; }
+install_inventory_monitor() { echo inventory_timer; }
 SDS_BOOTSTRAP_COMMIT=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 SDS_PROJECT_DIR=/opt/sanders-dash-seal
 SDS_STATE_DIR=/var/lib/sanders-dash-seal

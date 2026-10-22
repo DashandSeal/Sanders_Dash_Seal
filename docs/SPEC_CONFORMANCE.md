@@ -490,3 +490,18 @@ proof of installed software. Retain the $0 constraint: no image/instance creatio
 100-node launch, paid storage or production capture is performed. Do not clone
 an authoritative SQLite ledger into multiple independent production writers.
 Unsigned pairs and missing independent runtime/release authority remain blockers.
+
+## October 22 automated OCI inventory acceptance
+
+Source: owner's request to make Tenancy Explorer resource discovery an automated
+Sanders Dash & Seal function. Add read-only Instance Principals discovery across
+subscribed regions, including the chosen root/child compartment subtree; paginate
+Search results, compare explicitly configured expected identities/states and
+previous successful observations, and preserve private machine-readable evidence.
+Install a six-hour host timer through the existing authorized deployment and
+staging paths. Report failed/partial visibility and stale previous success
+honestly; an invisible resource is NOT_OBSERVED, not proof it was deleted.
+Do not grant IAM, provision resources, silently repair routes, send external mail,
+claim full tenancy visibility, or treat inventory as billing/transaction/readiness
+verification. Search is eventually consistent and permission-filtered. No actual
+OCI query or timer installation is possible without authenticated host access.

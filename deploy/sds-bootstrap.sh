@@ -68,6 +68,7 @@ stage_node() {
     compose build pipeline-worker wsgi-backend
     apply_kernel_profile
     install_integrity_monitor
+    install_inventory_monitor
     printf 'STAGED: approved source, images and integrity monitoring prepared. Application services were not started.\n'
 }
 
