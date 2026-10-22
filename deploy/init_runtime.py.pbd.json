@@ -12,5 +12,5 @@
     "payload_hash": "1a646779be6b82e767932025425a42e01b9bf9410d08e1d416aca1468ef9c5db"
   },
   "signatures": {},
-  "status": "UNSIGNED_DEPLOYMENT_BLOCKED"
+  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

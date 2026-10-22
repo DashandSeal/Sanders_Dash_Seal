@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "infrastructure/resource-manager/variables.tf",
-    "payload_hash": "c145bec2b23a59674f016ae6829dcb1858f3920a6d232d869a232127c5791925",
+    "payload_hash": "00bfefa3fc579c8197c8f6c88d5b57f4168bdc0da660e69b457ed45a8b0ec476",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
@@ -12,5 +12,5 @@
     }
   },
   "signatures": {},
-  "status": "UNSIGNED_DEPLOYMENT_BLOCKED"
+  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

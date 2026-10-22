@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": ".github/workflows/oci-gitops-deploy.yml",
-    "payload_hash": "d335dd8e372d7c23c5fa0fe1417fe70c248badf815a4b8403ebb77a3e5612e93",
+    "payload_hash": "409d7d57c3337cca492255fa8278ecc60df2a7c66ae9f1a57fe411f7d8275060",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
@@ -12,5 +12,5 @@
     }
   },
   "signatures": {},
-  "status": "UNSIGNED_DEPLOYMENT_BLOCKED"
+  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

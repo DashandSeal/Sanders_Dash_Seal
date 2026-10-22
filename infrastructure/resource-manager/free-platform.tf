@@ -45,7 +45,7 @@ locals {
     budget_bytes = 20000000000
     max_snapshot_bytes = 1000000000
   } : null
-  existing_release_config = var.deploy_existing_instance ? {
+  existing_release_config = local.deployment_enabled ? {
     commit = local.approved_commit
     tenancy_id = local.selected_tenancy
     compartment_id = local.selected_compartment
@@ -57,7 +57,7 @@ locals {
   } : null
 }
 resource "oci_objectstorage_object" "existing_installer" {
-  count = var.deploy_existing_instance ? 1 : 0
+  count = local.deployment_enabled ? 1 : 0
   namespace = data.oci_objectstorage_namespace.release.namespace
   bucket = oci_objectstorage_bucket.release[0].name
   object = "installers/${local.approved_commit}.sh"
@@ -67,7 +67,18 @@ resource "oci_objectstorage_object" "existing_installer" {
   content_type = "text/x-shellscript"
 }
 output "existing_install_command" {
-  value = var.deploy_existing_instance ? {
+  value = local.deployment_enabled ? {
+    compartment_id = local.selected_compartment
+    instance_id = local.target_instance_id
+    namespace = data.oci_objectstorage_namespace.release.namespace
+    bucket = oci_objectstorage_bucket.release[0].name
+    object = oci_objectstorage_object.existing_installer[0].object
+    sha256 = sha256(oci_objectstorage_object.existing_installer[0].content)
+    commit = local.approved_commit
+  } : null
+}
+output "application_install_command" {
+  value = local.deployment_enabled ? {
     compartment_id = local.selected_compartment
     instance_id = local.target_instance_id
     namespace = data.oci_objectstorage_namespace.release.namespace

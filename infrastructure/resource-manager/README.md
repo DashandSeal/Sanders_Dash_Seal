@@ -14,7 +14,7 @@ Unzip a copy in authenticated Oracle Cloud Shell and run:
 python3 activate_on_oracle.py --stack-id YOUR_ACTUAL_STACK_OCID
 ```
 
-The launcher runs Plan, checks the structured plan for the existing-host resource
+The launcher runs Plan, checks the structured plan against the owner zero-spend and non-destruction
 set and destructive actions, then applies that exact plan. It dispatches the
 private installer through OCI Run Command and waits for execution success with
 exit code zero. It uses the Cloud Shell session; no SSH key or private Git token

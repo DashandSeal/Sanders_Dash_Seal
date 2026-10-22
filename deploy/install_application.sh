@@ -3,6 +3,8 @@
 set -Eeuo pipefail
 trap 'result=$?; echo "APPLICATION_INSTALL_FAILED exit=$result" >&2; exit "$result"' ERR
 [[ "$EUID" == 0 ]]
+exec 9>/run/lock/sanders-application-install.lock
+flock 9
 source /etc/os-release
 [[ "$ID" == ol && "$VERSION_ID" == 9* ]]
 dnf install -y git python3 curl firewalld tar iproute util-linux dnf-plugins-core oraclelinux-developer-release-el9

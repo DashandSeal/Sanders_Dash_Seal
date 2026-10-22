@@ -1,4 +1,4 @@
-"""Upload a complete release and execute the existing-VM Oracle deployment."""
+"""Upload a complete release and deploy the stack's actual Oracle host profile."""
 import argparse
 import contextlib
 import hashlib
@@ -16,8 +16,9 @@ from deploy.activate_on_oracle import cli, deploy
 def credentials(environment=None):
     env = os.environ if environment is None else environment
     names = ('OCI_TENANCY_OCID', 'OCI_USER_OCID', 'OCI_FINGERPRINT', 'OCI_PRIVATE_KEY')
-    if any(not env.get(name, '').strip() for name in names):
-        raise ValueError('Required OCI API signing credentials are not configured')
+    missing = [name for name in names if not env.get(name, '').strip()]
+    if missing:
+        raise ValueError('Missing GitHub Actions secrets: ' + ', '.join(missing))
     for name, kind in [('OCI_TENANCY_OCID', 'tenancy'), ('OCI_USER_OCID', 'user')]:
         if not re.fullmatch(r'ocid1\.' + kind + r'\.[A-Za-z0-9.]+', env[name]):
             raise ValueError('Actual OCI identity identifiers are required')
@@ -63,23 +64,23 @@ def release(zip_path, commit, stack_id, *, api=cli, activation=deploy):
         for name, checksum in manifest['files'].items():
             if hashlib.sha256(archive.read(name)).hexdigest() != checksum:
                 raise ValueError('Release archive checksum mismatch')
-        variables = archive.read('variables.tf').decode()
-        if not re.search(r'variable "create_instance"\s*{\s*type\s*=\s*bool\s*default\s*=\s*false', variables):
-            raise ValueError('GitOps uses the existing VM package without additional compute')
+        defaults = archive.read('variables.tf').decode()
     current = api(['resource-manager', 'stack', 'get', '--stack-id', stack_id])['data']
-    variables = current.get('variables') or {}
-    if (str(variables.get('create_instance', 'false')).lower() != 'false'
-            or str(variables.get('create_network', 'false')).lower() != 'false'):
-        raise ValueError('This stack creates resources outside the existing-host deployment profile')
-    # Detect a previously created direct-profile VM even when defaults were not
-    # stored as explicit stack variables; never silently remove or migrate it.
+    variables = dict(current.get('variables') or {})
     state = json.loads(api(['resource-manager', 'stack', 'get-stack-tf-state',
                            '--stack-id', stack_id, '--file', '-'], raw=True))
-    if any(r.get('mode') == 'managed' and r.get('type') == 'oci_core_instance'
-           for r in state.get('resources', [])):
-        raise ValueError('Existing new-node stack requires its own deployment profile; left unchanged')
+    managed_node = any(r.get('mode') == 'managed' and r.get('type') == 'oci_core_instance'
+                       for r in state.get('resources', []))
+    default_new = bool(re.search(r'variable "create_instance"\s*{\s*type\s*=\s*bool\s*default\s*=\s*true', defaults))
+    new_node = managed_node or str(variables.get('create_instance', str(default_new))).lower() == 'true'
+    variables.update(create_instance=str(new_node).lower(),
+        deploy_existing_instance=str(not new_node).lower(), wait_for_application='false')
+    # Resource Manager finishes provisioning first; the agent installs the exact
+    # release below. This also updates an already-booted new-node stack, where
+    # changing cloud-init metadata alone does not rerun application installation.
     api(['resource-manager', 'stack', 'update', '--stack-id', stack_id,
-         '--config-source', str(Path(zip_path).resolve()), '--force'])
+         '--config-source', str(Path(zip_path).resolve()),
+         '--variables', json.dumps(variables), '--force'])
     result = activation(stack_id, api=api)
     if result.get('commit') != commit:
         raise ValueError('Oracle installed a different source commit')
@@ -99,6 +100,9 @@ def main():
 if __name__ == '__main__':
     try:
         main()
+    except ValueError as error:
+        # Our validation errors contain field names and public identifiers only.
+        raise SystemExit('OCI_GITOPS_NOT_COMPLETED: ' + str(error))
     except Exception:
         # OCI diagnostics can contain authentication configuration; use the job
         # logs in the owner's console rather than echoing exceptions or secrets.

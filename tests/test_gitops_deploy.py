@@ -71,7 +71,7 @@ class GitOpsTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 release(self.archive(folder),'a'*40,'ocid1.ormstack.oc1.phx.test',api=api,activation=fail)
 
-    def test_different_release_and_existing_new_vm_do_not_mutate_stack(self):
+    def test_different_release_fails_but_existing_new_vm_profile_is_preserved(self):
         calls=[]
         def api(args,**kwargs):
             calls.append(args)
@@ -81,5 +81,11 @@ class GitOpsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as folder:
             path=self.archive(folder)
             with self.assertRaises(ValueError):release(path,'b'*40,'ocid1.ormstack.oc1.phx.test',api=api)
-            with self.assertRaises(ValueError):release(path,'a'*40,'ocid1.ormstack.oc1.phx.test',api=api)
-        self.assertFalse(any('update' in call for call in calls))
+            self.assertFalse(any('update' in call for call in calls))
+            release(path,'a'*40,'ocid1.ormstack.oc1.phx.test',api=api,
+                activation=lambda *a,**kw:{'commit':'a'*40})
+        update=calls[-1]
+        options=json.loads(update[update.index('--variables')+1])
+        self.assertEqual(options['create_instance'],'true')
+        self.assertEqual(options['deploy_existing_instance'],'false')
+        self.assertEqual(options['wait_for_application'],'false')

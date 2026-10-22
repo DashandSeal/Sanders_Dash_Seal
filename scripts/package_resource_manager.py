@@ -22,7 +22,7 @@ def pair(name, content):
         'artifact': name, 'payload_hash': hashlib.sha256(content.encode()).hexdigest(),
         'scope': {'endpoint': 'local://development', 'method': 'TEST', 'ip': '127.0.0.1',
                   'operation': 'DEVELOPMENT_VALIDATION'}}, 'signatures': {},
-        'status': 'UNSIGNED_DEPLOYMENT_BLOCKED'}, indent=2) + '\n'
+        'status': 'UNSIGNED_SOURCE_MANIFEST'}, indent=2) + '\n'
 
 
 def application_bundle(commit, root=ROOT, source_names=None):
@@ -93,8 +93,6 @@ def contents(commit, *, root=ROOT, source_names=None, direct=False):
     existing = """#!/bin/bash
 set -Eeuo pipefail
 if [[ \"$EUID\" != 0 ]]; then exec sudo -n /bin/bash \"$0\"; fi
-exec 9>/run/lock/sanders-application-install.lock
-flock -n 9
 install -d -m 0700 /etc/sanders-dash-seal
 """
     for destination, raw in [('/usr/local/sbin/sds-install-application', install),

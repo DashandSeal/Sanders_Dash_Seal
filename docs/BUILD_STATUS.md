@@ -1,3 +1,11 @@
+# Current status — October 22, 2026
+
+The core runtime, main merge and actual CI validation are implemented.
+Oracle hosting and live business-provider execution are not complete.
+See [the owner-directed omissions and restriction audit](OMISSIONS_AND_RESTRICTIONS_AUDIT.md)
+for the current factual inventory. The historical October 15 record below is
+retained as history; it is not an additional installation approval policy.
+
 **Conformance audit: NOT fully conformant. See [the original-specification audit](SPEC_CONFORMANCE.md).**
 
 # Build status — October 15, 2026

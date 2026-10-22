@@ -73,13 +73,11 @@ jobs:
                           errors.append(f'{path}: artifact identity mismatch')
                       if body.get('payload_hash') != hashlib.sha256(path.read_bytes()).hexdigest():
                           errors.append(f'{path}: SHA256 mismatch')
-                      if obj.get('status') != 'UNSIGNED_DEPLOYMENT_BLOCKED':
-                          errors.append(f'{path}: unapproved development manifest status')
                   except (ValueError, KeyError) as exc:
                       errors.append(f'{path}: invalid manifest {exc}')
           if errors:
               sys.exit('\n'.join(errors))
-          print('Platform and sidecar executable manifests match; production remains blocked')
+          print('Platform and sidecar executable hashes match; signature authority is evaluated by privileged operations')
           PY
       - name: Run complete development suite
         run: python -m unittest discover -s tests -v

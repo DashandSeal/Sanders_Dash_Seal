@@ -1,6 +1,6 @@
 # Sanders Dash & Seal — unified production acceptance contract
 
-Status: **NOT PRODUCTION READY**. This is a cross-platform acceptance plan, not a claim of deployment or authority. Deadline target: October 22, 2026; no security bypass to meet the date.
+Status: **End-to-end completion is not yet demonstrated.** This is an implementation/evidence inventory, not an extra installation-approval policy. See OMISSIONS_AND_RESTRICTIONS_AUDIT.md for current status.
 
 ## Controlling source
 
@@ -8,7 +8,7 @@ Status: **NOT PRODUCTION READY**. This is a cross-platform acceptance plan, not 
 
 ## One end-to-end service transaction — required evidence
 
-| Stage | Required verification | Production blocker until verified |
+| Stage | Required verification | Unfinished integration to verify |
 |---|---|---|
 | 1. Human intake | Authenticated human, informed consent, service case, privacy controls, case ID and authorization evidence | No authenticated production case workflow |
 | 2. Authority and jurisdiction | Real commission/provider authorization, act type, jurisdiction, signer presence/identity and applicable restrictions | No verified production jurisdiction/authority engine |
@@ -23,14 +23,19 @@ Status: **NOT PRODUCTION READY**. This is a cross-platform acceptance plan, not 
 | 11. Failure and recovery | Denial, isolation, quarantine, shelter-in-place, rollback, L15/L15+ repair, safe recovery and preserved evidence | In-process simulations only |
 | 12. Production operations | Secure deployment, secrets custody, monitoring, incident response, backups, legal/privacy controls, release rollback and verified real transactions | Deployment and operations not established |
 
-## Release rule
+## Completion reporting
 
-**No subsystem passes production acceptance on its own.** The platform passes only when a complete authorized service transaction and its denial/failure/recovery variants are demonstrated against deployed infrastructure, independently observed, cryptographically attested, and evidenced end to end. No placeholder keys, unsigned manifests, simulated receipts, or CI-only tests satisfy production release.
+Install and start the application under the owner's standing deployment
+instruction. Report each functioning capability and each unfinished integration
+accurately. This inventory does not require a separate human release approval,
+block ordinary hosting because unrelated services are unfinished, or invent
+production signatures. Claim a complete end-to-end service only after it has
+actually executed. Preserve the owner's privileged-operation controls.
 
 ## Current Stripe evidence
 
-Stripe account `acct_1UQTehAgIE87JukG` was queried in live mode on October 15, 2026: `charges_enabled=true`, `payouts_enabled=true`, `card_payments=active`, and no currently due account requirements. No webhook endpoints were returned at that check. Development source: `core_platform/stripe_payments.py`, `core_platform/stripe_webhook_wsgi.py`; neither is a deployed, PBD-authorized production endpoint.
+Stripe account `acct_1UQTehAgIE87JukG` was queried in live mode on October 15, 2026: `charges_enabled=true`, `payouts_enabled=true`, `card_payments=active`, and no currently due account requirements. That historical check is superseded: live webhook we_1UTPrCAgIE87JukG9yBNbUB4 is now registered at https://sandersdashandseal.com/stripe/webhook; Oracle runtime secret installation and a complete live payment round trip remain unfinished. Development source: `core_platform/stripe_payments.py`, `core_platform/stripe_webhook_wsgi.py`; neither is a deployed, PBD-authorized production endpoint.
 
 ## Continuous integration vs production evidence
 
-Source hash pairing, original governance text and unit/failure-path tests must pass on each change. These are necessary development gates, **not sufficient production acceptance**. A release requires signed manifests and real independent verification plus actual production infrastructure evidence.
+Source hash pairing, original governance text and unit/failure-path tests must pass on each change. These are necessary development gates, **not sufficient production acceptance**. Privileged application operations retain the original MASTER signature/authority requirements. Ordinary installation has no additional release-evidence approval requirement.

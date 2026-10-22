@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "tests/test_gitops_deploy.py",
-    "payload_hash": "37f8c2f6a8e4081322e0bb7fe8cf37e5d246c268b12df1a2badfc2724ade32ef",
+    "payload_hash": "28086bc0c2d2096f61a947ed7e14792b9acd40fff0e1928f27018db0dc8328a3",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
@@ -12,5 +12,5 @@
     }
   },
   "signatures": {},
-  "status": "UNSIGNED_DEPLOYMENT_BLOCKED"
+  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

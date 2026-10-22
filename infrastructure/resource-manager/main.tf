@@ -257,7 +257,7 @@ resource "oci_identity_policy" "bootstrap" {
   ]
 }
 resource "terraform_data" "application_installation" {
-  count = var.create_instance ? 1 : 0
+  count = var.create_instance && var.wait_for_application ? 1 : 0
   triggers_replace = [oci_core_instance.sds_automated[0].id, local.approved_commit]
   depends_on = [oci_identity_policy.bootstrap]
   provisioner "local-exec" {

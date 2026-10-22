@@ -29,6 +29,11 @@ variable "create_instance" {
   default = false
   description = "Optional: enable one NEW 1-OCPU/6-GB A1 instance after reviewing remaining tenancy capacity. Does not update the existing VM."
 }
+variable "wait_for_application" {
+  type = bool
+  default = true
+  description = "Direct uploads wait for cloud-init; GitOps waits for its agent installation after Apply."
+}
 variable "create_network" {
   type = bool
   default = false

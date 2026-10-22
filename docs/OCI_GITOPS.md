@@ -15,11 +15,12 @@ the existing `sanders-dash-seal` VM using the Oracle agent. Failed jobs and
 nonzero install exit codes fail the workflow. Test counts are reported by the
 test runners, never hardcoded as success messages.
 
-This continuous-deployment profile reuses the existing VM. The separate direct
-first-install profile creates a new node; an existing new-node stack is not
-silently converted because that could remove its instance. Select the actual
-existing-host Resource Manager stack for this workflow. A stack must already
-exist; this workflow updates it rather than inventing a stack OCID.
+The workflow preserves the stack's actual existing/new-node profile. When
+Terraform state already contains the stack's A1 instance, GitOps keeps that
+instance selected rather than changing to the original host or destroying it.
+Resource Manager completes Apply before the agent installs the exact release;
+this works for updates as well as first boot. A stack must already exist;
+the workflow uses its actual OCID rather than inventing one.
 
 Repository Actions secrets required once:
 

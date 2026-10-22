@@ -3,6 +3,7 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  workflow_call:
 permissions:
   contents: read
 concurrency:
@@ -60,7 +61,7 @@ jobs:
         run: |
           set -Eeuo pipefail
           "$SDS_WORK_DIR/tests/bin/python" scripts/package_resource_manager.py --commit "$GITHUB_SHA" --output "$SDS_WORK_DIR/sds-unified-production-stack.zip"
-      - name: Upload, Plan, Apply and install on the existing Oracle VM
+      - name: Upload, Plan, Apply and install on the selected Oracle VM
         env:
           OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
           OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}

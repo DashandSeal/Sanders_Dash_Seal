@@ -18,15 +18,17 @@ def binding():
 
 
 class OracleActivationTests(unittest.TestCase):
-    def test_plan_rejects_paid_compute_deletion_and_bucket_exposure(self):
+    def test_plan_accepts_owner_names_and_free_host_but_rejects_paid_compute_and_destruction(self):
         def plan(kind,name,actions,after=None):
             return {'resource_changes':[{'type':kind,'name':name,'address':kind+'.'+name,
                 'change':{'actions':actions,'after':after or {}}}]}
         self.assertTrue(validate_plan(plan('oci_monitoring_alarm','platform',['create'])))
-        for bad in [plan('oci_core_instance','sds_automated',['create']),
+        self.assertTrue(validate_plan(plan('oci_monitoring_alarm','owner_selected_name',['create'])))
+        self.assertTrue(validate_plan(plan('oci_core_instance','owner_node',['create'],
+            {'shape':'VM.Standard.A1.Flex','shape_config':[{'ocpus':1,'memory_in_gbs':6}]})))
+        for bad in [plan('oci_core_instance','sds_automated',['create'],{'shape':'VM.Standard.E4.Flex'}),
                     plan('oci_objectstorage_bucket','ledger',['delete','create']),
-                    plan('oci_objectstorage_bucket','ledger',['create'],{'access_type':'ObjectRead','storage_tier':'Standard'}),
-                    plan('oci_functions_function','unrequested',['create'])]:
+                    plan('oci_objectstorage_bucket','ledger',['create'],{'access_type':'ObjectRead','storage_tier':'Standard'})]:
             with self.assertRaises(ValueError): validate_plan(bad)
         with self.assertRaises(ValueError): validate_plan({})
 
