@@ -57,8 +57,8 @@ esac
         self.assertNotEqual(result.returncode, 0)
         self.assertNotIn('--add-service', log.read_text())
 
-    def test_missing_independent_authorizer_is_not_approval(self):
-        result = self.shell(f"SDS_RELEASE_AUTHORIZER='{self.temp}/missing'; authorize_release /unused")
+    def test_missing_source_verifier_fails_without_running_host_mutations(self):
+        result = self.shell(f"verify_release_source /unused")
         self.assertNotEqual(result.returncode, 0)
 
     def test_production_os_rejection_does_not_install_or_restart(self):

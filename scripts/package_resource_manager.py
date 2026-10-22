@@ -1,5 +1,9 @@
 """Build a reproducible Resource Manager ZIP; never contacts OCI or creates resources."""
 import argparse
+import gzip
+import io
+import subprocess
+import tarfile
 import hashlib
 import json
 from pathlib import Path
@@ -21,37 +25,69 @@ def pair(name, content):
         'status': 'UNSIGNED_DEPLOYMENT_BLOCKED'}, indent=2) + '\n'
 
 
-def contents(commit, *, root=ROOT):
+def application_bundle(commit, root=ROOT, source_names=None):
+    if source_names is None:
+        source_names = subprocess.check_output(['git', '-C', str(root), 'ls-files'], text=True).splitlines()
+    names = sorted(set(source_names))
+    manifest = {'source_commit': commit, 'files': {}}
+    output = io.BytesIO()
+    with gzip.GzipFile(fileobj=output, mode='wb', mtime=0) as compressed:
+        with tarfile.open(fileobj=compressed, mode='w') as bundle:
+            for name in names:
+                path = root / name
+                if (Path(name).is_absolute() or '..' in Path(name).parts or path.is_symlink()
+                        or not path.is_file() or any(part in ('.git', 'node_modules', '.venv') for part in Path(name).parts)
+                        or name.endswith(('.env', '.env.secrets'))):
+                    raise ValueError('Only clean repository source files may be packaged')
+                raw = path.read_bytes()
+                manifest['files'][name] = hashlib.sha256(raw).hexdigest()
+                item = tarfile.TarInfo(name)
+                item.size, item.mode = len(raw), 0o644
+                bundle.addfile(item, io.BytesIO(raw))
+            raw = (json.dumps(manifest, sort_keys=True) + '\n').encode()
+            item = tarfile.TarInfo('.sds-source.json')
+            item.size, item.mode = len(raw), 0o644
+            bundle.addfile(item, io.BytesIO(raw))
+    if not all(name in names for name in ('docker-compose.yml', 'backend/platform-source.json',
+            'worker/package-lock.json', 'deploy/install_application.sh', 'scripts/verify_release_source.py')):
+        raise ValueError('The complete committed application source is required')
+    if len(output.getvalue()) > 8 * 1024 * 1024:
+        raise ValueError('Application archive exceeds Resource Manager upload budget')
+    return output.getvalue()
+
+
+def contents(commit, *, root=ROOT, source_names=None):
     if not re.fullmatch('[0-9a-f]{40}', commit):
         raise ValueError('A full source commit SHA is required')
     folder = root / 'infrastructure/resource-manager'
     files = {name: (folder / name).read_text() for name in
              ('versions.tf', 'variables.tf', 'main.tf', 'outputs.tf', 'schema.yaml', 'README.md')}
     files['release.tf'] = 'locals {\n  approved_commit = "' + commit + '"\n}\n'
-    # Escape Terraform interpolation inside embedded shell; only the release slot
-    # is a Terraform substitution. No credentials or source archives enter metadata.
-    stage = cloud_config(commit)
-    stage_config = json.loads(stage.split('\n', 1)[1])
-    audit = next(item for item in stage_config['write_files'] if item['path'].endswith('sds-system-preflight-audit'))
-    files['cloud-init-audit.yaml'] = '#cloud-config\n' + json.dumps({
-        'ssh_deletekeys': True, 'write_files': [audit],
-        'runcmd': [['bash', '/usr/local/sbin/sds-system-preflight-audit']]}, indent=2) + '\n'
-    stage = stage.replace('${', '$${').replace('%{', '%%{')
-    files['cloud-init-stage.yaml.tftpl'] = stage.replace('SDS_BOOTSTRAP_COMMIT=' + commit,
-                                                    'SDS_BOOTSTRAP_COMMIT=${approved_commit}')
-    if len(stage.encode()) > 22000:
-        raise ValueError('Bootstrap template exceeds the conservative metadata budget')
+    files['application.tgz'] = application_bundle(commit, root, source_names)
+    files['wait_application.py'] = (root / 'deploy/wait_application.py').read_text()
+    install = (root / 'deploy/install_application.sh').read_text()
+    fetch = (root / 'deploy/fetch_release.py').read_text()
+    config = {'ssh_deletekeys': True, 'write_files': [
+        {'path': '/usr/local/sbin/sds-install-application', 'owner': 'root:root',
+         'permissions': '0700', 'content': install},
+        {'path': '/usr/local/sbin/sds-fetch-release', 'owner': 'root:root',
+         'permissions': '0700', 'content': fetch},
+        {'path': '/etc/sanders-dash-seal/release.json', 'owner': 'root:root',
+         'permissions': '0600', 'content': 'SDS_RELEASE_CONFIG_SLOT'}],
+        'runcmd': [['bash', '/usr/local/sbin/sds-install-application']]}
+    template = ('#cloud-config\n' + json.dumps(config, indent=2) + '\n').replace('${', '$${').replace('%{', '%%{')
+    files['cloud-init-application.yaml.tftpl'] = template.replace('"SDS_RELEASE_CONFIG_SLOT"', '${jsonencode(release_config)}')
     for name, raw in list(files.items()):
-        if name != 'README.md':
+        if name != 'README.md' and isinstance(raw, str):
             files[name + '.pbd.json'] = pair(name, raw)
     files['package_manifest.json'] = json.dumps({'schema': 1, 'source_commit': commit,
-        'files': {name: hashlib.sha256(raw.encode()).hexdigest() for name, raw in sorted(files.items())},
+        'files': {name: hashlib.sha256(raw.encode() if isinstance(raw, str) else raw).hexdigest() for name, raw in sorted(files.items())},
         'production_signatures_verified': False, 'cloud_resources_created': False}, indent=2) + '\n'
     return files
 
 
-def build(output, commit):
-    files = contents(commit)
+def build(output, commit, *, root=ROOT, source_names=None):
+    files = contents(commit, root=root, source_names=source_names)
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open('xb') as handle:
@@ -69,9 +105,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--commit', required=True)
     parser.add_argument('--output', required=True, type=Path)
+    parser.add_argument('--source-list', type=Path)
     args = parser.parse_args()
     try:
-        print(json.dumps(build(args.output, args.commit)))
+        print(json.dumps(build(args.output, args.commit, source_names=json.loads(args.source_list.read_text()) if args.source_list else None)))
     except (OSError, ValueError) as error:
         parser.error(str(error))
 

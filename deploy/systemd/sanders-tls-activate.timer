@@ -1,0 +1,8 @@
+[Unit]
+Description=Retry Sanders Dash & Seal TLS activation after DNS is configured
+[Timer]
+OnBootSec=3min
+OnUnitInactiveSec=30min
+Persistent=true
+[Install]
+WantedBy=timers.target

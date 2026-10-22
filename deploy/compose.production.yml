@@ -1,7 +1,9 @@
 services:
   reverse-proxy:
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf:ro,Z
+      - /var/lib/sanders-dash-seal/nginx.active.conf:/etc/nginx/nginx.conf:ro,Z
+      - ./web:/srv/sanders-public:ro,Z
+      - /var/lib/sanders-dash-seal/public:/srv/sds-status:ro,Z
     healthcheck:
       test: ["CMD", "nginx", "-t"]
       interval: 30s
@@ -14,14 +16,8 @@ services:
       timeout: 5s
       retries: 3
   wsgi-backend:
-    env_file:
-      - ${SDS_RUNTIME_ENV_FILE:-/etc/sanders-dash-seal/runtime.env}
-    environment:
-      PYTHONPATH: /app/runtime-adapters:/app
-    volumes:
-      - /etc/sanders-dash-seal/adapters:/app/runtime-adapters:ro,Z
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/readyz',headers={'Host':'sandersdashandseal.com'}),timeout=3)"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/healthz',headers={'Host':'sandersdashandseal.com'}),timeout=3)"]
       interval: 30s
       timeout: 5s
       retries: 3

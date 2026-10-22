@@ -27,7 +27,14 @@ locals {
   nsg_id = var.create_network ? oci_core_network_security_group.edge[0].id : var.existing_nsg_ocid
   image_id = var.image_ocid != "" ? var.image_ocid : try(local.ol9_images[0], null)
   availability_domain = try(data.oci_identity_availability_domains.available.availability_domains[var.availability_domain_index].name, null)
-  user_data = var.boot_profile == "audit" ? file("${path.module}/cloud-init-audit.yaml") : templatefile("${path.module}/cloud-init-stage.yaml.tftpl", { approved_commit = local.approved_commit })
+  deployment_id = substr(md5("${var.compartment_ocid}:${var.deployment_name}"), 0, 12)
+  user_data = var.create_instance ? templatefile("${path.module}/cloud-init-application.yaml.tftpl", { release_config = jsonencode({
+    commit = local.approved_commit,
+    namespace = data.oci_objectstorage_namespace.release.namespace,
+    bucket = oci_objectstorage_bucket.release[0].name,
+    object = oci_objectstorage_object.release[0].object,
+    sha256 = filesha256("${path.module}/application.tgz")
+  }) }) : ""
 }
 
 resource "oci_core_vcn" "isolated" {
@@ -133,7 +140,7 @@ resource "oci_core_instance" "sds_automated" {
     are_legacy_imds_endpoints_disabled = true
   }
   metadata = merge({ user_data = base64encode(local.user_data) }, var.ssh_public_key == "" ? {} : { ssh_authorized_keys = var.ssh_public_key })
-  freeform_tags = { "SandersRelease" = local.approved_commit, "SandersBootProfile" = var.boot_profile }
+  freeform_tags = { "SandersRelease" = local.approved_commit, "SandersBootProfile" = "application" }
   lifecycle {
     prevent_destroy = true
     precondition {
@@ -161,8 +168,58 @@ resource "oci_core_instance" "sds_automated" {
       error_message = "User data exceeds the conservative metadata budget."
     }
     precondition {
-      condition = var.boot_profile != "approved_stage" || var.image_ocid != ""
-      error_message = "Approved stage requires an explicit prepared image with independent source access and runtime/release bindings."
+      condition = var.assign_public_ip
+      error_message = "Public application deployment requires a public IPv4."
+    }
+  }
+}
+
+data "oci_objectstorage_namespace" "release" {
+  compartment_id = var.compartment_ocid
+}
+resource "oci_objectstorage_bucket" "release" {
+  count = var.create_instance ? 1 : 0
+  compartment_id = var.compartment_ocid
+  namespace = data.oci_objectstorage_namespace.release.namespace
+  name = "sds-release-${local.deployment_id}"
+  access_type = "NoPublicAccess"
+  storage_tier = "Standard"
+}
+resource "oci_objectstorage_object" "release" {
+  count = var.create_instance ? 1 : 0
+  namespace = data.oci_objectstorage_namespace.release.namespace
+  bucket = oci_objectstorage_bucket.release[0].name
+  object = "releases/${local.approved_commit}.tgz"
+  source = "${path.module}/application.tgz"
+  content_type = "application/gzip"
+}
+resource "oci_identity_dynamic_group" "bootstrap" {
+  count = var.create_instance ? 1 : 0
+  compartment_id = var.tenancy_ocid
+  name = "SDSBootstrap${local.deployment_id}"
+  description = "Only this deployment instance may retrieve its private application release"
+  matching_rule = "ALL {instance.id = '${oci_core_instance.sds_automated[0].id}'}"
+}
+resource "oci_identity_policy" "bootstrap" {
+  count = var.create_instance ? 1 : 0
+  compartment_id = var.tenancy_ocid
+  name = "SDSBootstrap${local.deployment_id}"
+  description = "Scoped read-only release retrieval and primary VNIC metadata"
+  statements = [
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read objects in compartment id ${var.compartment_ocid} where all {target.bucket.name='${oci_objectstorage_bucket.release[0].name}', request.permission='OBJECT_READ'}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect instance-family in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read vnics in compartment id ${var.compartment_ocid}"
+  ]
+}
+resource "terraform_data" "application_installation" {
+  count = var.create_instance ? 1 : 0
+  triggers_replace = [oci_core_instance.sds_automated[0].id, local.approved_commit]
+  depends_on = [oci_identity_policy.bootstrap]
+  provisioner "local-exec" {
+    command = "python3 \"${path.module}/wait_application.py\""
+    environment = {
+      SDS_EXPECTED_PUBLIC_IPV4 = oci_core_instance.sds_automated[0].public_ip
+      SDS_EXPECTED_COMMIT = local.approved_commit
     }
   }
 }

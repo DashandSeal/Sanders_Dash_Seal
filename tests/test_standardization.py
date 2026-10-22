@@ -74,10 +74,10 @@ class StandardizationTests(unittest.TestCase):
                                'fixture', str(ROOT / 'deploy/sds-bootstrap.sh')],
                               capture_output=True, text=True)
 
-    def test_stage_authorization_failure_stops_before_mutation_or_success(self):
+    def test_stage_source_integrity_failure_stops_before_mutation_or_success(self):
         result = self.shell('''
 check_source() { echo source; }; check_host() { echo host; }
-authorize_release() { echo denied; return 7; }
+verify_release_source() { echo denied; return 7; }
 install_engine() { echo MUTATION; }; configure_firewall() { echo MUTATION; }
 SDS_BOOTSTRAP_COMMIT=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 stage_node
@@ -88,7 +88,7 @@ stage_node
 
     def test_stage_refuses_existing_containers(self):
         result = self.shell('''
-check_source() { :; }; check_host() { :; }; authorize_release() { :; }
+check_source() { :; }; check_host() { :; }; verify_release_source() { :; }
 docker() { echo existing_container; }
 install_engine() { echo MUTATION; }
 SDS_BOOTSTRAP_COMMIT=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
@@ -102,7 +102,7 @@ stage_node
 
     def test_successful_stage_builds_but_does_not_start_application(self):
         result = self.shell('''
-check_source() { :; }; check_host() { :; }; authorize_release() { echo authorized; }
+check_source() { :; }; check_host() { :; }; verify_release_source() { echo authorized; }
 docker() { :; }; install_engine() { echo engine; }; configure_firewall() { echo firewall; }
 stage_authorized_source() { echo source_staged; }
 compose() { echo "compose $*"; }
@@ -123,7 +123,7 @@ stage_node
 
     def test_failed_build_never_reports_staged(self):
         result = self.shell('''
-check_source() { :; }; check_host() { :; }; authorize_release() { :; }
+check_source() { :; }; check_host() { :; }; verify_release_source() { :; }
 docker() { :; }; install_engine() { :; }; configure_firewall() { :; }
 stage_authorized_source() { :; }
 compose() { [[ "$1" != build ]]; }

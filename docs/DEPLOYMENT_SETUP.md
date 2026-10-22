@@ -1,3 +1,5 @@
+> October 22 owner correction: the custom authorize-release executable and SANDERS_RUNTIME_FACTORY are not deployment requirements. Earlier prerequisite language below is historical and superseded by infrastructure/resource-manager/README.md and the application installer. Business-operation authentication and authority controls remain separate.
+
 # Existing platform deployment setup
 
 October 21, 2026. This change supplies WSGI startup/composition for the existing

@@ -6,8 +6,6 @@ set -Eeuo pipefail
 SDS_PROJECT_DIR=${SDS_PROJECT_DIR:-/opt/sanders-dash-seal}
 SDS_COMPOSE_PROJECT=${SDS_COMPOSE_PROJECT:-sanders-dash-seal}
 SDS_PUBLIC_IPV4=${SDS_PUBLIC_IPV4:-129.146.111.166}
-SDS_RUNTIME_ENV_FILE=${SDS_RUNTIME_ENV_FILE:-/etc/sanders-dash-seal/runtime.env}
-SDS_RELEASE_AUTHORIZER=${SDS_RELEASE_AUTHORIZER:-/etc/sanders-dash-seal/authorize-release}
 SDS_STATE_DIR=${SDS_STATE_DIR:-/var/lib/sanders-dash-seal}
 SDS_DOMAINS=(sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com)
 
@@ -21,8 +19,7 @@ check_source() {
     local source_dir=$1
     [[ -f "$source_dir/docker-compose.yml" && -f "$source_dir/nginx.conf" \
        && -f "$source_dir/backend/platform-source.json" ]] || fail 'Complete source checkout required.'
-    [[ -z "$(git -C "$source_dir" status --porcelain --untracked-files=all)" ]] \
-        || fail 'Source checkout has uncommitted or untracked changes.'
+    verify_release_source "$source_dir" "${SDS_BOOTSTRAP_COMMIT:-}"
     [[ "$SDS_PROJECT_DIR" == /opt/* && "$SDS_PROJECT_DIR" != *$'\n'* ]] || fail 'Project directory must be under /opt.'
     [[ "$SDS_COMPOSE_PROJECT" =~ ^[a-z0-9][a-z0-9_-]*$ ]] || fail 'Invalid Compose project name.'
 }
@@ -40,21 +37,9 @@ check_host() {
     systemctl is-active --quiet firewalld || fail 'Inspect and activate firewalld with SSH access preserved before applying.'
 }
 
-authorize_release() {
+verify_release_source() {
     local source_dir=$1 approved_commit=${2:-}
-    [[ -x "$SDS_RELEASE_AUTHORIZER" && ! -L "$SDS_RELEASE_AUTHORIZER" ]] \
-        || fail 'Independent administrator-installed release authorizer required.'
-    [[ "$(stat -c %u "$SDS_RELEASE_AUTHORIZER")" == 0 ]] || fail 'Authorizer must be root-owned.'
-    (( (8#$(stat -c %a "$SDS_RELEASE_AUTHORIZER") & 0022) == 0 )) || fail 'Authorizer is group/world writable.'
-    [[ -f "$SDS_RUNTIME_ENV_FILE" && ! -L "$SDS_RUNTIME_ENV_FILE" ]] || fail 'Protected runtime configuration required.'
-    [[ "$(stat -c %u "$SDS_RUNTIME_ENV_FILE")" == 0 ]] || fail 'Runtime configuration must be root-owned.'
-    (( (8#$(stat -c %a "$SDS_RUNTIME_ENV_FILE") & 0077) == 0 )) || fail 'Runtime configuration must be private to root.'
-    grep -Eq '^SANDERS_RUNTIME_FACTORY=[A-Za-z_][A-Za-z0-9_.]*:[A-Za-z_][A-Za-z0-9_]*$' "$SDS_RUNTIME_ENV_FILE" \
-        || fail 'Real runtime factory reference required.'
-    # This file is deliberately not generated; it must verify independent source,
-    # dependency and runtime authority, not echo a fabricated approval.
-    [[ -n "$approved_commit" ]] || approved_commit=$(git -C "$source_dir" rev-parse HEAD)
-    "$SDS_RELEASE_AUTHORIZER" "$source_dir" "$approved_commit"
+    python3 "$source_dir/scripts/verify_release_source.py" "$source_dir" "$approved_commit"
 }
 
 configure_firewall() {
@@ -127,20 +112,20 @@ validate_live() {
     local attempt domain
     for attempt in {1..30}; do
         if compose exec -T wsgi-backend python -c \
-            "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/readyz',headers={'Host':'sandersdashandseal.com'}),timeout=3)"; then
+            "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/healthz',headers={'Host':'sandersdashandseal.com'}),timeout=3)"; then
             break
         fi
-        (( attempt < 30 )) || fail 'Python authority/readiness remains unavailable.'
+        (( attempt < 30 )) || fail 'Python process health remains unavailable.'
         sleep 2
     done
     compose exec -T reverse-proxy nginx -t
     curl --fail --silent --show-error --connect-timeout 5 --max-time 10 \
-        --resolve "sandersdashandseal.com:443:$SDS_PUBLIC_IPV4" https://sandersdashandseal.com/readyz
+        --resolve "sandersdashandseal.com:443:$SDS_PUBLIC_IPV4" https://sandersdashandseal.com/healthz
     for domain in "${SDS_DOMAINS[@]:1}"; do
         curl --fail --silent --show-error --output /dev/null --connect-timeout 5 --max-time 10 \
             --resolve "$domain:443:$SDS_PUBLIC_IPV4" "https://$domain/"
     done
-    printf '\nHTTPS/readiness checks passed from this host. External authenticated WebSocket validation remains a separate check.\n'
+    printf '\nHTTPS/process health checks passed from this host; business-service readiness is separate. External authenticated WebSocket validation remains a separate check.\n'
 }
 
 install_integrity_monitor() {
@@ -180,7 +165,7 @@ stage_authorized_source() {
     [[ ! -L "$SDS_PROJECT_DIR" ]] || fail 'Project directory cannot be a symlink.'
     install -d -m 0755 "$SDS_PROJECT_DIR"
     stage=$(mktemp -d /opt/sds-stage.XXXXXX)
-    git -C "$source_dir" archive "$approved_commit" | tar -x -C "$stage" --no-same-owner
+    python3 "$source_dir/scripts/verify_release_source.py" "$source_dir" "$approved_commit" --copy-to "$stage"
     if ! python3 "$source_dir/deploy/host_integrity.py" validate-stage "$stage" "$SDS_PROJECT_DIR"; then
         rm -rf -- "$stage"
         fail 'Existing unrecognized source files require review before staging.'
@@ -195,24 +180,25 @@ main() {
     [[ "$mode" == --check || "$mode" == --apply ]] || fail 'Use --check or --apply.'
     check_source "$source_dir"
     if [[ "$mode" == --check ]]; then
-        printf 'Source checkout is clean. Apply requires OL9, active firewalld, real release authorization and protected runtime configuration. No host changes made.\n'
+        printf 'Source checkout is clean. Apply requires OL9, active firewalld, verified source integrity. No host changes made.\n'
         return
     fi
     [[ "$EUID" == 0 ]] || fail '--apply requires root.'
     [[ "$SDS_PROJECT_DIR" == /opt/sanders-dash-seal && "$SDS_STATE_DIR" == /var/lib/sanders-dash-seal \
         && "$SDS_COMPOSE_PROJECT" == sanders-dash-seal ]] || fail 'Systemd templates currently require the default project/state paths and Compose project.'
     check_host
-    approved_commit=$(git -C "$source_dir" rev-parse HEAD)
-    authorize_release "$source_dir" "$approved_commit"
+    approved_commit=${SDS_BOOTSTRAP_COMMIT:-$(git -C "$source_dir" rev-parse HEAD)}
+    verify_release_source "$source_dir" "$approved_commit"
     install_engine
     existing_project=$(docker inspect -f '{{ index .Config.Labels "com.docker.compose.project" }}' sds_wsgi_backend 2>/dev/null || true)
     [[ -z "$existing_project" || "$existing_project" == "$SDS_COMPOSE_PROJECT" ]] || fail 'Existing container uses a different project/volume identity; review migration first.'
     configure_firewall
     stage_authorized_source "$source_dir" "$approved_commit"
-    export SDS_RUNTIME_ENV_FILE
     compose config --quiet
     compose build pipeline-worker wsgi-backend
     issue_certificate
+    install -d -m 0700 "$SDS_STATE_DIR"
+    install -m 0644 "$SDS_PROJECT_DIR/nginx.conf" "$SDS_STATE_DIR/nginx.active.conf"
     compose up -d pipeline-worker wsgi-backend reverse-proxy
     validate_live
     install_monitors

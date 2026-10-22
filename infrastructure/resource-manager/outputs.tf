@@ -14,8 +14,8 @@ output "approved_commit" {
   value = local.approved_commit
 }
 output "boot_profile" {
-  value = var.boot_profile
+  value = "application"
 }
 output "application_status" {
-  value = "NOT_VERIFIED: Terraform Apply provisions infrastructure; inspect cloud-init, authority, runtime and readiness evidence before activation."
+  value = "APPLICATION_INSTALLATION_CHECKED_BY_JOB: completion requires exact release and public process health. TLS and business-integration readiness remain separate; inspect /readyz and host logs."
 }

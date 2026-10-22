@@ -571,3 +571,45 @@ private Git access, genuine runtime/release bindings and capacity still need
 provisioning. Audit-only first boot must be labeled, and approved stage must keep
 existing independent gates. No zero-downtime guarantee or invented 283-test pass.
 Do not import, replace, stop or overwrite the existing sanders-dash-seal VM.
+
+## October 22 Resource Manager application activation acceptance
+
+Source: owner's correction that the uploaded stack must deploy Sanders Dash &
+Seal itself fully, rather than stop at infrastructure or audit-only staging.
+Expose the existing approved activation path in the stack, including exact
+source checkout, dual-engine regressions, production Compose, DNS/TLS, durable
+SQLite identity, readiness checks and timers. Discover this node's assigned
+public IPv4 from authenticated OCI VNIC records bound to its local IMDS identity;
+never inherit the original server address. Make Resource Manager wait for actual
+external TLS/readiness and canonical aliases when activation is selected, failing
+the job on missing readiness rather than promoting VM provisioning to success.
+Retain explicit provisioning/staging profiles for deliberate diagnostic use.
+
+This change cannot create genuine external runtime adapters, release authority,
+private repository access or DNS control from absent inputs. Prepared image
+prerequisites must be explicit and validated before activation; no paid image
+capture or bypass of independent production controls is introduced. Missing
+requirements remain blockers to a turnkey deployment package, not reasons to
+label diagnostics a full application. No actual OCI Apply, DNS edit or production
+activation is performed here.
+
+## October 22 owner-directed removal of imposed deployment prerequisites
+
+The owner explicitly directs removal of the custom authorize-release executable
+and SANDERS_RUNTIME_FACTORY deployment prerequisite, and requires the ZIP to
+install/start Sanders Dash & Seal itself. This instruction supersedes earlier
+assistant-authored statements making these interfaces or unsigned development
+pairs blanket infrastructure/deployment blockers. Retain hash/pair integrity,
+source identity, independent application authorization, human notarial review
+and truthful feature readiness. Starting containers does not grant a notarial act,
+create an authenticated session, verify a payment or fabricate signatures.
+
+Acceptance: supply application source inside the upload ZIP; securely transfer
+it via a private OCI artifact bucket using per-instance IAM, with no private Git
+credential, prebuilt custom image or separate authorizer/runtime-factory file.
+Install OL9 dependencies, validate payload SHA and file hashes, run disposable
+regressions, start the supplied Node/Python/Nginx/SQLite stack, install monitoring
+and automatic DNS-dependent TLS activation. Report installed application health
+separately from still-unconfigured business integrations; never turn a 503
+service-authority result into a claim that authentication/payments are operational.
+No actual cloud Apply or live readiness is asserted from local checks.

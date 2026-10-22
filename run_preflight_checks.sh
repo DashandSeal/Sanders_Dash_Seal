@@ -38,13 +38,7 @@ run_preflight() {
     if [[ ! -d "$source_dir/.git" && "$source_dir" == /opt/sanders-dash-seal ]]; then
         source_dir=/opt/sds-approved-source
     fi
-    [[ ! -L "$source_dir" && -d "$source_dir/.git" ]] || {
-        printf 'A clean approved source checkout is required.\n' >&2; return 1;
-    }
-    [[ "$(git -C "$source_dir" rev-parse HEAD)" == "$commit" \
-       && -z "$(git -C "$source_dir" status --porcelain --untracked-files=all)" ]] || {
-        printf 'Source commit mismatch or checkout drift.\n' >&2; return 1;
-    }
+    python3 "$source_dir/scripts/verify_release_source.py" "$source_dir" "$commit"
     command -v docker >/dev/null
     docker compose version >/dev/null
     preflight_work=$(mktemp -d "${TMPDIR:-/tmp}/sds-preflight.XXXXXX")
@@ -53,7 +47,7 @@ run_preflight() {
     mkdir "$preflight_snapshot"
     trap preflight_cleanup EXIT
     trap preflight_failure ERR
-    git -C "$source_dir" archive "$commit" | tar -x -C "$preflight_snapshot" --no-same-owner
+    python3 "$source_dir/scripts/verify_release_source.py" "$source_dir" "$commit" --copy-to "$preflight_snapshot"
     printf 'Preflight source commit: %s\n' "$commit"
     preflight_compose config --quiet
     preflight_compose build --quiet node-tests python-tests

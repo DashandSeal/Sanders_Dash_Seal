@@ -1,3 +1,5 @@
+> October 22 owner correction: the custom authorize-release executable and SANDERS_RUNTIME_FACTORY are not deployment requirements. Earlier prerequisite language below is historical and superseded by infrastructure/resource-manager/README.md and the application installer. Business-operation authentication and authority controls remain separate.
+
 # Render deployment review — Sanders Dash & Seal
 
 Prepared October 21, 2026. Review only; no Render service, subscription, domain record or live payment has been created.

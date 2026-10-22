@@ -39,14 +39,7 @@ apply_kernel_profile() {
 }
 
 verify_bootstrap_source() {
-    # Verify with independently provisioned code BEFORE sourcing repository code
-    # as root. The deployment script repeats runtime/release checks afterward.
-    local authorizer=/etc/sanders-dash-seal/authorize-release
-    [[ -x "$authorizer" && ! -L "$authorizer" ]] \
-        || bootstrap_fail 'Independent release authorizer required before loading source.'
-    [[ "$(stat -c %u "$authorizer")" == 0 ]] || bootstrap_fail 'Authorizer must be root-owned.'
-    (( (8#$(stat -c %a "$authorizer") & 0022) == 0 )) || bootstrap_fail 'Authorizer is group/world writable.'
-    "$authorizer" "$SDS_SOURCE_DIR" "$SDS_BOOTSTRAP_COMMIT"
+    python3 "$SDS_SOURCE_DIR/scripts/verify_release_source.py" "$SDS_SOURCE_DIR" "$SDS_BOOTSTRAP_COMMIT"
 }
 
 validate_candidate() {
@@ -60,7 +53,7 @@ verify_instance_context() {
 stage_node() {
     check_source "$SDS_SOURCE_DIR"
     check_host
-    authorize_release "$SDS_SOURCE_DIR" "$SDS_BOOTSTRAP_COMMIT"
+    verify_release_source "$SDS_SOURCE_DIR" "$SDS_BOOTSTRAP_COMMIT"
     local existing
     [[ "$SDS_PROJECT_DIR" == /opt/sanders-dash-seal && "$SDS_STATE_DIR" == /var/lib/sanders-dash-seal ]] \
         || bootstrap_fail 'Monitor templates require the standard project/state paths.'
@@ -71,7 +64,6 @@ stage_node() {
     install_engine
     configure_firewall
     stage_authorized_source "$SDS_SOURCE_DIR" "$SDS_BOOTSTRAP_COMMIT"
-    export SDS_RUNTIME_ENV_FILE
     compose config --quiet
     compose build pipeline-worker wsgi-backend
     validate_candidate
@@ -98,6 +90,8 @@ bootstrap_main() {
     if [[ "$SDS_BOOTSTRAP_MODE" == stage ]]; then
         stage_node
     else
+        check_host
+        install_engine
         verify_instance_context
         validate_candidate
         main --apply

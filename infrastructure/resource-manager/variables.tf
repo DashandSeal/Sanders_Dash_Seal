@@ -24,7 +24,7 @@ variable "region" {
 }
 variable "create_instance" {
   type = bool
-  default = false
+  default = true
   description = "Enable one NEW 1-OCPU/6-GB A1 instance after reviewing remaining tenancy capacity. Does not update the existing VM."
 }
 variable "create_network" {
@@ -79,12 +79,12 @@ variable "ssh_public_key" {
     error_message = "Supply an OpenSSH public key or leave empty."
   }
 }
-variable "boot_profile" {
+variable "deployment_name" {
   type = string
-  default = "audit"
-  description = "audit observes a fresh platform image; approved_stage requires preprovisioned private source access and genuine independent runtime/release bindings. Neither activates production."
+  default = "sanders-dash-seal"
+  description = "Unique name for this stack's private artifact bucket and IAM identities."
   validation {
-    condition = contains(["audit", "approved_stage"], var.boot_profile)
-    error_message = "Choose audit or approved_stage."
+    condition = can(regex("^[a-z][a-z0-9-]{2,39}$", var.deployment_name))
+    error_message = "Use 3–40 lowercase letters, digits and hyphens."
   }
 }

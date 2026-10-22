@@ -19,6 +19,8 @@ class PreflightRunnerTests(unittest.TestCase):
         self.repo = self.root / 'source'
         self.repo.mkdir()
         shutil.copyfile(ROOT / 'run_preflight_checks.sh', self.repo / 'run_preflight_checks.sh')
+        (self.repo / 'scripts').mkdir()
+        shutil.copyfile(ROOT / 'scripts/verify_release_source.py', self.repo / 'scripts/verify_release_source.py')
         (self.repo / 'deploy').mkdir()
         shutil.copyfile(ROOT / 'deploy/compose.preflight.yml', self.repo / 'deploy/compose.preflight.yml')
         for args in (['init', '-q'], ['add', '.'], ['-c', 'user.name=Fixture', '-c',
@@ -96,7 +98,7 @@ exit 0
         self.assertEqual(text.count('read_only: true'), 2)
 
     def test_activation_cannot_run_after_a_failed_regression(self):
-        (self.root / 'deploy.sh').write_text('main() { echo ACTIVATED; }\n')
+        (self.root / 'deploy.sh').write_text('check_host() { :; }; install_engine() { :; }; main() { echo ACTIVATED; }\n')
         result = subprocess.run(['bash', '-c', '''
 source "$1/deploy/sds-bootstrap.sh"
 require_bootstrap_root() { :; }; prepare_checkout() { :; }; verify_bootstrap_source() { :; }
