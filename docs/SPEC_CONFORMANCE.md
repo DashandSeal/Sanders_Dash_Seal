@@ -554,3 +554,20 @@ untracked drift before source staging. Missing initial tools/directories are
 reported as gaps rather than false success or installation. Reject symlink logs,
 preserve actual audit errors and do not install software, alter permissions,
 create OCI resources or claim a live SSH connection merely from supplied commands.
+
+## October 22 OCI Resource Manager automation stack acceptance
+
+Source: owner's master Terraform/main.tf/cloud-init ZIP provisioning blueprint.
+Preserve submitted sources. Package a real Resource Manager stack with managed
+provider authentication, A1 1-OCPU/6-GB shape, current compatible platform image
+lookup or explicit image selection, actual compartment/AD/network inputs and
+existing-network reuse by default. Add optional isolated VCN/subnet/IGW/route/
+NSG creation. Pin application source to a full commit and include the established
+first-boot audit and approved bootstrap profile; no mutable main or fake OCIDs.
+Supply a browser-uploadable ZIP, tests and Terraform validation in CI. Do not
+apply a stack or create paid/cloud resources in this workspace. Make explicit
+that Terraform provisioning does not prove cloud-init/application completion;
+private Git access, genuine runtime/release bindings and capacity still need
+provisioning. Audit-only first boot must be labeled, and approved stage must keep
+existing independent gates. No zero-downtime guarantee or invented 283-test pass.
+Do not import, replace, stop or overwrite the existing sanders-dash-seal VM.

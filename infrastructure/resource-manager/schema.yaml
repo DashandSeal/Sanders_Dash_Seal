@@ -1,0 +1,51 @@
+schemaVersion: 1.1.0
+version: "1.0.0"
+locale: en
+title: Sanders Dash & Seal Resource Manager provisioning
+description: Provision a new A1 node or optional network. Default first boot observes the host; approved staging retains independent runtime and release gates. No production activation is asserted.
+variableGroups:
+  - title: Existing tenancy and network
+    variables: [tenancy_ocid, compartment_ocid, region, existing_subnet_ocid, existing_nsg_ocid]
+  - title: New resources
+    variables: [create_instance, create_network, availability_domain_index, image_ocid, assign_public_ip]
+  - title: First boot and recovery
+    variables: [boot_profile, ssh_public_key]
+variables:
+  tenancy_ocid:
+    type: string
+    required: true
+    title: Actual tenancy OCID
+  compartment_ocid:
+    type: string
+    required: true
+    title: Actual target compartment or root tenancy OCID
+  region:
+    type: string
+    title: Phoenix home region
+  existing_subnet_ocid:
+    type: string
+    title: Existing public subnet OCID
+  existing_nsg_ocid:
+    type: string
+    title: Existing ig-quick-action-NSG OCID
+  create_instance:
+    type: boolean
+    title: Provision one additional A1 instance
+  create_network:
+    type: boolean
+    title: Provision a separate VCN instead of reusing the existing network
+  availability_domain_index:
+    type: number
+    title: Availability domain index
+  image_ocid:
+    type: string
+    title: Optional explicit compatible ARM64 image OCID
+  assign_public_ip:
+    type: boolean
+    title: Assign the new node a public IP
+  boot_profile:
+    type: string
+    title: audit or approved_stage
+  ssh_public_key:
+    type: string
+    title: Optional recovery public key

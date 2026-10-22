@@ -10,6 +10,27 @@ permissions:
   contents: read
 
 jobs:
+  verify-resource-manager-stack:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: '1.5.7'
+      - name: Package and validate the actual Resource Manager upload
+        run: |
+          python3 -m scripts.package_resource_manager --commit "$(git rev-parse HEAD)" --output "$RUNNER_TEMP/sds-automation-stack.zip"
+          python3 -m zipfile -e "$RUNNER_TEMP/sds-automation-stack.zip" "$RUNNER_TEMP/sds-tf-validation"
+          terraform -chdir="$RUNNER_TEMP/sds-tf-validation" fmt
+          terraform -chdir="$RUNNER_TEMP/sds-tf-validation" init -backend=false -input=false
+          terraform -chdir="$RUNNER_TEMP/sds-tf-validation" validate -no-color
+
   verify-development-source:
     runs-on: ubuntu-latest
     timeout-minutes: 15
