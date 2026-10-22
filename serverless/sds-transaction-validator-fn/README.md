@@ -3,7 +3,11 @@
 The three submitted file bodies are preserved as supplied (formatting-only
 whitespace normalization). This is a proposed implementation on the review
 branch, not an OCI-deployed function. No production traffic is routed here and
-the existing Compose stack does not reference this directory.
+the existing Compose stack does not launch this directory. The integrated
+entrypoint, private Python route and Connector Hub request renderer are described
+in [STREAMING_INTEGRATION.md](../../docs/STREAMING_INTEGRATION.md). Use the staging
+command there to select the integrated entrypoint; the three supplied files below
+remain intact.
 
 ## Validation status
 

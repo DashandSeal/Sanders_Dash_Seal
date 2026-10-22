@@ -147,3 +147,8 @@ jobs:
       - name: Clean disposable CI container
         if: always()
         run: docker rm -f sds-backend-review || true
+      - name: Build integrated Python 3.11 Function and verify actual FDK protocol
+        run: |
+          python3 -m serverless.oci_pipeline stage-function --output "$RUNNER_TEMP/sds-integrated-function"
+          docker build -t sds-integrated-function-review "$RUNNER_TEMP/sds-integrated-function"
+          docker run --rm --entrypoint python -e SDS_FUNCTION_MODULE=/function/integrated.py -v "$PWD/scripts/verify_stream_fdk.py:/function/verify_stream_fdk.py:ro" sds-integrated-function-review /function/verify_stream_fdk.py

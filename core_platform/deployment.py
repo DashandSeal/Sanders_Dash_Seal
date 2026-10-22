@@ -11,6 +11,7 @@ import re
 
 from .customer_app import create_customer_app
 from .pipeline_api import create_pipeline_app, TransactionStore
+from .stream_api import create_stream_app
 
 
 CANONICAL_HOST = 'sandersdashandseal.com'
@@ -34,6 +35,7 @@ class RuntimeBindings:
     webhook_app: object = None
     transaction_processor: object = None
     transaction_store: object = None
+    stream_verifiers: object = None
 
 
 def _response(start, status, payload, extra=()):
@@ -78,6 +80,9 @@ def create_application(bindings=None):
     pipeline = create_pipeline_app(bindings.authenticate if bindings else None,
         bindings.transaction_processor if bindings else None, verifier,
         bindings.transaction_store if bindings else None)
+    stream = create_stream_app(bindings.transaction_processor if bindings else None,
+        verifier, bindings.transaction_store if bindings else None,
+        bindings.stream_verifiers if bindings else None)
 
     def ready():
         try:
@@ -93,6 +98,8 @@ def create_application(bindings=None):
             return _response(start, '421 Misdirected Request', {'error': 'host_denied'})
         host = host.lower()
         path = env.get('PATH_INFO', '')
+        if host == 'wsgi-backend:8000' and path == '/api/stream/transactions':
+            return stream(env, start)
         if host == 'wsgi-backend:8000' and path in ('/api/auth/verify', '/api/transactions/process'):
             return pipeline(env, start)
         if host.endswith(':443'):
@@ -125,6 +132,8 @@ def create_application(bindings=None):
             return bindings.webhook_app(env, start)
         if path in ('/api/auth/verify', '/api/transactions/process'):
             return pipeline(env, start)
+        if path == '/api/stream/transactions':
+            return stream(env, start)
         return customer(env, start)
     return application
 

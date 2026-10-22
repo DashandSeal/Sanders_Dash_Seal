@@ -395,3 +395,46 @@ reproduces unsigned VERIFIED writes, conflicting replacement, missing IDs and
 batch SUCCESS on a failed write. This characterizes known deviations; it does
 not approve them. No dependency installation, image build, OCI invocation or
 live Limits API query was performed for this function.
+
+## October 21 integrated event-driven implementation acceptance
+
+Source: owner's instruction to use everything supplied and proceed with full
+integration, including Streaming, Connector Hub, Functions, Object Storage and
+the existing Nginx/Node/Python/SQLite core. Preserve original Function files.
+Add a separately named integrated entrypoint and explicit integration manifest,
+OCI request renderer and authenticated producer utility. Connect function-task
+output to the storage target; accept receipts only after the existing Python
+core commits. Retain Node/WebSockets and existing application routes.
+
+MASTER 13–14 and 19–20 require independent signature/release authority and durable
+transactional receipts. Add a signed stream boundary with trusted actor-key
+bindings from the administrator's runtime factory; never accept a payload key,
+UNSIGNED, conflicting retry or a failed-write success acknowledgement. Use the
+existing receipt verifier and transaction processor in one SQLite transaction.
+Function retries must be idempotent and failures visible. Keep /tmp out of the
+integrated authoritative ledger path. Restrict the backend stream route to the
+private subnet at Nginx and require independently verified signatures as well.
+
+Record the explicit hybrid: Functions handles events on demand while the selected
+Python/SQLite core remains durable on the existing VM. This does not establish
+zero idle resources for the whole platform, maximum measured throughput or free
+Streaming. Render requests locally without creating resources. The no-additional-
+cost requirement and missing authenticated OCI access still preclude actual
+metered provisioning. Frontend production cutover requires real producer identity,
+network, resources and business-authority bindings; never invent these.
+
+Integration evidence: 211 Python regressions pass (21 new stream integration
+checks), plus the selected real Node/Python/SQLite relay test. Three actual FDK
+0.1.128 fixture checks pass locally for response protocol, committed receipt
+output and transport failure propagation; peer HTTPS is simulated. Tests cover
+real Ed25519 verification, atomic rollback, simultaneous duplicates, partial
+batch retry, conflicting actor/ID reuse, key/release revocation and publisher
+admission failures. Rendered JSON field names match OCI SDK 2.189.0 model maps;
+service-side ranges, resource existence and permissions are not claimed.
+An isolated 265-file candidate passes forensic scanning with zero anomalies;
+all 110 source/config pairs match and remain unsigned. The original three
+Function files are unchanged. CI now builds the integrated Python 3.11 container
+and runs the actual FDK protocol checks. Live OCI resources, ARM64 image release,
+private DNS/TLS route, signing identities, business bindings and frontend direct
+publishing remain external dependencies. Existing ws 8.16.0 audit failures are
+not removed or bypassed. No paid service or production deployment occurred.

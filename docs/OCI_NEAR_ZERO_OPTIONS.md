@@ -67,3 +67,9 @@ Primary sources:
 - https://docs.oracle.com/en-us/iaas/Content/Functions/Tasks/functionscustomizing.htm
 - https://docs.oracle.com/en-us/iaas/Content/APIGateway/Concepts/apigatewayoverview.htm
 - https://docs.oracle.com/en-us/iaas/Content/FreeTier/freetier_topic-Always_Free_Resources.htm
+
+The Connecting implementation is now documented in STREAMING_INTEGRATION.md:
+Functions handles event batches on demand while the existing Python core commits
+signed business transactions on durable SQLite. Original proposal files remain
+intact. This makes the components interoperable without claiming that the durable
+VM has disappeared or that active Streaming is free. No live migration occurred.

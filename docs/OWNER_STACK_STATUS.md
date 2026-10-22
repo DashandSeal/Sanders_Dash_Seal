@@ -93,3 +93,13 @@ The owner-requested deployment, Compose maintenance override, certificate
 staging/renewal and host integrity timers are documented in ORACLE_BOOTSTRAP.md.
 Their source is prepared for the approved OL9 host; no host installation or DNS
 cutover has been executed in this session.
+
+## Integrated Streaming path
+
+The owner's Streaming/Connector Hub/Functions/Object Storage design now has an
+integrated entrypoint, producer utility, OCI request renderer, private Nginx route
+and durable Python stream endpoint. See STREAMING_INTEGRATION.md for the exact
+wiring, signed-event contract and remaining live dependencies. Original Function
+files remain intact; use the staged integrated manifest for the connected path.
+Node/WebSockets and existing business APIs remain part of the stack. No live
+frontend cutover, resource provisioning or whole-platform zero-idle claim is made.
