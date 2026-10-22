@@ -143,18 +143,44 @@ validate_live() {
     printf '\nHTTPS/readiness checks passed from this host. External authenticated WebSocket validation remains a separate check.\n'
 }
 
-install_monitors() {
+install_integrity_monitor() {
+    local unit
     install -d -m 0700 "$SDS_STATE_DIR"
     python3 "$SDS_PROJECT_DIR/deploy/host_integrity.py" baseline "$SDS_PROJECT_DIR" "$SDS_STATE_DIR/integrity.json"
-    for unit in "$SDS_PROJECT_DIR"/deploy/systemd/*.service "$SDS_PROJECT_DIR"/deploy/systemd/*.timer; do
+    for unit in "$SDS_PROJECT_DIR"/deploy/systemd/sanders-integrity.service "$SDS_PROJECT_DIR"/deploy/systemd/sanders-integrity.timer; do
         install -m 0644 "$unit" /etc/systemd/system/
     done
     systemctl daemon-reload
-    systemctl enable --now sanders-integrity.timer sanders-certbot-renew.timer
+    systemctl enable --now sanders-integrity.timer
+}
+
+install_monitors() {
+    install_integrity_monitor
+    local unit
+    for unit in "$SDS_PROJECT_DIR"/deploy/systemd/sanders-certbot-* "$SDS_PROJECT_DIR"/deploy/systemd/sanders-ledger-backup.*; do
+        [[ "$unit" == *.service || "$unit" == *.timer ]] || continue
+        install -m 0644 "$unit" /etc/systemd/system/
+    done
+    systemctl daemon-reload
+    systemctl enable --now sanders-certbot-renew.timer
+}
+
+stage_authorized_source() {
+    local source_dir=$1 approved_commit=$2 stage
+    [[ ! -L "$SDS_PROJECT_DIR" ]] || fail 'Project directory cannot be a symlink.'
+    install -d -m 0755 "$SDS_PROJECT_DIR"
+    stage=$(mktemp -d /opt/sds-stage.XXXXXX)
+    git -C "$source_dir" archive "$approved_commit" | tar -x -C "$stage" --no-same-owner
+    if ! python3 "$source_dir/deploy/host_integrity.py" validate-stage "$stage" "$SDS_PROJECT_DIR"; then
+        rm -rf -- "$stage"
+        fail 'Existing unrecognized source files require review before staging.'
+    fi
+    cp -a "$stage/." "$SDS_PROJECT_DIR/"
+    rm -rf -- "$stage"
 }
 
 main() {
-    local mode=${1:---check} source_dir stage existing_project approved_commit
+    local mode=${1:---check} source_dir existing_project approved_commit
     source_dir=${SDS_SOURCE_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}
     [[ "$mode" == --check || "$mode" == --apply ]] || fail 'Use --check or --apply.'
     check_source "$source_dir"
@@ -172,16 +198,7 @@ main() {
     existing_project=$(docker inspect -f '{{ index .Config.Labels "com.docker.compose.project" }}' sds_wsgi_backend 2>/dev/null || true)
     [[ -z "$existing_project" || "$existing_project" == "$SDS_COMPOSE_PROJECT" ]] || fail 'Existing container uses a different project/volume identity; review migration first.'
     configure_firewall
-    [[ ! -L "$SDS_PROJECT_DIR" ]] || fail 'Project directory cannot be a symlink.'
-    install -d -m 0755 "$SDS_PROJECT_DIR"
-    stage=$(mktemp -d /opt/sds-stage.XXXXXX)
-    git -C "$source_dir" archive "$approved_commit" | tar -x -C "$stage" --no-same-owner
-    if ! python3 "$source_dir/deploy/host_integrity.py" validate-stage "$stage" "$SDS_PROJECT_DIR"; then
-        rm -rf -- "$stage"
-        fail 'Existing unrecognized source files require review before staging.'
-    fi
-    cp -a "$stage/." "$SDS_PROJECT_DIR/"
-    rm -rf -- "$stage"
+    stage_authorized_source "$source_dir" "$approved_commit"
     export SDS_RUNTIME_ENV_FILE
     compose config --quiet
     compose build pipeline-worker wsgi-backend

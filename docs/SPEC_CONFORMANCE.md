@@ -470,3 +470,23 @@ OCI API request or host change occurred. Oracle's documented public-subnet
 Internet Gateway + All Services Service Gateway conflict is reflected in the
 live-verification guide; no unsupported route was applied. The supplied sample
 notarial payload/signature is not represented as a real authorized transaction.
+
+## October 22 repeatable OCI instance standardization acceptance
+
+Source: owner's golden image → instance configuration → cloud-init → production
+roll blueprint, named SDS-Platinum-Golden-Image and SDS-Standard-Production-Template.
+Preserve the submitted YAML as provenance. Supply a real fail-fast bootstrap,
+immutable commit selection, standard instance-configuration/cloud-init renderer,
+optional persistent owner-requested sysctl profile, integrity monitoring and
+explicit staged versus activated states. Reuse the existing deploy.sh authority,
+active-interface firewall handling, Docker layout and readiness gates. Do not
+clone main blindly, treat YAML runcmd cd as persistent shell state, print success
+on an earlier failure or bake credentials/production data into a reusable image.
+
+Oracle documents downtime during custom-image capture and image storage charges;
+images contain the boot disk, not attached block volume data. Instance
+configurations are selected templates, not retroactive tenancy-wide policy or
+proof of installed software. Retain the $0 constraint: no image/instance creation,
+100-node launch, paid storage or production capture is performed. Do not clone
+an authoritative SQLite ledger into multiple independent production writers.
+Unsigned pairs and missing independent runtime/release authority remain blockers.
