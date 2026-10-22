@@ -2,7 +2,7 @@ FROM node:20.12.2-bookworm-slim AS node-runtime
 
 FROM python:3.12-slim-bookworm AS validation
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/validation
-RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 git \
+RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 libatomic1 git \
     && rm -rf /var/lib/apt/lists/*
 COPY --from=node-runtime /usr/local/bin/node /usr/local/bin/node
 COPY --from=node-runtime /usr/local/lib/node_modules /usr/local/lib/node_modules
