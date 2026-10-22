@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "web/resources.html",
+    "payload_hash": "5d404361cbedf3c0c77faa4e596b7255e4bf33544851bced5353bc80db273902",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_DEPLOYMENT_BLOCKED"
+}

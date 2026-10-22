@@ -624,3 +624,25 @@ new-node installer does not yet automate installation onto the existing VM and
 must not be labeled a completed full production deployment. Preserve removal
 of the imposed authorizer/runtime-factory prerequisites. Actual OCI session
 access, remaining allowance and application integrations have not been verified.
+
+## October 22 complete free-resource incorporation acceptance
+
+Source: owner's three supplied documents: InfoQ's July 3, 2026 Ampere allowance
+report; Oracle Always Free Resources (June 12, 2026); and Oracle Viewing All
+Resources in a Compartment (September 18, 2026). Owner asks to incorporate the
+entire documented free resource set into Sanders Dash & Seal immediately, under
+sole owner spending authority and strict $0 scope. Record all free resource
+categories and their quantitative/conditional limits, shared pools, intended
+platform roles and source provenance; include supporting discovery semantics.
+
+Acceptance: integrate a machine-readable catalog and read-only application
+resource view; connect the existing scheduled inventory to catalog mapping
+without confusing observable resource counts with metered free usage. Supply
+advisory capacity comparisons only when explicit usage is available. A resource
+appearing in Tenancy Explorer is not evidence of Always Free entitlement.
+Functions' published pricing allowances are distinct from this supplied catalog.
+No blanket authorizer/runtime-factory requirement, new deployment dependency,
+cloud creation, paid activation, account upgrade or replacement of SQLite is
+introduced. Keep inventory permission/freshness limitations, document trial vs
+free-only differences and do not claim deployment or live provider integration
+from catalog incorporation. Pair source changes and test denied/unknown states.

@@ -10,6 +10,7 @@ import json
 import re
 
 from .customer_app import create_customer_app
+from .free_resources import catalog as free_resource_catalog
 from .pipeline_api import create_pipeline_app, TransactionStore
 from .stream_api import create_stream_app
 
@@ -116,6 +117,10 @@ def create_application(bindings=None):
             start('308 Permanent Redirect', [('Location', ORIGIN + '/'),
                 ('Content-Length', '0'), ('Cache-Control', 'no-store')])
             return [b'']
+        if path == '/api/platform/free-resources':
+            if method != 'GET':
+                return _response(start, '405 Method Not Allowed', {'error': 'read_only'}, [('Allow', 'GET')])
+            return _response(start, '200 OK', free_resource_catalog())
         if path in ('/healthz', '/readyz'):
             if method != 'GET':
                 return _response(start, '405 Method Not Allowed',

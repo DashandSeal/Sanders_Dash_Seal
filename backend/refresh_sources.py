@@ -10,6 +10,7 @@ from pathlib import Path
 
 def snapshot(root):
     paths = [*root.glob('core_platform/*.py'), *root.glob('core_platform/*.py.pbd.json')]
+    paths += [root / 'core_platform/oci_free_resources.json', root / 'core_platform/oci_free_resources.json.pbd.json']
     paths += [p for p in (root / 'web').rglob('*') if p.is_file()]
     paths += [root / p for p in ('requirements.txt', 'requirements-server.txt',
                                 'deploy/gunicorn.conf.py', 'deploy/gunicorn.conf.py.pbd.json')]

@@ -10,6 +10,10 @@ import re
 import subprocess
 import tempfile
 import time
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from core_platform.free_resources import inventory_mapping
 
 
 CONFIG = Path('/etc/sanders-dash-seal/inventory.json')
@@ -283,6 +287,7 @@ def run_inventory(config_path=CONFIG, state=STATE, *, api=None):
                       'errors': [{'phase': 'CONFIGURATION', 'reason': 'INVALID_OR_UNAVAILABLE'}],
                       'production_ready': False, 'changes': {'status': 'WITHHELD_INCOMPLETE_SCAN'}}
         report['previous_complete_observed_at'] = previous.get('observed_at') if previous else None
+        report['free_resource_mapping'] = inventory_mapping(report)
         atomic_json(state / 'latest.json', report)
         if report['scan_complete']:
             atomic_json(previous_path, report)

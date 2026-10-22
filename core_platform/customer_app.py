@@ -12,7 +12,9 @@ from .appointments import AppointmentDenied, IDENT
 from .cases import CaseDenied
 from .stripe_payments import PaymentDenied
 
-ASSETS = {'/': ('index.html', 'text/html; charset=utf-8'),
+ASSETS = {'/resources': ('resources.html', 'text/html; charset=utf-8'),
+          '/assets/resources.js': ('resources.js', 'application/javascript; charset=utf-8'),
+          '/': ('index.html', 'text/html; charset=utf-8'),
           '/appointments': ('index.html', 'text/html; charset=utf-8'),
           '/operator': ('operator.html', 'text/html; charset=utf-8'),
           '/assets/operator.js': ('operator.js', 'application/javascript; charset=utf-8'),
