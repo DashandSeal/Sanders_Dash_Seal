@@ -1,0 +1,8 @@
+schema_version: 20180708
+name: sds-transaction-validator-fn
+version: 1.0.0
+runtime: python3.11
+architecture: arm64
+entrypoint: /python/bin/fdk /function/func.py handler
+memory: 256
+timeout: 30

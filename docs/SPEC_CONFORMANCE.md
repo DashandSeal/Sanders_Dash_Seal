@@ -371,3 +371,27 @@ created. Existing ws audit findings remain unresolved. Oracle's Streaming FAQ
 explicitly excludes it from the free tier; Functions has finite free allowances
 and API Gateway is metered. Preserve the optional proposal without claiming $0
 active managed-service usage or migrating the durable SQLite/WebSocket design.
+
+## October 21 owner-supplied OCI Function source preservation
+
+Source: owner's repeated complete func.py, func.yaml, requirements.txt and
+limits-query submission. Preserve the three file bodies exactly in
+serverless/sds-transaction-validator-fn; do not replace their business logic or
+route production traffic to them. Pair the source/config files with unsigned
+hash manifests. Record syntax verification separately from security acceptance.
+The submitted handler's VERIFIED writes do not verify a signature; INSERT OR
+REPLACE permits conflicting receipt replacement; missing IDs are accepted;
+per-record failures still yield batch_status SUCCESS; default /tmp SQLite is
+not shared durable ledger storage. Keep these known deviations visible under
+MASTER 13–14 and 19–20, and leave production use blocked. The limits command
+reports resource limits, not pricing, free-tier eligibility or available usage.
+No function application, stream, connector, frontend cutover or paid resource
+is authorized merely by saving these proposed files.
+
+Preservation validation: Python compilation succeeds and all three new source/
+configuration hash pairs match. An isolated temporary-database execution of the
+actual submitted function (FDK response replaced only by a local capture stub)
+reproduces unsigned VERIFIED writes, conflicting replacement, missing IDs and
+batch SUCCESS on a failed write. This characterizes known deviations; it does
+not approve them. No dependency installation, image build, OCI invocation or
+live Limits API query was performed for this function.
