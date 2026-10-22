@@ -539,3 +539,18 @@ must not replace compartment inventory or be called cryptographic attestation.
 Do not hardcode an unverified SHA, require .git in the archived production tree,
 claim static test totals or 100% full production verification. No live host calls
 or application start are authorized merely by running development tests.
+
+## October 22 first-boot system audit acceptance
+
+Source: owner's interactive stacking diagnostic and cloud-init telemetry profile.
+Preserve the submitted cloud-config separately. Add an observational architecture,
+Git/Docker/OCI binary, bounded Compose-plugin and protected-directory permissions
+audit. Evaluate shell variables/date at runtime (no literal escaped dollars),
+store a private bounded log and print it to cloud-init output. Integrate into the
+existing single cloud-init execution chain before the approved bootstrap, rather
+than replacing its source/release/preflight controls. Place the embedded audit in
+/usr/local/sbin, outside the managed /opt application tree, so it cannot create
+untracked drift before source staging. Missing initial tools/directories are
+reported as gaps rather than false success or installation. Reject symlink logs,
+preserve actual audit errors and do not install software, alter permissions,
+create OCI resources or claim a live SSH connection merely from supplied commands.

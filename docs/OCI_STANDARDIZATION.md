@@ -68,6 +68,10 @@ alter the verified Internet Gateway route, or grant an IAM policy.
 
 Cloud-init writes a root-owned driver and invokes one argv command once per
 instance in its final stage. It does not run at the exact instant of boot.
+It also writes the root-owned system audit outside the managed source directory
+and runs it first, saving/printing a private first-boot observation. Missing
+initial tools or directories are labeled as gaps; the subsequent bootstrap
+retains the actual deployment gates. See `docs/SYSTEM_PREFLIGHT_AUDIT.md`.
 The driver checks out a full immutable commit, disables interactive Git prompts,
 rejects a different origin or dirty checkout, and stops on failures. It uses
 the active interface's firewalld zone without flushing rules or removing SSH.

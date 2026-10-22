@@ -139,7 +139,7 @@ jobs:
           runtime_config=$(mktemp)
           printf 'SANDERS_RUNTIME_FACTORY=fixture:factory\n' > "$runtime_config"
           SDS_RUNTIME_ENV_FILE="$runtime_config" docker compose -p sds-review -f docker-compose.yml -f deploy/compose.production.yml config --quiet
-          bash -n run_preflight_checks.sh instance_init.sh deploy.sh deploy/sds-bootstrap.sh deploy/renew-certificates.sh deploy_backup.sh
+          bash -n run_preflight_checks.sh instance_init.sh deploy.sh deploy/sds-bootstrap.sh deploy/system_preflight_audit.sh deploy/renew-certificates.sh deploy_backup.sh
           systemd-analyze calendar '*-*-* 00,12:30:00 UTC'
           systemd-analyze calendar '*-*-* 00:00:00 UTC'
           docker run --rm --entrypoint nginx -v "$PWD/deploy/nginx.acme.conf:/etc/nginx/nginx.conf:ro" nginx:1.25-alpine -t

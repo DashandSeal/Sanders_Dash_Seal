@@ -53,8 +53,11 @@ def cloud_config(commit, *, mode='stage', tune_kernel=False, public_ipv4=None):
     command.extend(['bash', '/usr/local/sbin/sds-bootstrap'])
     config = {'ssh_deletekeys': True, 'write_files': [{
         'path': '/usr/local/sbin/sds-bootstrap', 'owner': 'root:root',
-        'permissions': '0700', 'content': (ROOT / 'deploy/sds-bootstrap.sh').read_text()}],
-        'runcmd': [command]}
+        'permissions': '0700', 'content': (ROOT / 'deploy/sds-bootstrap.sh').read_text()}, {
+        'path': '/usr/local/sbin/sds-system-preflight-audit', 'owner': 'root:root',
+        'permissions': '0700', 'content': (ROOT / 'deploy/system_preflight_audit.sh').read_text()}],
+        'runcmd': [['bash', '-c', 'set -Eeuo pipefail\nbash /usr/local/sbin/sds-system-preflight-audit\nexec "$@"',
+                   'sds-cloud-init', *command]]}
     # JSON is a YAML subset accepted after the cloud-config header.
     return '#cloud-config\n' + json.dumps(config, indent=2) + '\n'
 
