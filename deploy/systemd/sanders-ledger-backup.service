@@ -8,6 +8,6 @@ Requires=docker.service
 Type=oneshot
 User=root
 WorkingDirectory=/opt/sanders-dash-seal
-ExecStart=/bin/bash /opt/sanders-dash-seal/deploy_backup.sh
+ExecStart=/usr/bin/python3 /opt/sanders-dash-seal/deploy/bind_free_resources.py --backup
 UMask=0077
 TimeoutStartSec=30min

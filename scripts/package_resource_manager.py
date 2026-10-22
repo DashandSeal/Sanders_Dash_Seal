@@ -56,14 +56,25 @@ def application_bundle(commit, root=ROOT, source_names=None):
     return output.getvalue()
 
 
-def contents(commit, *, root=ROOT, source_names=None):
+def contents(commit, *, root=ROOT, source_names=None, direct=False):
     if not re.fullmatch('[0-9a-f]{40}', commit):
         raise ValueError('A full source commit SHA is required')
     folder = root / 'infrastructure/resource-manager'
     files = {name: (folder / name).read_text() for name in
-             ('versions.tf', 'variables.tf', 'main.tf', 'outputs.tf', 'schema.yaml', 'README.md')}
+             ('versions.tf', 'variables.tf', 'main.tf', 'free-platform.tf', 'outputs.tf', 'schema.yaml', 'README.md')}
+    if direct:
+        # Apply alone boots a fresh A1 using the same bundled application installer.
+        files['variables.tf'] = files['variables.tf'].replace(
+            'variable "create_instance" {\n  type = bool\n  default = false',
+            'variable "create_instance" {\n  type = bool\n  default = true').replace(
+            'variable "deploy_existing_instance" {\n  type = bool\n  default = true',
+            'variable "deploy_existing_instance" {\n  type = bool\n  default = false')
+        files['schema.yaml'] = files['schema.yaml'].replace('title: Sanders Dash & Seal application deployment',
+            'title: Sanders Dash & Seal direct A1 installation')
+        files['README.md'] = (root / 'infrastructure/resource-manager/DIRECT_INSTALL.md').read_text()
     files['release.tf'] = 'locals {\n  approved_commit = "' + commit + '"\n}\n'
     files['application.tgz'] = application_bundle(commit, root, source_names)
+    files['activate_on_oracle.py'] = (root / 'deploy/activate_on_oracle.py').read_text()
     files['wait_application.py'] = (root / 'deploy/wait_application.py').read_text()
     install = (root / 'deploy/install_application.sh').read_text()
     fetch = (root / 'deploy/fetch_release.py').read_text()
@@ -77,6 +88,21 @@ def contents(commit, *, root=ROOT, source_names=None):
         'runcmd': [['bash', '/usr/local/sbin/sds-install-application']]}
     template = ('#cloud-config\n' + json.dumps(config, indent=2) + '\n').replace('${', '$${').replace('%{', '%%{')
     files['cloud-init-application.yaml.tftpl'] = template.replace('"SDS_RELEASE_CONFIG_SLOT"', '${jsonencode(release_config)}')
+    import base64
+    # Oracle Run Command can fetch a script larger than 4 KB from private Object Storage.
+    # A root invocation is required by the OS; this does not invent a release authorizer.
+    existing = """#!/bin/bash
+set -Eeuo pipefail
+if [[ \"$EUID\" != 0 ]]; then exec sudo -n /bin/bash \"$0\"; fi
+exec 9>/run/lock/sanders-application-install.lock
+flock -n 9
+install -d -m 0700 /etc/sanders-dash-seal
+"""
+    for destination, raw in [('/usr/local/sbin/sds-install-application', install),
+                             ('/usr/local/sbin/sds-fetch-release', fetch)]:
+        existing += "printf '%s' '" + base64.b64encode(raw.encode()).decode() + "' | base64 -d > " + destination + "\nchmod 0700 " + destination + "\n"
+    existing += "printf '%s' '${release_config_base64}' | base64 -d > /etc/sanders-dash-seal/release.json\nchmod 0600 /etc/sanders-dash-seal/release.json\nexec /bin/bash /usr/local/sbin/sds-install-application\n"
+    files['install-existing.sh.tftpl'] = existing
     for name, raw in list(files.items()):
         if name != 'README.md' and isinstance(raw, str):
             files[name + '.pbd.json'] = pair(name, raw)
@@ -86,8 +112,8 @@ def contents(commit, *, root=ROOT, source_names=None):
     return files
 
 
-def build(output, commit, *, root=ROOT, source_names=None):
-    files = contents(commit, root=root, source_names=source_names)
+def build(output, commit, *, root=ROOT, source_names=None, direct=False):
+    files = contents(commit, root=root, source_names=source_names, direct=direct)
     output = Path(output)
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open('xb') as handle:
@@ -106,9 +132,10 @@ def main():
     parser.add_argument('--commit', required=True)
     parser.add_argument('--output', required=True, type=Path)
     parser.add_argument('--source-list', type=Path)
+    parser.add_argument('--direct', action='store_true')
     args = parser.parse_args()
     try:
-        print(json.dumps(build(args.output, args.commit, source_names=json.loads(args.source_list.read_text()) if args.source_list else None)))
+        print(json.dumps(build(args.output, args.commit, source_names=json.loads(args.source_list.read_text()) if args.source_list else None, direct=args.direct)))
     except (OSError, ValueError) as error:
         parser.error(str(error))
 

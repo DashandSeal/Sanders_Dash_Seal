@@ -7,17 +7,15 @@ variableGroups:
   - title: Existing tenancy and network
     variables: [tenancy_ocid, compartment_ocid, region, existing_subnet_ocid, existing_nsg_ocid]
   - title: New resources
-    variables: [create_instance, create_network, availability_domain_index, image_ocid, assign_public_ip]
+    variables: [deploy_existing_instance, existing_instance_ocid, create_instance, create_network, availability_domain_index, image_ocid, assign_public_ip]
   - title: First boot and recovery
     variables: [deployment_name, ssh_public_key]
 variables:
   tenancy_ocid:
     type: string
-    required: true
     title: Actual tenancy OCID
   compartment_ocid:
     type: string
-    required: true
     title: Actual target compartment or root tenancy OCID
   region:
     type: string
@@ -49,3 +47,10 @@ variables:
   ssh_public_key:
     type: string
     title: Optional recovery public key
+
+  deploy_existing_instance:
+    type: boolean
+    title: Install on the existing Sanders Dash & Seal VM
+  existing_instance_ocid:
+    type: string
+    title: Existing Phoenix instance OCID

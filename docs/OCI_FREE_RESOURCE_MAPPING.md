@@ -102,3 +102,15 @@ This is implemented application/catalog/inventory code. It does not create cloud
 Every listed category is recorded, mapped to a platform role, packaged with the application and included in the read-only view/inventory coverage. This does not install provider-specific integrations or provision all listed products. Existing application and deployment integrations retain their actual status.
 
 The supplied Logging section is cut off; the public Oracle page completes it with Logging and Bastion. Their provenance/conditions are explicit in the catalog. Pricing allowances for Functions and the paid Streaming service are not promoted to unlimited Always Free entitlements by the Tenancy Explorer supported-type list.
+
+
+### Executable Oracle activation update
+
+`deploy/activate_on_oracle.py` now orchestrates existing-host Resource Manager
+Plan/Apply and OCI agent installation. `infrastructure/resource-manager/free-platform.tf`
+provisions real private ledger storage, an operational topic and two custom-metric
+alarms. `deploy/bind_free_resources.py` binds and verifies those resources, enables
+daily online backup with restore verification, and emits periodic heartbeat metrics.
+This replaces catalog-only behavior for the connected hosting/backup/monitoring path.
+Other catalog entries remain documented, not automatically provisioned adapters.
+See the Resource Manager README for exact activation and current live-access status.

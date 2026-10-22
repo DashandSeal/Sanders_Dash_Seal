@@ -1,65 +1,68 @@
-# Sanders Dash & Seal application deployment
+# Sanders Dash & Seal automatic Oracle activation
 
-This replaces the earlier audit-only ZIP. Upload the ZIP to OCI Resource Manager,
-select Terraform 1.5.x, provide your actual tenancy/compartment and existing
-Phoenix public subnet/NSG OCIDs, then Plan and Apply. Default create_instance=false creates no VM or private artifact bucket and does
-not deploy the application. If explicitly selected after reviewing actual free
-capacity, create_instance=true launches ONE NEW A1 node (1 OCPU, 6 GB, 50 GB boot). create_network=false reuses
-the supplied network; true creates a separate network. The original VM is not
-modified, imported, stopped or deleted. This stack does not yet automate an
-in-place installation on the existing VM. The contained installer can start the
-application on a fresh node, but this is not an already completed deployment. Check remaining tenancy allowance first.
-The documented original 1/6 node plus this 1/6 node totals 2 OCPUs/12 GB before
-any other instances. Standard Object Storage uses a small private source archive
-within your shared storage allowance. No paid Streaming, Functions, custom image,
-NAT gateway or load balancer is provisioned. No unlimited/free-usage guarantee.
+This package now targets the existing `sanders-dash-seal` VM by default. It does
+not allocate another VM, resize the existing VM, add a VCN, upgrade the account,
+purchase a domain, or provision Streaming, Functions or API Gateway.
 
-The ZIP includes the application source itself. Resource Manager uploads it to a
-private artifact bucket and creates an instance-specific dynamic group/policy
-allowing the new VM to read that bucket and VNIC metadata. The account running
-Apply needs normal permissions to create these OCI resources. No API key,
-preauthenticated URL or private Git token is embedded in user data. Only the
-artifact identifiers, exact commit and SHA-256 are passed to cloud-init.
+Upload the ZIP to Oracle Resource Manager and create a stack using Terraform
+1.5.x and the actual tenancy and VM compartment. `deploy_existing_instance=true`
+is the default; `create_instance=false` and `create_network=false` remain the
+defaults. Existing subnet/NSG values are not needed for this existing-VM path.
+Unzip a copy in authenticated Oracle Cloud Shell and run:
 
-First boot installs OL9 host tools, Docker Compose and OCI CLI, downloads and
-verifies the artifact through Instance Principals, validates the source inventory,
-runs the actual Node/Python regressions in isolated containers, builds the supplied
-Node/Python containers, and starts them with Nginx and persistent SQLite storage.
-It installs the integrity/inventory/certificate timers. The Resource Manager job
-waits for the exact release marker and public process health; failed application
-installation fails the job instead of treating VM creation as application success.
-There is no custom authorize-release file or SANDERS_RUNTIME_FACTORY prerequisite.
+```sh
+python3 activate_on_oracle.py --stack-id YOUR_ACTUAL_STACK_OCID
+```
 
-The new VM receives its own public IP. Public HTTP initially serves the existing
-application assets and health; it refuses API/auth/WebSocket traffic until TLS is
-installed. Point the four existing domains' A records to the new VM's public IP,
-preserving mail and verification records. A timer checks DNS and obtains real
-Let's Encrypt certificates, then activates the supplied HTTPS/WebSocket proxy.
-DNS changes require your existing DNS provider access; this ZIP does not pretend
-to control a registrar. The TLS operation can briefly recreate Nginx and makes no
-zero-downtime guarantee. This is a fresh deployment, not ledger migration; do not
-run two authoritative independent SQLite ledgers for the same business records.
+The launcher runs Plan, checks the structured plan for the existing-host resource
+set and destructive actions, then applies that exact plan. It dispatches the
+private installer through OCI Run Command and waits for execution success with
+exit code zero. It uses the Cloud Shell session; no SSH key or private Git token
+is required. Apply in the console alone prepares resources; it does not dispatch
+the existing VM's installation command. The launcher performs both steps.
 
-Application installation and business integration are distinct states. The
-repository currently contains static customer/operator interfaces and core
-components, but no complete live session-authentication/business adapter
-composition. /healthz reports the running Python process. /readyz continues to
-report 503 for unconfigured business authority. Existing human-review, signed
-receipt, payment and privileged-operation controls remain enforced; this installer
-never invents sessions, provider keys, payment confirmation or notarial authority.
-Installing every source file does not make those incomplete integrations ready.
-This package is therefore an application installer, not evidence that all business
-features are complete. No live cloud Apply has been performed from this workspace.
+Actual provisioned resources: private Standard release and ledger backup buckets;
+an exact-instance dynamic group and scoped IAM policy; an operational notification
+topic; two alarms for heartbeat loss and failed backup verification. The installer
+binds the returned resource identifiers to root-owned configuration, installs the
+supplied Nginx/Node/Python/SQLite application, executes the isolated regressions,
+and immediately performs an online SQLite snapshot, private upload, download and
+restore-integrity verification. It enables daily backup, five-minute resource
+verification/heartbeat, six-hour inventory, integrity and certificate timers.
+No email subscription is created or sent by this implementation; the topic is
+visible in Oracle and can be subscribed to through the owner's chosen endpoint.
 
-The private source archive includes repository code/docs/tests, excludes private
-keys, runtime secrets, Git internals and dependencies, and is checked against its
-recorded hashes. Hashes are integrity checks, not fabricated authority signatures.
-Source pairing remains available without becoming a blanket server-start blocker.
-Production secrets and customer data must not be put in this upload ZIP.
+Run Command needs the actual plugin running, outbound connectivity, and existing
+administrator permissions for `ocarun` (or execution as root). Those are Oracle
+and Linux execution requirements. The launcher cannot grant itself host sudo.
+IAM propagation can delay polling. Failure or timeout returns a nonzero result;
+resource creation or a queued command is never labeled successful installation.
+Resources already created remain in Terraform state for a controlled retry.
 
-If Apply times out, inspect OCI Console cloud-init output; IAM propagation,
-capacity, egress, RPM installation and image pulls can fail independently. The new
-instance has prevent_destroy protection. A failed job may leave provisioned
-resources; review its Terraform state/Plan before retrying. No automatic destroy,
-replacement or rollback of the existing VM occurs. The deployment script refuses
-to overwrite an existing source tree and is intended for first boot.
+The full 26-category catalog is preserved. This implementation actively connects
+Compute, existing networking, Resource Manager, Object Storage, Monitoring and
+Notifications to the application. Other catalog categories remain catalog-mapped;
+they are not silently claimed as provisioned or working application adapters.
+For example, adding a managed database does not automatically migrate SQLite.
+Terraform owns resource provisioning; the application automatically binds,
+checks and uses the supported resources after activation. It does not hold broad
+cloud administrator permissions or automatically provision every catalog entry.
+
+The backup bucket uses the shared documented 20-GB free-only storage ceiling,
+with a maximum 1-GB individual snapshot; neither value establishes remaining
+account-wide storage headroom. Existing usage, old release artifacts and backups
+all consume shared allowances. The code does not claim a billing cap or verify
+the tenancy's actual free balance. It stops uploading when its configured backup
+allocation is exhausted and does not delete ledger records or backups.
+
+TLS activation uses the existing domain names and requires real DNS resolution to
+the actual VM. Existing TLS configuration is preserved. New HTTP bootstrap exposes
+public assets/health only; an existing timer obtains genuine ACME certificates
+and activates the supplied HTTPS/WebSocket proxy when DNS is ready. This package
+does not control the existing DNS provider or rewrite mail records.
+
+Process health, successful backup, and cloud provisioning are distinct from full
+business readiness: `/readyz` still reports missing business authority/adapters.
+This package does not invent sessions, payments, notarial authority or signatures.
+The source and generated scripts are hash paired without a custom release-authorizer
+prerequisite. No live OCI Apply or host activation was executed in this workspace.

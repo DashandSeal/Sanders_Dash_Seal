@@ -1,10 +1,10 @@
 data "oci_identity_availability_domains" "available" {
-  compartment_id = var.tenancy_ocid
+  compartment_id = local.selected_tenancy
 }
 
 data "oci_core_images" "ol9_a1" {
   count = var.create_instance && var.image_ocid == "" ? 1 : 0
-  compartment_id = var.compartment_ocid
+  compartment_id = local.selected_compartment
   operating_system = "Oracle Linux"
   shape = "VM.Standard.A1.Flex"
   state = "AVAILABLE"
@@ -14,49 +14,71 @@ data "oci_core_images" "ol9_a1" {
 
 data "oci_core_subnet" "existing" {
   count = var.create_instance && !var.create_network ? 1 : 0
-  subnet_id = var.existing_subnet_ocid
+  subnet_id = local.selected_existing_subnet
 }
 data "oci_core_network_security_group" "existing" {
   count = var.create_instance && !var.create_network ? 1 : 0
-  network_security_group_id = var.existing_nsg_ocid
+  network_security_group_id = local.selected_existing_nsg
 }
 
+data "oci_core_instance" "deployment_target" {
+  count = local.deployment_enabled ? 1 : 0
+  instance_id = var.existing_instance_ocid
+}
+
+data "oci_core_vnic_attachments" "existing_target" {
+  count = local.deployment_enabled ? 1 : 0
+  compartment_id = local.selected_compartment
+  instance_id = var.existing_instance_ocid
+}
+data "oci_core_vnic" "existing_target" {
+  count = local.deployment_enabled ? 1 : 0
+  vnic_id = data.oci_core_vnic_attachments.existing_target[0].vnic_attachments[0].vnic_id
+}
 locals {
+  selected_compartment = var.compartment_ocid != "" ? var.compartment_ocid : try(data.oci_core_instance.deployment_target[0].compartment_id, "")
+  selected_tenancy = var.tenancy_ocid != "" ? var.tenancy_ocid : (startswith(local.selected_compartment, "ocid1.tenancy.") ? local.selected_compartment : "")
+  selected_existing_subnet = var.existing_subnet_ocid != "" ? var.existing_subnet_ocid : try(data.oci_core_vnic.existing_target[0].subnet_id, "")
+  selected_existing_nsg = var.existing_nsg_ocid != "" ? var.existing_nsg_ocid : try(sort(data.oci_core_vnic.existing_target[0].nsg_ids)[0], "")
+  deployment_enabled = var.create_instance || var.deploy_existing_instance
+  target_instance_id = var.create_instance ? oci_core_instance.sds_automated[0].id : var.existing_instance_ocid
+
   ol9_images = [for image in try(data.oci_core_images.ol9_a1[0].images, []) : image.id if can(regex("^9([.].*)?$", image.operating_system_version))]
-  subnet_id = var.create_network ? oci_core_subnet.public[0].id : var.existing_subnet_ocid
-  nsg_id = var.create_network ? oci_core_network_security_group.edge[0].id : var.existing_nsg_ocid
+  subnet_id = var.create_network ? oci_core_subnet.public[0].id : local.selected_existing_subnet
+  nsg_id = var.create_network ? oci_core_network_security_group.edge[0].id : local.selected_existing_nsg
   image_id = var.image_ocid != "" ? var.image_ocid : try(local.ol9_images[0], null)
   availability_domain = try(data.oci_identity_availability_domains.available.availability_domains[var.availability_domain_index].name, null)
-  policy_scope = var.compartment_ocid == var.tenancy_ocid ? "tenancy" : "compartment id ${var.compartment_ocid}"
-  deployment_id = substr(md5("${var.compartment_ocid}:${var.deployment_name}"), 0, 12)
+  policy_scope = local.selected_compartment == local.selected_tenancy ? "tenancy" : "compartment id ${local.selected_compartment}"
+  deployment_id = substr(md5("${local.selected_compartment}:${var.deployment_name}"), 0, 12)
   user_data = var.create_instance ? templatefile("${path.module}/cloud-init-application.yaml.tftpl", { release_config = jsonencode({
     commit = local.approved_commit,
-    tenancy_id = var.tenancy_ocid,
-    compartment_id = var.compartment_ocid,
+    tenancy_id = local.selected_tenancy,
+    compartment_id = local.selected_compartment,
     namespace = data.oci_objectstorage_namespace.release.namespace,
     bucket = oci_objectstorage_bucket.release[0].name,
     object = oci_objectstorage_object.release[0].object,
-    sha256 = filesha256("${path.module}/application.tgz")
+    sha256 = filesha256("${path.module}/application.tgz"),
+    resources = local.platform_bindings
   }) }) : ""
 }
 
 resource "oci_core_vcn" "isolated" {
   count = var.create_network ? 1 : 0
-  compartment_id = var.compartment_ocid
+  compartment_id = local.selected_compartment
   cidr_blocks = ["10.42.0.0/16"]
   display_name = "sds-automation-vcn"
   dns_label = "sdsauto"
 }
 resource "oci_core_internet_gateway" "edge" {
   count = var.create_network ? 1 : 0
-  compartment_id = var.compartment_ocid
+  compartment_id = local.selected_compartment
   vcn_id = oci_core_vcn.isolated[0].id
   enabled = true
   display_name = "sds-automation-igw"
 }
 resource "oci_core_route_table" "public" {
   count = var.create_network ? 1 : 0
-  compartment_id = var.compartment_ocid
+  compartment_id = local.selected_compartment
   vcn_id = oci_core_vcn.isolated[0].id
   display_name = "sds-automation-public-route"
   route_rules {
@@ -67,7 +89,7 @@ resource "oci_core_route_table" "public" {
 }
 resource "oci_core_security_list" "subnet" {
   count = var.create_network ? 1 : 0
-  compartment_id = var.compartment_ocid
+  compartment_id = local.selected_compartment
   vcn_id = oci_core_vcn.isolated[0].id
   display_name = "sds-automation-subnet-egress"
   egress_security_rules {
@@ -78,7 +100,7 @@ resource "oci_core_security_list" "subnet" {
 }
 resource "oci_core_subnet" "public" {
   count = var.create_network ? 1 : 0
-  compartment_id = var.compartment_ocid
+  compartment_id = local.selected_compartment
   vcn_id = oci_core_vcn.isolated[0].id
   cidr_block = "10.42.1.0/24"
   display_name = "sds-automation-public-subnet"
@@ -89,7 +111,7 @@ resource "oci_core_subnet" "public" {
 }
 resource "oci_core_network_security_group" "edge" {
   count = var.create_network ? 1 : 0
-  compartment_id = var.compartment_ocid
+  compartment_id = local.selected_compartment
   vcn_id = oci_core_vcn.isolated[0].id
   display_name = "ig-quick-action-NSG-automated"
 }
@@ -121,7 +143,7 @@ resource "oci_core_network_security_group_security_rule" "outbound" {
 resource "oci_core_instance" "sds_automated" {
   count = var.create_instance ? 1 : 0
   availability_domain = local.availability_domain
-  compartment_id = var.compartment_ocid
+  compartment_id = local.selected_compartment
   display_name = "sanders-dash-seal-automated"
   shape = "VM.Standard.A1.Flex"
   shape_config {
@@ -163,7 +185,7 @@ resource "oci_core_instance" "sds_automated" {
       error_message = "The selected subnet prohibits assigning a public IP."
     }
     precondition {
-      condition = !startswith(var.compartment_ocid, "ocid1.tenancy.") || var.compartment_ocid == var.tenancy_ocid
+      condition = !startswith(local.selected_compartment, "ocid1.tenancy.") || local.selected_compartment == local.selected_tenancy
       error_message = "The root compartment must be this tenancy's actual OCID."
     }
     precondition {
@@ -178,18 +200,18 @@ resource "oci_core_instance" "sds_automated" {
 }
 
 data "oci_objectstorage_namespace" "release" {
-  compartment_id = var.compartment_ocid
+  compartment_id = local.selected_compartment
 }
 resource "oci_objectstorage_bucket" "release" {
-  count = var.create_instance ? 1 : 0
-  compartment_id = var.compartment_ocid
+  count = local.deployment_enabled ? 1 : 0
+  compartment_id = local.selected_compartment
   namespace = data.oci_objectstorage_namespace.release.namespace
   name = "sds-release-${local.deployment_id}"
   access_type = "NoPublicAccess"
   storage_tier = "Standard"
 }
 resource "oci_objectstorage_object" "release" {
-  count = var.create_instance ? 1 : 0
+  count = local.deployment_enabled ? 1 : 0
   namespace = data.oci_objectstorage_namespace.release.namespace
   bucket = oci_objectstorage_bucket.release[0].name
   object = "releases/${local.approved_commit}.tgz"
@@ -197,24 +219,39 @@ resource "oci_objectstorage_object" "release" {
   content_type = "application/gzip"
 }
 resource "oci_identity_dynamic_group" "bootstrap" {
-  count = var.create_instance ? 1 : 0
-  compartment_id = var.tenancy_ocid
+  count = local.deployment_enabled ? 1 : 0
+  compartment_id = local.selected_tenancy
   name = "SDSBootstrap${local.deployment_id}"
   description = "Only this deployment instance may retrieve its private application release"
-  matching_rule = "ALL {instance.id = '${oci_core_instance.sds_automated[0].id}'}"
+  lifecycle {
+    precondition {
+      condition = !(var.create_instance && var.deploy_existing_instance)
+      error_message = "Select either the existing VM or a new VM, not both."
+    }
+    precondition {
+      condition = !var.deploy_existing_instance || try(data.oci_core_instance.deployment_target[0].compartment_id == local.selected_compartment, false)
+      error_message = "Use the actual compartment containing the existing VM."
+    }
+  }
+  matching_rule = "ALL {instance.id = '${local.target_instance_id}'}"
 }
 resource "oci_identity_policy" "bootstrap" {
-  count = var.create_instance ? 1 : 0
-  compartment_id = var.tenancy_ocid
+  count = local.deployment_enabled ? 1 : 0
+  compartment_id = local.selected_tenancy
   name = "SDSBootstrap${local.deployment_id}"
-  description = "Scoped read-only release retrieval and primary VNIC metadata"
+  description = "Exact-instance release retrieval, resource checks and private backup operations"
   statements = [
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read objects in ${local.policy_scope} where all {target.bucket.name='${oci_objectstorage_bucket.release[0].name}', request.permission='OBJECT_READ'}",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect instance-family in ${local.policy_scope}",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read vnics in ${local.policy_scope}",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect all-resources in ${local.policy_scope}",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect compartments in tenancy",
-    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect tenancies in tenancy"
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect tenancies in tenancy",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to use instance-agent-command-execution in ${local.policy_scope}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read buckets in ${local.policy_scope} where target.bucket.name='${oci_objectstorage_bucket.ledger[0].name}'",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to manage objects in ${local.policy_scope} where all {target.bucket.name='${oci_objectstorage_bucket.ledger[0].name}', any {request.permission='OBJECT_CREATE',request.permission='OBJECT_READ',request.permission='OBJECT_INSPECT'}}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read ons-topics in ${local.policy_scope}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to use metrics in ${local.policy_scope} where target.metrics.namespace='sds_platform'"
   ]
 }
 resource "terraform_data" "application_installation" {

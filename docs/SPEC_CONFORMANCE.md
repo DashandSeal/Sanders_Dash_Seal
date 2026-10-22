@@ -646,3 +646,14 @@ cloud creation, paid activation, account upgrade or replacement of SQLite is
 introduced. Keep inventory permission/freshness limitations, document trial vs
 free-only differences and do not claim deployment or live provider integration
 from catalog incorporation. Pair source changes and test denied/unknown states.
+
+
+## October 22 owner instruction: automatic Oracle implementation and hosting
+
+Source: owner request that Sanders Dash & Seal automatically implement the free resources and establish effective hosting on Oracle. Acceptance: replace catalog-only behavior with executable existing-instance deployment; provision private Standard backup storage, monitoring/notification resources and exact-instance IAM; bind actual identifiers to host configuration, enable online SQLite backup/restore verification and recurring resource checks. Reuse the owner's 1-OCPU/6-GB VM by default, with no additional compute, paid service, DNS purchase or account upgrade. Preserve all 26 documented categories; report unimplemented integrations explicitly. Resource Manager remains the cloud state owner. A Cloud Shell activation helper must run Plan, reject destructive/unsupported resource actions, Apply, dispatch the application install through the Oracle agent, and check actual execution status. Missing Oracle credentials or agent administrator permissions must return failure, never a false deployment success. This workspace cannot independently authenticate to the owner's Oracle account.
+
+
+Owner's direct-install follow-up: preserve immediate cloud-init start and Resource Manager Apply. Correct paid E4 to Always Free-eligible A1; use the supplied existing instance to discover actual compartment/network instead of fake OCIDs; package actual private source instead of invalid `https://github.com .`. A separately named direct ZIP selects NEW 1/6 A1 explicitly, while the existing-host ZIP remains available. Do not claim DNS control, actual cloud success or all-category service provisioning. Do not stop the existing platform with compose down.
+
+
+Validation for automatic activation: 297 local Python tests, one skipped; generated installer Bash syntax and HCL parsing pass. Official Terraform 1.5.7 initialized the signed OCI 9.11.0 provider successfully. Full Terraform validate could not start the provider because this workspace denies its Unix listening socket (`operation not permitted`); Oracle Resource Manager Plan is not reported as run. No actual Oracle provisioning, administrator permission change, DNS change or deployment was executed.

@@ -48,7 +48,13 @@ def fetch(config, *, runner=subprocess.run, pause=time.sleep):
                 stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                 timeout=30, check=False)
             if result.returncode == 0:
-                unpack(archive, '/opt/sds-approved-source', config['sha256'])
+                destination = Path('/opt/sds-approved-source-' + config['commit'])
+                if destination.exists():
+                    # Repeat activation is safe only for the exact intact prior release.
+                    verifier = destination / 'scripts/verify_release_source.py'
+                    runner(['python3', str(verifier), str(destination), config['commit']], check=True, timeout=30)
+                else:
+                    unpack(archive, destination, config['sha256'])
                 return
             if archive.exists(): archive.unlink()
             pause(15)

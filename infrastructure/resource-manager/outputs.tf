@@ -17,5 +17,5 @@ output "boot_profile" {
   value = "application"
 }
 output "application_status" {
-  value = var.create_instance ? "APPLICATION_INSTALLATION_CHECKED_BY_JOB: completion requires exact release and public process health. TLS and business-integration readiness remain separate; inspect /readyz and host logs." : "NOT_INSTALLED: additional resource creation is disabled; no deployment was performed by this stack."
+  value = var.create_instance ? "APPLICATION_INSTALLATION_CHECKED_BY_JOB: completion requires exact release and public process health. TLS and business-integration readiness remain separate; inspect /readyz and host logs." : (var.deploy_existing_instance ? "RESOURCES_PREPARED: activate_on_oracle.py dispatches and verifies installation on the existing VM; Apply alone does not run its agent command." : "DISABLED: no deployment selected.")
 }

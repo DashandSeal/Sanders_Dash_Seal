@@ -83,7 +83,7 @@ class ResourceManagerStackTests(unittest.TestCase):
     def test_private_artifact_and_exact_instance_iam_scope(self):
         main = packaged()['main.tf']
         self.assertIn('access_type = "NoPublicAccess"', main)
-        self.assertIn("instance.id = '${oci_core_instance.sds_automated[0].id}'", main)
+        self.assertIn("instance.id = '${local.target_instance_id}'", main)
         self.assertIn("request.permission='OBJECT_READ'", main)
         self.assertNotIn('preauthenticated', main)
         self.assertIn('VM.Standard.A1.Flex', main)

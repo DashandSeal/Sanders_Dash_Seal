@@ -23,7 +23,7 @@ fi
 install -d -m 0700 /var/lib/sanders-dash-seal
 # OCI IAM propagation can take time; download only the named private object.
 python3 /usr/local/sbin/sds-fetch-release /etc/sanders-dash-seal/release.json
-source_dir=/opt/sds-approved-source
+source_dir=$(python3 -c 'import json; c=json.load(open("/etc/sanders-dash-seal/release.json")); print("/opt/sds-approved-source-"+c["commit"])')
 export SDS_SOURCE_DIR="$source_dir"
 commit=$(python3 -c 'import json;print(json.load(open("/etc/sanders-dash-seal/release.json"))["commit"])')
 python3 "$source_dir/scripts/verify_release_source.py" "$source_dir" "$commit"
@@ -37,7 +37,9 @@ bash "$source_dir/run_preflight_checks.sh" --commit "$commit"
 install -d -m 0755 "$SDS_STATE_DIR/public"
 compose config --quiet
 compose build pipeline-worker wsgi-backend
-install -m 0644 "$SDS_PROJECT_DIR/deploy/nginx.http.conf" "$SDS_STATE_DIR/nginx.active.conf"
+if [[ ! -s "$SDS_STATE_DIR/nginx.active.conf" ]]; then
+    install -m 0644 "$SDS_PROJECT_DIR/deploy/nginx.http.conf" "$SDS_STATE_DIR/nginx.active.conf"
+fi
 # Preserve the supplied TLS configuration; active configuration transitions only
 # after genuine ACME issuance. HTTP exposes public assets and health, no secrets.
 compose up -d pipeline-worker wsgi-backend reverse-proxy
@@ -48,13 +50,6 @@ for attempt in {1..30}; do
     sleep 2
 done
 compose exec -T reverse-proxy nginx -t
-python3 - "$SDS_STATE_DIR/public/release-status.json" "$commit" <<'STATUS'
-import json,sys
-from pathlib import Path
-Path(sys.argv[1]).write_text(json.dumps({'platform':'Sanders Dash & Seal','commit':sys.argv[2],
-    'application_installed':True,'started_services':['nginx','node','python','sqlite'],
-    'business_integrations_verified':False})+'\n')
-STATUS
 python3 - <<'INVENTORY'
 import json,urllib.request
 from pathlib import Path
@@ -68,10 +63,35 @@ record={'schema':1,'tenancy_id':cfg['tenancy_id'],'compartment_id':cfg['compartm
 p=Path('/etc/sanders-dash-seal/inventory.json');p.write_text(json.dumps(record));p.chmod(0o600)
 INVENTORY
 install_monitors
+python3 - <<'BIND'
+import json,urllib.request
+from pathlib import Path
+config=json.loads(Path('/etc/sanders-dash-seal/release.json').read_text())
+if config.get('resources'):
+    resource=config['resources']
+    request=urllib.request.Request('http://169.254.169.254/opc/v2/instance/id',headers={'Authorization':'Bearer Oracle'})
+    with urllib.request.build_opener(urllib.request.ProxyHandler({})).open(request,timeout=5) as response:
+        identity=response.read(1024).decode().strip()
+    if resource.get('instance_id') and resource['instance_id'] != identity:
+        raise SystemExit('Resource binding belongs to a different VM')
+    resource['instance_id']=identity
+    destination=Path('/etc/sanders-dash-seal/resources.json')
+    destination.write_text(json.dumps(resource));destination.chmod(0o600)
+BIND
+if [[ -f /etc/sanders-dash-seal/resources.json ]]; then
+    python3 "$SDS_PROJECT_DIR/deploy/bind_free_resources.py" --install --backup
+fi
 install -m 0644 "$SDS_PROJECT_DIR/deploy/systemd/sanders-tls-activate.service" /etc/systemd/system/
 install -m 0644 "$SDS_PROJECT_DIR/deploy/systemd/sanders-tls-activate.timer" /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable --now sanders-tls-activate.timer
 # TLS waits for actual DNS ownership/routing. It never substitutes a self-signed certificate.
 systemctl start sanders-tls-activate.service || echo 'TLS_PENDING_DNS: see sanders-tls-activate journal.'
+python3 - "$SDS_STATE_DIR/public/release-status.json" "$commit" <<'STATUS'
+import json,sys
+from pathlib import Path
+Path(sys.argv[1]).write_text(json.dumps({'platform':'Sanders Dash & Seal','commit':sys.argv[2],
+    'application_installed':True,'started_services':['nginx','node','python','sqlite'],
+    'business_integrations_verified':False})+'\n')
+STATUS
 echo 'APPLICATION_INSTALLED: Node, Python, SQLite and Nginx started; review /readyz for business integration readiness.'

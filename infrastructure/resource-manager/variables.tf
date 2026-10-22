@@ -1,16 +1,18 @@
 variable "tenancy_ocid" {
   type = string
+  default = ""
   description = "Actual tenancy OCID; Resource Manager prepopulates this."
   validation {
-    condition = can(regex("^ocid1\\.tenancy\\.oc1\\.\\.[A-Za-z0-9]{40,}$", var.tenancy_ocid))
+    condition = var.tenancy_ocid == "" || can(regex("^ocid1\\.tenancy\\.oc1\\.\\.[A-Za-z0-9]{40,}$", var.tenancy_ocid))
     error_message = "Use the actual tenancy OCID."
   }
 }
 variable "compartment_ocid" {
   type = string
+  default = ""
   description = "Actual root tenancy OCID or selected compartment OCID."
   validation {
-    condition = can(regex("^ocid1\\.(tenancy|compartment)\\.oc1\\.\\.[A-Za-z0-9]{40,}$", var.compartment_ocid))
+    condition = var.compartment_ocid == "" || can(regex("^ocid1\\.(tenancy|compartment)\\.oc1\\.\\.[A-Za-z0-9]{40,}$", var.compartment_ocid))
     error_message = "Use a complete actual compartment/root tenancy OCID."
   }
 }
@@ -86,5 +88,19 @@ variable "deployment_name" {
   validation {
     condition = can(regex("^[a-z][a-z0-9-]{2,39}$", var.deployment_name))
     error_message = "Use 3–40 lowercase letters, digits and hyphens."
+  }
+}
+
+variable "deploy_existing_instance" {
+  type = bool
+  default = true
+  description = "Prepare automatic application installation on the owner's existing A1 VM. No additional compute."
+}
+variable "existing_instance_ocid" {
+  type = string
+  default = "ocid1.instance.oc1.phx.anyhqljrftib4xqcn3nk7tzuyteftz65vngafs5ww72uwuoeihel57urzhha"
+  validation {
+    condition = can(regex("^ocid1\\.instance\\.oc1\\.phx\\.[A-Za-z0-9]+$", var.existing_instance_ocid))
+    error_message = "Select the existing Phoenix instance OCID."
   }
 }
