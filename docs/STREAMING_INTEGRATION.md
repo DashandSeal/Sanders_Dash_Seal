@@ -207,3 +207,7 @@ or maximum measured throughput. Unsigned source pairs remain deployment blockers
 - https://docs.oracle.com/en-us/iaas/tools/python/latest/api/sch/models/oci.sch.models.FunctionTaskDetails.html
 - https://docs.oracle.com/en-us/iaas/tools/python/latest/api/sch/models/oci.sch.models.ObjectStorageTargetDetails.html
 - https://blogs.oracle.com/developers/archiving-stream-data-to-object-storage-with-service-connectors
+
+The latest owner-authorized dependency/security and live-verification procedure
+is recorded in [LIVE_VERIFICATION.md](LIVE_VERIFICATION.md). It includes the
+public-subnet Service Gateway routing constraint and read-only identity checks.

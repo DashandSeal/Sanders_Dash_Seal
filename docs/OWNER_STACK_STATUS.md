@@ -5,7 +5,8 @@ on Oracle and has not been merged into main. No paid service has been added.
 
 ## Owner-provided definitions
 
-- worker/package.json retains the owner's exact Node engine and ws 8.16.0 pin.
+- worker/package.json retains the owner's Node engine and now pins ws 8.22.0,
+  following the owner's later 8.17.1-or-later remediation instruction.
 - worker/Dockerfile retains the supplied node:20.12.2-alpine multi-stage definition.
 - docker-compose.yml retains the supplied three service definitions, names,
   restart policies, network, volumes and configuration. compose.yaml now matches
@@ -103,3 +104,12 @@ wiring, signed-event contract and remaining live dependencies. Original Function
 files remain intact; use the staged integrated manifest for the connected path.
 Node/WebSockets and existing business APIs remain part of the stack. No live
 frontend cutover, resource provisioning or whole-platform zero-idle claim is made.
+
+## Owner-authorized dependency remediation
+
+The later 8.17.1-or-later instruction supersedes the earlier 8.16.0 constraint.
+Both direct dependency and override now pin ws 8.22.0, with a regenerated lockfile.
+The production npm audit reports zero known vulnerabilities; historical audit
+failures above describe earlier revisions. See LIVE_VERIFICATION.md for real
+resource mapping checks, supported Service Gateway routing and the live receipt/
+backup procedure. No Oracle deployment is implied by dependency remediation.

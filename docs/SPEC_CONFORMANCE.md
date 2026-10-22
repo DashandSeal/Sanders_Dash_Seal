@@ -438,3 +438,35 @@ and runs the actual FDK protocol checks. Live OCI resources, ARM64 image release
 private DNS/TLS route, signing identities, business bindings and frontend direct
 publishing remain external dependencies. Existing ws 8.16.0 audit failures are
 not removed or bypassed. No paid service or production deployment occurred.
+
+## October 21 owner-authorized ws upgrade and live verification acceptance
+
+Source: owner's Step 1–3 dependency remediation, OCI mapping, private service
+routing and deployment/receipt/backup loop. The explicit ws 8.17.1-or-later
+instruction supersedes the earlier exact 8.16.0 pin/override. Preserve metadata
+and architecture; select current patched 8.x, regenerate lockfile, run npm ci,
+production audit, existing relay tests and CI builds without suppressing findings.
+Current registry/audit and maintainer advisories identify 8.22.0 as the latest
+8.x; 8.17.1 remains affected by later disclosure/fragmentation advisories.
+
+Do not label the supplied readable OCIDs, ://oraclecloud.com endpoint or sample
+signature as verified identities/credentials. Do not check .env.secrets into git.
+Add read-only environment/resource identity validation that rejects placeholders,
+checks real CLI API responses and never creates resources or changes routes.
+Correct the deployment verification procedure to preserve the existing Compose
+project/production override, use the actual named SQLite volume, real signed
+supported operations and independent backup restore evidence. No compose down,
+notarial verification assertion, fake signature, public root-path receipt test
+or bucket listing alone establishes live production readiness. Actual Oracle
+queries/deployment remain unavailable without authenticated host access.
+
+Remediation evidence: package and override both pin ws 8.22.0; npm install
+--package-lock-only and npm ci --ignore-scripts completed. npm audit --omit=dev
+reports zero known vulnerabilities. The selected Node/Python/SQLite relay and
+all 220 Python tests pass, including nine read-only identity/placeholder/IAM/
+compartment/privacy checks. An isolated 270-file snapshot passes forensic audit
+with zero anomalies; all 112 paired hashes match and remain unsigned. No actual
+OCI API request or host change occurred. Oracle's documented public-subnet
+Internet Gateway + All Services Service Gateway conflict is reflected in the
+live-verification guide; no unsupported route was applied. The supplied sample
+notarial payload/signature is not represented as a real authorized transaction.
