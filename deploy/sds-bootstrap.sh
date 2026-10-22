@@ -8,6 +8,7 @@ SDS_BOOTSTRAP_MODE=${SDS_BOOTSTRAP_MODE:-stage}
 SDS_TUNE_KERNEL=${SDS_TUNE_KERNEL:-0}
 
 bootstrap_fail() { printf 'Standardization stopped: %s\n' "$*" >&2; return 1; }
+require_bootstrap_root() { [[ "$EUID" == 0 ]] || bootstrap_fail 'Cloud-init driver requires root.'; }
 
 prepare_checkout() {
     [[ "${SDS_BOOTSTRAP_COMMIT:-}" =~ ^[0-9a-f]{40}$ ]] || bootstrap_fail 'Exact approved commit SHA required.'
@@ -71,7 +72,7 @@ stage_node() {
 }
 
 bootstrap_main() {
-    [[ "$EUID" == 0 ]] || bootstrap_fail 'Cloud-init driver requires root.'
+    require_bootstrap_root
     [[ "$SDS_BOOTSTRAP_MODE" == stage || "$SDS_BOOTSTRAP_MODE" == activate ]] \
         || bootstrap_fail 'Use stage or activate mode.'
     [[ "$SDS_TUNE_KERNEL" == 0 || "$SDS_TUNE_KERNEL" == 1 ]] || bootstrap_fail 'Invalid tuning selection.'

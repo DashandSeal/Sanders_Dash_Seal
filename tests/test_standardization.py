@@ -140,6 +140,7 @@ stage_node
         result = self.shell('''
 SDS_BOOTSTRAP_MODE=activate
 unset SDS_PUBLIC_IPV4
+require_bootstrap_root() { :; }
 prepare_checkout() { echo CHECKOUT; }
 bootstrap_main
 ''')
@@ -152,6 +153,7 @@ bootstrap_main
             result = self.shell('''
 SDS_BOOTSTRAP_MODE=stage
 SDS_SOURCE_DIR="$2"
+require_bootstrap_root() { :; }
 prepare_checkout() { :; }
 verify_bootstrap_source() { echo DENIED; return 9; }
 bootstrap_main
