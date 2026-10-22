@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "core_platform/sidecar_protection_gates.py",
+    "payload_hash": "58a605770d689161ac23b242253ea456c9c22405736ab6318f3c65bb28651b60",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_DEPLOYMENT_BLOCKED"
+}

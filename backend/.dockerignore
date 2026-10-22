@@ -1,0 +1,6 @@
+**
+!Dockerfile
+!platform-source.json
+!unpack.py
+!wsgi.py
+!wsgi.py.pbd.json

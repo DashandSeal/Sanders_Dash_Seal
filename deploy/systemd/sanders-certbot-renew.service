@@ -1,0 +1,10 @@
+[Unit]
+Description=Renew Sanders Dash & Seal certificates and gracefully reload Nginx
+After=docker.service network-online.target
+Wants=network-online.target
+Requires=docker.service
+
+[Service]
+Type=oneshot
+TimeoutStartSec=20min
+ExecStart=/bin/bash /opt/sanders-dash-seal/deploy/renew-certificates.sh

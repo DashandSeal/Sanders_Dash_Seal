@@ -1,0 +1,20 @@
+[Unit]
+Description=Sanders Dash & Seal read-only OCI inventory and expected-resource checks
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/sanders-dash-seal
+Environment=PATH=/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/python3 /opt/sanders-dash-seal/deploy/oci_inventory.py
+UMask=0077
+TimeoutStartSec=10min
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+StateDirectory=sanders-dash-seal/oci-inventory
+StateDirectoryMode=0700
+ReadWritePaths=/var/lib/sanders-dash-seal/oci-inventory

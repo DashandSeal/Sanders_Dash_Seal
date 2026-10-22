@@ -1,0 +1,40 @@
+services:
+  reverse-proxy:
+    volumes:
+      - /var/lib/sanders-dash-seal/nginx.active.conf:/etc/nginx/nginx.conf:ro,Z
+      - ./web:/srv/sanders-public:ro,Z
+      - /var/lib/sanders-dash-seal/public:/srv/sds-status:ro,Z
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  pipeline-worker:
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://127.0.0.1:3000/health',r=>{r.resume();process.exitCode=r.statusCode===200?0:1}).on('error',()=>{process.exitCode=1})"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  wsgi-backend:
+    volumes:
+      - /etc/sanders-dash-seal/runtime:/run/sds:ro,Z
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/healthz',headers={'Host':'sandersdashandseal.com'}),timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+  certbot:
+    image: certbot/certbot:v5.8.0
+    profiles: [maintenance]
+    volumes:
+      - certs_volume:/etc/letsencrypt
+      - certbot_validation_volume:/var/www/certbot
+    networks: [sds_production_network]
+  acme-bootstrap:
+    image: nginx:1.25-alpine
+    profiles: [maintenance]
+    ports: ["80:80"]
+    volumes:
+      - ./deploy/nginx.acme.conf:/etc/nginx/nginx.conf:ro,Z
+      - certbot_validation_volume:/var/www/certbot:ro
+    networks: [sds_production_network]

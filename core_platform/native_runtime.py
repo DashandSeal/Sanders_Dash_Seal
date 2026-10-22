@@ -1,0 +1,164 @@
+"""Concrete server composition for customer intake, payments and ingestion.
+
+Customer accounts prove account access, never commission, signer identity or
+independent AI authority. Those authorities remain separate from this runtime.
+"""
+import hashlib
+import io
+import json
+import os
+from pathlib import Path
+import sqlite3
+
+from .accounts import AccountStore, auth_app
+from .appointments import AppointmentStore
+from .appointment_payments import AppointmentPayments
+from .cases import CaseRegistry
+from .deployment import RuntimeBindings, create_application, ORIGIN, _response
+from .glass_box_audit import GlassBoxAudit
+from .pipeline_api import TransactionStore, TransactionRejected, create_pipeline_app
+from .stripe_payments import PaymentLedger, PaymentDenied
+from .stripe_webhook_wsgi import make_app
+from .stream_api import strict_json
+from .upgrade_sidecar import CORE_LAWS
+
+
+class UnconfiguredStripeClient:
+    def __getattr__(self,name):raise PaymentDenied('Stripe credentials unavailable')
+
+
+def read_settings(path):
+    path=Path(path)
+    if not path.exists():return {}
+    info=path.stat()
+    if path.is_symlink() or info.st_uid!=0 or info.st_mode & 0o037 or info.st_size>16384:
+        raise ValueError('Runtime secret configuration must be root-owned, private and bounded')
+    settings=json.loads(path.read_text())
+    if not isinstance(settings,dict) or set(settings)-{
+        'owner_setup_digest','owner_setup_expires','stripe_api_key','stripe_webhook_secret','stripe_livemode'}:
+        raise ValueError('Invalid runtime configuration fields')
+    return settings
+
+
+class NativeRuntime:
+    def __init__(self,path,settings=None,*,stripe_client=None):
+        self.path=str(path);Path(path).parent.mkdir(parents=True,exist_ok=True)
+        os.umask(0o077)
+        os.chmod(Path(path).parent,0o700)
+        settings={} if settings is None else settings
+        self.accounts=AccountStore(path,setup_digest=settings.get('owner_setup_digest'),
+            setup_expires=settings.get('owner_setup_expires',0))
+        self.audit=GlassBoxAudit(Path(path).with_name('sds_audit.db'))
+        self.cases=CaseRegistry(path,CORE_LAWS)
+        self.appointments=AppointmentStore(self.cases,self.audit)
+        self.ledger=PaymentLedger(path)
+        self.store=TransactionStore(path)
+        with self.store.connect() as db:
+            db.execute('''CREATE TABLE IF NOT EXISTS sds_ingestion_events (
+                actor TEXT NOT NULL, request_id TEXT NOT NULL, payload TEXT NOT NULL,
+                sha256_digest TEXT NOT NULL, status TEXT NOT NULL,
+                PRIMARY KEY(actor,request_id))''')
+        livemode=settings.get('stripe_livemode',True)
+        if type(livemode) is not bool:raise ValueError('Explicit Stripe environment must be boolean')
+        key=settings.get('stripe_api_key')
+        secret=settings.get('stripe_webhook_secret')
+        if key:
+            prefix='rk_live_' if livemode else 'rk_test_'
+            if not isinstance(key,str) or not key.startswith(prefix):
+                raise ValueError('Restricted Stripe key must match configured environment')
+        if secret and (not isinstance(secret,str) or not secret.startswith('whsec_')):
+            raise ValueError('Invalid Stripe webhook secret configuration')
+        if key and secret and stripe_client is None:
+            from stripe import StripeClient
+            stripe_client=StripeClient(key,stripe_version='2026-08-26.dahlia',max_network_retries=2)
+        self.payments_configured=bool(key and secret)
+        # A test-supplied client never changes whether production credentials exist.
+        client=stripe_client or UnconfiguredStripeClient()
+        self.payments=AppointmentPayments(self.appointments,self.ledger,client,
+            self.accounts.operator,self.fee_review,self.checkout_eligibility,self.audit,ORIGIN,
+            expected_livemode=livemode)
+        self.webhook=make_app(self.ledger,secret,enabled=bool(secret),expected_livemode=livemode)
+        self.bindings=RuntimeBindings(self.appointments,self.payments,self.accounts.authenticate,
+            auth_app(self.accounts,ORIGIN),self.available,self.webhook,self.process_event,self.store)
+        self.base=create_application(self.bindings)
+        self.pipeline=create_pipeline_app(self.accounts.authenticate,self.process_event,self.available,self.store)
+
+    def available(self):
+        # Core service readiness is not permission to perform a privileged AI/notarial operation.
+        try:
+            self.audit.verify_audit()
+            with self.store.connect() as db:
+                return db.execute('PRAGMA quick_check').fetchone()[0]=='ok'
+        except Exception:
+            return False
+
+    def fee_review(self,case,actor,items):
+        # The authenticated operator's itemized approval is a human decision,
+        # not an automated certification of statutory fee or commission compliance.
+        if not self.accounts.operator(actor):return False
+        self.audit.preserve({'stage':'HUMAN_ITEMIZED_QUOTE_REVIEW', 'case_id':case['case_id'],
+                            'actor':actor,'items_sha256':hashlib.sha256(json.dumps(items,sort_keys=True).encode()).hexdigest()})
+        return True
+
+    def checkout_eligibility(self,appointment,requester):
+        self.appointments.get(appointment['case_id'],requester)
+        with self.appointments.connect() as db:
+            row=db.execute('SELECT 1 FROM appointment_quotes WHERE case_id=?',(appointment['case_id'],)).fetchone()
+        return bool(row)
+
+    def process_event(self,transaction,actor,db):
+        if (set(transaction)!={'request_id','action','payload'} or transaction['action']!='dispatch_transaction'
+            or not isinstance(transaction['payload'],dict)):
+            raise TransactionRejected('Only authenticated ingestion is available through this transport')
+        raw=json.dumps(transaction['payload'],sort_keys=True,separators=(',',':'),allow_nan=False)
+        if len(raw.encode())>65536:raise TransactionRejected('Payload too large')
+        checksum=hashlib.sha256(raw.encode()).hexdigest()
+        db.execute('INSERT INTO sds_ingestion_events VALUES (?,?,?,?,?)',
+                   (actor,transaction['request_id'],raw,checksum,'RECEIVED'))
+        return {'status':'RECEIVED','sha256_digest':checksum,'notarial_act_executed':False}
+
+    def status(self):
+        return {'platform':'Sanders Dash & Seal','accounts':True,'appointment_intake':True,
+            'operator_quotes':True,'durable_ingestion':True,'stripe_credentials_configured':self.payments_configured,
+            'live_payment_verified':False,'notarial_execution_connected':False,
+            'independent_ai_authorities_connected':False,'complete_build_verified':False}
+
+    def __call__(self,env,start):
+        path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
+        if host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
+            return self.base(env,start)
+        if path=='/api/platform/status':
+            if env.get('REQUEST_METHOD')!='GET':return _response(start,'405 Method Not Allowed',{'error':'read_only'})
+            return _response(start,'200 OK',self.status())
+        if path=='/readyz' and env.get('REQUEST_METHOD')=='GET':
+            ready=self.available()
+            return _response(start,'200 OK' if ready else '503 Service Unavailable',
+                {'service_ready':ready,'complete_build_ready':False,'capabilities':self.status()})
+        if path=='/api/pipeline/events':
+            if env.get('REQUEST_METHOD')!='POST':return _response(start,'405 Method Not Allowed',{'error':'post_required'})
+            if self.accounts.authenticate(env) is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
+            if 'HTTP_AUTHORIZATION' not in env and env.get('HTTP_ORIGIN')!=ORIGIN:
+                return _response(start,'403 Forbidden',{'error':'origin_denied'})
+            if env.get('CONTENT_TYPE','').split(';')[0]!='application/json':
+                return _response(start,'415 Unsupported Media Type',{'error':'json_required'})
+            try:
+                n=int(env.get('CONTENT_LENGTH','0'))
+                if not 0<n<=70000:raise ValueError()
+                raw=env['wsgi.input'].read(n)
+                if len(raw)!=n:raise ValueError()
+                transaction=strict_json(raw)
+                data=json.dumps({'transaction':transaction,'session':{
+                    'authorization':'Bearer '+self.accounts.credential(env)}}).encode()
+            except (ValueError,TypeError,KeyError,UnicodeError,RecursionError):
+                return _response(start,'400 Bad Request',{'error':'invalid_request'})
+            internal=dict(env,PATH_INFO='/api/transactions/process',CONTENT_LENGTH=str(len(data)),
+                          **{'wsgi.input':io.BytesIO(data)})
+            return self.pipeline(internal,start)
+        return self.base(env,start)
+
+
+def create_native_application(path=None,*,config_path=None,settings=None,stripe_client=None):
+    path=path or os.environ.get('SQLITE_DB_PATH','/app/data/sds_production.db')
+    if settings is None:
+        settings=read_settings(config_path or '/run/sds/runtime.json')
+    return NativeRuntime(path,settings,stripe_client=stripe_client)
