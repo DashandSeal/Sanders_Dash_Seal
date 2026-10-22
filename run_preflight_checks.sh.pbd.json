@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "run_preflight_checks.sh",
+    "payload_hash": "c815ba0e89e5d8306319354dd492d0ea412847363d408706d28837b6f78b520b",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_DEPLOYMENT_BLOCKED"
+}

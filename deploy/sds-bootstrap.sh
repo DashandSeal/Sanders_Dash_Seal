@@ -49,6 +49,14 @@ verify_bootstrap_source() {
     "$authorizer" "$SDS_SOURCE_DIR" "$SDS_BOOTSTRAP_COMMIT"
 }
 
+validate_candidate() {
+    bash "$SDS_SOURCE_DIR/run_preflight_checks.sh" --commit "$SDS_BOOTSTRAP_COMMIT"
+}
+
+verify_instance_context() {
+    python3 "$SDS_SOURCE_DIR/scripts/scan_identity_metadata.py"
+}
+
 stage_node() {
     check_source "$SDS_SOURCE_DIR"
     check_host
@@ -66,6 +74,7 @@ stage_node() {
     export SDS_RUNTIME_ENV_FILE
     compose config --quiet
     compose build pipeline-worker wsgi-backend
+    validate_candidate
     apply_kernel_profile
     install_integrity_monitor
     install_inventory_monitor
@@ -89,6 +98,8 @@ bootstrap_main() {
     if [[ "$SDS_BOOTSTRAP_MODE" == stage ]]; then
         stage_node
     else
+        verify_instance_context
+        validate_candidate
         main --apply
         apply_kernel_profile
         printf 'ACTIVATED: existing deployment readiness checks passed on this host.\n'

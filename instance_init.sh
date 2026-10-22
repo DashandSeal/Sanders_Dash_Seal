@@ -1,7 +1,12 @@
 #!/bin/bash
 # Owner's production automation profile, integrated with the authorized bootstrap.
 set -Eeuo pipefail
-trap 'printf "Initializer failed; activation was not reported as successful.\n" >&2' ERR
+initializer_failure() {
+    local result=$?
+    printf 'Initializer failed (exit %s); activation was not reported as successful.\n' "$result" >&2
+    exit "$result"
+}
+trap initializer_failure ERR
 
 init_fail() { printf 'Initializer stopped: %s\n' "$*" >&2; return 1; }
 

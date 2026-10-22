@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "deploy/preflight.Dockerfile",
+    "payload_hash": "fe5419f361a3caa413a41dafbb3dc4c555881268c7d7121f80a9e17146bf074a",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_DEPLOYMENT_BLOCKED"
+}

@@ -4,6 +4,9 @@
   "private": true,
   "description": "Hardened Real-Time Data Ingestion Subsystem for Sanders Dash & Seal",
   "main": "src/index.js",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=10.0.0"

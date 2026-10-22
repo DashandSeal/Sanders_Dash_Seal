@@ -14,7 +14,7 @@ sudo bash /opt/sanders-dash-seal/instance_init.sh --stage --commit "$APPROVED_CO
 Supply the full actual 40-character commit SHA, not a PR label or moving branch.
 The bootstrap checks out that revision, verifies independent release authority
 before loading repository code as root, and checks protected runtime bindings.
-Stage mode builds the worker/backend and installs integrity/inventory timers.
+Stage mode builds the worker/backend, runs isolated dual-engine preflight, and installs integrity/inventory timers.
 It starts no application containers and refuses to rebaseline an existing host.
 The selected revision must include the bootstrap and monitoring functions.
 
@@ -26,7 +26,8 @@ sudo bash /opt/sanders-dash-seal/instance_init.sh --activate \
   --commit "$APPROVED_COMMIT" --public-ipv4 "$VERIFIED_NODE_PUBLIC_IPV4"
 ```
 
-This delegates to `deploy.sh --apply`; the existing Compose project and production
+Activation observes local IMDSv2 identity/state and runs the same isolated
+preflight before delegating to `deploy.sh --apply`; the existing Compose project and production
 override, ACME, runtime authority and readiness checks still apply. Stage and
 activate are separate invocations. A failed stage cannot fall through into an
 activation command. Errors propagate a nonzero status; errors are not automatically
@@ -42,16 +43,17 @@ still provisioned through the established secure path.
 
 ## Corrections to the submitted commands
 
-- The supplied metadata URL is incomplete. The initializer needs no metadata
-  hostname request: OCI assigns each VNIC's network addresses. Passing a distinct
+- The supplied metadata URL is incomplete. The supplemental helper now observes
+  documented IMDSv2 fields; OCI assigns each VNIC's network addresses. Passing a distinct
   public address here selects deployment/DNS validation; it does not assign DHCP,
   reserve a public IP, modify a VNIC or configure a subnet address.
 - `TARGET_COMMIT` in the submitted script only printed a placeholder. The real
   initializer passes a full commit to the checkout and independent verifier.
-- The worker manifest has no `npm test` script, and a worker test cannot stand in
-  for Python, Nginx, Function or full-stack CI. CI runs the actual suites; approval
-  of the exact release and real runtime remains independent. No test success
-  message is fabricated by this script.
+- The newly added worker `npm test` command runs all actual Node test files in
+  the dedicated validation image. The Python validation image runs unittest
+  discovery, matching this repository's suite. Production images do not contain
+  these full test environments; see `docs/PREFLIGHT_VALIDATION.md`. Approval of
+  the exact release and real runtime remains independent of a passing suite.
 - The existing deployment builds both app images and retains the production
   Compose override/project identity. No uncontrolled image pull, forced no-cache
   rebuild, stack shutdown or orphan deletion is introduced.

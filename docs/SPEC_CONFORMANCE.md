@@ -521,3 +521,21 @@ claim a Node test runs the whole Python suite, pull uncontrolled images, remove
 orphans or rewrite the current production stack. Clarify that current inventory
 observes selected identity/state metadata, not IAM policy or bucket-setting
 contents, and that passing development CI is not complete live verification.
+
+## October 22 dual-engine preflight and local IMDS integration acceptance
+
+Source: owner's run_preflight_checks.sh, revised initializer and local metadata
+helper. Preserve submitted scripts separately. Implement actual Node and Python
+regressions in disposable validation containers containing their test sources,
+without production volumes/ports/secrets or missing pytest/npm commands. Require
+an exact clean source commit; use the existing independent release verifier
+before bootstrap invokes source validation. Run preflight on stage/activation
+without making a passing suite grant release authority. Preserve original exit
+codes, separate activation, and the existing cross-region inventory timer.
+Add a bounded fixed-endpoint IMDSv2 helper using the documented instance id,
+hostname, canonicalRegionName and state keys, not an invalid URL/lifecycleState
+key or success-looking fallback. Local metadata is supplemental evidence and
+must not replace compartment inventory or be called cryptographic attestation.
+Do not hardcode an unverified SHA, require .git in the archived production tree,
+claim static test totals or 100% full production verification. No live host calls
+or application start are authorized merely by running development tests.
