@@ -12,6 +12,14 @@ if ! command -v docker >/dev/null || ! docker compose version >/dev/null 2>&1; t
     dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 fi
 systemctl enable --now docker firewalld
+interface=$(ip -4 route show default | awk 'NR==1 {for(i=1;i<=NF;i++)if($i=="dev"){print $(i+1);exit}}')
+[[ -n "$interface" ]]
+zone=$(firewall-cmd --get-zone-of-interface="$interface" || true)
+if [[ -z "$zone" || "$zone" == 'no zone' ]]; then
+    zone=$(firewall-cmd --get-default-zone)
+    firewall-cmd --zone="$zone" --change-interface="$interface"
+    firewall-cmd --permanent --zone="$zone" --change-interface="$interface"
+fi
 install -d -m 0700 /var/lib/sanders-dash-seal
 # OCI IAM propagation can take time; download only the named private object.
 python3 /usr/local/sbin/sds-fetch-release /etc/sanders-dash-seal/release.json
@@ -47,6 +55,18 @@ Path(sys.argv[1]).write_text(json.dumps({'platform':'Sanders Dash & Seal','commi
     'application_installed':True,'started_services':['nginx','node','python','sqlite'],
     'business_integrations_verified':False})+'\n')
 STATUS
+python3 - <<'INVENTORY'
+import json,urllib.request
+from pathlib import Path
+cfg=json.loads(Path('/etc/sanders-dash-seal/release.json').read_text())
+req=urllib.request.Request('http://169.254.169.254/opc/v2/instance/',headers={'Authorization':'Bearer Oracle'})
+opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
+with opener.open(req,timeout=5) as response: instance=json.loads(response.read(65536))
+record={'schema':1,'tenancy_id':cfg['tenancy_id'],'compartment_id':cfg['compartment_id'],
+ 'home_region':'us-phoenix-1','expected':[{'identifier':instance['id'],'resource_type':'Instance',
+ 'region':'us-phoenix-1','compartment_id':cfg['compartment_id'],'allowed_states':['RUNNING']}]}
+p=Path('/etc/sanders-dash-seal/inventory.json');p.write_text(json.dumps(record));p.chmod(0o600)
+INVENTORY
 install_monitors
 install -m 0644 "$SDS_PROJECT_DIR/deploy/systemd/sanders-tls-activate.service" /etc/systemd/system/
 install -m 0644 "$SDS_PROJECT_DIR/deploy/systemd/sanders-tls-activate.timer" /etc/systemd/system/

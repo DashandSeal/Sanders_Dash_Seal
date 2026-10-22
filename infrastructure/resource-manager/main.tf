@@ -30,6 +30,8 @@ locals {
   deployment_id = substr(md5("${var.compartment_ocid}:${var.deployment_name}"), 0, 12)
   user_data = var.create_instance ? templatefile("${path.module}/cloud-init-application.yaml.tftpl", { release_config = jsonencode({
     commit = local.approved_commit,
+    tenancy_id = var.tenancy_ocid,
+    compartment_id = var.compartment_ocid,
     namespace = data.oci_objectstorage_namespace.release.namespace,
     bucket = oci_objectstorage_bucket.release[0].name,
     object = oci_objectstorage_object.release[0].object,
@@ -208,7 +210,10 @@ resource "oci_identity_policy" "bootstrap" {
   statements = [
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read objects in compartment id ${var.compartment_ocid} where all {target.bucket.name='${oci_objectstorage_bucket.release[0].name}', request.permission='OBJECT_READ'}",
     "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect instance-family in compartment id ${var.compartment_ocid}",
-    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read vnics in compartment id ${var.compartment_ocid}"
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to read vnics in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect all-resources in compartment id ${var.compartment_ocid}",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect compartments in tenancy",
+    "Allow dynamic-group id ${oci_identity_dynamic_group.bootstrap[0].id} to inspect tenancies in tenancy"
   ]
 }
 resource "terraform_data" "application_installation" {

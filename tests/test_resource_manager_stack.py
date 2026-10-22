@@ -16,8 +16,9 @@ from deploy.wait_application import wait
 
 ROOT = Path(__file__).resolve().parents[1]
 SHA = 'a' * 40
-NAMES = sorted(set(subprocess.check_output(['git', '-C', str(ROOT), 'ls-files'], text=True).splitlines()) |
-    {'docker-compose.yml', 'backend/platform-source.json', 'worker/package-lock.json', 'deploy/install_application.sh', 'scripts/verify_release_source.py'})
+NAMES = sorted(set(json.loads((ROOT / 'backend/platform-source.json').read_text())) |
+    {'docker-compose.yml', 'backend/platform-source.json', 'worker/package-lock.json',
+     'deploy/install_application.sh', 'scripts/verify_release_source.py'})
 
 
 def packaged():
