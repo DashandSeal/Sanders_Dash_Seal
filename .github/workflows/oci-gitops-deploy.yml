@@ -36,7 +36,7 @@ jobs:
           SDS_WORK_DIR=$(mktemp -d "$RUNNER_TEMP/sds-gitops.XXXXXX")
           echo "SDS_WORK_DIR=$SDS_WORK_DIR" >> "$GITHUB_ENV"
           python3 -m venv "$SDS_WORK_DIR/tests"
-          "$SDS_WORK_DIR/tests/bin/pip" install -r requirements.txt
+          "$SDS_WORK_DIR/tests/bin/pip" install -r requirements-server.txt
           python3 -m venv "$SDS_WORK_DIR/oci"
           "$SDS_WORK_DIR/oci/bin/pip" install oci-cli==3.95.1
           echo "$SDS_WORK_DIR/oci/bin" >> "$GITHUB_PATH"

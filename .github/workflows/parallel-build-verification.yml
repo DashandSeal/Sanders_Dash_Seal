@@ -20,8 +20,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install development test dependency
-        run: python -m pip install cryptography
+      - name: Install complete server test dependencies
+        run: python -m pip install -r requirements-server.txt
       - name: Platform case and payment tests
         run: |
           python -m unittest discover -s tests -p 'test_cases.py' -v
@@ -36,8 +36,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install development test dependency
-        run: python -m pip install cryptography
+      - name: Install complete server test dependencies
+        run: python -m pip install -r requirements-server.txt
       - name: Sidecar and hot-swap tests
         run: |
           python -m unittest discover -s tests -p 'test_upgrade_sidecar.py' -v
@@ -53,8 +53,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install development test dependency
-        run: python -m pip install cryptography
+      - name: Install complete server test dependencies
+        run: python -m pip install -r requirements-server.txt
       - name: Verify every executable has a paired matching PBD hash
         run: |
           python - <<'PY'

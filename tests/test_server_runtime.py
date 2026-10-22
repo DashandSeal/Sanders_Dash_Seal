@@ -1,16 +1,16 @@
 """Actual HTTP and SIGTERM checks against the pinned server, without live services."""
-import importlib.util
+import json
 from pathlib import Path
 import socket
 import subprocess
 import sys
+import tempfile
 import time
 import unittest
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 
-@unittest.skipUnless(importlib.util.find_spec('gunicorn'), 'Install requirements-server.txt')
 class ServerRuntimeTests(unittest.TestCase):
     def test_http_gates_and_clean_sigterm(self):
         with socket.socket() as probe:
@@ -21,6 +21,9 @@ class ServerRuntimeTests(unittest.TestCase):
         env = os.environ.copy()
         env.pop('SANDERS_RUNTIME_FACTORY', None)
         env.pop('GUNICORN_CMD_ARGS', None)
+        database = tempfile.TemporaryDirectory(prefix='sds-server-test-')
+        self.addCleanup(database.cleanup)
+        env['SQLITE_DB_PATH'] = str(Path(database.name) / 'sds_production.db')
         server = subprocess.Popen([sys.executable, '-m', 'gunicorn', '--config',
             'deploy/gunicorn.conf.py', '--bind', f'127.0.0.1:{port}', 'wsgi:application'],
             cwd=root, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -42,8 +45,13 @@ class ServerRuntimeTests(unittest.TestCase):
                         self.fail('WSGI server failed to start')
                     time.sleep(0.05)
             self.assertEqual(code, 200)
-            self.assertEqual(status('/readyz', 'sandersdashandseal.com'), 503)
-            self.assertEqual(status('/api/appointments', 'sandersdashandseal.com'), 503)
+            self.assertEqual(status('/readyz', 'sandersdashandseal.com'), 200)
+            with urlopen(Request(f'http://127.0.0.1:{port}/readyz',
+                    headers={'Host': 'sandersdashandseal.com'}), timeout=1) as response:
+                readiness = json.load(response)
+            self.assertTrue(readiness['service_ready'])
+            self.assertFalse(readiness['complete_build_ready'])
+            self.assertEqual(status('/api/appointments', 'sandersdashandseal.com'), 401)
             self.assertEqual(status('/healthz', 'untrusted.invalid'), 421)
             server.terminate()
             self.assertEqual(server.wait(timeout=8), 0)
