@@ -69,6 +69,13 @@ jobs:
           OCI_PRIVATE_KEY: ${{ secrets.OCI_PRIVATE_KEY }}
           OCI_REGION: ${{ secrets.OCI_REGION || 'us-phoenix-1' }}
           OCI_STACK_OCID: ${{ secrets.OCI_STACK_OCID }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          STRIPE_LIVEMODE: ${{ vars.STRIPE_LIVEMODE }}
+          SIGNWELL_API_KEY: ${{ secrets.SIGNWELL_API_KEY }}
+          SIGNWELL_TEST_MODE: ${{ vars.SIGNWELL_TEST_MODE }}
+          BLUENOTARY_API_KEY: ${{ secrets.BLUENOTARY_API_KEY }}
         run: '"$SDS_WORK_DIR/tests/bin/python" -m deploy.gitops_deploy --zip "$SDS_WORK_DIR/sds-unified-production-stack.zip" --commit "$GITHUB_SHA"'
       - name: Remove temporary credentials and release workspace
         if: always()

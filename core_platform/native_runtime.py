@@ -7,9 +7,13 @@ import hashlib
 import io
 import json
 import os
+import re
 from pathlib import Path
 import sqlite3
 
+from .provider_connections import WriteProviderClient
+from .provider_workflows import ProviderWorkflows, ProviderUnavailable, ProviderRequestConflict
+from .cases import CaseDenied
 from .accounts import AccountStore, auth_app
 from .appointments import AppointmentStore
 from .appointment_payments import AppointmentPayments
@@ -35,7 +39,8 @@ def read_settings(path):
         raise ValueError('Runtime secret configuration must be root-owned, private and bounded')
     settings=json.loads(path.read_text())
     if not isinstance(settings,dict) or set(settings)-{
-        'owner_setup_digest','owner_setup_expires','stripe_api_key','stripe_webhook_secret','stripe_livemode'}:
+        'owner_setup_digest','owner_setup_expires','stripe_api_key','stripe_webhook_secret','stripe_livemode',
+        'signwell_api_key','signwell_test_mode','bluenotary_api_key'}:
         raise ValueError('Invalid runtime configuration fields')
     return settings
 
@@ -63,14 +68,22 @@ class NativeRuntime:
         key=settings.get('stripe_api_key')
         secret=settings.get('stripe_webhook_secret')
         if key:
-            prefix='rk_live_' if livemode else 'rk_test_'
+            prefix=('rk_live_','sk_live_') if livemode else ('rk_test_','sk_test_')
             if not isinstance(key,str) or not key.startswith(prefix):
-                raise ValueError('Restricted Stripe key must match configured environment')
+                raise ValueError('Stripe key must match configured environment')
         if secret and (not isinstance(secret,str) or not secret.startswith('whsec_')):
             raise ValueError('Invalid Stripe webhook secret configuration')
         if key and secret and stripe_client is None:
             from stripe import StripeClient
             stripe_client=StripeClient(key,stripe_version='2026-08-26.dahlia',max_network_retries=2)
+        if type(settings.get('signwell_test_mode',False)) is not bool:
+            raise ValueError('Explicit SignWell environment must be boolean')
+        clients={}
+        for provider in ('signwell','bluenotary'):
+            if settings.get(provider+'_api_key'):
+                clients[provider]=WriteProviderClient(provider,settings[provider+'_api_key'])
+        self.providers=ProviderWorkflows(path,self.cases,self.accounts.operator,self.audit,clients,
+            signwell_test_mode=settings.get('signwell_test_mode',False))
         self.payments_configured=bool(key and secret)
         # A test-supplied client never changes whether production credentials exist.
         client=stripe_client or UnconfiguredStripeClient()
@@ -120,13 +133,47 @@ class NativeRuntime:
     def status(self):
         return {'platform':'Sanders Dash & Seal','accounts':True,'appointment_intake':True,
             'operator_quotes':True,'durable_ingestion':True,'stripe_credentials_configured':self.payments_configured,
-            'live_payment_verified':False,'notarial_execution_connected':False,
+            'signwell_credentials_configured':'signwell' in self.providers.clients,
+            'bluenotary_credentials_configured':'bluenotary' in self.providers.clients,
+            'provider_request_workflows_implemented':True,'live_payment_verified':False,'notarial_execution_connected':False,
             'independent_ai_authorities_connected':False,'complete_build_verified':False}
 
     def __call__(self,env,start):
         path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
         if host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
             return self.base(env,start)
+        provider_route=re.fullmatch(r'/api/operator/appointments/([A-Za-z0-9_.-]{1,128})/providers(?:/(signwell|bluenotary))?',path)
+        if provider_route:
+            actor=self.accounts.authenticate(env)
+            if actor is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
+            if not self.accounts.operator(actor):return _response(start,'403 Forbidden',{'error':'operator_required'})
+            case_id,provider=provider_route.groups()
+            try:
+                if provider is None and env.get('REQUEST_METHOD')=='GET':
+                    return _response(start,'200 OK',{'requests':self.providers.records(case_id,actor)})
+                if provider is None or env.get('REQUEST_METHOD')!='POST':
+                    return _response(start,'405 Method Not Allowed',{'error':'method_not_allowed'})
+                if env.get('HTTP_ORIGIN')!=ORIGIN:
+                    return _response(start,'403 Forbidden',{'error':'origin_denied'})
+                if env.get('CONTENT_TYPE','').split(';')[0].strip()!='application/json':
+                    return _response(start,'415 Unsupported Media Type',{'error':'json_required'})
+                n=int(env.get('CONTENT_LENGTH','0'))
+                if not 0<n<=32768:raise ValueError('Invalid body length')
+                raw=env['wsgi.input'].read(n)
+                if len(raw)!=n:raise ValueError('Incomplete body')
+                result=self.providers.submit(case_id,actor,provider,strict_json(raw))
+                return _response(start,'201 Created',result)
+            except PermissionError:
+                return _response(start,'403 Forbidden',{'error':'operator_required'})
+            except CaseDenied:
+                return _response(start,'404 Not Found',{'error':'case_not_found'})
+            except ProviderRequestConflict:
+                return _response(start,'409 Conflict',{'error':'request_conflict_or_outcome_unknown'})
+            except ProviderUnavailable:
+                return _response(start,'503 Service Unavailable',{'error':'provider_unavailable',
+                    'detail':'Check provider configuration or the existing request outcome before resubmitting.'})
+            except (ValueError,TypeError,KeyError,UnicodeError,RecursionError):
+                return _response(start,'400 Bad Request',{'error':'invalid_request'})
         if path=='/api/platform/status':
             if env.get('REQUEST_METHOD')!='GET':return _response(start,'405 Method Not Allowed',{'error':'read_only'})
             return _response(start,'200 OK',self.status())

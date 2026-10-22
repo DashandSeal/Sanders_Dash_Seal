@@ -7,7 +7,8 @@ import subprocess
 import tempfile
 
 NAME='sds-runtime-provider-config'
-FIELDS={'stripe_api_key','stripe_webhook_secret','stripe_livemode'}
+FIELDS={'stripe_api_key','stripe_webhook_secret','stripe_livemode',
+        'signwell_api_key','signwell_test_mode','bluenotary_api_key'}
 
 
 def command(args,runner=subprocess.run):
@@ -27,14 +28,19 @@ def retrieve(compartment,api=command):
     if content.get('content-type')!='BASE64':raise ValueError('Unexpected secret encoding')
     raw=base64.b64decode(content['content'],validate=True)
     if len(raw)>8192:raise ValueError('Provider configuration is too large')
-    data=json.loads(raw)
+    return validate(json.loads(raw))
+
+
+def validate(data):
     if not isinstance(data,dict) or set(data)-FIELDS:raise ValueError('Invalid provider configuration fields')
-    if type(data.get('stripe_livemode',True)) is not bool:raise ValueError('Invalid provider environment')
-    for name in ('stripe_api_key','stripe_webhook_secret'):
-        if name in data and (not isinstance(data[name],str) or not 8<=len(data[name])<=4096):
+    if any(type(data.get(k,default)) is not bool for k,default in
+           (('stripe_livemode',True),('signwell_test_mode',False))):raise ValueError('Invalid provider environment')
+    for name in ('stripe_api_key','stripe_webhook_secret','signwell_api_key','bluenotary_api_key'):
+        if name in data and (not isinstance(data[name],str) or not 8<=len(data[name])<=4096
+                or any(ord(c)<33 or ord(c)>126 for c in data[name])):
             raise ValueError('Invalid credential value')
     key=data.get('stripe_api_key')
-    prefix='rk_live_' if data.get('stripe_livemode',True) else 'rk_test_'
+    prefix=('rk_live_','sk_live_') if data.get('stripe_livemode',True) else ('rk_test_','sk_test_')
     if key is not None and not key.startswith(prefix):raise ValueError('Provider key environment mismatch')
     signing=data.get('stripe_webhook_secret')
     if signing is not None and not signing.startswith('whsec_'):raise ValueError('Invalid webhook secret')

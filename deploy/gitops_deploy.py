@@ -10,6 +10,7 @@ import tempfile
 import zipfile
 
 from deploy.activate_on_oracle import cli, deploy
+from deploy.publish_provider_secrets import environment_values, publish
 
 
 @contextlib.contextmanager
@@ -52,7 +53,7 @@ def credentials(environment=None):
                     os.environ[name] = value
 
 
-def release(zip_path, commit, stack_id, *, api=cli, activation=deploy):
+def release(zip_path, commit, stack_id, *, api=cli, activation=deploy, provider_environment=None):
     if not re.fullmatch(r'[0-9a-f]{40}', commit):
         raise ValueError('Exact source commit required')
     if not re.fullmatch(r'ocid1\.ormstack\.[A-Za-z0-9.]+', stack_id):
@@ -81,7 +82,12 @@ def release(zip_path, commit, stack_id, *, api=cli, activation=deploy):
     api(['resource-manager', 'stack', 'update', '--stack-id', stack_id,
          '--config-source', str(Path(zip_path).resolve()),
          '--variables', json.dumps(variables), '--force'])
-    result = activation(stack_id, api=api)
+    supplied = environment_values(provider_environment or {})
+    if supplied:
+        result = activation(stack_id, api=api,
+            before_install=lambda config, actual_api: publish(config['compartment_id'], supplied, actual_api))
+    else:
+        result = activation(stack_id, api=api)
     if result.get('commit') != commit:
         raise ValueError('Oracle installed a different source commit')
     return result
@@ -93,7 +99,7 @@ def main():
     parser.add_argument('--commit', required=True)
     args = parser.parse_args()
     with credentials():
-        result = release(args.zip, args.commit, os.environ.get('OCI_STACK_OCID', ''))
+        result = release(args.zip, args.commit, os.environ.get('OCI_STACK_OCID', ''), provider_environment=os.environ)
     print(json.dumps(result))
 
 

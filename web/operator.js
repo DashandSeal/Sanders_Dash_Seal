@@ -44,7 +44,78 @@ async function load() {
         status.textContent = 'Quote approved. It is now available in the customer’s request details.';
       } catch (error) { status.textContent = error.message; button.disabled = false; }
     });
-    card.append(form); queue.append(card);
+    card.append(form, providerPanel(record)); queue.append(card);
   }
 }
 load().catch(() => { notice.textContent = 'Appointment review is currently unavailable.'; });
+
+function providerPanel(record) {
+  const panel = el('details', ''); panel.append(el('summary', 'Signing and RON requests'));
+  panel.append(el('p', 'Create a SignWell signing request or a BlueNotary RON session using your provider templates.'));
+  const history = el('p', 'Loading existing provider requests…'); panel.append(history);
+  const endpoint = '/api/operator/appointments/' + encodeURIComponent(record.case_id) + '/providers';
+  const updateHistory = async () => {
+    const response = await fetch(endpoint, {credentials: 'same-origin', cache: 'no-store'});
+    if (!response.ok) { history.textContent = 'Provider request history is unavailable.'; return; }
+    const data = await response.json();
+    history.textContent = data.requests.length ? data.requests.map(r =>
+      r.provider + ': ' + r.state + ' · ' + (r.resource_id || r.request_id)).join(' | ') : 'No provider requests yet.';
+  };
+  updateHistory().catch(() => { history.textContent = 'Provider request history is unavailable.'; });
+  const form = el('form', ''), fields = {};
+  const providerLabel = el('label', 'Provider'), provider = document.createElement('select');
+  for (const [value, label] of [['signwell', 'SignWell signing'], ['bluenotary', 'BlueNotary RON']]) {
+    const option = el('option', label); option.value = value; provider.append(option);
+  }
+  providerLabel.append(provider); form.append(providerLabel);
+  for (const [key, label, type] of [['template', 'Provider template ID', 'text'],
+      ['first', 'Signer first name', 'text'], ['last', 'Signer last name', 'text'],
+      ['email', 'Signer email', 'email'], ['placeholder', 'SignWell template placeholder name', 'text'],
+      ['notary', 'BlueNotary notary account email', 'email']]) {
+    const container = el('label', label), input = document.createElement('input');
+    input.type = type; input.required = true; input.maxLength = key === 'email' || key === 'notary' ? 254 : 128;
+    container.append(input); form.append(container); fields[key] = {input, container};
+  }
+  const changeProvider = () => {
+    for (const key of ['placeholder', 'notary']) {
+      const active = key === (provider.value === 'signwell' ? 'placeholder' : 'notary');
+      fields[key].container.hidden = !active; fields[key].input.required = active;
+    }
+  };
+  provider.addEventListener('change', changeProvider); changeProvider();
+  const submit = el('button', 'Create provider request'), status = el('p', '');
+  submit.type = 'submit'; submit.className = 'primary'; status.setAttribute('role', 'status');
+  form.append(submit, status); panel.append(form);
+  const requestId = crypto.randomUUID();
+  form.addEventListener('submit', async event => {
+    event.preventDefault(); if (!form.reportValidity()) return; submit.disabled = true;
+    const value = key => fields[key].input.value.trim();
+    let payload = {request_id: requestId};
+    if (provider.value === 'signwell') {
+      Object.assign(payload, {template_id: value('template'), name: 'Sanders Dash & Seal ' + record.case_id,
+        recipients: [{id: '1', placeholder_name: value('placeholder'),
+          name: value('first') + ' ' + value('last'), email: value('email')}]});
+    } else {
+      Object.assign(payload, {document_templates: [value('template')],
+        all_signers: [{first_name: value('first'), last_name: value('last'), email: value('email')}],
+        session_notary_email: value('notary'), notarization_timing_type: 'notarize_now'});
+    }
+    try {
+      const response = await fetch(endpoint + '/' + provider.value, {method: 'POST', credentials: 'same-origin',
+        headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)});
+      if (!response.ok) {
+        status.textContent = response.status === 400 ? 'Check the template and recipient fields.' :
+          'Request was not confirmed. Review the request history and provider account before submitting again.';
+        // An ambiguous provider outcome must not silently create another session.
+        if (response.status === 400) submit.disabled = false;
+      } else {
+        const result = await response.json();
+        status.textContent = 'Provider accepted request: ' + result.resource_id + '. Signing and notarial completion remain separate.';
+      }
+      await updateHistory();
+    } catch (_) {
+      status.textContent = 'Connection interrupted. Check request history and your provider account before submitting again.';
+    }
+  });
+  return panel;
+}

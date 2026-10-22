@@ -74,7 +74,7 @@ def wait_command(command, instance, api=cli, clock=time.monotonic, pause=time.sl
     raise TimeoutError('Agent did not complete; check plugin permissions and egress')
 
 
-def deploy(stack_id, api=cli):
+def deploy(stack_id, api=cli, *, before_install=None):
     if not re.fullmatch(r'ocid1\.ormstack\.[A-Za-z0-9.]+',stack_id):
         raise ValueError('Actual Oracle Resource Manager stack OCID required')
     plan_id=api(['resource-manager','job','create-plan-job','--stack-id',stack_id])['data']['id']
@@ -88,6 +88,8 @@ def deploy(stack_id, api=cli):
     state=json.loads(api(['resource-manager','job','get-job-tf-state','--job-id',apply_id,'--file','-'],raw=True))
     outputs=state['outputs']
     config=outputs.get('application_install_command',outputs.get('existing_install_command'))['value']
+    if before_install is not None:
+        before_install(config, api)
     # The install source is PRIVATE. No PAR or credential is put in an agent command.
     content={'source':{'sourceType':'OBJECT_STORAGE_TUPLE','namespaceName':config['namespace'],
         'bucketName':config['bucket'],'objectName':config['object']},'output':{'outputType':'TEXT'}}
