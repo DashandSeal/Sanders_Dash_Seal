@@ -2,7 +2,7 @@
 
 ## Durable technical-task execution — October 23, 2026
 
-Verification so far: 395 Python tests passed, zero skipped. The new cases cover
+Verification so far: 396 Python tests passed, zero skipped. The new cases cover
 concurrent ownership, expired claims, stale completion, persistent results,
 redacted failures, no automatic mutation retry, grounding review, actual local
 HTTP inference transport and rejected unsupported model output. The HTTP model
