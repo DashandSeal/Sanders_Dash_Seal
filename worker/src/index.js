@@ -35,7 +35,11 @@ const wss = new WebSocketServer({ noServer: true });
 server.on('upgrade', async (request, socket, head) => {
     socket.on('error', () => {});
     if (isShuttingDown) { socket.destroy(); return; }
-    const token = request.headers.authorization;
+    // Browsers cannot set Authorization on WebSocket upgrades. A scoped
+    // short-lived token is supplied as a WebSocket subprotocol instead.
+    const protocols = (request.headers['sec-websocket-protocol'] || '').split(',').map(v => v.trim());
+    const browserProtocol = protocols.find(v => /^sds-auth\\.[a-f0-9]{64}$/.test(v));
+    const token = request.headers.authorization || (browserProtocol ? 'Bearer ' + browserProtocol.slice(9) : null);
     if (!token) {
         socket.end('HTTP/1.1 401 Unauthorized\r\nConnection: close\r\nContent-Length: 0\r\n\r\n');
         return;
@@ -44,6 +48,7 @@ server.on('upgrade', async (request, socket, head) => {
     if (!verification.isValid || isShuttingDown || socket.destroyed) {
         socket.destroy(); return;
     }
+    if (browserProtocol) delete request.headers['sec-websocket-protocol'];
     wss.handleUpgrade(request, socket, head, (ws) => {
         ws.sessionData = verification.session;
         wss.emit('connection', ws, request);
