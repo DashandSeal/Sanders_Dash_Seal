@@ -33,6 +33,7 @@ from .stripe_payments import PaymentLedger, PaymentDenied
 from .stripe_webhook_wsgi import make_app
 from .stream_api import strict_json
 from .upgrade_sidecar import CORE_LAWS
+from backend.auth_session import validate_worker_token_request
 
 
 class UnconfiguredStripeClient:
@@ -160,6 +161,18 @@ class NativeRuntime:
         path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
         if host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
             return self.base(env,start)
+        if path == '/api/auth/verify':
+            if env.get('REQUEST_METHOD') != 'POST':
+                return _response(start,'405 Method Not Allowed',{'error':'post_required'})
+            # This endpoint must only be reachable from the trusted worker network.
+            # The token itself is verified against the hashed, expiring ledger.
+            auth = env.get('HTTP_AUTHORIZATION','')
+            if not auth.startswith('Bearer '):
+                return _response(start,'401 Unauthorized',{'error':'bearer_required'})
+            result = validate_worker_token_request(auth[7:])
+            if not result['isValid']:
+                return _response(start,'401 Unauthorized',{'error':'invalid_token'})
+            return _response(start,'200 OK',result['session'])
         ron_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/ron-room',path)
         if ron_route:
             actor=self.accounts.authenticate(env)
