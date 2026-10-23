@@ -160,6 +160,43 @@ class NativeRuntimeTests(unittest.TestCase):
         for _ in range(11):self.request('/auth/login',{'username':'unknown-user','password':self.password})
         self.assertEqual(self.request('/auth/login',{'username':'unknown-user','password':self.password})['status'],'429 Too Many Requests')
 
+    def test_native_notary_operator_workflow_and_evidence(self):
+        customer=self.account('customer-one')
+        operator=self.account('roosevelt',operator=True)
+        self.app.cases.create('native-case-1','WI','RON','customer-one')
+        base='/api/operator/native-notary/sessions'
+        payload={'session_id':'native-session-1','case_id':'native-case-1','method':'RON','jurisdiction':'WI'}
+        self.assertEqual(self.request(base,payload,token=customer)['status'],'403 Forbidden')
+        self.assertEqual(self.request(base,payload)['status'],'401 Unauthorized')
+        self.assertEqual(self.request(base,payload,token=operator,
+            headers={'HTTP_ORIGIN':'https://evil.example'})['status'],'403 Forbidden')
+        created=self.request(base,payload,token=operator)
+        self.assertEqual(created['status'],'201 Created',created)
+        self.assertEqual(created['json']['state'],'AWAITING_AUTHORITY')
+        self.assertEqual(self.request(base,payload,token=operator)['status'],'409 Conflict')
+        evidence={'evidence_id':'record-1','kind':'AV_RECORDING','sha256':'a'*64}
+        route=base+'/native-session-1/evidence'
+        self.assertEqual(self.request(route,evidence,token=operator)['status'],'201 Created')
+        self.assertEqual(self.request(route,evidence,token=operator)['status'],'201 Created')
+        self.assertEqual(len(self.request(route,token=operator)['json']['evidence']),1)
+        conflict=dict(evidence,sha256='b'*64)
+        self.assertEqual(self.request(route,conflict,token=operator)['status'],'409 Conflict')
+        self.assertEqual(self.request(base+'/native-session-1',{'action':'cancel'},token=operator)['status'],'201 Created')
+        self.assertEqual(self.request(route,evidence,token=operator)['status'],'409 Conflict')
+        self.assertEqual(self.request(base+'/native-session-1',token=customer)['status'],'403 Forbidden')
+        self.app.audit.verify_audit()
+
+    def test_native_notary_case_method_and_ron_evidence_isolation(self):
+        operator=self.account('roosevelt',operator=True)
+        self.app.cases.create('native-co','CO','E_NOTARY','requester')
+        base='/api/operator/native-notary/sessions'
+        payload={'session_id':'native-co-1','case_id':'native-co','method':'RON','jurisdiction':'CO'}
+        self.assertEqual(self.request(base,payload,token=operator)['status'],'409 Conflict')
+        payload['method']='E_NOTARY'
+        self.assertEqual(self.request(base,payload,token=operator)['status'],'201 Created')
+        evidence={'evidence_id':'record-1','kind':'AV_RECORDING','sha256':'a'*64}
+        self.assertEqual(self.request(base+'/native-co-1/evidence',evidence,token=operator)['status'],'409 Conflict')
+
     def test_wrong_payment_environment_or_invalid_signature_cannot_mark_paid(self):
         token=self.account('customer-one');case=self.appointment(token)
         event={'id':'evt_forged','type':'checkout.session.completed','livemode':True,'data':{'object':{}}}
