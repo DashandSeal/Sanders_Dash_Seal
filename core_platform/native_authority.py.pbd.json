@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/native_authority.py",
-    "payload_hash": "44c68708782de5b945bae229736fc448fe1f86c7e3dd39850514b1683a6ed5ea",
+    "payload_hash": "5e4fa6d67d787ddb98b08ddbb8f9640a809a32bd4bd0214cb258baaec373bf74",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

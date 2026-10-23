@@ -9,7 +9,7 @@ import sqlite3
 import time
 
 ID=re.compile(r'[A-Za-z0-9_.-]{1,128}\Z',re.ASCII)
-KINDS=frozenset(('IDENTITY','COMMISSION','JURISDICTION','METHOD','HUMAN_ATTESTATION','RON_PROVIDER_AUTHORIZATION'))
+KINDS=frozenset(('IDENTITY','COMMISSION','JURISDICTION','METHOD','HUMAN_ATTESTATION','RON_PROVIDER_AUTHORIZATION','ACT_EXECUTION'))
 class AuthorityDenied(ValueError):pass
 
 class NativeAuthority:
@@ -27,7 +27,8 @@ class NativeAuthority:
             raise AuthorityDenied('Invalid authority identity')
         if kind not in KINDS or type(verified_at)!=int or type(expires_at)!=int or not 0<verified_at<expires_at:
             raise AuthorityDenied('Invalid authority record')
-        if expires_at<=int(time.time()):raise AuthorityDenied('Expired verification')
+        if verified_at>int(time.time()) or expires_at<=int(time.time()):
+            raise AuthorityDenied('Verification timestamp must be current and unexpired')
         if not callable(trusted_verifier) or trusted_verifier(session_id,kind,evidence_id,verifier_id,verified_at,expires_at) is not True:
             raise AuthorityDenied('Independent authority verification unavailable')
         with sqlite3.connect(self.path,timeout=10) as db:

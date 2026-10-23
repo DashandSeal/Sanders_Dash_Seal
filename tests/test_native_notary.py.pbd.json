@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "tests/test_native_notary.py",
-    "payload_hash": "cf64d5db2398cc29fc0b9ff8321a452a6f7f418e77724912c3a838c5eb1464a7",
+    "payload_hash": "ea6486f79536163e70330d4017e78ad28d862f89ebade7f140274c938a2b60f7",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

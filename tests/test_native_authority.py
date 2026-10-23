@@ -28,6 +28,14 @@ class NativeAuthorityTests(unittest.TestCase):
         self.assertIn('RON_PROVIDER_AUTHORIZATION',self.authority.missing('ron-1'))
         self.assertNotIn('RON_PROVIDER_AUTHORIZATION',self.authority.missing('enotary-1'))
 
+
+    def test_future_dated_authority_evidence_denied(self):
+        now=int(time.time())
+        with self.assertRaises(AuthorityDenied):
+            self.authority.register('ron-1','IDENTITY','future-evidence','verifier-1',
+                now+300,now+3600,trusted_verifier=lambda *a: True)
+        self.assertIn('ACT_EXECUTION',self.authority.missing('enotary-1'))
+
     def test_expired_decision_rejected(self):
         now=int(time.time())
         with self.assertRaises(AuthorityDenied):
