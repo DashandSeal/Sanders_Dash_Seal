@@ -19,41 +19,25 @@ test('Actual worker serves the native telemetry dashboard', async () => {
  backend.listen(0,'127.0.0.1');
  await once(backend,'listening');
  const backendPort=backend.address().port;
- const worker = spawn(process.execPath,[workerPath],{
-  cwd:path.join(__dirname,'..'),
-  env:{...process.env,PORT:'0',PYTHON_BACKEND_URL:'http://127.0.0.1:'+backendPort},
-  stdio:['ignore','pipe','pipe']
- });
- let stderr='';
- worker.stderr.on('data',chunk=>{stderr+=chunk.toString();});
- try {
-  // Node's listen(0) binds an ephemeral port, but the current worker does not
-  // announce it. Locate the process port through an isolated test-owned port
-  // provided by the parent instead.
-  const port = await reservePort();
-  worker.kill('SIGTERM');
-  await once(worker,'exit');
-  const running=spawn(process.execPath,[workerPath],{
+ const port = await reservePort();
+ const running=spawn(process.execPath,[workerPath],{
    cwd:path.join(__dirname,'..'),
    env:{...process.env,PORT:String(port),PYTHON_BACKEND_URL:'http://127.0.0.1:'+backendPort},
    stdio:['ignore','pipe','pipe']
   });
-  try {
+ try {
    const response=await waitForDashboard(port,running);
    assert.equal(response.status,200);
    assert.match(response.type,/^text\/html/);
    assert.match(response.body,/window\.SDS_BindTelemetry/);
    assert.equal(response.cache,'no-store');
    assert.equal(response.nosniff,'nosniff');
-  } finally {
+ } finally {
    running.kill('SIGTERM');
    await Promise.race([once(running,'exit'),new Promise(resolve=>setTimeout(resolve,6500))]);
    if(running.exitCode===null)running.kill('SIGKILL');
   }
- } finally {
-  if(worker.exitCode===null)worker.kill('SIGKILL');
-  backend.close();
- }
+ backend.close();
 });
 
 async function reservePort(){
