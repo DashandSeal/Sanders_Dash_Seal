@@ -159,7 +159,7 @@ class NativeRuntime:
 
     def __call__(self,env,start):
         path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
-        if host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
+        if path != '/api/auth/verify' and host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
             return self.base(env,start)
         if path == '/api/auth/verify':
             if env.get('REQUEST_METHOD') != 'POST':
