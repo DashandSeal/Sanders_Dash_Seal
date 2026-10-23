@@ -86,6 +86,11 @@ for unit in sanders-provider-secrets.service sanders-provider-secrets.timer; do
 done
 systemctl daemon-reload
 systemctl enable --now sanders-provider-secrets.timer
+for unit in sanders-ai-observe.service sanders-ai-observe.timer; do
+    install -m 0644 "$SDS_PROJECT_DIR/deploy/systemd/$unit" /etc/systemd/system/
+done
+systemctl daemon-reload
+systemctl enable --now sanders-ai-observe.timer
 python3 - <<'BIND'
 import json,urllib.request
 from pathlib import Path

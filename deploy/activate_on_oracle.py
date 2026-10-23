@@ -25,7 +25,11 @@ def validate_plan(plan):
         if change.get('mode')=='data': continue
         actions=change['change']['actions']
         if actions==['no-op'] or (change.get('type')=='terraform_data' and actions==['delete']): continue
-        if actions not in (['create'],['update']):
+        # Versioned installer/source objects change their key every release.
+        # Terraform expresses that normal rotation as replacement; it is not
+        # destruction of the VM, a ledger bucket, or a customer record.
+        release_rotation = versioned_release_rotation(change)
+        if actions not in (['create'],['update']) and not release_rotation:
             raise ValueError('Destructive/replacement operation rejected: '+change['address'])
         after=change['change'].get('after') or {}
         if change['type']=='oci_core_instance':
@@ -40,6 +44,28 @@ def validate_plan(plan):
                 or after.get('auto_tiering') not in (None,'Disabled') or after.get('kms_key_id')):
                 raise ValueError('Unexpected bucket billing/public-access configuration')
     return True
+
+
+def versioned_release_rotation(change):
+    patterns = {'release': r'releases/[0-9a-f]{40}\.tgz',
+                'existing_installer': r'installers/[0-9a-f]{40}\.sh'}
+    name = change.get('name')
+    if (change.get('type') != 'oci_objectstorage_object' or name not in patterns
+            or change.get('address') != 'oci_objectstorage_object.'+name+'[0]'
+            or change.get('change',{}).get('actions') not in
+               (['delete','create'],['create','delete'])):
+        return False
+    before=change['change'].get('before') or {}
+    after=change['change'].get('after') or {}
+    return (isinstance(before.get('namespace'),str) and bool(before['namespace'])
+        and before.get('namespace')==after.get('namespace')
+        and isinstance(before.get('bucket'),str)
+        and re.fullmatch(r'sds-release-[0-9a-f]{12}',before['bucket']) is not None
+        and before['bucket']==after.get('bucket')
+        and all(isinstance(record.get('object'),str) and
+            re.fullmatch(patterns[name],record['object']) is not None
+            for record in (before,after))
+        and before['object']!=after['object'])
 
 
 def wait_job(identifier, api=cli, clock=time.monotonic, pause=time.sleep, timeout=3600):

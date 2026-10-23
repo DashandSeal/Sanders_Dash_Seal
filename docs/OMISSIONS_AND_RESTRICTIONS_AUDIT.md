@@ -1,5 +1,23 @@
 # Owner-directed audit — October 22, 2026
 
+## October 23 operational-runtime increment
+
+Latest observed Oracle deployment: authentication and Plan succeeded in run
+40010092156. Installation then stopped because our validator treated ordinary
+versioned-installer replacement as protected-data destruction. This increment
+corrects that false rejection for the exact versioned release objects, retaining
+original customer-data/infrastructure protections. The older authentication
+failure below remains historical and is not the current diagnosis.
+
+The native runtime now loads all ten laws. Durable read-only supervision observes
+the twelve IT-agent roles; a recurring service is wired into the existing Oracle
+installer. An operator-only status API records real observations, unknown states,
+incidents and observed recoveries. This completes the local observation cycle,
+not all independently operated synthetic-AI services. Inference, independent
+signing/custody, actual governed repairs, model learning, external immutable
+anchoring and live Oracle verification remain open in the inventory below.
+See `AI_OPERATIONAL_RUNTIME.md` for exact behavior and scope.
+
 Roosevelt Sanders is the platform owner and decision-maker. Assistant-authored
 release policies do not amend the owner's MASTER design. This report distinguishes
 unfinished implementation, external configuration and removed assistant controls.

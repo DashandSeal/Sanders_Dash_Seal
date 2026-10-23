@@ -7,6 +7,7 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import time
 
 
 def cli(args, runner=subprocess.run):
@@ -69,6 +70,24 @@ def metric(config, name, value, api=cli):
     api(['monitoring','metric-data','post','--metric-data',json.dumps(data)])
 
 
+def backup_observation(path=Path('/etc/sanders-dash-seal/runtime/backup-status.json'),
+                       *, clock=time.time, chown=os.chown):
+    """Publish only verified restore metadata into the existing read-only mount."""
+    path=Path(path)
+    with tempfile.NamedTemporaryFile(mode='w',dir=path.parent,delete=False) as output:
+        temporary=Path(output.name)
+        try:
+            os.chmod(temporary,0o640);chown(temporary,0,10001)
+            json.dump({'status':'BACKUP_RESTORE_VERIFIED','verified_at':clock(),
+                       'databases_verified':2},output)
+            output.write('\n');output.flush();os.fsync(output.fileno())
+        except BaseException:
+            temporary.unlink(missing_ok=True)
+            raise
+    try:os.replace(temporary,path)
+    finally:temporary.unlink(missing_ok=True)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, default=Path('/etc/sanders-dash-seal/resources.json'))
@@ -95,6 +114,7 @@ def main():
             raise
         metric(config,'BackupVerified',1)
         result['backup_restore_verified']=True
+        backup_observation()
     metric(config,'PlatformHeartbeat',1)
     private_json('/var/lib/sanders-dash-seal/resource-status.json',result)
     print(json.dumps(result))

@@ -18,6 +18,33 @@ def binding():
 
 
 class OracleActivationTests(unittest.TestCase):
+    def test_versioned_release_rotation_is_not_customer_data_destruction(self):
+        from copy import deepcopy
+        def rotation(name, prefix, suffix):
+            before={'bucket':'sds-release-'+'a'*12,'namespace':'actual-namespace',
+                    'object':prefix+'a'*40+suffix}
+            after={**before,'object':prefix+'b'*40+suffix}
+            return {'type':'oci_objectstorage_object','name':name,
+                    'address':'oci_objectstorage_object.'+name+'[0]',
+                    'change':{'actions':['delete','create'],'before':before,'after':after}}
+        for name,prefix,suffix in [('existing_installer','installers/','.sh'),('release','releases/','.tgz')]:
+            item=rotation(name,prefix,suffix)
+            for actions in (['delete','create'],['create','delete']):
+                item['change']['actions']=actions
+                self.assertTrue(validate_plan({'resource_changes':[item]}))
+            for field,value in [('bucket','customer-records'),('namespace','other-namespace'),
+                                ('object','ledger_snapshots/customer.db'),('object',None),
+                                ('object',item['change']['before']['object'])]:
+                bad=deepcopy(item);bad['change']['after'][field]=value
+                with self.subTest(field=field,value=value),self.assertRaises(ValueError):
+                    validate_plan({'resource_changes':[bad]})
+            bad=deepcopy(item);bad['name']='ledger'
+            with self.assertRaises(ValueError):validate_plan({'resource_changes':[bad]})
+            bad=deepcopy(item);bad['address']='module.customer.oci_objectstorage_object.'+name+'[0]'
+            with self.assertRaises(ValueError):validate_plan({'resource_changes':[bad]})
+            bad=deepcopy(item);bad['change']['actions']=['delete']
+            with self.assertRaises(ValueError):validate_plan({'resource_changes':[bad]})
+
     def test_plan_accepts_owner_names_and_free_host_but_rejects_paid_compute_and_destruction(self):
         def plan(kind,name,actions,after=None):
             return {'resource_changes':[{'type':kind,'name':name,'address':kind+'.'+name,

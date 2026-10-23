@@ -1,5 +1,34 @@
 # Original-specification conformance audit
 
+## Operational supervision completion increment — October 23, 2026
+
+Live deployment diagnosis during this increment: main GitOps run 40010092156
+authenticated with OCI and completed its real Plan, then the validator rejected
+`oci_objectstorage_object.existing_installer[0]` as destructive replacement.
+That object is a versioned release installer, not customer data. Acceptance:
+permit replacement of only the known versioned installer/source objects within
+the same private release bucket/namespace, retaining rejection of VM/bucket/data
+destruction, unrelated object replacements, unknown destinations and paid compute.
+Positive and negative regression cases cover both Terraform replacement orders.
+
+Source: MASTER §§3–8, 15, 19–20; owner request to finish the real-time synthetic AIs.
+Acceptance: carry all ten laws into running components; add a durable, recurring
+observation/incident/recovery path; preserve separate role identities; expose actual
+status only to the authenticated operator; retain application startup independently
+of monitoring, inference or external authority availability. Persist observations,
+diagnosis and recovery evidence across restarts; never equate an observation or a
+model recommendation with Twin-Gate authorization, signed Quality approval, an
+autonomous repair, or verified model inference. Preserve original privileged
+execution checks. Tests must cover persistence, fault/recovery, malformed data,
+one failed observer, concurrent cycles, API authorization and real HTTP probes.
+
+The full independent inference, signing/custody, model learning and governed live
+repair workstreams remain explicitly open until connected and demonstrated.
+
+Verification: 379 Python tests and 22 Node tests passed, with no skips. Actual
+local worker processes observed HTTP outage/recovery and retained SQLite history.
+See `AI_RUNTIME_VERIFICATION_2026-10-23.md` for scope and unresolved live work.
+
 Current owner-directed completion inventory: `OMISSIONS_AND_RESTRICTIONS_AUDIT.md`.
 Earlier dated audit paragraphs are historical findings, not a blanket ban on
 installation. The October 22 owner instructions and current implementation
