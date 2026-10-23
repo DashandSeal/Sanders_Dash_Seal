@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "tests/test_instance_initializer.py",
+    "payload_hash": "0a34677f80a6141796b97f1555fedd1de3ef40aacab2a41ba2971ee1f64268ea",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

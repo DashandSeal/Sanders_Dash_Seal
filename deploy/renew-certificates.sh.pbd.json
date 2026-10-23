@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "deploy/renew-certificates.sh",
+    "payload_hash": "70409b82f7d4839723683480b396f666ae2f7dc1248f7fabe5a1e958a6122d80",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

@@ -1,0 +1,12 @@
+[Unit]
+Description=Inventory Sanders Dash & Seal OCI resources every six hours
+
+[Timer]
+OnBootSec=5min
+OnCalendar=*-*-* 00,06,12,18:00:00 UTC
+RandomizedDelaySec=5min
+Persistent=true
+Unit=sanders-oci-inventory.service
+
+[Install]
+WantedBy=timers.target

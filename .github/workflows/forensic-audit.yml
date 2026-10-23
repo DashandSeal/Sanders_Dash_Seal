@@ -1,0 +1,79 @@
+name: "Sanders Dash & Seal - Platinum Forensic Security Audit"
+
+on:
+  push:
+    branches: ["main", "release/*"]
+  pull_request:
+    branches: ["main"]
+  schedule:
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  forensic-integrity-checksum:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: "1. Checkout Secure Code Base"
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: "2. Generate Cryptographic Manifest Digests and 3. Evaluate Execution Controls & Drift Anomalies"
+        run: python3 scripts/forensic_audit.py --output "$RUNNER_TEMP/sds-forensics"
+      - name: Preserve forensic evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: forensic-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/sds-forensics/
+          retention-days: 30
+          if-no-files-found: warn
+
+  incident-response:
+    needs: forensic-integrity-checksum
+    # SMTP secrets never enter a job executing PR-controlled source. A failed
+    # audit is an investigation signal; it is not proof of an unauthorized actor.
+    if: ${{ always() && needs.forensic-integrity-checksum.result == 'failure' && github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check SMTP configuration without printing values
+        id: smtp
+        env:
+          SDS_SMTP_SERVER: ${{ secrets.SDS_SMTP_SERVER }}
+          SDS_SMTP_USERNAME: ${{ secrets.SDS_SMTP_USERNAME }}
+          SDS_SMTP_PASSWORD: ${{ secrets.SDS_SMTP_PASSWORD }}
+        run: |
+          if [ -n "$SDS_SMTP_SERVER" ] && [ -n "$SDS_SMTP_USERNAME" ] && [ -n "$SDS_SMTP_PASSWORD" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            echo "::error::SMTP alert delivery unavailable: required repository secrets are missing."
+            exit 1
+          fi
+      - name: "4. Trigger Incident Response System"
+        if: steps.smtp.outputs.ready == 'true'
+        uses: dawidd6/action-send-mail@4226df7daafa6fc901a43789c49bf7ab309066e7 # v3
+        with:
+          server_address: ${{ secrets.SDS_SMTP_SERVER }}
+          server_port: 465
+          username: ${{ secrets.SDS_SMTP_USERNAME }}
+          password: ${{ secrets.SDS_SMTP_PASSWORD }}
+          secure: true
+          ignore_cert: false
+          subject: "[CRITICAL REVIEW] Sanders Dash & Seal Forensic Integrity Audit Failed"
+          to: "rooseveltsanders381@gmail.com"
+          from: "Forensic Integrity Agent <${{ secrets.SDS_SMTP_USERNAME }}>"
+          body: |
+            SANDERS DASH & SEAL - FORENSIC INCIDENT RESPONSE
+            A repository integrity audit failed and requires review.
+            This result does not by itself prove unauthorized modification.
+            Event: ${{ github.event_name }}
+            Actor: ${{ github.actor }}
+            Commit: ${{ github.sha }}
+            Audit run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Inspect the timestamped forensic report and checksum inventory attached to that run.

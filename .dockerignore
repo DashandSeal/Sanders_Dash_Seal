@@ -1,0 +1,14 @@
+# Build context allowlist: keys, databases, .env and local uploads stay excluded.
+**
+!requirements.txt
+!requirements-server.txt
+!core_platform/
+!core_platform/*.py
+!core_platform/*.py.pbd.json
+!web/
+!web/**
+!wsgi.py
+!wsgi.py.pbd.json
+!deploy/
+!deploy/gunicorn.conf.py
+!deploy/gunicorn.conf.py.pbd.json

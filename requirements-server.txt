@@ -1,0 +1,3 @@
+-r requirements.txt
+gunicorn==26.2.0
+stripe==15.6.0

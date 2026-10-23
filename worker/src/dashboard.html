@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sanders Dash & Seal — Stream Monitor</title>
+<style>
+body{font-family:system-ui,sans-serif;background:#0f172a;color:#f8fafc;margin:0;padding:24px}
+.header{text-align:center;margin-bottom:20px}.header p{color:#94a3b8}
+.video-container{position:relative;max-width:960px;margin:auto;background:#020617;aspect-ratio:16/9}
+video{width:100%;height:100%;object-fit:cover}
+.badge{position:absolute;top:8px;left:8px;background:rgba(15,23,42,.75);padding:4px 8px;border-radius:4px;font-size:.7rem;font-weight:600;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;max-width:960px;margin:20px auto}
+.card{background:#1e293b;padding:18px;border-radius:8px}.card-full{grid-column:1/-1}
+.label{font-size:.8rem;color:#94a3b8}.value{font-size:1.4rem;margin-top:8px}
+.status-active{color:#4ade80}.status-warn{color:#fbbf24}
+</style></head><body>
+<div class="header"><h1>SDS Stream Monitor</h1><p>Real-Time Ingestion Node Telemetry</p></div>
+<div class="video-container"><div class="badge" id="stream-label">Media Isolated</div><video id="local-view" autoplay playsinline muted></video></div>
+<div class="grid">
+<div class="card"><div class="label">Bitrate (Video)</div><div class="value" id="metric-bitrate">0 kbps</div></div>
+<div class="card"><div class="label">Frame Rate</div><div class="value" id="metric-fps">0 fps</div></div>
+<div class="card"><div class="label">Network Jitter</div><div class="value" id="metric-jitter">0 ms</div></div>
+<div class="card"><div class="label">Packet Loss</div><div class="value" id="metric-loss">0.0%</div></div>
+<div class="card card-full"><div class="label">Transport Protocol / Codec</div><div class="value" id="metric-codec">Negotiating...</div></div>
+<div class="card card-full"><div class="label">ICE Connection State</div><div class="value status-warn" id="metric-ice">Disconnected</div></div></div>
+<script>
+let peerConnection=null,lastResult=null,telemetryTimer=null;
+async function runTelemetryLoop(){
+ if(!peerConnection)return;
+ try{
+  const stats=await peerConnection.getStats();
+  stats.forEach(report=>{
+   if(report.type==='inbound-rtp' && (report.kind==='video'||report.mediaType==='video')){
+    const previous=lastResult && lastResult.get(report.id);
+    if(previous && Number.isFinite(report.bytesReceived) && Number.isFinite(previous.bytesReceived)){
+     const elapsed=report.timestamp-previous.timestamp;
+     const bytes=report.bytesReceived-previous.bytesReceived;
+     if(elapsed>0 && bytes>=0)document.getElementById('metric-bitrate').textContent=((bytes*8)/elapsed).toFixed(0)+' kbps';
+    }
+    if(Number.isFinite(report.framesPerSecond))document.getElementById('metric-fps').textContent=report.framesPerSecond+' fps';
+    if(Number.isFinite(report.jitter))document.getElementById('metric-jitter').textContent=(report.jitter*1000).toFixed(1)+' ms';
+    const received=report.packetsReceived||0,lost=report.packetsLost||0;
+    if(received+lost>0)document.getElementById('metric-loss').textContent=((lost/(received+lost))*100).toFixed(2)+'%';
+    if(report.codecId){const codec=stats.get(report.codecId);if(codec)document.getElementById('metric-codec').textContent=codec.mimeType+' ('+codec.clockRate+' Hz)';}
+   }
+  });
+  lastResult=stats;
+ }catch(error){document.getElementById('metric-ice').textContent='Telemetry unavailable';}
+}
+function SDS_BindTelemetry(pc){
+ if(telemetryTimer)clearInterval(telemetryTimer);
+ peerConnection=pc;lastResult=null;
+ const update=()=>{
+  const state=pc.iceConnectionState;
+  const connected=state==='connected'||state==='completed';
+  const el=document.getElementById('metric-ice');
+  el.textContent=state.toUpperCase();el.className='value '+(connected?'status-active':'status-warn');
+  document.getElementById('stream-label').textContent=connected?'Live Stream Active':'Media Isolated';
+ };
+ pc.addEventListener('iceconnectionstatechange',update);update();
+ telemetryTimer=setInterval(runTelemetryLoop,1000);
+}
+window.SDS_BindTelemetry=SDS_BindTelemetry;
+</script><script>
+/* Authorized browser media transport. Tokens must be issued by an
+   independently authenticated and room-authorized application flow. */
+window.SDS_InitializeLiveMedia = async function(sessionId, token, signalUrl, options = {}) {
+ if (!/^[A-Za-z0-9_.-]{1,128}$/.test(sessionId) || !/^[a-f0-9]{64}$/.test(token))
+  throw new Error('Invalid room authorization');
+ if (!signalUrl || !/^wss:\/\//.test(signalUrl))
+  throw new Error('Encrypted signaling URL required');
+ const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+ const local = document.getElementById('local-view');
+ local.muted = true; local.srcObject = stream;
+ const pc = new RTCPeerConnection({iceServers: options.iceServers || []});
+ const remote = document.createElement('video');
+ remote.autoplay = true;remote.playsInline = true;remote.muted = false;
+ remote.id = 'remote-view';remote.style.cssText='width:100%;max-height:360px;background:#020617';
+ local.parentElement.insertAdjacentElement('afterend',remote);
+ stream.getTracks().forEach(track=>pc.addTrack(track,stream));
+ pc.ontrack = event => {
+  if(event.streams[0])remote.srcObject=event.streams[0];
+  else {
+   const incoming=remote.srcObject || new MediaStream();
+   incoming.addTrack(event.track);remote.srcObject=incoming;
+  }
+ };
+ const ws = new WebSocket(signalUrl,['sds-auth.'+token]);
+ let authorized=false;
+ const queuedCandidates=[];
+ const send = frame => {if(ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify({
+  type:'webrtc_signal',targetSessionId:sessionId,...frame}));};
+ pc.onicecandidate=event=>{if(event.candidate && authorized)send({action:'ice_candidate',candidate:event.candidate.toJSON()});};
+ pc.onnegotiationneeded=async()=>{
+  if(!authorized || pc.signalingState!=='stable')return;
+  await pc.setLocalDescription(await pc.createOffer());
+  send({action:'offer',sdp:pc.localDescription.toJSON()});
+ };
+ ws.onopen=()=>send({action:'initialize_session'});
+ ws.onmessage=async event=>{
+  let msg;
+  try{msg=JSON.parse(event.data);}catch{return;}
+  if(msg.type==='webrtc_error'||msg.type==='security_error'){ws.close();return;}
+  if(msg.type!=='webrtc_signal'||msg.targetSessionId!==sessionId)return;
+  if(msg.action==='initialized'){
+   authorized=true;
+   if(pc.signalingState==='stable'){
+    await pc.setLocalDescription(await pc.createOffer());
+    send({action:'offer',sdp:pc.localDescription.toJSON()});
+   }
+  }else if(msg.action==='offer'){
+   await pc.setRemoteDescription(msg.sdp);
+   await pc.setLocalDescription(await pc.createAnswer());
+   send({action:'answer',sdp:pc.localDescription.toJSON()});
+  }else if(msg.action==='answer'){
+   await pc.setRemoteDescription(msg.sdp);
+  }else if(msg.action==='ice_candidate'){
+   if(pc.remoteDescription)await pc.addIceCandidate(msg.candidate);
+   else queuedCandidates.push(msg.candidate);
+  }
+  if(pc.remoteDescription)while(queuedCandidates.length)await pc.addIceCandidate(queuedCandidates.shift());
+ };
+ ws.onclose=()=>{authorized=false;document.getElementById('stream-label').textContent='Media Isolated';};
+ window.SDS_BindTelemetry(pc);
+ return {peerConnection:pc,signaling:ws,localStream:stream,remoteVideo:remote,
+  stop(){ws.close();pc.close();stream.getTracks().forEach(t=>t.stop());}};
+};
+</script>
+</body></html>

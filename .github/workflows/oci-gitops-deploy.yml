@@ -1,0 +1,86 @@
+name: Sanders Dash & Seal OCI GitOps deployment
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  workflow_call:
+permissions:
+  contents: read
+concurrency:
+  group: sanders-oci-gitops
+  cancel-in-progress: false
+jobs:
+  validate-and-deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Validate Python, Node and Docker tools
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python3 --version
+          node --version
+          npm --version
+          docker compose version
+      - name: Create isolated validation environment
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          SDS_WORK_DIR=$(mktemp -d "$RUNNER_TEMP/sds-gitops.XXXXXX")
+          echo "SDS_WORK_DIR=$SDS_WORK_DIR" >> "$GITHUB_ENV"
+          python3 -m venv "$SDS_WORK_DIR/tests"
+          "$SDS_WORK_DIR/tests/bin/pip" install -r requirements-server.txt
+          python3 -m venv "$SDS_WORK_DIR/oci"
+          "$SDS_WORK_DIR/oci/bin/pip" install oci-cli==3.95.1
+          echo "$SDS_WORK_DIR/oci/bin" >> "$GITHUB_PATH"
+      - name: Run actual Python regression suite
+        run: '"$SDS_WORK_DIR/tests/bin/python" -m unittest discover -s tests -v'
+      - name: Run actual Node regression suite and audit
+        working-directory: worker
+        run: |
+          set -Eeuo pipefail
+          npm ci --omit=dev
+          npm test
+          npm audit --omit=dev
+      - name: Build both application containers
+        run: |
+          set -Eeuo pipefail
+          docker compose config --quiet
+          docker compose build pipeline-worker wsgi-backend
+      - name: Verify source integrity
+        run: '"$SDS_WORK_DIR/tests/bin/python" scripts/forensic_audit.py --root . --output "$SDS_WORK_DIR/forensic"'
+      - name: Build single embedded-source production ZIP
+        run: |
+          set -Eeuo pipefail
+          "$SDS_WORK_DIR/tests/bin/python" scripts/package_resource_manager.py --commit "$GITHUB_SHA" --output "$SDS_WORK_DIR/sds-unified-production-stack.zip"
+      - name: Upload, Plan, Apply and install on the selected Oracle VM
+        env:
+          OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
+          OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
+          OCI_FINGERPRINT: ${{ secrets.SDS_OCI_FINGERPRINT_V2 }}
+          OCI_PRIVATE_KEY: ${{ secrets.SDS_OCI_PRIVATE_KEY_V2 }}
+          OCI_REGION: ${{ secrets.OCI_REGION || 'us-phoenix-1' }}
+          OCI_STACK_OCID: ${{ secrets.OCI_STACK_OCID || vars.OCI_STACK_OCID || 'ocid1.ormstack.oc1.phx.amaaaaaaftib4xqaggduipcxfh7oscxgqq4276qzr3u25dynr3vzs3hiadqa' }}
+          STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+          STRIPE_API_KEY: ${{ secrets.STRIPE_API_KEY }}
+          STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
+          STRIPE_LIVEMODE: ${{ vars.STRIPE_LIVEMODE }}
+          SIGNWELL_API_KEY: ${{ secrets.SIGNWELL_API_KEY }}
+          SIGNWELL_TEST_MODE: ${{ vars.SIGNWELL_TEST_MODE }}
+          BLUENOTARY_API_KEY: ${{ secrets.BLUENOTARY_API_KEY }}
+        run: '"$SDS_WORK_DIR/tests/bin/python" -m deploy.gitops_deploy --zip "$SDS_WORK_DIR/sds-unified-production-stack.zip" --commit "$GITHUB_SHA"'
+      - name: Remove temporary credentials and release workspace
+        if: always()
+        shell: bash
+        run: |
+          if [[ -n "${SDS_WORK_DIR:-}" && "$SDS_WORK_DIR" == "$RUNNER_TEMP"/sds-gitops.* ]]; then
+            rm -rf -- "$SDS_WORK_DIR"
+          fi
