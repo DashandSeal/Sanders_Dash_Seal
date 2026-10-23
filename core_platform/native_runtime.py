@@ -33,7 +33,7 @@ from .stripe_payments import PaymentLedger, PaymentDenied
 from .stripe_webhook_wsgi import make_app
 from .stream_api import strict_json
 from .upgrade_sidecar import CORE_LAWS
-from backend.auth_session import validate_worker_token_request
+from backend.auth_session import validate_worker_token_request, issue_webrtc_access_token
 
 
 class UnconfiguredStripeClient:
@@ -173,6 +173,40 @@ class NativeRuntime:
             if not result['isValid']:
                 return _response(start,'401 Unauthorized',{'error':'invalid_token'})
             return _response(start,'200 OK',result['session'])
+        token_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/media-token',path)
+        if token_route:
+            actor=self.accounts.authenticate(env)
+            if actor is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
+            if not self.accounts.operator(actor):
+                return _response(start,'403 Forbidden',{'error':'operator_required'})
+            if env.get('REQUEST_METHOD')!='POST':
+                return _response(start,'405 Method Not Allowed',{'error':'post_required'})
+            if env.get('HTTP_ORIGIN')!=ORIGIN:
+                return _response(start,'403 Forbidden',{'error':'origin_denied'})
+            if env.get('CONTENT_TYPE','').split(';')[0].strip()!='application/json':
+                return _response(start,'415 Unsupported Media Type',{'error':'json_required'})
+            try:
+                n=int(env.get('CONTENT_LENGTH','0'))
+                if not 0<n<=512:raise ValueError('Invalid content length')
+                raw=env['wsgi.input'].read(n)
+                if len(raw)!=n:raise ValueError('Incomplete request')
+                data=strict_json(raw)
+                if data!={}:raise ValueError('Unexpected token fields')
+                sid=token_route.group(1)
+                room=self.native_ron_rooms.get(sid)
+                if room['state'] not in ('CONSENT_RECORDED','RECORDING_INDEXED'):
+                    return _response(start,'409 Conflict',{'error':'room_consent_required'})
+                session=self.native_sessions.get(sid)
+                if session['method']!='RON' or session['state']!='AWAITING_AUTHORITY':
+                    return _response(start,'409 Conflict',{'error':'session_unavailable'})
+                token=issue_webrtc_access_token(actor,sid,ttl_minutes=5)
+                self.audit.preserve({'stage':'RON_MEDIA_TOKEN_ISSUED','actor':actor,'session_id':sid})
+                return _response(start,'201 Created',{'token':token,'expires_in':300,
+                    'session_id':sid,'room_id':room['room_id']})
+            except (RoomDenied,NativeNotaryDenied):
+                return _response(start,'404 Not Found',{'error':'room_not_found'})
+            except (ValueError,TypeError,KeyError,UnicodeError,RecursionError):
+                return _response(start,'400 Bad Request',{'error':'invalid_request'})
         ron_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/ron-room',path)
         if ron_route:
             actor=self.accounts.authenticate(env)
