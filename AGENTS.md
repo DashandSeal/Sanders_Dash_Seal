@@ -17,3 +17,9 @@ Before implementing or modifying a requirement:
 9. No merge, public release or deployment is implied by development work. Do not commit private keys, credentials or customer records.
 
 See `docs/SPEC_CONFORMANCE.md` for known deviations and unresolved decisions. Do not expand functionality while concealing those deviations.
+
+## Mandatory continuous completion and verification protocol (owner instruction, October 22, 2026)
+
+**Inspect → Reproduce → Diagnose → Fix → Complete All Related Unfinished Work → Retest → Verify Completion → Capture Evidence → Continue.**
+
+At each discovered defect or unfinished requirement, implement the correction and complete the related outstanding functionality before moving on. Do not stop at an audit, proposal, diagnostic-only patch, commit, or passing test count. Verify each requirement against the controlling MASTER acceptance criteria, including actual integration/runtime behavior and negative-path controls where applicable. Capture genuine test output, deployment evidence and observed results; never fabricate evidence. Record remaining dependencies and failures explicitly, without calling an incomplete component complete. Continue through the entire owner-directed inventory, preserving original architecture, separate inventions, and existing safeguards. Do not authorize paid resources or paid upgrades without explicit owner approval.
