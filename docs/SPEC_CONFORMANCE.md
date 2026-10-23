@@ -733,3 +733,15 @@ All 17 unfinished workstreams remain in scope.
 **Acceptance:** Exact per-session, unexpired decisions for IDENTITY, COMMISSION, JURISDICTION, METHOD, HUMAN_ATTESTATION and independently verified ACT_EXECUTION must all exist before session completion; RON additionally requires RON_PROVIDER_AUTHORIZATION and a room with consent and indexed recording digests that match its stored session evidence. The supplied human/identity/commission/act evidence identifiers must exactly match the registered decisions. Mismatch, expired or future-dated authority, missing registries, incomplete RON media, cancelled sessions and replay must not mark completion. Changes are limited to the native completion operation, preserving all independent human authority and the original MASTER architecture; ordinary installation has no extra gate.
 
 **Implementation:** The native session completion transition checks the durable authority registry and RON evidence index in its existing atomic SQLite transaction. The registered ACT_EXECUTION entry is independently checked by the separate registry client, not inferred from signatures, seals, receipts or a boolean sent by the operator. Unit regression tests exercise fail-closed cases and positive registry-backed E_NOTARY/RON transitions with disposable test verifiers. Production identity, commission, authorized provider and actual recording verification still require live independent integrations before factual notarial execution is represented to a customer.
+
+
+## Owner amendment: Humanitarian Core Law 10 — October 23, 2026
+
+Source: Roosevelt Sanders' explicit instruction to add the tenth core law, together with his instruction not to add blockers or restrictions to the application. MASTER §3 now includes verbatim:
+
+> Sanders Dash & Seal shall always use only Oracle Always Free resources.
+
+Acceptance criteria: preserve laws 1–9 verbatim; add law 10 to MASTER and GOVERNANCE; embed its exact text and source in the existing OCI resource catalog exposed by the application; synchronize the embedded backend source snapshot and hash manifests. Do not introduce a blanket startup, execution, shutdown, or additional approval gate. Preserve existing privileged-operation safeguards and the owner's no-unapproved-spend instruction.
+
+Implementation: governing-source and runtime-catalog amendment. The existing catalog API exposes the added governing_core_law field. This amendment records the owner's law; it does not establish tenancy-wide enforcement, verify live Oracle usage or billing, or change OCI resources. Existing comparisons remain advisory. Live deployment is separate from this source change.
+

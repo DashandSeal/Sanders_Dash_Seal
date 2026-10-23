@@ -1241,5 +1241,14 @@
     "api_gateway": "Not established as Always Free by the supplied catalog.",
     "custom_images": "No free image-storage entitlement established here; no automatic capture.",
     "virtual_private_vault": "Explicitly excluded from the Vault allowance."
+  },
+  "governing_core_law": {
+    "number": 10,
+    "text": "Sanders Dash & Seal shall always use only Oracle Always Free resources.",
+    "authority": "Roosevelt Sanders — October 23, 2026",
+    "source": "Sanders_Dash_Seal_Actual_Build_Design_MASTER_2026-10-11.md §3",
+    "application_shutdown_gate": false,
+    "additional_approval_gate": false
   }
 }
+
