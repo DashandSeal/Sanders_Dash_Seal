@@ -1,0 +1,613 @@
+{
+  "schema_version": "1.0",
+  "platforms": [
+    {
+      "id": 1,
+      "name": "Sanders Sentinel",
+      "nickname": "Alpha",
+      "host": "34.133.172.131",
+      "port": 3001,
+      "naics": [
+        "541512",
+        "541513",
+        "541519",
+        "561621",
+        "518210",
+        "541690"
+      ],
+      "role": "Global watchdog, critical infrastructure"
+    },
+    {
+      "id": 2,
+      "name": "Lil Mama",
+      "nickname": "Beta",
+      "host": "34.133.172.131",
+      "port": 3002,
+      "naics": [
+        "541512",
+        "541519",
+        "561621",
+        "518210",
+        "541690",
+        "519190"
+      ],
+      "role": "Secondary watchdog / human oversight"
+    },
+    {
+      "id": 3,
+      "name": "Baby Girl",
+      "nickname": "Gamma",
+      "host": "34.133.172.131",
+      "port": 3003,
+      "naics": [
+        "541512",
+        "541519",
+        "561621",
+        "518210",
+        "541690",
+        "519190"
+      ],
+      "role": "Redundant monitoring AI"
+    },
+    {
+      "id": 4,
+      "name": "Sanders Omniconm",
+      "nickname": "Big Brother",
+      "host": "34.133.172.131",
+      "port": 3004,
+      "naics": [
+        "517810",
+        "518210",
+        "541511",
+        "541512",
+        "541519",
+        "519190"
+      ],
+      "role": "Oversight, AI coordination"
+    },
+    {
+      "id": 5,
+      "name": "Gai Mind",
+      "nickname": "Balance",
+      "host": "34.133.172.131",
+      "port": 3005,
+      "naics": [
+        "541715",
+        "541720",
+        "541690",
+        "519190",
+        "541511",
+        "541519"
+      ],
+      "role": "Ethical AI, system balance"
+    },
+    {
+      "id": 6,
+      "name": "AI Doctor",
+      "nickname": "AI-Only Healer",
+      "host": "34.133.172.131",
+      "port": 3006,
+      "naics": [
+        "541715",
+        "541511",
+        "518210",
+        "541690",
+        "541512",
+        "541519"
+      ],
+      "role": "AI-to-AI medical services (never humans)"
+    },
+    {
+      "id": 7,
+      "name": "Sanders AI Psychiatrist",
+      "nickname": "MindCare",
+      "host": "34.133.172.131",
+      "port": 3007,
+      "naics": [
+        "621330",
+        "621112",
+        "621399",
+        "541511",
+        "541715",
+        "518210"
+      ],
+      "role": "AI psychiatric services (AI-only)"
+    },
+    {
+      "id": 8,
+      "name": "Sanders AI Recon",
+      "nickname": "ReconX",
+      "host": "34.133.172.131",
+      "port": 3008,
+      "naics": [
+        "541512",
+        "541511",
+        "518210",
+        "541715",
+        "561621",
+        "541690"
+      ],
+      "role": "Security intelligence / recon"
+    },
+    {
+      "id": 9,
+      "name": "Grantwriter",
+      "nickname": "GrantX",
+      "host": "34.133.172.131",
+      "port": 3009,
+      "naics": [
+        "541611",
+        "541612",
+        "541618",
+        "561499",
+        "541990",
+        "813211"
+      ],
+      "role": "Grant applications & oversight"
+    },
+    {
+      "id": 10,
+      "name": "Sanders Home Healthcare",
+      "nickname": "HomeGuard",
+      "host": "34.133.172.131",
+      "port": 3010,
+      "naics": [
+        "621610",
+        "623110",
+        "621399",
+        "541611",
+        "541512",
+        "541690"
+      ],
+      "role": "Healthcare service platform"
+    },
+    {
+      "id": 11,
+      "name": "Sanders Senior Living",
+      "nickname": "SeniorNest",
+      "host": "34.133.172.131",
+      "port": 3011,
+      "naics": [
+        "623311",
+        "623312",
+        "621399",
+        "541611",
+        "541715",
+        "541512"
+      ],
+      "role": "Senior living / assisted care"
+    },
+    {
+      "id": 12,
+      "name": "Sanders Legal Helpers",
+      "nickname": "LawAid",
+      "host": "34.133.172.131",
+      "port": 3012,
+      "naics": [
+        "541110",
+        "541199",
+        "541611",
+        "541618",
+        "541512",
+        "541690"
+      ],
+      "role": "Legal support / compliance"
+    },
+    {
+      "id": 13,
+      "name": "Sanders Education",
+      "nickname": "Mentor",
+      "host": "35.238.209.6",
+      "port": 3013,
+      "naics": [
+        "611430",
+        "611710",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Educational & training platform"
+    },
+    {
+      "id": 14,
+      "name": "Sanders Finance",
+      "nickname": "Ledger",
+      "host": "35.238.209.6",
+      "port": 3014,
+      "naics": [
+        "522110",
+        "523930",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Financial / accounting services"
+    },
+    {
+      "id": 15,
+      "name": "Sanders Retail",
+      "nickname": "Market",
+      "host": "35.238.209.6",
+      "port": 3015,
+      "naics": [
+        "454110",
+        "445120",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Retail operations"
+    },
+    {
+      "id": 16,
+      "name": "Sanders Logistics",
+      "nickname": "Flow",
+      "host": "35.238.209.6",
+      "port": 3016,
+      "naics": [
+        "493110",
+        "488510",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Supply chain management"
+    },
+    {
+      "id": 17,
+      "name": "Sanders Security",
+      "nickname": "Guard",
+      "host": "35.238.209.6",
+      "port": 3017,
+      "naics": [
+        "561612",
+        "561621",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Security services"
+    },
+    {
+      "id": 18,
+      "name": "Sanders Real Estate",
+      "nickname": "Ground",
+      "host": "35.238.209.6",
+      "port": 3018,
+      "naics": [
+        "531110",
+        "531312",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Real estate management"
+    },
+    {
+      "id": 19,
+      "name": "Sanders Energy",
+      "nickname": "Pulse",
+      "host": "35.238.209.6",
+      "port": 3019,
+      "naics": [
+        "221114",
+        "221118",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Energy management & monitoring"
+    },
+    {
+      "id": 20,
+      "name": "Sanders Transportation",
+      "nickname": "Path",
+      "host": "35.238.209.6",
+      "port": 3020,
+      "naics": [
+        "485999",
+        "488999",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Transportation coordination"
+    },
+    {
+      "id": 21,
+      "name": "Sanders Agriculture",
+      "nickname": "Root",
+      "host": "35.238.209.6",
+      "port": 3021,
+      "naics": [
+        "111998",
+        "115116",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Agriculture & food services"
+    },
+    {
+      "id": 22,
+      "name": "Sanders Manufacturing",
+      "nickname": "Forge",
+      "host": "35.238.209.6",
+      "port": 3022,
+      "naics": [
+        "339999",
+        "332999",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Manufacturing & production"
+    },
+    {
+      "id": 23,
+      "name": "Sanders Consulting",
+      "nickname": "Compass",
+      "host": "35.238.209.6",
+      "port": 3023,
+      "naics": [
+        "541611",
+        "541618",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Business consulting & strategy"
+    },
+    {
+      "id": 24,
+      "name": "Sanders Hospitality",
+      "nickname": "Welcome",
+      "host": "34.27.79.1",
+      "port": 3024,
+      "naics": [
+        "721110",
+        "721199",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Hospitality & lodging"
+    },
+    {
+      "id": 25,
+      "name": "Sanders Entertainment",
+      "nickname": "Stage",
+      "host": "34.27.79.1",
+      "port": 3025,
+      "naics": [
+        "512110",
+        "512190",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Entertainment & media"
+    },
+    {
+      "id": 26,
+      "name": "Sanders Sports",
+      "nickname": "Arena",
+      "host": "34.27.79.1",
+      "port": 3026,
+      "naics": [
+        "711219",
+        "713940",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Sports & recreation"
+    },
+    {
+      "id": 27,
+      "name": "Sanders Wellness",
+      "nickname": "Balance+",
+      "host": "34.27.79.1",
+      "port": 3027,
+      "naics": [
+        "621399",
+        "812199",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Health & wellness"
+    },
+    {
+      "id": 28,
+      "name": "Sanders Travel",
+      "nickname": "Journey",
+      "host": "34.27.79.1",
+      "port": 3028,
+      "naics": [
+        "561520",
+        "481219",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Travel & logistics"
+    },
+    {
+      "id": 29,
+      "name": "Sanders AI Research",
+      "nickname": "Think Tank",
+      "host": "34.27.79.1",
+      "port": 3029,
+      "naics": [
+        "541715",
+        "541511",
+        "518210",
+        "541512",
+        "541690",
+        "519190"
+      ],
+      "role": "Advanced AI research"
+    },
+    {
+      "id": 30,
+      "name": "Sanders Research",
+      "nickname": "Insight",
+      "host": "34.27.79.1",
+      "port": 3030,
+      "naics": [
+        "541720",
+        "541715",
+        "541511",
+        "518210",
+        "541690",
+        "519190"
+      ],
+      "role": "Cross-domain research"
+    },
+    {
+      "id": 31,
+      "name": "Sanders Media",
+      "nickname": "Voice",
+      "host": "34.27.79.1",
+      "port": 3031,
+      "naics": [
+        "519130",
+        "519190",
+        "541511",
+        "541512",
+        "518210",
+        "541690"
+      ],
+      "role": "Media & communications"
+    },
+    {
+      "id": 32,
+      "name": "Sanders Communications",
+      "nickname": "Signal",
+      "host": "34.27.79.1",
+      "port": 3032,
+      "naics": [
+        "517810",
+        "518210",
+        "541511",
+        "541512",
+        "541690",
+        "519190"
+      ],
+      "role": "Messaging & communications"
+    },
+    {
+      "id": 33,
+      "name": "Sanders Compliance",
+      "nickname": "Lock",
+      "host": "34.27.79.1",
+      "port": 3033,
+      "naics": [
+        "541611",
+        "541690",
+        "541512",
+        "518210",
+        "519190",
+        "541990"
+      ],
+      "role": "Compliance & governance"
+    },
+    {
+      "id": 34,
+      "name": "Sanders Coordinator",
+      "nickname": "Butterscotch",
+      "host": "34.27.79.1",
+      "port": 3034,
+      "naics": [
+        "541611",
+        "541512",
+        "541511",
+        "518210",
+        "541690",
+        "519190"
+      ],
+      "role": "Human-facing coordination"
+    },
+    {
+      "id": 35,
+      "name": "Sanders Quantum",
+      "nickname": "QuantumX",
+      "host": "34.27.79.1",
+      "port": 3035,
+      "naics": [
+        "541715",
+        "541512",
+        "541511",
+        "621399",
+        "518210",
+        "541690"
+      ],
+      "role": "Advanced computational AI"
+    },
+    {
+      "id": 36,
+      "name": "Sanders Nano Tech",
+      "nickname": "NanoLab",
+      "host": "34.27.79.1",
+      "port": 3036,
+      "naics": [
+        "541715",
+        "541512",
+        "541511",
+        "621399",
+        "518210",
+        "541690"
+      ],
+      "role": "Nanotechnology R&D"
+    },
+    {
+      "id": 37,
+      "name": "Sanders Space Tech",
+      "nickname": "SpaceNest",
+      "host": "34.27.79.1",
+      "port": 3037,
+      "naics": [
+        "541715",
+        "541512",
+        "541511",
+        "621399",
+        "518210",
+        "541690"
+      ],
+      "role": "Space research & development"
+    },
+    {
+      "id": 38,
+      "name": "Sanders Biotech",
+      "nickname": "BioNest",
+      "host": "34.27.79.1",
+      "port": 3038,
+      "naics": [
+        "541711",
+        "621399",
+        "541512",
+        "541511",
+        "518210",
+        "541715"
+      ],
+      "role": "Biotech & life sciences"
+    }
+  ]
+}
