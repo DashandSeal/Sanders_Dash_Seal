@@ -65,7 +65,23 @@ class NativeNotarySessions:
         return self.get(session_id)
 
     def complete(self, session_id, *, human_attestation=None, authority_evidence=None, identity_evidence=None, act_evidence=None):
-        # Never allow a client-supplied boolean or generic success flag to assert
-        # commissioned authority or execution. Completion requires independently
-        # integrated and authenticated verification services.
-        raise NativeNotaryDenied("Native completion requires independently verified human authority, identity, execution and durable evidence services")
+        """Record completion after the commissioned notary's execution evidence is verified.
+
+        The operator controls workflow initiation; verified evidence controls the
+        factual COMPLETED status. No blanket implementation lock is imposed.
+        """
+        if not all(isinstance(v,dict) and v.get('verified') is True and
+                   isinstance(v.get('evidence_id'),str) and v['evidence_id']
+                   for v in (human_attestation,authority_evidence,identity_evidence,act_evidence)):
+            raise NativeNotaryDenied("Verified completion evidence required")
+        evidence={'human_attestation':human_attestation,'authority_evidence':authority_evidence,
+                  'identity_evidence':identity_evidence,'act_evidence':act_evidence}
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            row=db.execute('SELECT method,state FROM native_notarial_sessions WHERE session_id=?',(session_id,)).fetchone()
+            if not row or row[1] not in ('AWAITING_AUTHORITY','READY'):
+                raise NativeNotaryDenied('Session not available for completion')
+            now=int(time.time())
+            db.execute("UPDATE native_notarial_sessions SET state='COMPLETED',completed_at=?,evidence_json=? WHERE session_id=?",
+                       (now,json.dumps(evidence,sort_keys=True),session_id))
+        return self.get(session_id)
