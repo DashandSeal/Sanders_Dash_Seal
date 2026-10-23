@@ -30,7 +30,7 @@ SQLite volume. SHA-256 is a digest, not a verified digital signature. These are
 recorded deviations, not silently repaired or accepted production behavior.
 The original docstrings are preserved but do not constitute verification evidence.
 
-All paired manifests remain UNSIGNED_DEPLOYMENT_BLOCKED. The independently
+Paired manifests without genuine authority signatures remain UNSIGNED_SOURCE_MANIFEST; that status alone does not prohibit ordinary installation or startup. The independently
 verified receipt utility in core_platform/receipt_verification.py remains distinct;
 this submitted function does not call it. No automatic deployment workflow was
 added. See docs/SPEC_CONFORMANCE.md and docs/OCI_NEAR_ZERO_OPTIONS.md.
