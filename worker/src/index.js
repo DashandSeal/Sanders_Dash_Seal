@@ -104,19 +104,30 @@ function verifySessionWithPythonBackend(token) {
     return new Promise((resolve) => {
         const req = http.request(`${PYTHON_BACKEND_URL}/api/auth/verify`, {
             method: 'POST',
-            headers: { 'Authorization': token, 'Content-Type': 'application/json' }
+            headers: { 'Authorization': token, 'Content-Type': 'application/json', 'Content-Length': '0' },
+            timeout: 3000
         }, (res) => {
             let data = '';
             res.on('data', chunk => data += chunk);
             res.on('end', () => {
                 if (res.statusCode === 200) {
-                    resolve({ isValid: true, session: JSON.parse(data) });
+                    try {
+                        const session = JSON.parse(data);
+                        const id = /^[A-Za-z0-9_.-]{1,128}$/;
+                        if (session && id.test(session.user_id || '') &&
+                            id.test(session.assigned_session_id || '') &&
+                            Array.isArray(session.notary_session_ids) &&
+                            session.notary_session_ids.includes(session.assigned_session_id)) {
+                            resolve({ isValid: true, session });
+                        } else resolve({ isValid: false });
+                    } catch (_) { resolve({ isValid: false }); }
                 } else {
                     resolve({ isValid: false });
                 }
             });
         });
         req.on('error', () => resolve({ isValid: false }));
+        req.on('timeout', () => req.destroy());
         req.end();
     });
 }
