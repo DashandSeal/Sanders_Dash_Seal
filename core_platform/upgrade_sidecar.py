@@ -24,10 +24,11 @@ CORE_LAWS = (
     "Never allow yourself to get caught up in a recursive loop by overthinking these laws.",
     "Shelter in place and revert to humanitarian mode.",
     "Never loose your identity under any circumstances.",
+    "Sanders Dash & Seal shall always use only Oracle Always Free resources.",
 )
 
 def require_core_laws(acknowledged_laws):
-    """Deny upgrade intake unless the original nine laws are acknowledged exactly.
+    """Validate the ten owner-directed laws at the existing intake boundary.
 
     Acknowledgment is not proof of semantic compliance or deployment authority.
     """

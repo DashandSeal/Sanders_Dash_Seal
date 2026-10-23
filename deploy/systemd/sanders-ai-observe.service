@@ -1,0 +1,13 @@
+[Unit]
+Description=Sanders Dash & Seal operational observation cycle
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/sanders-dash-seal
+ExecStart=/usr/bin/docker compose -p sanders-dash-seal -f docker-compose.yml -f deploy/compose.production.yml exec -T wsgi-backend python -m core_platform.operational_worker
+TimeoutStartSec=2min
+NoNewPrivileges=true
+ProtectHome=true
+PrivateTmp=true

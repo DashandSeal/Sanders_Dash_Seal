@@ -33,6 +33,7 @@ from .stripe_payments import PaymentLedger, PaymentDenied
 from .stripe_webhook_wsgi import make_app
 from .stream_api import strict_json
 from .upgrade_sidecar import CORE_LAWS
+from .operational_runtime import OperationalRuntime
 from backend.auth_session import validate_worker_token_request, issue_webrtc_access_token
 
 
@@ -63,6 +64,7 @@ class NativeRuntime:
         self.accounts=AccountStore(path,setup_digest=settings.get('owner_setup_digest'),
             setup_expires=settings.get('owner_setup_expires',0))
         self.audit=GlassBoxAudit(Path(path).with_name('sds_audit.db'))
+        self.operations=OperationalRuntime(path)
         self.cases=CaseRegistry(path,CORE_LAWS)
         self.native_sessions=NativeNotarySessions(path)
         self.native_evidence=NativeEvidenceIndex(path)
@@ -161,6 +163,12 @@ class NativeRuntime:
         path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
         if path != '/api/auth/verify' and host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
             return self.base(env,start)
+        if path == '/api/operator/ai/status':
+            actor=self.accounts.authenticate(env)
+            if actor is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
+            if not self.accounts.operator(actor):return _response(start,'403 Forbidden',{'error':'operator_required'})
+            if env.get('REQUEST_METHOD')!='GET':return _response(start,'405 Method Not Allowed',{'error':'read_only'})
+            return _response(start,'200 OK',self.operations.status())
         if path == '/api/auth/verify':
             if env.get('REQUEST_METHOD') != 'POST':
                 return _response(start,'405 Method Not Allowed',{'error':'post_required'})
