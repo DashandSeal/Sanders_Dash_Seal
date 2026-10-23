@@ -65,23 +65,67 @@ class NativeNotarySessions:
         return self.get(session_id)
 
     def complete(self, session_id, *, human_attestation=None, authority_evidence=None, identity_evidence=None, act_evidence=None):
-        """Record completion after the commissioned notary's execution evidence is verified.
+        """Record verified native completion against separately registered authority.
 
-        The operator controls workflow initiation; verified evidence controls the
-        factual COMPLETED status. No blanket implementation lock is imposed.
+        Caller assertions are insufficient: all required authority decisions must
+        have been admitted by their independent verifier, still be current, and
+        bind to this session. The separate RON evidence index is also checked.
         """
-        if not all(isinstance(v,dict) and v.get('verified') is True and
-                   isinstance(v.get('evidence_id'),str) and v['evidence_id']
-                   for v in (human_attestation,authority_evidence,identity_evidence,act_evidence)):
-            raise NativeNotaryDenied("Verified completion evidence required")
-        evidence={'human_attestation':human_attestation,'authority_evidence':authority_evidence,
-                  'identity_evidence':identity_evidence,'act_evidence':act_evidence}
+        supplied = {
+            'HUMAN_ATTESTATION': human_attestation,
+            'COMMISSION': authority_evidence,
+            'IDENTITY': identity_evidence,
+            'ACT_EXECUTION': act_evidence,
+        }
+        if not isinstance(session_id, str) or not re.fullmatch(r'[A-Za-z0-9_.-]{1,128}', session_id):
+            raise NativeNotaryDenied('Invalid session identity')
+        if not all(isinstance(value, dict) and value.get('verified') is True and
+                   isinstance(value.get('evidence_id'), str) and
+                   re.fullmatch(r'[A-Za-z0-9_.-]{1,128}', value['evidence_id'])
+                   for value in supplied.values()):
+            raise NativeNotaryDenied('Verified completion evidence required')
+        evidence = {'human_attestation': human_attestation,
+                    'authority_evidence': authority_evidence,
+                    'identity_evidence': identity_evidence,
+                    'act_evidence': act_evidence}
         with self._connect() as db:
             db.execute('BEGIN IMMEDIATE')
-            row=db.execute('SELECT method,state FROM native_notarial_sessions WHERE session_id=?',(session_id,)).fetchone()
-            if not row or row[1] not in ('AWAITING_AUTHORITY','READY'):
+            row = db.execute('SELECT method,state FROM native_notarial_sessions WHERE session_id=?',
+                             (session_id,)).fetchone()
+            if not row or row[1] not in ('AWAITING_AUTHORITY', 'READY'):
                 raise NativeNotaryDenied('Session not available for completion')
-            now=int(time.time())
-            db.execute("UPDATE native_notarial_sessions SET state='COMPLETED',completed_at=?,evidence_json=? WHERE session_id=?",
+            method = row[0]
+            now = int(time.time())
+            required = {'IDENTITY', 'COMMISSION', 'JURISDICTION', 'METHOD',
+                        'HUMAN_ATTESTATION', 'ACT_EXECUTION'}
+            if method == 'RON':
+                required.add('RON_PROVIDER_AUTHORIZATION')
+            try:
+                decisions = db.execute(
+                    'SELECT kind,evidence_id,verified_at,expires_at FROM native_authority_decisions '
+                    'WHERE session_id=?', (session_id,)).fetchall()
+                valid = {kind: evidence_id for kind, evidence_id, verified_at, expires_at in decisions
+                         if verified_at <= now < expires_at}
+                if not required.issubset(valid):
+                    raise NativeNotaryDenied('Independent authority evidence incomplete or expired')
+                for kind, value in supplied.items():
+                    if valid[kind] != value['evidence_id']:
+                        raise NativeNotaryDenied('Completion evidence does not match authority registry')
+                if method == 'RON':
+                    room = db.execute(
+                        'SELECT state,consent_digest,recording_digest FROM native_ron_rooms '
+                        'WHERE session_id=?', (session_id,)).fetchone()
+                    if not room or room[0] != 'RECORDING_INDEXED' or not room[1] or not room[2]:
+                        raise NativeNotaryDenied('RON consent and recording evidence incomplete')
+                    indexed = db.execute(
+                        'SELECT kind,sha256 FROM native_evidence_index WHERE session_id=?',
+                        (session_id,)).fetchall()
+                    indexed_pairs = set(indexed)
+                    if not {('CONSENT', room[1]), ('AV_RECORDING', room[2])}.issubset(indexed_pairs):
+                        raise NativeNotaryDenied('RON evidence index does not match consent and recording')
+            except sqlite3.OperationalError as exc:
+                raise NativeNotaryDenied('Authority or evidence registry unavailable') from exc
+            db.execute("UPDATE native_notarial_sessions SET state='COMPLETED',completed_at=?,evidence_json=? "
+                       "WHERE session_id=?",
                        (now,json.dumps(evidence,sort_keys=True),session_id))
         return self.get(session_id)
