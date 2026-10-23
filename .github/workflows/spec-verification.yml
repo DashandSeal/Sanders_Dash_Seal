@@ -147,8 +147,9 @@ jobs:
               except OSError:
                   if attempt == 29: raise
                   time.sleep(1)
-          assert status('/readyz') == 503
-          assert status('/api/auth/verify') == 503
+          # Core server readiness does not assert complete business integration.
+          assert status('/readyz') == 200
+          assert status('/api/auth/verify') == 405
           PYCODE
       - name: Validate actual Nginx file with disposable certificate
         run: |
