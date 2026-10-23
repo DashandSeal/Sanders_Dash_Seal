@@ -47,11 +47,6 @@ jobs:
           "$SDS_WORK_DIR/tests/bin/python" -m compileall -q core_platform backend
           node --check worker/src/webrtc.js
           node --check worker/src/index.js
-      - name: Run native security and media subsystem regressions
-        run: |
-          set -Eeuo pipefail
-          "$SDS_WORK_DIR/tests/bin/python" -m unittest discover -s tests -p 'test_native_*.py' -v
-          (cd worker && node --test test/webrtc.test.js)
       - name: Run actual Python regression suite
         run: '"$SDS_WORK_DIR/tests/bin/python" -m unittest discover -s tests -v'
       - name: Run actual Node regression suite and audit
