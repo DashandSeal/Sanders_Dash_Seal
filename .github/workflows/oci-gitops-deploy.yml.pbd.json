@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": ".github/workflows/oci-gitops-deploy.yml",
-    "payload_hash": "b91826c35948500c7714d343b5bbdb8e05463bbf39863d975341d93f8150cafd",
+    "payload_hash": "0be8ea37d9a694346df131aefc99a4e30a7de6cecc3b7092d43dad379019d24d",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
