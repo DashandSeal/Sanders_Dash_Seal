@@ -39,6 +39,12 @@ class NativeSignatureTests(unittest.TestCase):
         with self.assertRaises(SignatureDenied):
             self.signatures.record('s-1','d-1','sig-1','signer-1',self.public,self.signature('0'*64))
 
+    def test_tampered_document_bytes_rejected(self):
+        filename=next((Path(self.temp.name)/'docs').glob('*.bin'))
+        filename.write_bytes(b'tampered document')
+        with self.assertRaises(SignatureDenied):
+            self.signatures.record('s-1','d-1','sig-1','signer-1',self.public,self.signature())
+
     def test_cancelled_session_rejected(self):
         self.sessions.cancel('s-1')
         with self.assertRaises(SignatureDenied):
