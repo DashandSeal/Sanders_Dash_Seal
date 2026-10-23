@@ -118,7 +118,7 @@ window.SDS_InitializeLiveMedia = async function(sessionId, token, signalUrl, opt
   }
   if(pc.remoteDescription)while(queuedCandidates.length)await pc.addIceCandidate(queuedCandidates.shift());
  };
- ws.onclose=()=>{authorized=false;};
+ ws.onclose=()=>{authorized=false;document.getElementById('stream-label').textContent='Media Isolated';};
  window.SDS_BindTelemetry(pc);
  return {peerConnection:pc,signaling:ws,localStream:stream,remoteVideo:remote,
   stop(){ws.close();pc.close();stream.getTracks().forEach(t=>t.stop());}};
