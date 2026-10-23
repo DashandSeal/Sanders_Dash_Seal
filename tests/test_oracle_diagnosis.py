@@ -25,3 +25,22 @@ class OracleDiagnosisTests(unittest.TestCase):
         result=safe_lines('before\n-----BEGIN PRIVATE KEY-----\nabcdefg\n-----END PRIVATE KEY-----\nafter\nDownload failed https://private/path?signature=hidden')
         self.assertNotIn('abcdefg',str(result));self.assertNotIn('signature=',str(result))
         self.assertIn('Download failed [URL]',result)
+
+    def test_optional_host_probe_executes_only_fixed_os_queries(self):
+        calls=[]
+        def api(args,raw=False):
+            calls.append(args)
+            if 'get-stack-tf-state' in args:return json.dumps({'outputs':{'application_install_command':{'value':{
+                'compartment_id':'compartment','instance_id':'selected-instance'}}}})
+            if 'list' in args:return {'data':[]}
+            if 'create' in args:
+                content=json.loads(args[args.index('--content')+1])
+                script=content['source']['text']
+                self.assertIn('id -un',script);self.assertIn('sudo -n -l /bin/bash',script)
+                for mutation in ('dnf install','chmod','chown','systemctl','rm -','curl'):
+                    self.assertNotIn(mutation,script)
+                return {'data':{'id':'inspection-command'}}
+            return {'data':{'lifecycle-state':'SUCCEEDED','content':{'exit-code':0,'text':'SDS_HOST_CHECK_END'}}}
+        result=diagnose('ocid1.ormstack.oc1.phx.actual',api,probe_host=True)
+        self.assertFalse(result['infrastructure_changes_performed'])
+        self.assertEqual(result['host_probe']['output'],['SDS_HOST_CHECK_END'])
