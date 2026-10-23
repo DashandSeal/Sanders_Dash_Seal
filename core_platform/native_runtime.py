@@ -19,6 +19,7 @@ from .appointments import AppointmentStore
 from .appointment_payments import AppointmentPayments
 from .native_notary import NativeNotarySessions, NativeNotaryDenied
 from .native_evidence import NativeEvidenceIndex, EvidenceDenied
+from .native_documents import NativeDocuments, DocumentDenied
 from .cases import CaseRegistry
 from .deployment import RuntimeBindings, create_application, ORIGIN, _response
 from .glass_box_audit import GlassBoxAudit
@@ -59,6 +60,7 @@ class NativeRuntime:
         self.cases=CaseRegistry(path,CORE_LAWS)
         self.native_sessions=NativeNotarySessions(path)
         self.native_evidence=NativeEvidenceIndex(path)
+        self.native_documents=NativeDocuments(path,Path(path).with_name('native_documents'))
         self.appointments=AppointmentStore(self.cases,self.audit)
         self.ledger=PaymentLedger(path)
         self.store=TransactionStore(path)
@@ -140,13 +142,44 @@ class NativeRuntime:
             'signwell_credentials_configured':'signwell' in self.providers.clients,
             'bluenotary_credentials_configured':'bluenotary' in self.providers.clients,
             'provider_request_workflows_implemented':True,'native_notarial_session_intake':True,
-            'native_evidence_digest_index':True,'live_payment_verified':False,'notarial_execution_connected':False,
+            'native_evidence_digest_index':True,'native_document_custody':True,'live_payment_verified':False,'notarial_execution_connected':False,
             'independent_ai_authorities_connected':False,'complete_build_verified':False}
 
     def __call__(self,env,start):
         path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
         if host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
             return self.base(env,start)
+        document_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/documents/([A-Za-z0-9_.-]{1,128})',path)
+        if document_route:
+            actor=self.accounts.authenticate(env)
+            if actor is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
+            if not self.accounts.operator(actor):return _response(start,'403 Forbidden',{'error':'operator_required'})
+            session_id,document_id=document_route.groups()
+            method=env.get('REQUEST_METHOD')
+            try:
+                if method=='GET':
+                    content=self.native_documents.read(session_id,document_id)
+                    start('200 OK',[('Content-Type','application/octet-stream'),
+                        ('Content-Length',str(len(content))),('Cache-Control','no-store'),
+                        ('X-Content-Type-Options','nosniff')])
+                    return [content]
+                if method!='PUT':return _response(start,'405 Method Not Allowed',{'error':'method_not_allowed'})
+                if env.get('HTTP_ORIGIN')!=ORIGIN:
+                    return _response(start,'403 Forbidden',{'error':'origin_denied'})
+                if env.get('CONTENT_TYPE','').split(';')[0].strip()!='application/octet-stream':
+                    return _response(start,'415 Unsupported Media Type',{'error':'binary_required'})
+                n=int(env.get('CONTENT_LENGTH','0'))
+                if not 0<n<=20971520:raise ValueError('Invalid content length')
+                content=env['wsgi.input'].read(n)
+                if len(content)!=n:raise ValueError('Incomplete document')
+                result=self.native_documents.put(session_id,document_id,content)
+                self.audit.preserve({'stage':'NATIVE_DOCUMENT_CUSTODY','actor':actor,
+                    'session_id':session_id,'document_id':document_id,'sha256':result['sha256']})
+                return _response(start,'201 Created',result)
+            except DocumentDenied:
+                return _response(start,'409 Conflict',{'error':'document_rejected'})
+            except (ValueError,TypeError,KeyError,UnicodeError):
+                return _response(start,'400 Bad Request',{'error':'invalid_request'})
         native_route=re.fullmatch(r'/api/operator/native-notary/sessions(?:/([A-Za-z0-9_.-]{1,128})(?:/evidence)?)?',path)
         if native_route:
             actor=self.accounts.authenticate(env)
