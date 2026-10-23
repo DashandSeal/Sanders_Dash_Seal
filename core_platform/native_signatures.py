@@ -1,5 +1,7 @@
 """Native Ed25519 document signature verification; not proof of notarial authority."""
 import base64
+from pathlib import Path
+from .native_documents import NativeDocuments, DocumentDenied
 import re
 import sqlite3
 import time
@@ -42,6 +44,10 @@ class NativeSignatures:
             row=db.execute('SELECT sha256 FROM native_documents WHERE session_id=? AND document_id=?',(session_id,document_id)).fetchone()
             if not row: raise SignatureDenied('Document unavailable')
             digest=row[0]
+            try:
+                NativeDocuments(self.path,Path(self.path).with_name('native_documents')).read(session_id,document_id)
+            except DocumentDenied as exc:
+                raise SignatureDenied('Stored document integrity failure') from exc
             try:
                 Ed25519PublicKey.from_public_bytes(key).verify(sig,self.message(session_id,document_id,signer_id,digest))
             except (InvalidSignature,ValueError) as exc:
