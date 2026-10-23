@@ -1,6 +1,8 @@
 // Assembly prefix: imports and upgrade/message setup connect the owner's earlier
 // complete worker to the later helper, receipt, heartbeat and shutdown revision.
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
 const { WebSocketServer } = require('ws');
 const { handleWebRTCSignaling } = require('./webrtc');
 
@@ -9,6 +11,18 @@ const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || 'http://wsgi-backen
 const CLIENT_HEARTBEAT_INTERVAL_MS = 30000;
 const activeSockets = new Set();
 const server = http.createServer((req, res) => {
+    if (req.method === 'GET' && req.url === '/v1/telemetry/dashboard') {
+        fs.readFile(path.join(__dirname, 'dashboard.html'), (err, content) => {
+            if (err) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Dashboard unavailable' }));
+                return;
+            }
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });
+            res.end(content);
+        });
+        return;
+    }
     if (req.url === '/health' || req.url === '/') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'HEALTHY', timestamp: new Date().toISOString(), uptime: process.uptime() }));
