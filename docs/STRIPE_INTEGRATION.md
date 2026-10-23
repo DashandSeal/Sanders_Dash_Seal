@@ -12,7 +12,7 @@ Source precedence: the owner's `Sanders_Dash_Seal_Actual_Build_Design_MASTER_202
 - Associate completed payments only with a pre-registered case, exact Checkout Session ID, amount and currency. A completed event marked unpaid does not mark a case paid.
 - Payment is **never** proof of notarial authority or eligibility and must not automatically release a notarial act.
 - Secrets must come from protected deployment configuration, never the repository. No live keys, customer data, real webhook endpoints or live transactions are used in tests.
-- Current adapter is an isolated, testable boundary. Missing: authenticated human/customer case registry, verified provider access, approved price catalog, actual Stripe API session creation, protected webhook ingress, refund/dispute lifecycle, external immutable audit, PBD-authorized runtime, independent security assessment and deployment. Production stays blocked.
+- Current adapter is an isolated, testable boundary. Missing: authenticated human/customer case registry, verified provider access, approved price catalog, actual Stripe API session creation, protected webhook ingress, refund/dispute lifecycle, external immutable audit, PBD-authorized runtime, independent security assessment and deployment. Live payment functionality remains unverified until actual credentials, webhook authentication and settlement evidence are tested; this is not a blanket platform installation veto.
 
 ## Verification
 
