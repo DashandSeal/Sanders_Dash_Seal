@@ -2,6 +2,7 @@
 // complete worker to the later helper, receipt, heartbeat and shutdown revision.
 const http = require('http');
 const { WebSocketServer } = require('ws');
+const { handleWebRTCSignaling } = require('./webrtc');
 
 const PORT = process.env.PORT || 3000;
 const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || 'http://wsgi-backend:8000';
@@ -41,6 +42,10 @@ wss.on('connection', (ws) => {
     ws.on('message', async (message) => {
         try {
             const payload = JSON.parse(message.toString());
+            if (payload && payload.type === 'webrtc_signal') {
+                handleWebRTCSignaling(ws, payload, activeSockets);
+                return;
+            }
             // Proxy transaction payload directly to Python for strict validation and recording
             const backendReceipt = await dispatchToPythonBackend(payload, ws.sessionData);
 
