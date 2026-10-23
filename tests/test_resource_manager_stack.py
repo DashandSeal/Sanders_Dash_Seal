@@ -75,7 +75,11 @@ class ResourceManagerStackTests(unittest.TestCase):
         text = files['cloud-init-application.yaml.tftpl'].replace('${jsonencode(release_config)}', json.dumps(json.dumps({'commit': SHA}))).replace('$${','${').replace('%%{','%{')
         config = json.loads(text.split('\n',1)[1])
         self.assertEqual(config['runcmd'], [['bash', '/usr/local/sbin/sds-install-application']])
+        wrapper = files['install-existing.sh.tftpl']
+        self.assertIn('sudo -n /usr/local/sbin/sanders-install-from-bucket ' + SHA, wrapper)
+        self.assertNotIn('sudo -n /bin/bash', wrapper)
         installer = config['write_files'][0]['content']
+        self.assertIn('deploy/bootstrap_agent_installer.py', installer)
         self.assertIn('compose up -d pipeline-worker wsgi-backend reverse-proxy', installer)
         self.assertNotIn('SANDERS_RUNTIME_FACTORY', text)
         self.assertNotIn('authorize-release', text)

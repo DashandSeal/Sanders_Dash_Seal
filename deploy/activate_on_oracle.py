@@ -91,7 +91,9 @@ def wait_command(command, instance, api=cli, clock=time.monotonic, pause=time.sl
         state=record.get('lifecycle-state')
         print('Instance agent execution: '+str(state),flush=True)
         if state=='SUCCEEDED':
-            if record.get('exit-code') != 0:
+            content=record.get('content')
+            code=content.get('exit-code') if isinstance(content,dict) else record.get('exit-code')
+            if type(code) is not int or code != 0:
                 raise ValueError('Agent success state without exit code zero')
             return record
         if state in ('FAILED','TIMED_OUT','CANCELED'):

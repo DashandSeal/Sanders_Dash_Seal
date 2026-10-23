@@ -29,6 +29,7 @@ source_dir=$(python3 -c 'import json; c=json.load(open("/etc/sanders-dash-seal/r
 export SDS_SOURCE_DIR="$source_dir"
 commit=$(python3 -c 'import json;print(json.load(open("/etc/sanders-dash-seal/release.json"))["commit"])')
 python3 "$source_dir/scripts/verify_release_source.py" "$source_dir" "$commit"
+python3 "$source_dir/deploy/bootstrap_agent_installer.py" --release-config /etc/sanders-dash-seal/release.json
 source "$source_dir/deploy.sh"
 check_source "$source_dir"
 check_host

@@ -63,6 +63,11 @@ class OracleActivationTests(unittest.TestCase):
         def api(record): return lambda args: {'data':record}
         good={'lifecycle-state':'SUCCEEDED','exit-code':0}
         self.assertEqual(wait_command('command','instance',api(good)),good)
+        nested={'lifecycle-state':'SUCCEEDED','content':{'output-type':'TEXT','exit-code':0,'text':'done'}}
+        self.assertEqual(wait_command('command','instance',api(nested)),nested)
+        for bad in ({'lifecycle-state':'SUCCEEDED','exit-code':0,'content':{'exit-code':1}},
+                    {'lifecycle-state':'SUCCEEDED','content':{'exit-code':False}}):
+            with self.assertRaises(ValueError):wait_command('command','instance',api(bad))
         for record in [{'lifecycle-state':'SUCCEEDED'}, {'lifecycle-state':'SUCCEEDED','exit-code':1},
                        {'lifecycle-state':'FAILED','exit-code':1}, {'lifecycle-state':'TIMED_OUT'}]:
             with self.assertRaises(ValueError): wait_command('command','instance',api(record))
@@ -103,7 +108,8 @@ class OracleActivationTests(unittest.TestCase):
         text=files['install-existing.sh.tftpl'].replace('${release_config_base64}','e30=')
         result=subprocess.run(['bash','-n'],input=text,text=True,capture_output=True)
         self.assertEqual(result.returncode,0,result.stderr)
-        self.assertIn('exec sudo -n /bin/bash "$0"',text)
+        self.assertIn('exec sudo -n /usr/local/sbin/sanders-install-from-bucket ' + 'a'*40,text)
+        self.assertNotIn('sudo -n /bin/bash',text)
         self.assertNotIn('activate_on_oracle.py',files)
         self.assertIn('free-platform.tf',files)
         self.assertNotIn('https://github.com .',text)
