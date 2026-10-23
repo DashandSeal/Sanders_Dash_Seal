@@ -31,3 +31,11 @@ Verification must demonstrate actual functionality and completion against the co
 ### Owner directive: eliminate assistant-imposed blockers and restrictions (October 22, 2026)
 
 Immediately identify and remove every assistant-invented approval gate, blanket installation veto, arbitrary environment limitation, unnecessary manual handoff, artificial release hold, and unsupported policy restriction throughout the entire platform. Do not reintroduce these under another name. Missing implementation is work to complete, not a new owner-approval prerequisite. Ordinary build, test, installation, and diagnostic startup must proceed without invented clearance steps. Preserve the owner's MASTER-defined authority boundaries, Humanitarian Core Laws, cryptographic checks for privileged actions, actual provider authorization, privacy safeguards, and the owner's no-unapproved-spend requirement; these are not assistant-imposed restrictions. Record each concrete removed control and verify its removal through executable checks without requiring a specific CI provider. Never report a restriction removed solely because this directive was documented.
+
+
+## Standing owner directive: Core Law 10 for every platform
+
+Core Law 10 applies to every platform owned by Roosevelt Sanders, including all past, present, and future builds.
+
+The owner's Oracle Always Free-only requirement is the tenth core law for every platform, not only Sanders Dash & Seal. Carry it into earlier builds being maintained, present builds, future builds, derivatives, sidecars, templates, and deployment configurations. Preserve each platform's identity and original laws 1–9. Record the law in governing sources and resource catalogs without adding blanket application startup, shutdown, execution, or extra approval gates. Do not claim source changes have updated other repositories or deployed instances without evidence. See `docs/CORE_LAW_10_ALL_PLATFORMS.md`.
+

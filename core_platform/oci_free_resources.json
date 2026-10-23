@@ -1248,7 +1248,19 @@
     "authority": "Roosevelt Sanders — October 23, 2026",
     "source": "Sanders_Dash_Seal_Actual_Build_Design_MASTER_2026-10-11.md §3",
     "application_shutdown_gate": false,
-    "additional_approval_gate": false
+    "additional_approval_gate": false,
+    "applicability": {
+      "owner": "Roosevelt Sanders",
+      "platforms": "all",
+      "builds": [
+        "past",
+        "present",
+        "future"
+      ],
+      "statement": "Core Law 10 applies to every platform owned by Roosevelt Sanders, including all past, present, and future builds.",
+      "universal_text": "Every platform owned by Roosevelt Sanders shall always use only Oracle Always Free resources.",
+      "source": "docs/CORE_LAW_10_ALL_PLATFORMS.md"
+    }
   }
 }
 

@@ -13,6 +13,8 @@ The actual build design's Humanitarian Core Laws are retained verbatim:
 9. “Never loose your identity under any circumstances.”
 10. “Sanders Dash & Seal shall always use only Oracle Always Free resources.”
 
+**Owner-wide applicability (October 23, 2026):** Core Law 10 applies to every platform owned by Roosevelt Sanders, including all past, present, and future builds. Each platform retains its own identity. See `docs/CORE_LAW_10_ALL_PLATFORMS.md`.
+
 These are governing design requirements. Cryptographic checks alone do not prove semantic compliance with all humanitarian laws.
 
 MINOTAUR patrols the Sanders Labyrinth Shield 🛡️. They remain distinct.
@@ -20,4 +22,5 @@ More urgency may increase priority, but it can never increase authority beyond t
 No valid `.pbd.json` Twin-Gated manifest = no production execution.
 
 Source is prepared for private review. No public release or deployment is authorized by this build. Ownership assignments and patent filings are separate from implementation; no patent grant is asserted.
+
 
