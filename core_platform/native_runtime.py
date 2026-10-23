@@ -20,6 +20,7 @@ from .appointment_payments import AppointmentPayments
 from .native_notary import NativeNotarySessions, NativeNotaryDenied
 from .native_evidence import NativeEvidenceIndex, EvidenceDenied
 from .native_documents import NativeDocuments, DocumentDenied
+from .native_journal import NativeJournal, JournalDenied
 from .cases import CaseRegistry
 from .deployment import RuntimeBindings, create_application, ORIGIN, _response
 from .glass_box_audit import GlassBoxAudit
@@ -61,6 +62,7 @@ class NativeRuntime:
         self.native_sessions=NativeNotarySessions(path)
         self.native_evidence=NativeEvidenceIndex(path)
         self.native_documents=NativeDocuments(path,Path(path).with_name('native_documents'))
+        self.native_journal=NativeJournal(path)
         self.appointments=AppointmentStore(self.cases,self.audit)
         self.ledger=PaymentLedger(path)
         self.store=TransactionStore(path)
@@ -142,13 +144,48 @@ class NativeRuntime:
             'signwell_credentials_configured':'signwell' in self.providers.clients,
             'bluenotary_credentials_configured':'bluenotary' in self.providers.clients,
             'provider_request_workflows_implemented':True,'native_notarial_session_intake':True,
-            'native_evidence_digest_index':True,'native_document_custody':True,'live_payment_verified':False,'notarial_execution_connected':False,
+            'native_evidence_digest_index':True,'native_document_custody':True,'native_workflow_journal':True,'live_payment_verified':False,'notarial_execution_connected':False,
             'independent_ai_authorities_connected':False,'complete_build_verified':False}
 
     def __call__(self,env,start):
         path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
         if host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
             return self.base(env,start)
+        journal_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/journal',path)
+        if journal_route:
+            actor=self.accounts.authenticate(env)
+            if actor is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
+            if not self.accounts.operator(actor):return _response(start,'403 Forbidden',{'error':'operator_required'})
+            session_id=journal_route.group(1)
+            if env.get('REQUEST_METHOD')=='GET':
+                try:
+                    self.native_sessions.get(session_id)
+                    count=self.native_journal.verify()
+                    return _response(start,'200 OK',{'integrity_verified':True,'total_events':count})
+                except (NativeNotaryDenied,JournalDenied):
+                    return _response(start,'409 Conflict',{'error':'journal_unavailable'})
+            if env.get('REQUEST_METHOD')!='POST':
+                return _response(start,'405 Method Not Allowed',{'error':'method_not_allowed'})
+            if env.get('HTTP_ORIGIN')!=ORIGIN:
+                return _response(start,'403 Forbidden',{'error':'origin_denied'})
+            if env.get('CONTENT_TYPE','').split(';')[0].strip()!='application/json':
+                return _response(start,'415 Unsupported Media Type',{'error':'json_required'})
+            try:
+                n=int(env.get('CONTENT_LENGTH','0'))
+                if not 0<n<=4096:raise ValueError('Invalid body length')
+                raw=env['wsgi.input'].read(n)
+                if len(raw)!=n:raise ValueError('Incomplete body')
+                data=strict_json(raw)
+                if not isinstance(data,dict) or set(data)!=set(('event_id','event_type','evidence_digest')):
+                    raise ValueError('Invalid journal envelope')
+                result=self.native_journal.append(session_id,actor=actor,**data)
+                self.audit.preserve({'stage':'NATIVE_NOTARY_JOURNAL','actor':actor,
+                    'session_id':session_id,'event_id':result['event_id'],'entry_hash':result['entry_hash']})
+                return _response(start,'201 Created',result)
+            except JournalDenied:
+                return _response(start,'409 Conflict',{'error':'journal_rejected'})
+            except (ValueError,TypeError,KeyError,UnicodeError,RecursionError):
+                return _response(start,'400 Bad Request',{'error':'invalid_request'})
         document_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/documents/([A-Za-z0-9_.-]{1,128})',path)
         if document_route:
             actor=self.accounts.authenticate(env)
