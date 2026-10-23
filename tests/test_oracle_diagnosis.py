@@ -10,7 +10,7 @@ class OracleDiagnosisTests(unittest.TestCase):
             calls.append(args)
             if 'get-stack-tf-state' in args:return json.dumps({'outputs':{'application_install_command':{'value':{
                 'compartment_id':'compartment','instance_id':'selected-instance'}}}})
-            if 'list' in args:return {'data':[{'command-id':'command-one'}]}
+            if 'list' in args:return {'data':[{'instance-agent-command-id':'command-one'}]}
             return {'data':{'lifecycle-state':'FAILED','content':{'exit-code':1,'text':
                 'APPLICATION_INSTALL_FAILED exit=1\npassword=not-for-logs\nPackage not found\nhttps://host/private?token=hidden'}}}
         result=diagnose('ocid1.ormstack.oc1.phx.actual',api)

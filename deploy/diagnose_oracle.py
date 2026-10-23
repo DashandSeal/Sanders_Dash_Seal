@@ -34,15 +34,17 @@ def diagnose(stack_id,api=cli):
         '--sort-by','TIMECREATED','--sort-order','DESC','--limit','5'])['data']
     results=[]
     for record in records:
-        command=record.get('command-id')
-        if not command:continue
+        command=record.get('instance-agent-command-id')
+        if not isinstance(command,str) or not command:
+            raise ValueError('Oracle execution summary lacks its documented command identifier')
         actual=api(['instance-agent','command-execution','get',
                     '--command-id',command,'--instance-id',config['instance_id']])['data']
         content=actual.get('content') or {}
         results.append({'command_id':command,'state':actual.get('lifecycle-state'),
             'exit_code':content.get('exit-code'),'output':safe_lines(content.get('text')),
             'message':safe_lines(content.get('message'))})
-    return {'cloud_changes_performed':False,'executions':results}
+    return {'cloud_changes_performed':False,'executions':results,
+            'status':'EXECUTIONS_OBSERVED' if results else 'NO_EXECUTIONS_OBSERVED'}
 
 
 def main():
