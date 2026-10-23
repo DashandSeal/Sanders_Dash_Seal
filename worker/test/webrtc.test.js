@@ -3,7 +3,7 @@ const test=require('node:test');
 const assert=require('node:assert/strict');
 const {handleWebRTCSignaling}=require('../src/webrtc');
 function peer(user,allowed) {
-  return {OPEN:1,readyState:1,sessionData:{user_id:user,notary_session_ids:allowed},
+  return {OPEN:1,readyState:1,sessionData:{user_id:user,assigned_session_id:allowed[0],notary_session_ids:allowed},
     sent:[],send(data){this.sent.push(JSON.parse(data));}};
 }
 test('authorized SDP and ICE routing stays inside the session',()=>{
