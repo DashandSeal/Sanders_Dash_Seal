@@ -36,6 +36,19 @@ class NativeNotaryTests(unittest.TestCase):
                                    act_evidence=True)
         self.assertEqual(self.sessions.get("session-4")["state"], "AWAITING_AUTHORITY")
 
+    def test_case_registry_binding_when_shared_database(self):
+        from core_platform.cases import CaseRegistry
+        from core_platform.upgrade_sidecar import CORE_LAWS
+        cases = CaseRegistry(self.path, CORE_LAWS)
+        cases.create("case-6", "CO", "E_NOTARY", "requester-6")
+        self.sessions.create("session-6", "case-6", "E_NOTARY", "CO")
+        with self.assertRaises(NativeNotaryDenied):
+            self.sessions.create("session-7", "case-6", "RON", "CO")
+        with self.assertRaises(NativeNotaryDenied):
+            self.sessions.create("session-8", "missing-case", "E_NOTARY", "CO")
+        with self.assertRaises(NativeNotaryDenied):
+            self.sessions.create("session-9", "case-6", "E_NOTARY", "WI")
+
     def test_unknown_session_and_invalid_identity_denied(self):
         with self.assertRaises(NativeNotaryDenied):
             self.sessions.get("missing")
