@@ -160,6 +160,31 @@ class NativeRuntimeTests(unittest.TestCase):
         for _ in range(11):self.request('/auth/login',{'username':'unknown-user','password':self.password})
         self.assertEqual(self.request('/auth/login',{'username':'unknown-user','password':self.password})['status'],'429 Too Many Requests')
 
+    def test_native_document_upload_download_and_authorization(self):
+        customer=self.account('customer-one')
+        operator=self.account('roosevelt',operator=True)
+        self.app.cases.create('doc-case','CO','E_NOTARY','customer-one')
+        base='/api/operator/native-notary/sessions'
+        created=self.request(base,{'session_id':'doc-session','case_id':'doc-case',
+            'method':'E_NOTARY','jurisdiction':'CO'},token=operator)
+        self.assertEqual(created['status'],'201 Created',created)
+        route=base+'/doc-session/documents/document-1'
+        binary=b'%PDF-1.4\\nSDS TEST DOCUMENT\\n'
+        self.assertEqual(self.request(route,token=customer,method='PUT',raw=binary,
+            headers={'CONTENT_TYPE':'application/octet-stream'})['status'],'403 Forbidden')
+        uploaded=self.request(route,token=operator,method='PUT',raw=binary,
+            headers={'CONTENT_TYPE':'application/octet-stream'})
+        self.assertEqual(uploaded['status'],'201 Created',uploaded)
+        self.assertEqual(uploaded['json']['sha256'],hashlib.sha256(binary).hexdigest())
+        downloaded=self.request(route,token=operator,method='GET')
+        self.assertEqual(downloaded['status'],'200 OK')
+        self.assertEqual(downloaded['body'],binary)
+        self.assertEqual(self.request(route,token=operator,method='PUT',raw=binary+b'changed',
+            headers={'CONTENT_TYPE':'application/octet-stream'})['status'],'409 Conflict')
+        self.app.native_sessions.cancel('doc-session')
+        self.assertEqual(self.request(base+'/doc-session/documents/new-document',token=operator,
+            method='PUT',raw=binary,headers={'CONTENT_TYPE':'application/octet-stream'})['status'],'409 Conflict')
+
     def test_native_notary_operator_workflow_and_evidence(self):
         customer=self.account('customer-one')
         operator=self.account('roosevelt',operator=True)
