@@ -21,6 +21,7 @@ from .native_notary import NativeNotarySessions, NativeNotaryDenied
 from .native_evidence import NativeEvidenceIndex, EvidenceDenied
 from .native_documents import NativeDocuments, DocumentDenied
 from .native_journal import NativeJournal, JournalDenied
+from .native_signatures import NativeSignatures, SignatureDenied
 from .cases import CaseRegistry
 from .deployment import RuntimeBindings, create_application, ORIGIN, _response
 from .glass_box_audit import GlassBoxAudit
@@ -63,6 +64,7 @@ class NativeRuntime:
         self.native_evidence=NativeEvidenceIndex(path)
         self.native_documents=NativeDocuments(path,Path(path).with_name('native_documents'))
         self.native_journal=NativeJournal(path)
+        self.native_signatures=NativeSignatures(path)
         self.appointments=AppointmentStore(self.cases,self.audit)
         self.ledger=PaymentLedger(path)
         self.store=TransactionStore(path)
@@ -144,13 +146,41 @@ class NativeRuntime:
             'signwell_credentials_configured':'signwell' in self.providers.clients,
             'bluenotary_credentials_configured':'bluenotary' in self.providers.clients,
             'provider_request_workflows_implemented':True,'native_notarial_session_intake':True,
-            'native_evidence_digest_index':True,'native_document_custody':True,'native_workflow_journal':True,'live_payment_verified':False,'notarial_execution_connected':False,
+            'native_evidence_digest_index':True,'native_document_custody':True,'native_workflow_journal':True,'native_cryptographic_signature_verification':True,'live_payment_verified':False,'notarial_execution_connected':False,
             'independent_ai_authorities_connected':False,'complete_build_verified':False}
 
     def __call__(self,env,start):
         path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
         if host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
             return self.base(env,start)
+        signature_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/signatures',path)
+        if signature_route:
+            actor=self.accounts.authenticate(env)
+            if actor is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
+            if not self.accounts.operator(actor):return _response(start,'403 Forbidden',{'error':'operator_required'})
+            if env.get('REQUEST_METHOD')!='POST':
+                return _response(start,'405 Method Not Allowed',{'error':'post_required'})
+            if env.get('HTTP_ORIGIN')!=ORIGIN:
+                return _response(start,'403 Forbidden',{'error':'origin_denied'})
+            if env.get('CONTENT_TYPE','').split(';')[0].strip()!='application/json':
+                return _response(start,'415 Unsupported Media Type',{'error':'json_required'})
+            try:
+                n=int(env.get('CONTENT_LENGTH','0'))
+                if not 0<n<=8192:raise ValueError('Invalid body length')
+                raw=env['wsgi.input'].read(n)
+                if len(raw)!=n:raise ValueError('Incomplete body')
+                data=strict_json(raw)
+                if not isinstance(data,dict) or set(data)!=set(('document_id','signature_id','signer_id','public_key_b64','signature_b64')):
+                    raise ValueError('Invalid signature envelope')
+                result=self.native_signatures.record(signature_route.group(1),**data)
+                self.audit.preserve({'stage':'NATIVE_DOCUMENT_SIGNATURE','actor':actor,
+                    'session_id':result['session_id'],'signature_id':result['signature_id'],
+                    'document_sha256':result['document_sha256']})
+                return _response(start,'201 Created',result)
+            except SignatureDenied:
+                return _response(start,'409 Conflict',{'error':'signature_rejected'})
+            except (ValueError,TypeError,KeyError,UnicodeError,RecursionError):
+                return _response(start,'400 Bad Request',{'error':'invalid_request'})
         journal_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/journal',path)
         if journal_route:
             actor=self.accounts.authenticate(env)
