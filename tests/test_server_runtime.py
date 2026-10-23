@@ -24,9 +24,11 @@ class ServerRuntimeTests(unittest.TestCase):
         database = tempfile.TemporaryDirectory(prefix='sds-server-test-')
         self.addCleanup(database.cleanup)
         env['SQLITE_DB_PATH'] = str(Path(database.name) / 'sds_production.db')
+        stderr_log = tempfile.TemporaryFile(mode='w+t')
+        self.addCleanup(stderr_log.close)
         server = subprocess.Popen([sys.executable, '-m', 'gunicorn', '--config',
             'deploy/gunicorn.conf.py', '--bind', f'127.0.0.1:{port}', 'wsgi:application'],
-            cwd=root, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            cwd=root, env=env, stdout=subprocess.DEVNULL, stderr=stderr_log)
         def status(path, host):
             try:
                 with urlopen(Request(f'http://127.0.0.1:{port}{path}',
@@ -42,7 +44,9 @@ class ServerRuntimeTests(unittest.TestCase):
                     break
                 except OSError:
                     if server.poll() is not None or time.monotonic() > deadline:
-                        self.fail('WSGI server failed to start')
+                        stderr_log.seek(0)
+                        detail = stderr_log.read().strip()
+                        self.fail(f'WSGI server failed to start: {detail or "no server stderr"}')
                     time.sleep(0.05)
             self.assertEqual(code, 200)
             self.assertEqual(status('/readyz', 'sandersdashandseal.com'), 200)
