@@ -1,5 +1,15 @@
 # Owner-directed audit — October 22, 2026
 
+## October 23 model diagnostic recovery increment
+
+Reproduced and corrected: an unavailable model result previously completed its
+only model task permanently, suppressing later analysis of that open incident.
+Durable read-only retries now preserve earlier evidence, converge across concurrent
+cycles, stop after successful responses/recovered incidents, and recover from
+missing configuration. Task ownership now accommodates the configured model
+response timeout. Actual HTTP 503 → responding fixture recovery is tested;
+this does not establish a deployed model or production inference quality.
+
 ## October 23 observed OS installation dependency
 
 Host diagnostic run 40016589134 confirmed `ocarun` uid 988 on Oracle Linux 9.8,

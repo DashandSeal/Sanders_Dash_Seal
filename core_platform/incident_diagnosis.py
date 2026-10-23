@@ -94,12 +94,30 @@ class DiagnosticEvidenceReview:
                 'review_kind':'LOCAL_DIAGNOSTIC_EVIDENCE_CHECK','grants_execution_authority':False}
 
 
+def model_task_id(dispatcher, incident):
+    """Durable read-only retries; unique IDs converge across competing cycles."""
+    prefix='observed-incident-'+str(incident)+'-model'
+    with sqlite3.connect(dispatcher.db_path) as db:
+        latest=db.execute('''SELECT t.rowid,t.status,t.created_at,r.result
+            FROM technical_tasks t LEFT JOIN technical_task_runs r USING(task_id)
+            WHERE t.task_id=? OR t.task_id LIKE ? ORDER BY t.rowid DESC LIMIT 1''',
+            (prefix,prefix+'-retry-%')).fetchone()
+    if latest is None:return prefix
+    rowid,status,created,raw=latest
+    if status not in ('RESULT_RECORDED','REVIEW_READY') or raw is None:return None
+    result=json.loads(raw)
+    if (result.get('diagnostic_model_status') not in ('UNAVAILABLE','NOT_CONFIGURED')
+            or dispatcher.clock()<created+60):return None
+    return prefix+'-retry-'+str(rowid)
+
+
 def diagnose_open_incidents(runtime,audit,model=None):
-    dispatcher=TechTeamDispatcher(runtime.path,CORE_LAWS,audit)
+    dispatcher=TechTeamDispatcher(runtime.path,CORE_LAWS,audit,clock=runtime.clock)
     with runtime.connect() as db:
         incidents=db.execute("SELECT incident_id,agent FROM ai_operational_incidents WHERE state='OPEN' ORDER BY incident_id").fetchall()
     for incident,agent in incidents:
-        task_id='observed-incident-'+str(incident)+('-model' if model is not None else '')
+        task_id=model_task_id(dispatcher,incident) if model is not None else 'observed-incident-'+str(incident)
+        if task_id is None:continue
         try:dispatcher.inspect(task_id)
         except DispatchDenied:
             try:dispatcher.submit(task_id,'IT_AI_Manager_v15.0','BUG_DIAGNOSIS',agent,
@@ -108,7 +126,8 @@ def diagnose_open_incidents(runtime,audit,model=None):
                 # Another worker may have submitted the same durable incident.
                 dispatcher.inspect(task_id)
     worker=TechnicalWorker(dispatcher,'ObservationDiagnosisWorker',
-        {'BUG_DIAGNOSIS':IncidentDiagnosis(runtime.path,model)},DiagnosticEvidenceReview(runtime.path))
+        {'BUG_DIAGNOSIS':IncidentDiagnosis(runtime.path,model)},DiagnosticEvidenceReview(runtime.path),
+        lease_seconds=max(60,getattr(model,'timeout',30)+30))
     completed=[]
     for _ in range(1 if model is not None else len(AGENTS)):
         result=worker.once()

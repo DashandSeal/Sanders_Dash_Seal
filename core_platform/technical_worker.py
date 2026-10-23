@@ -3,16 +3,17 @@ from .tech_team_dispatch import DispatchDenied, READ_ONLY_CAPABILITIES
 
 
 class TechnicalWorker:
-    def __init__(self, dispatcher, worker_id, handlers, reviewer=None):
+    def __init__(self, dispatcher, worker_id, handlers, reviewer=None, *, lease_seconds=60):
         if (not isinstance(handlers,dict) or not handlers
                 or not set(handlers).issubset(READ_ONLY_CAPABILITIES)
                 or not all(callable(handler) for handler in handlers.values())):
             raise DispatchDenied('Explicit read-only handler registry required')
         self.dispatcher,self.worker_id=dispatcher,worker_id
         self.handlers,self.reviewer=dict(handlers),reviewer
+        self.lease_seconds=lease_seconds
 
     def once(self):
-        item=self.dispatcher.claim_next(self.worker_id,set(self.handlers))
+        item=self.dispatcher.claim_next(self.worker_id,set(self.handlers),lease_seconds=self.lease_seconds)
         if item is None:return None
         task_id,claim,task=item['task_id'],item['claim'],item['task']
         task={'task_id':task_id,**task}

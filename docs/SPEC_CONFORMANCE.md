@@ -1,5 +1,25 @@
 # Original-specification conformance audit
 
+## Model diagnostic recovery — October 23, 2026
+
+Source: MASTER §§6–8 and 19–20; owner instruction to continue the real-time AIs.
+Acceptance: a transient unavailable local model must not permanently suppress
+future analysis of an open measured incident. Preserve each result and review,
+retry only read-only diagnostic work with a durable minimum 60-second spacing,
+avoid duplicate retry tasks across concurrent cycles, and stop creating retries
+after a successful model response or observed incident recovery. Missing models
+must preserve deterministic diagnosis and normal application availability. A
+model timeout longer than the default work claim must receive an adequate
+ownership interval; this is not a privileged execution lease. Test unavailable →
+responding recovery, restart/concurrency, missing-model transitions and lease
+ownership. Do not represent fixture responses as installed production inference.
+
+Verification: **407 Python tests passed**, no skips; **219 source hashes match**.
+Six added cases cover actual HTTP fixture 503 → responding recovery, preserved
+attempts across restart, concurrent retry submission/ownership, observed recovery,
+missing-model reconnection and response time exceeding the old claim. No installed
+production model or new live authority is asserted by these tests.
+
 ## Oracle installer OS privilege repair — October 23, 2026
 
 Source: MASTER §§6–8, 19–20, existing Oracle deployment, and owner directive to

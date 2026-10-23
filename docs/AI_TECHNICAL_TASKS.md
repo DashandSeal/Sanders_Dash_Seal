@@ -54,7 +54,15 @@ becomes a Twin-Gate approval or an execution grant.
 Without a configuration, deterministic evidence diagnosis continues and records
 NOT_CONFIGURED. If the configured server cannot provide a valid response, that
 attempt records UNAVAILABLE while preserving the deterministic diagnosis. Only
-an actual successful HTTP response enters the model-assisted result path. With
+an actual successful HTTP response enters the model-assisted result path.
+Unavailable model attempts retain their result and review. For an incident still
+observed open, later cycles create a separate read-only retry after 60 seconds;
+concurrent cycles converge on the same retry ID. A successful response stops new
+retries for that incident. A model task processed while configuration is missing
+can also be retried after reconnection. Observed recovered incidents create no
+new attempts. Retry history survives process restarts. Work ownership is sized
+to the configured model timeout plus review time; the observation service has a
+three-minute deadline for its cycle. These changes grant no repair authority. With
 a model configured, at most one diagnostic task is processed per cycle to keep
 inference work separate from the normal recurring observation schedule.
 

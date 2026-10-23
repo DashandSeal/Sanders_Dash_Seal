@@ -12,7 +12,7 @@ from core_platform.glass_box_audit import GlassBoxAudit
 from core_platform.tech_team_dispatch import TechTeamDispatcher,DispatchDenied
 from core_platform.technical_worker import TechnicalWorker
 from core_platform.operational_runtime import OperationalRuntime,observation
-from core_platform.incident_diagnosis import IncidentDiagnosis,DiagnosticEvidenceReview,diagnose_open_incidents
+from core_platform.incident_diagnosis import IncidentDiagnosis,DiagnosticEvidenceReview,diagnose_open_incidents,model_task_id
 from core_platform.local_inference import LocalInferenceClient,InferenceUnavailable
 from core_platform.upgrade_sidecar import CORE_LAWS
 
@@ -136,6 +136,84 @@ class DiagnosisTests(unittest.TestCase):
         self.assertFalse(result['model_inference'])
         self.assertEqual(result['diagnostic_model_status'],'UNAVAILABLE')
 
+    def test_unavailable_model_retries_after_restart_and_stops_after_response(self):
+        now=[100];self.runtime.clock=lambda:now[0]
+        class Model:
+            available=False
+            def diagnose(self,task):
+                if not self.available:raise InferenceUnavailable('offline')
+                return {'hypotheses':[{'statement':'Unproven test hypothesis'}],'counterevidence':[]}
+        model=Model()
+        diagnose_open_incidents(self.runtime,self.audit,model)
+        now[0]=159
+        self.assertEqual(diagnose_open_incidents(self.runtime,self.audit,model),[])
+        self.runtime=OperationalRuntime(self.path,clock=lambda:now[0])
+        now[0]=160;model.available=True
+        self.assertEqual(diagnose_open_incidents(self.runtime,self.audit,model)[0]['status'],'REVIEW_READY')
+        now[0]=1000
+        self.assertEqual(diagnose_open_incidents(self.runtime,self.audit,model),[])
+        tasks=TechTeamDispatcher(self.path,CORE_LAWS,self.audit).list_tasks()
+        self.assertEqual(len(tasks),2)
+        self.assertEqual(tasks[0]['execution']['result']['diagnostic_model_status'],'RESPONDED')
+        self.assertEqual(tasks[1]['execution']['result']['diagnostic_model_status'],'UNAVAILABLE')
+        self.assertFalse(tasks[0]['execution']['result']['execution_authorized'])
+
+    def test_concurrent_cycles_submit_and_execute_one_retry(self):
+        now=[100];self.runtime.clock=lambda:now[0]
+        class Model:
+            def diagnose(self,task):raise InferenceUnavailable('offline')
+        model=Model();diagnose_open_incidents(self.runtime,self.audit,model)
+        now[0]=160;barrier=threading.Barrier(2);errors=[]
+        from unittest.mock import patch
+        def synchronized_id(dispatcher,incident):
+            task_id=model_task_id(dispatcher,incident)
+            barrier.wait(3)
+            return task_id
+        def run():
+            try:diagnose_open_incidents(self.runtime,self.audit,model)
+            except Exception as error:errors.append(error)
+        with patch('core_platform.incident_diagnosis.model_task_id',side_effect=synchronized_id):
+            threads=[threading.Thread(target=run) for _ in range(2)]
+            for thread in threads:thread.start()
+            for thread in threads:thread.join(5)
+        self.assertFalse(errors)
+        tasks=TechTeamDispatcher(self.path,CORE_LAWS,self.audit).list_tasks()
+        self.assertEqual(len(tasks),2)
+        self.assertEqual(tasks[0]['execution']['attempts'],1)
+
+    def test_incident_recovery_stops_model_retries(self):
+        now=[100];self.runtime.clock=lambda:now[0]
+        class Model:
+            def diagnose(self,task):raise InferenceUnavailable('offline')
+        model=Model();diagnose_open_incidents(self.runtime,self.audit,model)
+        self.runtime.cycle({'uptime':lambda:observation('HEALTHY','HTTP_VERIFIED')})
+        now[0]=200
+        self.assertEqual(diagnose_open_incidents(self.runtime,self.audit,model),[])
+        self.assertEqual(len(TechTeamDispatcher(self.path,CORE_LAWS,self.audit).list_tasks()),1)
+
+    def test_model_work_processed_without_configuration_can_reconnect_later(self):
+        now=[100];self.runtime.clock=lambda:now[0]
+        dispatcher=TechTeamDispatcher(self.path,CORE_LAWS,self.audit,clock=lambda:now[0])
+        dispatcher.submit('observed-incident-1-model','IT_AI_Manager_v15.0','BUG_DIAGNOSIS',
+            'UptimeAgent','MASTER-6',{'incident_id':1})
+        diagnose_open_incidents(self.runtime,self.audit)
+        self.assertEqual(dispatcher.inspect('observed-incident-1-model')['execution']['result']['diagnostic_model_status'],'NOT_CONFIGURED')
+        class Model:
+            def diagnose(self,task):raise InferenceUnavailable('offline')
+        now[0]=160
+        diagnose_open_incidents(self.runtime,self.audit,Model())
+        self.assertEqual(len(dispatcher.list_tasks()),3)
+
+    def test_long_valid_model_response_retains_task_ownership(self):
+        now=[100];self.runtime.clock=lambda:now[0]
+        class Model:
+            timeout=90
+            def diagnose(self,task):
+                now[0]+=61
+                return {'hypotheses':[{'statement':'Unproven test hypothesis'}],'counterevidence':[]}
+        result=diagnose_open_incidents(self.runtime,self.audit,Model())
+        self.assertEqual(result[0]['status'],'REVIEW_READY')
+
 
 class LocalInferenceTests(unittest.TestCase):
     def setUp(self):
@@ -144,6 +222,8 @@ class LocalInferenceTests(unittest.TestCase):
             def do_POST(self):
                 value=json.loads(self.rfile.read(int(self.headers['Content-Length'])))
                 outer.requests.append(value)
+                if outer.mode=='unavailable':
+                    self.send_response(503);self.end_headers();return
                 if outer.mode=='redirect':
                     self.send_response(302);self.send_header('Location','http://outside.invalid');self.end_headers();return
                 user=json.loads(value['messages'][1]['content'])
@@ -168,6 +248,21 @@ class LocalInferenceTests(unittest.TestCase):
         request=self.requests[0]
         for law in CORE_LAWS:self.assertIn(law,request['messages'][0]['content'])
         self.assertFalse(request['stream']);self.assertNotIn('tools',request)
+
+    def test_actual_http_service_recovery_runs_a_new_evidence_bound_attempt(self):
+        with tempfile.TemporaryDirectory() as directory:
+            now=[100]
+            runtime=OperationalRuntime(Path(directory)/'state.db',clock=lambda:now[0])
+            audit=GlassBoxAudit(Path(directory)/'audit.db')
+            runtime.cycle({'uptime':lambda:observation('FAULT','HTTP_UNAVAILABLE')})
+            self.mode='unavailable'
+            diagnose_open_incidents(runtime,audit,self.client)
+            self.mode='good';now[0]=160
+            diagnose_open_incidents(runtime,audit,self.client)
+            tasks=TechTeamDispatcher(runtime.path,CORE_LAWS,audit).list_tasks()
+            self.assertEqual(len(self.requests),2)
+            self.assertEqual(tasks[0]['execution']['result']['diagnostic_model_status'],'RESPONDED')
+            self.assertTrue(tasks[0]['execution']['verification']['passed'])
 
     def test_redirects_truncation_unsupported_evidence_and_tools_are_rejected(self):
         for mode in ('redirect','truncated','wrong_evidence','extra'):

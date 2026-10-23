@@ -1,5 +1,13 @@
 # Technical-task and inference-transport evidence — October 23, 2026
 
+Recovery follow-up after PR #12 merged: **407 Python tests passed**, no skips;
+**219 source hashes matched**. Six new cases verify unavailable → responding HTTP
+fixture recovery, independent preserved attempts, restart, concurrent retry
+ownership, incident recovery, missing configuration transitions and responses
+longer than the old 60-second claim. These are measured development results,
+not a deployed model or verified production inference. The earlier increment's
+validation and limitations are retained below.
+
 - Full Python regression: **401 passed**, no skips.
 - Node regression: **22 passed**, no skips.
 - Paired payload integrity: **219 hashes matched**; no authority signatures created.
