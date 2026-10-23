@@ -1,8 +1,25 @@
 # Original-specification conformance audit
 
+## Oracle installer OS privilege repair — October 23, 2026
+
+Source: MASTER §§6–8, 19–20, existing Oracle deployment, and owner directive to
+remove artificial installation handoffs while preserving actual provider/OS
+authorization. Live probe 40016589134 observed Oracle Linux 9.8, user `ocarun`
+(uid 988), and failed passwordless sudo for both id and bash.
+
+Acceptance: prepare a one-time administrator bootstrap, installing a root-owned
+helper bound to the owner's private release bucket. Permit only a full commit
+identifier; download only `installers/<commit>.sh` from that bound bucket using
+Instance Principals, then execute the root-private downloaded file. Do not grant
+arbitrary bash, caller paths, environment injection, bucket writes or general
+sudo. Preserve existing IAM and source verification. Subsequent root installations
+configure this helper automatically. An unprivileged agent cannot grant itself
+OS administrator rights; record the initial administrator action as outstanding
+until observed, rather than claiming the live deployment repaired.
+
 ## Durable technical-task execution — October 23, 2026
 
-Verification so far: 396 Python tests passed, zero skipped. The new cases cover
+Verification so far: 401 Python tests passed, zero skipped. The new cases cover
 concurrent ownership, expired claims, stale completion, persistent results,
 redacted failures, no automatic mutation retry, grounding review, actual local
 HTTP inference transport and rejected unsupported model output. The HTTP model

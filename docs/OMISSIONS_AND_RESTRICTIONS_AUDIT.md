@@ -1,5 +1,14 @@
 # Owner-directed audit — October 22, 2026
 
+## October 23 observed OS installation dependency
+
+Host diagnostic run 40016589134 confirmed `ocarun` uid 988 on Oracle Linux 9.8,
+without passwordless sudo. A tested one-time administrator bootstrap now prepares
+a root-owned, fixed private-bucket installer helper; subsequent root installs
+configure it automatically. This replaces the overly broad request to sudo an
+agent-writable script. Initial OS administrator setup remains unperformed;
+see `ORACLE_AGENT_BOOTSTRAP.md`. No live install success is claimed.
+
 ## October 23 technical-worker and local-inference increment
 
 The existing dispatcher now executes registered read-only diagnosis tasks with

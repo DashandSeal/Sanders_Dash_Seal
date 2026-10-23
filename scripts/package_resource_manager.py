@@ -92,9 +92,10 @@ def contents(commit, *, root=ROOT, source_names=None, direct=False):
     # A root invocation is required by the OS; this does not invent a release authorizer.
     existing = """#!/bin/bash
 set -Eeuo pipefail
-if [[ \"$EUID\" != 0 ]]; then exec sudo -n /bin/bash \"$0\"; fi
+if [[ \"$EUID\" != 0 ]]; then exec sudo -n /usr/local/sbin/sanders-install-from-bucket SDS_INSTALL_COMMIT; fi
 install -d -m 0700 /etc/sanders-dash-seal
 """
+    existing = existing.replace('SDS_INSTALL_COMMIT', commit)
     for destination, raw in [('/usr/local/sbin/sds-install-application', install),
                              ('/usr/local/sbin/sds-fetch-release', fetch)]:
         existing += "printf '%s' '" + base64.b64encode(raw.encode()).decode() + "' | base64 -d > " + destination + "\nchmod 0700 " + destination + "\n"
