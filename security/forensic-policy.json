@@ -1,6 +1,0 @@
-{
-  "schema": 1,
-  "allowed_duplicate_groups": [
-    ["compose.yaml", "docker-compose.yml"]
-  ]
-}

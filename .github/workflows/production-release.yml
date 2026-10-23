@@ -1,9 +1,0 @@
-name: Sanders Dash & Seal production deployment entrypoint
-on:
-  workflow_dispatch:
-permissions:
-  contents: read
-jobs:
-  deploy:
-    uses: ./.github/workflows/oci-gitops-deploy.yml
-    secrets: inherit
