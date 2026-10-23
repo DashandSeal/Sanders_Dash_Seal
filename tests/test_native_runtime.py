@@ -160,6 +160,26 @@ class NativeRuntimeTests(unittest.TestCase):
         for _ in range(11):self.request('/auth/login',{'username':'unknown-user','password':self.password})
         self.assertEqual(self.request('/auth/login',{'username':'unknown-user','password':self.password})['status'],'429 Too Many Requests')
 
+    def test_native_ron_room_and_authority_status(self):
+        customer=self.account('customer-one')
+        operator=self.account('roosevelt',operator=True)
+        self.app.cases.create('ron-case','WI','RON','customer-one')
+        base='/api/operator/native-notary/sessions'
+        created=self.request(base,{'session_id':'ron-session','case_id':'ron-case',
+            'method':'RON','jurisdiction':'WI'},token=operator)
+        self.assertEqual(created['status'],'201 Created',created)
+        room=base+'/ron-session/ron-room'
+        self.assertEqual(self.request(room,{'room_id':'room-1'},token=customer)['status'],'403 Forbidden')
+        self.assertEqual(self.request(room,{'room_id':'room-1'},token=operator)['status'],'201 Created')
+        self.assertEqual(self.request(room,{'recording_digest':'a'*64},token=operator)['status'],'409 Conflict')
+        self.assertEqual(self.request(room,{'consent_digest':'b'*64},token=operator)['json']['state'],'CONSENT_RECORDED')
+        self.assertEqual(self.request(room,{'recording_digest':'a'*64},token=operator)['json']['state'],'RECORDING_INDEXED')
+        self.assertEqual(self.request(room,token=operator)['json']['recording_digest'],'a'*64)
+        authority=self.request(base+'/ron-session/authority',token=operator)
+        self.assertEqual(authority['status'],'200 OK')
+        self.assertIn('RON_PROVIDER_AUTHORIZATION',authority['json']['missing'])
+        self.assertEqual(self.request(base+'/ron-session/authority',token=customer)['status'],'403 Forbidden')
+
     def test_native_journal_runtime_integrity_and_access(self):
         customer=self.account('customer-one')
         operator=self.account('roosevelt',operator=True)
