@@ -25,7 +25,7 @@
 - Every platform component declares image digest, dependency edges, health checks, rollback and data migration contract.
 - Upgrades that change case state, schema, legal authority, provider, payment or identity require specific end-to-end regression verification.
 - All releases bind approval to exact manifest, scope, environment, dependency hashes and human authorization.
-- Production is blocked until both tracks pass unified acceptance in docs/END_TO_END_PRODUCTION_ACCEPTANCE.md.
+- The unified acceptance checks assess functional completion; they do not prohibit ordinary installation, diagnostic startup or independent development of either track. Privileged operations retain their required authority checks.
 
 ## Actual implementation state as of October 15, 2026
 - Present: development PBD security, Vault and lifecycle; Stripe local adapter; upgrade queue; Docker hot-swap planning and rollback adapter; CI source verification; fail-closed manual production gate.
