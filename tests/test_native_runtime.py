@@ -157,8 +157,16 @@ class NativeRuntimeTests(unittest.TestCase):
         bad=self.request('/auth/logout',{},token=token,headers={'HTTP_ORIGIN':'https://evil.example'})
         self.assertEqual(bad['status'],'403 Forbidden')
         self.assertEqual(self.request('/auth/login',{},raw=b'{"username":"one","username":"two"}')['status'],'400 Bad Request')
-        for _ in range(11):self.request('/auth/login',{'username':'unknown-user','password':self.password})
-        self.assertEqual(self.request('/auth/login',{'username':'unknown-user','password':self.password})['status'],'429 Too Many Requests')
+        # Keep every attempt inside one deterministic 60-second quota window.
+        # Real-time scrypt work can otherwise cross a minute boundary in CI.
+        fixed_time=int(time.time()//60)*60+30
+        self.app.accounts.clock=lambda: fixed_time
+        for _ in range(10):
+            self.assertEqual(self.request('/auth/login',{'username':'unknown-user',
+                'password':self.password})['status'],'401 Unauthorized')
+        limited=self.request('/auth/login',{'username':'unknown-user','password':self.password})
+        self.assertEqual(limited['status'],'429 Too Many Requests')
+        self.assertEqual(limited['headers']['Retry-After'],'60')
 
     def test_native_seal_runtime_authorization_and_invalid_signature(self):
         import base64
