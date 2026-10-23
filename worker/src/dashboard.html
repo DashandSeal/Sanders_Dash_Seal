@@ -59,4 +59,69 @@ function SDS_BindTelemetry(pc){
  telemetryTimer=setInterval(runTelemetryLoop,1000);
 }
 window.SDS_BindTelemetry=SDS_BindTelemetry;
-</script></body></html>
+</script><script>
+/* Authorized browser media transport. Tokens must be issued by an
+   independently authenticated and room-authorized application flow. */
+window.SDS_InitializeLiveMedia = async function(sessionId, token, signalUrl, options = {}) {
+ if (!/^[A-Za-z0-9_.-]{1,128}$/.test(sessionId) || !/^[a-f0-9]{64}$/.test(token))
+  throw new Error('Invalid room authorization');
+ if (!signalUrl || !/^wss:\/\//.test(signalUrl))
+  throw new Error('Encrypted signaling URL required');
+ const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
+ const local = document.getElementById('local-view');
+ local.muted = true; local.srcObject = stream;
+ const pc = new RTCPeerConnection({iceServers: options.iceServers || []});
+ const remote = document.createElement('video');
+ remote.autoplay = true;remote.playsInline = true;remote.muted = false;
+ remote.id = 'remote-view';remote.style.cssText='width:100%;max-height:360px;background:#020617';
+ local.parentElement.insertAdjacentElement('afterend',remote);
+ stream.getTracks().forEach(track=>pc.addTrack(track,stream));
+ pc.ontrack = event => {
+  if(event.streams[0])remote.srcObject=event.streams[0];
+  else {
+   const incoming=remote.srcObject || new MediaStream();
+   incoming.addTrack(event.track);remote.srcObject=incoming;
+  }
+ };
+ const ws = new WebSocket(signalUrl,['sds-auth.'+token]);
+ let authorized=false;
+ const queuedCandidates=[];
+ const send = frame => {if(ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify({
+  type:'webrtc_signal',targetSessionId:sessionId,...frame}));};
+ pc.onicecandidate=event=>{if(event.candidate && authorized)send({action:'ice_candidate',candidate:event.candidate.toJSON()});};
+ pc.onnegotiationneeded=async()=>{
+  if(!authorized || pc.signalingState!=='stable')return;
+  await pc.setLocalDescription(await pc.createOffer());
+  send({action:'offer',sdp:pc.localDescription.toJSON()});
+ };
+ ws.onopen=()=>send({action:'initialize_session'});
+ ws.onmessage=async event=>{
+  let msg;
+  try{msg=JSON.parse(event.data);}catch{return;}
+  if(msg.type==='webrtc_error'||msg.type==='security_error'){ws.close();return;}
+  if(msg.type!=='webrtc_signal'||msg.targetSessionId!==sessionId)return;
+  if(msg.action==='initialized'){
+   authorized=true;
+   if(pc.signalingState==='stable'){
+    await pc.setLocalDescription(await pc.createOffer());
+    send({action:'offer',sdp:pc.localDescription.toJSON()});
+   }
+  }else if(msg.action==='offer'){
+   await pc.setRemoteDescription(msg.sdp);
+   await pc.setLocalDescription(await pc.createAnswer());
+   send({action:'answer',sdp:pc.localDescription.toJSON()});
+  }else if(msg.action==='answer'){
+   await pc.setRemoteDescription(msg.sdp);
+  }else if(msg.action==='ice_candidate'){
+   if(pc.remoteDescription)await pc.addIceCandidate(msg.candidate);
+   else queuedCandidates.push(msg.candidate);
+  }
+  if(pc.remoteDescription)while(queuedCandidates.length)await pc.addIceCandidate(queuedCandidates.shift());
+ };
+ ws.onclose=()=>{authorized=false;};
+ window.SDS_BindTelemetry(pc);
+ return {peerConnection:pc,signaling:ws,localStream:stream,remoteVideo:remote,
+  stop(){ws.close();pc.close();stream.getTracks().forEach(t=>t.stop());}};
+};
+</script>
+</body></html>
