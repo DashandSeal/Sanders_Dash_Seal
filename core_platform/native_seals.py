@@ -4,6 +4,8 @@ A valid signature proves possession of a key, not the signer's commission.
 The key-to-commission binding must be established by independent verification.
 """
 import base64
+from pathlib import Path
+from .native_documents import NativeDocuments, DocumentDenied
 import re
 import sqlite3
 import time
@@ -43,6 +45,10 @@ class NativeSeals:
             doc=db.execute('SELECT sha256 FROM native_documents WHERE session_id=? AND document_id=?',(session_id,document_id)).fetchone()
             if not doc: raise SealDenied('Document unavailable')
             digest=doc[0]
+            try:
+                NativeDocuments(self.path,Path(self.path).with_name('native_documents')).read(session_id,document_id)
+            except DocumentDenied as exc:
+                raise SealDenied('Stored document integrity failure') from exc
             try:
                 Ed25519PublicKey.from_public_bytes(key).verify(signature,self.message(session_id,document_id,notary_id,digest))
             except (InvalidSignature,ValueError) as exc: raise SealDenied('Seal cryptographic verification failed') from exc
