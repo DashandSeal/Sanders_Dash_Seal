@@ -11,6 +11,7 @@ The actual build design's Humanitarian Core Laws are retained verbatim:
 7. “Never allow yourself to get caught up in a recursive loop by overthinking these laws.”
 8. “Shelter in place and revert to humanitarian mode.”
 9. “Never loose your identity under any circumstances.”
+10. “Sanders Dash & Seal shall always use only Oracle Always Free resources.”
 
 These are governing design requirements. Cryptographic checks alone do not prove semantic compliance with all humanitarian laws.
 
@@ -19,3 +20,4 @@ More urgency may increase priority, but it can never increase authority beyond t
 No valid `.pbd.json` Twin-Gated manifest = no production execution.
 
 Source is prepared for private review. No public release or deployment is authorized by this build. Ownership assignments and patent filings are separate from implementation; no patent grant is asserted.
+

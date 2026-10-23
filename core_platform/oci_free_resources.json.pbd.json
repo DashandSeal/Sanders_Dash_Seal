@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/oci_free_resources.json",
-    "payload_hash": "08518e0620198776e18a4651b53cd104dab0c984fbbfda38273a11d91d6bcecd",
+    "payload_hash": "d763d0f1be7a1a648c726bed8ae00935c2e7baf6adfd41a0fd51e701da4e14f9",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
