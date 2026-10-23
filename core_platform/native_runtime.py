@@ -22,6 +22,8 @@ from .native_evidence import NativeEvidenceIndex, EvidenceDenied
 from .native_documents import NativeDocuments, DocumentDenied
 from .native_journal import NativeJournal, JournalDenied
 from .native_signatures import NativeSignatures, SignatureDenied
+from .native_ron_rooms import NativeRonRooms, RoomDenied
+from .native_authority import NativeAuthority, AuthorityDenied
 from .cases import CaseRegistry
 from .deployment import RuntimeBindings, create_application, ORIGIN, _response
 from .glass_box_audit import GlassBoxAudit
@@ -65,6 +67,8 @@ class NativeRuntime:
         self.native_documents=NativeDocuments(path,Path(path).with_name('native_documents'))
         self.native_journal=NativeJournal(path)
         self.native_signatures=NativeSignatures(path)
+        self.native_ron_rooms=NativeRonRooms(path)
+        self.native_authority=NativeAuthority(path)
         self.appointments=AppointmentStore(self.cases,self.audit)
         self.ledger=PaymentLedger(path)
         self.store=TransactionStore(path)
@@ -146,13 +150,54 @@ class NativeRuntime:
             'signwell_credentials_configured':'signwell' in self.providers.clients,
             'bluenotary_credentials_configured':'bluenotary' in self.providers.clients,
             'provider_request_workflows_implemented':True,'native_notarial_session_intake':True,
-            'native_evidence_digest_index':True,'native_document_custody':True,'native_workflow_journal':True,'native_cryptographic_signature_verification':True,'live_payment_verified':False,'notarial_execution_connected':False,
+            'native_evidence_digest_index':True,'native_document_custody':True,'native_workflow_journal':True,'native_cryptographic_signature_verification':True,'native_ron_room_lifecycle':True,
+            'native_authority_evidence_registry':True,'live_payment_verified':False,'notarial_execution_connected':False,
             'independent_ai_authorities_connected':False,'complete_build_verified':False}
 
     def __call__(self,env,start):
         path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
         if host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
             return self.base(env,start)
+        ron_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/ron-room',path)
+        if ron_route:
+            actor=self.accounts.authenticate(env)
+            if actor is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
+            if not self.accounts.operator(actor):return _response(start,'403 Forbidden',{'error':'operator_required'})
+            sid=ron_route.group(1)
+            if env.get('REQUEST_METHOD')=='GET':
+                try:return _response(start,'200 OK',self.native_ron_rooms.get(sid))
+                except RoomDenied:return _response(start,'404 Not Found',{'error':'room_not_found'})
+            if env.get('REQUEST_METHOD')!='POST':
+                return _response(start,'405 Method Not Allowed',{'error':'method_not_allowed'})
+            if env.get('HTTP_ORIGIN')!=ORIGIN:
+                return _response(start,'403 Forbidden',{'error':'origin_denied'})
+            if env.get('CONTENT_TYPE','').split(';')[0].strip()!='application/json':
+                return _response(start,'415 Unsupported Media Type',{'error':'json_required'})
+            try:
+                n=int(env.get('CONTENT_LENGTH','0'))
+                if not 0<n<=4096:raise ValueError('Invalid body length')
+                raw=env['wsgi.input'].read(n)
+                if len(raw)!=n:raise ValueError('Incomplete body')
+                data=strict_json(raw)
+                if not isinstance(data,dict):raise ValueError('Invalid room request')
+                if set(data)=={'room_id'}:result=self.native_ron_rooms.create(sid,data['room_id'])
+                elif set(data)=={'consent_digest'}:result=self.native_ron_rooms.consent(sid,data['consent_digest'])
+                elif set(data)=={'recording_digest'}:result=self.native_ron_rooms.recording(sid,data['recording_digest'])
+                else:raise ValueError('Invalid room operation')
+                self.audit.preserve({'stage':'NATIVE_RON_ROOM','actor':actor,'session_id':sid,'room_state':result['state']})
+                return _response(start,'201 Created',result)
+            except RoomDenied:return _response(start,'409 Conflict',{'error':'room_rejected'})
+            except (ValueError,TypeError,KeyError,UnicodeError,RecursionError):
+                return _response(start,'400 Bad Request',{'error':'invalid_request'})
+        authority_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/authority',path)
+        if authority_route:
+            actor=self.accounts.authenticate(env)
+            if actor is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
+            if not self.accounts.operator(actor):return _response(start,'403 Forbidden',{'error':'operator_required'})
+            if env.get('REQUEST_METHOD')!='GET':
+                return _response(start,'405 Method Not Allowed',{'error':'read_only'})
+            try:return _response(start,'200 OK',{'missing':self.native_authority.missing(authority_route.group(1))})
+            except AuthorityDenied:return _response(start,'404 Not Found',{'error':'session_not_found'})
         signature_route=re.fullmatch(r'/api/operator/native-notary/sessions/([A-Za-z0-9_.-]{1,128})/signatures',path)
         if signature_route:
             actor=self.accounts.authenticate(env)
