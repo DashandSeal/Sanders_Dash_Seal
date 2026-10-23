@@ -13,6 +13,8 @@ function handleWebRTCSignaling(ws, payload, activeSockets) {
       !ID.test(payload.targetSessionId || '')) return reject(ws,'Invalid session');
   const sessionId=payload.targetSessionId;
   // The authentication response must explicitly authorize the session.
+  if (ws.sessionData.assigned_session_id !== sessionId)
+    return reject(ws,'Room assignment mismatch');
   const allowed=ws.sessionData.notary_session_ids;
   if (!Array.isArray(allowed) || !allowed.includes(sessionId))
     return reject(ws,'Session membership not authorized');
