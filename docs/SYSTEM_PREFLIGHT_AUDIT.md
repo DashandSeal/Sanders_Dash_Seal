@@ -13,7 +13,7 @@ application directories. The Compose call has a ten-second timeout and does not
 claim Docker daemon or application readiness. Missing tools/directories at first
 boot produce OBSERVATION_COMPLETE_WITH_GAPS. That means the observation finished,
 not that the machine passed deployment requirements. The bootstrap's existing
-host, source, runtime and release gates remain in force.
+host, source and runtime checks remain observable; no assistant-created blanket release gate applies.
 
 The log is `/var/log/sds_platform_preflight.log`, created with private permissions
 and replaced on each run rather than appended indefinitely. Its contents also
