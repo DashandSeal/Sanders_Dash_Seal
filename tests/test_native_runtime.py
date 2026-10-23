@@ -160,6 +160,38 @@ class NativeRuntimeTests(unittest.TestCase):
         for _ in range(11):self.request('/auth/login',{'username':'unknown-user','password':self.password})
         self.assertEqual(self.request('/auth/login',{'username':'unknown-user','password':self.password})['status'],'429 Too Many Requests')
 
+    def test_native_seal_runtime_authorization_and_invalid_signature(self):
+        import base64
+        from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+        from cryptography.hazmat.primitives import serialization
+        customer=self.account('seal-customer')
+        operator=self.account('seal-operator',operator=True)
+        self.app.cases.create('seal-case','CO','E_NOTARY','seal-customer')
+        base='/api/operator/native-notary/sessions'
+        self.assertEqual(self.request(base,{'session_id':'seal-session','case_id':'seal-case',
+            'method':'E_NOTARY','jurisdiction':'CO'},token=operator)['status'],'201 Created')
+        document=b'%PDF-1.4 native seal fixture'
+        self.app.native_documents.put('seal-session','doc-1',document)
+        key=Ed25519PrivateKey.generate()
+        public=base64.b64encode(key.public_key().public_bytes(
+            serialization.Encoding.Raw,serialization.PublicFormat.Raw)).decode()
+        digest=hashlib.sha256(document).hexdigest()
+        message=self.app.native_seals.message('seal-session','doc-1','notary-1',digest)
+        signature=base64.b64encode(key.sign(message)).decode()
+        route=base+'/seal-session/seals'
+        payload={'document_id':'doc-1','seal_id':'seal-1','notary_id':'notary-1',
+            'key_b64':public,'signature_b64':signature}
+        self.assertEqual(self.request(route,payload,token=customer)['status'],'403 Forbidden')
+        valid=self.request(route,payload,token=operator)
+        self.assertEqual(valid['status'],'201 Created',valid)
+        self.assertTrue(valid['json']['cryptographic_seal_verified'])
+        self.assertFalse(valid['json']['commission_verified'])
+        self.assertEqual(self.request(route,payload,token=operator)['status'],'201 Created')
+        bad=dict(payload,seal_id='seal-2',signature_b64=base64.b64encode(b'0'*64).decode())
+        self.assertEqual(self.request(route,bad,token=operator)['status'],'409 Conflict')
+        self.app.native_sessions.cancel('seal-session')
+        self.assertEqual(self.request(route,dict(payload,seal_id='seal-3'),token=operator)['status'],'409 Conflict')
+
     def test_native_ron_room_and_authority_status(self):
         customer=self.account('customer-one')
         operator=self.account('roosevelt',operator=True)
