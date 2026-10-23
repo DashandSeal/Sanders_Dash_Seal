@@ -4,3 +4,5 @@
 !unpack.py
 !wsgi.py
 !wsgi.py.pbd.json
+
+!auth_session.py
