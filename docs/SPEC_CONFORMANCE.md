@@ -745,3 +745,13 @@ Acceptance criteria: preserve laws 1–9 verbatim; add law 10 to MASTER and GOVE
 
 Implementation: governing-source and runtime-catalog amendment. The existing catalog API exposes the added governing_core_law field. This amendment records the owner's law; it does not establish tenancy-wide enforcement, verify live Oracle usage or billing, or change OCI resources. Existing comparisons remain advisory. Live deployment is separate from this source change.
 
+
+
+## Core Law 10 owner-wide scope — October 23, 2026
+
+Source: Roosevelt Sanders: “That shall be the tenth law for every platform,past, present, and future builds of mine”.
+
+Acceptance: preserve the exact Sanders Dash & Seal law and laws 1–9; explicitly record all owner platforms and past/present/future builds in governing sources, contributor instructions, and the application resource catalog; synchronize source snapshots and hashes; introduce no blanket application execution, startup, shutdown, or extra approval gate. Record source incorporation separately from live adoption and from modifications to other platforms.
+
+Implementation: added an owner-wide directive document, MASTER/GOVERNANCE applicability statements, standing AGENTS instructions, and structured catalog applicability. This increment changes this repository branch only; other repositories and live deployments are not asserted updated.
+
