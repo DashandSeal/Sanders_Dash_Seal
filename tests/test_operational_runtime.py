@@ -151,6 +151,13 @@ class OperationsTests(unittest.TestCase):
         self.assertEqual(request(path,token,'POST')['status'],'405 Method Not Allowed')
         self.assertEqual(request(path,token,host='wrong.example')['status'],'421 Misdirected Request')
         self.assertEqual(request('/readyz')['status'],'200 OK')
+        roles='/api/operator/ai/roles'
+        self.assertEqual(request(roles)['status'],'401 Unauthorized')
+        self.assertEqual(request(roles,token,'POST')['status'],'405 Method Not Allowed')
+        observed=request(roles,token)['body']
+        self.assertEqual(len(observed['roles']),30)
+        self.assertFalse(observed['authority_granted'])
+        self.assertTrue(all(r['state']=='UNKNOWN' for r in observed['roles']))
         tasks='/api/operator/ai/tasks'
         self.assertEqual(request(tasks)['status'],'401 Unauthorized')
         self.assertEqual(request(tasks,token)['body'],{'tasks':[]})

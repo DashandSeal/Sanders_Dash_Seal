@@ -35,6 +35,7 @@ from .stream_api import strict_json
 from .upgrade_sidecar import CORE_LAWS
 from .operational_runtime import OperationalRuntime
 from .tech_team_dispatch import TechTeamDispatcher
+from .ai_role_workers import RoleObservationStore
 from backend.auth_session import validate_worker_token_request, issue_webrtc_access_token
 
 
@@ -66,6 +67,7 @@ class NativeRuntime:
             setup_expires=settings.get('owner_setup_expires',0))
         self.audit=GlassBoxAudit(Path(path).with_name('sds_audit.db'))
         self.operations=OperationalRuntime(path)
+        self.ai_roles=RoleObservationStore(path)
         self.technical_tasks=TechTeamDispatcher(path,CORE_LAWS,self.audit)
         self.cases=CaseRegistry(path,CORE_LAWS)
         self.native_sessions=NativeNotarySessions(path)
@@ -165,11 +167,12 @@ class NativeRuntime:
         path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
         if path != '/api/auth/verify' and host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
             return self.base(env,start)
-        if path in ('/api/operator/ai/status','/api/operator/ai/tasks'):
+        if path in ('/api/operator/ai/status','/api/operator/ai/tasks','/api/operator/ai/roles'):
             actor=self.accounts.authenticate(env)
             if actor is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
             if not self.accounts.operator(actor):return _response(start,'403 Forbidden',{'error':'operator_required'})
             if env.get('REQUEST_METHOD')!='GET':return _response(start,'405 Method Not Allowed',{'error':'read_only'})
+            if path.endswith('/roles'):return _response(start,'200 OK',self.ai_roles.status())
             return _response(start,'200 OK',self.operations.status() if path.endswith('/status')
                 else {'tasks':self.technical_tasks.list_tasks()})
         if path == '/api/auth/verify':
