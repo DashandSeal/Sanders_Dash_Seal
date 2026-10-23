@@ -1,5 +1,22 @@
 # Owner-directed audit — October 22, 2026
 
+## October 23 technical-worker and local-inference increment
+
+The existing dispatcher now executes registered read-only diagnosis tasks with
+atomic claims, expiry/reassignment protection and durable results/reviews. Open
+measured incidents create diagnosis tasks automatically. Independent local
+evidence review checks findings against actual stored observations. A tested
+local HTTP model transport carries all ten laws and bounded measured evidence;
+missing/failed model connections remain explicit and do not disable the app.
+No model weights, live model inference, independent signing authorities or
+privileged autonomous repair have been verified by this increment.
+
+Latest deployment run 40013274461 passed real Oracle Apply and reached an actual
+VM command, which failed during installation. The new read-only diagnostic job
+retrieves sanitized execution output. OCI command exit codes are now read from
+the documented nested content object. The full underlying AI/service inventory
+below remains open except for the particular tested mechanics just identified.
+
 ## October 23 operational-runtime increment
 
 Latest observed Oracle deployment: authentication and Plan succeeded in run

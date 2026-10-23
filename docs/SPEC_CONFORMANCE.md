@@ -1,5 +1,34 @@
 # Original-specification conformance audit
 
+## Durable technical-task execution — October 23, 2026
+
+Verification so far: 395 Python tests passed, zero skipped. The new cases cover
+concurrent ownership, expired claims, stale completion, persistent results,
+redacted failures, no automatic mutation retry, grounding review, actual local
+HTTP inference transport and rejected unsupported model output. The HTTP model
+responder in tests is a fixture, not a real inference engine. Source pairs and
+the embedded backend snapshot are synchronized; no authority signatures created.
+
+Deployment follow-up: real Oracle Apply succeeded, followed by an actual failed
+VM installation command. Read-only diagnostics retrieve the existing command
+output with credential/key/URL redaction. The exit-code parser now handles OCI's
+documented `content.exit-code`, retaining rejection of nonzero/boolean codes.
+References: https://docs.oracle.com/en-us/iaas/tools/oci-cli/latest/oci_cli_docs/cmdref/instance-agent/command-execution/list.html
+and https://docs.oracle.com/en-us/iaas/tools/python/latest/api/compute_instance_agent/models/oci.compute_instance_agent.models.InstanceAgentCommandExecutionOutputViaTextDetails.html.
+
+Source: MASTER §§6–8 and 19–20; owner instruction to continue the unfinished AIs.
+Acceptance: the existing technical dispatcher must run registered read-only
+diagnosis work, preserve result and verification evidence across restarts, and
+atomically assign work so concurrent workers do not execute the same active task.
+An expired ownership claim may redeliver only explicitly read-only handlers;
+stale workers cannot complete work after reassignment. Diagnose real stored
+observations, mark hypotheses as hypotheses, and independently verify every
+factual finding against observation history. Automatically create one diagnosis
+task per observed incident. Preserve Manager/Quality/MINOTAUR/Vault/audit role
+boundaries and application availability. Diagnostic completion grants no repair,
+shell, signing or notarial authority. Preserve model-inference/live-authority
+gaps explicitly; deterministic diagnosis must not be labeled model inference.
+
 ## Operational supervision completion increment — October 23, 2026
 
 Live deployment diagnosis during this increment: main GitOps run 40010092156

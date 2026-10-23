@@ -151,6 +151,10 @@ class OperationsTests(unittest.TestCase):
         self.assertEqual(request(path,token,'POST')['status'],'405 Method Not Allowed')
         self.assertEqual(request(path,token,host='wrong.example')['status'],'421 Misdirected Request')
         self.assertEqual(request('/readyz')['status'],'200 OK')
+        tasks='/api/operator/ai/tasks'
+        self.assertEqual(request(tasks)['status'],'401 Unauthorized')
+        self.assertEqual(request(tasks,token)['body'],{'tasks':[]})
+        self.assertEqual(request(tasks,token,'POST')['status'],'405 Method Not Allowed')
 
 
 class HttpProbeTests(unittest.TestCase):

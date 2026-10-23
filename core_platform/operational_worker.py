@@ -8,6 +8,8 @@ import sys
 from .glass_box_audit import GlassBoxAudit
 from .operational_probes import configured_probes
 from .operational_runtime import OperationalRuntime
+from .incident_diagnosis import diagnose_open_incidents
+from .local_inference import configured_client
 
 
 def main():
@@ -23,6 +25,11 @@ def main():
     audit = GlassBoxAudit(audit_path)
     result = runtime.cycle(configured_probes(args.database, audit))
     audit.preserve({'stage': 'OPERATIONAL_OBSERVATION_CYCLE', **result})
+    try:model=configured_client()
+    except (OSError,ValueError):
+        model=None;result['diagnostic_model_configuration']='INVALID'
+    else:result['diagnostic_model_configuration']='CONFIGURED' if model is not None else 'NOT_CONFIGURED'
+    result['diagnostic_tasks']=diagnose_open_incidents(runtime,audit,model)
     print(json.dumps(result))
 
 
