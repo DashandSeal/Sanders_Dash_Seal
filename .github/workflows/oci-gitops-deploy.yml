@@ -65,8 +65,8 @@ jobs:
         env:
           OCI_TENANCY_OCID: ${{ secrets.OCI_TENANCY_OCID }}
           OCI_USER_OCID: ${{ secrets.OCI_USER_OCID }}
-          OCI_FINGERPRINT: ${{ secrets.SDS_OCI_FINGERPRINT }}
-          OCI_PRIVATE_KEY: ${{ secrets.SDS_OCI_PRIVATE_KEY }}
+          OCI_FINGERPRINT: ${{ secrets.SDS_OCI_FINGERPRINT_V2 }}
+          OCI_PRIVATE_KEY: ${{ secrets.SDS_OCI_PRIVATE_KEY_V2 }}
           OCI_REGION: ${{ secrets.OCI_REGION || 'us-phoenix-1' }}
           OCI_STACK_OCID: ${{ secrets.OCI_STACK_OCID || vars.OCI_STACK_OCID || 'ocid1.ormstack.oc1.phx.amaaaaaaftib4xqaggduipcxfh7oscxgqq4276qzr3u25dynr3vzs3hiadqa' }}
           STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
