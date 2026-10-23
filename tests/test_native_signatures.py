@@ -18,7 +18,7 @@ class NativeSignatureTests(unittest.TestCase):
         self.sessions.create('s-1','c-1','E_NOTARY','CO')
         self.docs=NativeDocuments(path,Path(self.temp.name)/'docs')
         self.docs.put('s-1','d-1',b'document')
-        self.signatures=NativeSignatures(path)
+        self.signatures=NativeSignatures(path,storage_dir=Path(self.temp.name)/'docs')
         self.key=Ed25519PrivateKey.generate()
         self.public=base64.b64encode(self.key.public_key().public_bytes(
             serialization.Encoding.Raw,serialization.PublicFormat.Raw)).decode()

@@ -16,8 +16,9 @@ IDENT=re.compile(r'[A-Za-z0-9_.-]{1,128}\Z',re.ASCII)
 class SealDenied(ValueError): pass
 
 class NativeSeals:
-    def __init__(self,path):
+    def __init__(self,path,*,storage_dir=None):
         self.path=str(path)
+        self.storage_dir=Path(storage_dir) if storage_dir is not None else Path(self.path).with_name('native_documents')
         with sqlite3.connect(self.path) as db:
             db.execute("""CREATE TABLE IF NOT EXISTS native_document_seals (
                 session_id TEXT NOT NULL, document_id TEXT NOT NULL,
@@ -46,7 +47,7 @@ class NativeSeals:
             if not doc: raise SealDenied('Document unavailable')
             digest=doc[0]
             try:
-                NativeDocuments(self.path,Path(self.path).with_name('native_documents')).read(session_id,document_id)
+                NativeDocuments(self.path,self.storage_dir).read(session_id,document_id)
             except DocumentDenied as exc:
                 raise SealDenied('Stored document integrity failure') from exc
             try:

@@ -17,7 +17,7 @@ class NativeSealsTests(unittest.TestCase):
         self.sessions.create('s-1','c-1','E_NOTARY','CO')
         self.docs=NativeDocuments(path,Path(self.temp.name)/'docs')
         self.digest=self.docs.put('s-1','d-1',b'notarial document')['sha256']
-        self.seals=NativeSeals(path)
+        self.seals=NativeSeals(path,storage_dir=Path(self.temp.name)/'docs')
         self.private=Ed25519PrivateKey.generate()
         self.public=base64.b64encode(self.private.public_key().public_bytes(serialization.Encoding.Raw,serialization.PublicFormat.Raw)).decode()
 
