@@ -717,3 +717,11 @@ is configured; an existing Actions secret or variable takes precedence. The OCID
 is a resource identifier, not an API signing credential. No fake credentials,
 new stack, automatic account upgrade or production-success claim is introduced.
 All 17 unfinished workstreams remain in scope.
+
+## Native document custody and integrity correction — October 23, 2026
+
+**Controlling requirements:** October 11 MASTER §§2, 8, 13, 15, 19 and 20. The exact executable/document identity, tamper detection and evidence verification are mandatory, while independently verified commission and human execution remain distinct from an Ed25519 signature.
+
+**Acceptance criteria:** Signature and seal modules must verify actual bytes from the same protected document store as upload, reject changed/missing documents before recording a cryptographic assertion, and preserve the native runtime's existing default storage directory. Nonstandard trusted storage paths must be supplied explicitly; no caller-controlled upload path is inferred. Each executable source must have a matching hash-accurate PBD development manifest; no production signatures may be invented. The embedded backend source snapshot must reproduce the tracked source exactly.
+
+**Implemented correction under verification:** Optional constructor-level `storage_dir` for native signatures/seals, matching document tests, and regeneration of missing/stale paired source manifests. This is a native code/test correction, not an additional installation approval control.

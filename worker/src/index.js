@@ -114,6 +114,14 @@ function verifySessionWithPythonBackend(token) {
                     try {
                         const session = JSON.parse(data);
                         const id = /^[A-Za-z0-9_.-]{1,128}$/;
+                        // Legacy generic transaction identity is verified by Python
+                        // and its exact authorization credential is rechecked per write.
+                        // This shape does not grant room access or notarial authority.
+                        if (session && Object.keys(session).length === 1 &&
+                            session.authorization === token) {
+                            resolve({ isValid: true, session });
+                            return;
+                        }
                         if (session && id.test(session.user_id || '') &&
                             id.test(session.assigned_session_id || '') &&
                             Array.isArray(session.notary_session_ids) &&

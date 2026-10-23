@@ -14,8 +14,9 @@ class SignatureDenied(ValueError):
     pass
 
 class NativeSignatures:
-    def __init__(self, path):
+    def __init__(self, path, *, storage_dir=None):
         self.path=str(path)
+        self.storage_dir=Path(storage_dir) if storage_dir is not None else Path(self.path).with_name('native_documents')
         with sqlite3.connect(self.path) as db:
             db.execute("""CREATE TABLE IF NOT EXISTS native_document_signatures (
                 session_id TEXT NOT NULL, signature_id TEXT NOT NULL,
@@ -45,7 +46,7 @@ class NativeSignatures:
             if not row: raise SignatureDenied('Document unavailable')
             digest=row[0]
             try:
-                NativeDocuments(self.path,Path(self.path).with_name('native_documents')).read(session_id,document_id)
+                NativeDocuments(self.path,self.storage_dir).read(session_id,document_id)
             except DocumentDenied as exc:
                 raise SignatureDenied('Stored document integrity failure') from exc
             try:

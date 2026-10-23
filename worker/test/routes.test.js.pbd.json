@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "worker/test/routes.test.js",
+    "payload_hash": "e5102e362d93186b97754b44d014bc536f4a176cfa4af5d2b41cf23e79e4a541",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

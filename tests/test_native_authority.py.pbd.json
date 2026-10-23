@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "tests/test_native_authority.py",
+    "payload_hash": "334c3579729272862e37156726e30685465480f76bf562a5752902423d51d329",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
