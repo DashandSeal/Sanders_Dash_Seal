@@ -16,7 +16,7 @@ This development foundation implements selected mechanics from the October 11, 2
 - Separate Labyrinth Shield containment state and MINOTAUR verification roles.
 
 This is development source, not a deployed notarial service or the complete synthetic-AI platform.
-Production manifests are deliberately unsigned and deployment is blocked pending separate authority signing.
+Source manifests remain unsigned where no genuine authority signature exists. This does not prohibit ordinary build, diagnostic startup, installation, or non-privileged service operation; privileged operations retain their original authority verification requirements.
 The trusted test harness may exercise source with disposable test keys; it is not a production launcher.
 
 ## Run development tests
@@ -32,7 +32,7 @@ python -m unittest discover -s tests -v
 
 The development runner executes the exact independently signed source snapshot and binds its hash into the lease. It rejects unrelated callbacks and source substitution. It is not an OS sandbox or a production runtime.
 
-**128 local tests pass.**
+The test count in this older README is historical. Consult current executable test results for the latest status.
 
 The customer appointment interface, operator quote review and Checkout handoff
 are implemented in development. See [customer workflow](docs/CUSTOMER_APPOINTMENTS.md)
