@@ -35,6 +35,12 @@ class NativeSealsTests(unittest.TestCase):
         with self.assertRaises(SealDenied):
             self.seals.register('s-1','d-1','seal-1','notary-1',self.public,self.sign('0'*64))
 
+    def test_tampered_document_bytes_rejected(self):
+        filename=next((Path(self.temp.name)/'docs').glob('*.bin'))
+        filename.write_bytes(b'tampered document')
+        with self.assertRaises(SealDenied):
+            self.seals.register('s-1','d-1','seal-1','notary-1',self.public,self.sign())
+
     def test_cancelled_session_rejected(self):
         self.sessions.cancel('s-1')
         with self.assertRaises(SealDenied):
