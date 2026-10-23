@@ -199,7 +199,7 @@ Function batch decoding, partial retries, revocation, conflicting IDs, missing
 bindings and producer admission failures. Actual FDK fixture invocation checks
 HTTP 200 receipt lists and HTTP 503 error propagation; its HTTPS peer is simulated.
 These do not establish a live stream, private route, public client, ARM deployment
-or maximum measured throughput. Unsigned source pairs remain deployment blockers.
+or maximum measured throughput. Unsigned source pairs do not impose a blanket deployment or diagnostic-startup veto; privileged execution still requires valid independent authorization.
 
 - https://docs.oracle.com/en-us/iaas/Content/connector-hub/create-service-connector-streaming-source.htm
 - https://docs.oracle.com/en-us/iaas/tools/oci-cli/latest/oci_cli_docs/cmdref/streaming/admin/stream/create.html
