@@ -5,6 +5,7 @@ human notary. External identity/commission and evidence services must supply
 verified results before completion can be enabled.
 """
 import json
+import re
 import sqlite3
 import time
 from pathlib import Path
@@ -31,8 +32,14 @@ class NativeNotarySessions:
         return db
 
     def create(self, session_id, case_id, method, jurisdiction):
-        if any(not isinstance(x, str) or not x or len(x) > 128 for x in (session_id, case_id, jurisdiction)):
+        if any(not isinstance(x, str) or not re.fullmatch(r'[A-Za-z0-9_.-]{1,128}', x) for x in (session_id, case_id, jurisdiction)):
             raise NativeNotaryDenied("Valid session, case and jurisdiction identifiers required")
+        with self._connect() as db:
+            case_table = db.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='cases'").fetchone()
+            if case_table:
+                case = db.execute("SELECT jurisdiction,service FROM cases WHERE case_id=?", (case_id,)).fetchone()
+                if case is None or case != (jurisdiction, method):
+                    raise NativeNotaryDenied("Session must match an existing case, method and jurisdiction")
         if method not in METHODS:
             raise NativeNotaryDenied("Unsupported notarial method")
         with self._connect() as db:
