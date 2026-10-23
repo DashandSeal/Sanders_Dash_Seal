@@ -17,6 +17,8 @@ from .cases import CaseDenied
 from .accounts import AccountStore, auth_app
 from .appointments import AppointmentStore
 from .appointment_payments import AppointmentPayments
+from .native_notary import NativeNotarySessions, NativeNotaryDenied
+from .native_evidence import NativeEvidenceIndex, EvidenceDenied
 from .cases import CaseRegistry
 from .deployment import RuntimeBindings, create_application, ORIGIN, _response
 from .glass_box_audit import GlassBoxAudit
@@ -55,6 +57,8 @@ class NativeRuntime:
             setup_expires=settings.get('owner_setup_expires',0))
         self.audit=GlassBoxAudit(Path(path).with_name('sds_audit.db'))
         self.cases=CaseRegistry(path,CORE_LAWS)
+        self.native_sessions=NativeNotarySessions(path)
+        self.native_evidence=NativeEvidenceIndex(path)
         self.appointments=AppointmentStore(self.cases,self.audit)
         self.ledger=PaymentLedger(path)
         self.store=TransactionStore(path)
@@ -135,13 +139,66 @@ class NativeRuntime:
             'operator_quotes':True,'durable_ingestion':True,'stripe_credentials_configured':self.payments_configured,
             'signwell_credentials_configured':'signwell' in self.providers.clients,
             'bluenotary_credentials_configured':'bluenotary' in self.providers.clients,
-            'provider_request_workflows_implemented':True,'live_payment_verified':False,'notarial_execution_connected':False,
+            'provider_request_workflows_implemented':True,'native_notarial_session_intake':True,
+            'native_evidence_digest_index':True,'live_payment_verified':False,'notarial_execution_connected':False,
             'independent_ai_authorities_connected':False,'complete_build_verified':False}
 
     def __call__(self,env,start):
         path=env.get('PATH_INFO','');host=env.get('HTTP_HOST','')
         if host not in ('sandersdashandseal.com','sandersdashandseal.com:443'):
             return self.base(env,start)
+        native_route=re.fullmatch(r'/api/operator/native-notary/sessions(?:/([A-Za-z0-9_.-]{1,128})(?:/evidence)?)?',path)
+        if native_route:
+            actor=self.accounts.authenticate(env)
+            if actor is None:return _response(start,'401 Unauthorized',{'error':'sign_in_required'})
+            if not self.accounts.operator(actor):return _response(start,'403 Forbidden',{'error':'operator_required'})
+            method=env.get('REQUEST_METHOD')
+            session_id=native_route.group(1)
+            evidence_route=path.endswith('/evidence')
+            if method=='GET' and session_id:
+                try:
+                    session=self.native_sessions.get(session_id)
+                    self.cases.get(session['case_id'])
+                    result={'session':session}
+                    if evidence_route:result={'evidence':self.native_evidence.list_for_session(session_id)}
+                    return _response(start,'200 OK',result)
+                except (NativeNotaryDenied,CaseDenied,EvidenceDenied):
+                    return _response(start,'404 Not Found',{'error':'session_not_found'})
+            if method!='POST':
+                return _response(start,'405 Method Not Allowed',{'error':'method_not_allowed'})
+            if env.get('HTTP_ORIGIN')!=ORIGIN:
+                return _response(start,'403 Forbidden',{'error':'origin_denied'})
+            if env.get('CONTENT_TYPE','').split(';')[0].strip()!='application/json':
+                return _response(start,'415 Unsupported Media Type',{'error':'json_required'})
+            try:
+                n=int(env.get('CONTENT_LENGTH','0'))
+                if not 0<n<=8192:raise ValueError('Invalid body length')
+                raw=env['wsgi.input'].read(n)
+                if len(raw)!=n:raise ValueError('Incomplete body')
+                data=strict_json(raw)
+                if not isinstance(data,dict):raise ValueError('Invalid envelope')
+                if evidence_route:
+                    if set(data)!=set(('evidence_id','kind','sha256')):raise ValueError('Invalid evidence fields')
+                    result=self.native_evidence.register(session_id,**data)
+                elif session_id is None:
+                    if set(data)!=set(('session_id','case_id','method','jurisdiction')):
+                        raise ValueError('Invalid session fields')
+                    case=self.cases.get(data['case_id'])
+                    if case['jurisdiction']!=data['jurisdiction'] or case['service']!=data['method']:
+                        raise NativeNotaryDenied('Case mismatch')
+                    result=self.native_sessions.create(**data)
+                elif set(data)=={'action'} and data['action']=='cancel':
+                    result=self.native_sessions.cancel(session_id)
+                else:raise ValueError('Unsupported operation')
+                self.audit.preserve({'stage':'NATIVE_NOTARY_WORKFLOW','actor':actor,
+                    'session_id':result['session_id'],'operation':'EVIDENCE_INDEX' if evidence_route else 'SESSION'})
+                return _response(start,'201 Created',result)
+            except CaseDenied:
+                return _response(start,'404 Not Found',{'error':'case_not_found'})
+            except (NativeNotaryDenied,EvidenceDenied):
+                return _response(start,'409 Conflict',{'error':'native_workflow_rejected'})
+            except (ValueError,TypeError,KeyError,UnicodeError,RecursionError):
+                return _response(start,'400 Bad Request',{'error':'invalid_request'})
         provider_route=re.fullmatch(r'/api/operator/appointments/([A-Za-z0-9_.-]{1,128})/providers(?:/(signwell|bluenotary))?',path)
         if provider_route:
             actor=self.accounts.authenticate(env)
