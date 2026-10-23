@@ -160,6 +160,29 @@ class NativeRuntimeTests(unittest.TestCase):
         for _ in range(11):self.request('/auth/login',{'username':'unknown-user','password':self.password})
         self.assertEqual(self.request('/auth/login',{'username':'unknown-user','password':self.password})['status'],'429 Too Many Requests')
 
+    def test_native_journal_runtime_integrity_and_access(self):
+        customer=self.account('customer-one')
+        operator=self.account('roosevelt',operator=True)
+        self.app.cases.create('journal-case','WI','RON','customer-one')
+        base='/api/operator/native-notary/sessions'
+        created=self.request(base,{'session_id':'journal-session','case_id':'journal-case',
+            'method':'RON','jurisdiction':'WI'},token=operator)
+        self.assertEqual(created['status'],'201 Created',created)
+        route=base+'/journal-session/journal'
+        event={'event_id':'journal-event-1','event_type':'CONSENT_RECORDED','evidence_digest':'a'*64}
+        self.assertEqual(self.request(route,event,token=customer)['status'],'403 Forbidden')
+        first=self.request(route,event,token=operator)
+        self.assertEqual(first['status'],'201 Created',first)
+        self.assertEqual(self.request(route,event,token=operator)['json'],first['json'])
+        self.assertEqual(self.request(route,dict(event,evidence_digest='b'*64),token=operator)['status'],'409 Conflict')
+        check=self.request(route,token=operator)
+        self.assertEqual(check['status'],'200 OK',check)
+        self.assertTrue(check['json']['integrity_verified'])
+        self.assertEqual(check['json']['total_events'],1)
+        with sqlite3.connect(self.path) as db:
+            db.execute("UPDATE native_journal_events SET evidence_digest=? WHERE event_id=?",('b'*64,'journal-event-1'))
+        self.assertEqual(self.request(route,token=operator)['status'],'409 Conflict')
+
     def test_native_document_upload_download_and_authorization(self):
         customer=self.account('customer-one')
         operator=self.account('roosevelt',operator=True)
