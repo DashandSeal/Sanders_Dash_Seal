@@ -15,6 +15,7 @@ def _request(app, path, method="GET"):
 
 
 def test_jade_static_routes_are_registered():
+    assert ASSETS["/"][0] == "jade-landing.html"
     assert ASSETS["/landing"][0] == "jade-landing.html"
     assert ASSETS["/assets/jade-landing.css"][0] == "jade-landing.css"
     assert ASSETS["/assets/jade-landing.js"][0] == "jade-landing.js"
@@ -27,6 +28,7 @@ def test_jade_landing_served_without_appointment_authority():
                               lambda env, start: [b""],
                               "https://sandersdashandseal.com")
     for path, mime in (
+        ("/", "text/html"),
         ("/landing", "text/html"),
         ("/assets/jade-landing.css", "text/css"),
         ("/assets/jade-landing.js", "application/javascript"),
