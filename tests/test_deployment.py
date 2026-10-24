@@ -32,7 +32,10 @@ class DeploymentTests(unittest.TestCase):
         result = self.request(create_application())
         self.assertEqual(result['status'], '200 OK')
         self.assertIn(b'Sanders Dash', result['body'])
-        self.assertIn(b'booking.js', result['body'])
+        self.assertIn(b'jade-landing.css', result['body'])
+        booking = self.request(create_application(), '/appointments')
+        self.assertEqual(booking['status'], '200 OK')
+        self.assertIn(b'booking.js', booking['body'])
 
     def test_liveness_does_not_imply_readiness(self):
         app = create_application()
