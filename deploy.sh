@@ -11,8 +11,9 @@ SDS_DOMAINS=(sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpe
 
 fail() { printf 'Deployment stopped: %s\n' "$*" >&2; return 1; }
 compose() {
-    docker compose -p "$SDS_COMPOSE_PROJECT" --project-directory "$SDS_PROJECT_DIR" \
-        -f "$SDS_PROJECT_DIR/docker-compose.yml" -f "$SDS_PROJECT_DIR/deploy/compose.production.yml" "$@"
+    SDS_COMPOSE_PROJECT="$SDS_COMPOSE_PROJECT" docker compose -p "$SDS_COMPOSE_PROJECT" --project-directory "$SDS_PROJECT_DIR" \
+        -f "$SDS_PROJECT_DIR/docker-compose.yml" -f "$SDS_PROJECT_DIR/deploy/compose.production.yml" \
+        -f "$SDS_PROJECT_DIR/deploy/compose.ai.yml" "$@"
 }
 
 check_source() {

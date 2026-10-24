@@ -1,5 +1,37 @@
 # Original-specification conformance audit
 
+## Dedicated AI role workers — October 23, 2026
+
+Source: MASTER §§3–8, 15, 19–20 and the preserved original Sidecar reconciliation;
+owner instruction to continue all AIs. Acceptance: implement separate recurring
+read-only workers for the twelve named IT roles and distinct Manager, MINOTAUR,
+Shield, Sentinel and Sidecar observations. Give each worker a distinct observation
+identity/key, persist signed measured results and sequence across restart, reject
+wrong-role/tampered/stale/future/replayed results, and expose role-specific status
+only to the operator. Private role keys must not be mounted into the backend or
+other workers; no observation key may sign a production Twin-Gate/Quality lease.
+Use current measured facts and explicit unknown states. Do not equate running
+processes, signatures or deterministic analysis with deployed model reasoning,
+security containment or privileged autonomous repairs. Missing worker/model
+services must not veto ordinary app startup. Recovered source: foundation commit `3164db713b92fe7ec9332d41c0eb96175725bb62`,
+`docs/architecture/RTSA_14_ARCHITECTURE.md`, `rtsa_registry.py` and
+`rtsa_assessments.py`, corroborated by the preserved October 21 build inventory.
+MICHAEL ANGELO #49 is the separate conductor, fourteen RTSAs retain their exact
+canonical names/missions and the twelve IT agents remain a distinct matrix.
+HYDRA-Q/LABYRINTH and MINOTAUR/Shield must never be merged. Recover these existing
+assets rather than replacing or silently omitting their architecture. Old boolean
+clearance prototypes are not production authorization; current cryptographic
+Twin-Gate remains controlling. All source retains actual unsigned manifests.
+
+
+Verification: **420 Python tests passed**, no skips. Thirteen new tests cover
+thirty distinct identities, genuine observation signatures, separate child writer
+processes, tampering/wrong-role/wrong-domain rejection, replay across restart,
+clock freshness, concurrent writers, masked initialization custody, independent
+Shield patrol and fourteen-input conductor aggregation. Existing operator tests
+cover authorization and missing-service availability for the new roles API.
+Docker/container/Oracle startup and full inference/repair remain unverified.
+
 ## Model diagnostic recovery — October 23, 2026
 
 Source: MASTER §§6–8 and 19–20; owner instruction to continue the real-time AIs.
