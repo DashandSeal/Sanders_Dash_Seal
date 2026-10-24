@@ -50,3 +50,12 @@ def test_jade_landing_keeps_existing_appointments():
     status, _, body = _request(app, "/appointments")
     assert status == "200 OK"
     assert b'booking-form' in body
+
+
+def test_jade_csp_allows_same_origin_images():
+    app = create_customer_app(None, lambda env: None, None,
+                              lambda env, start: [b""],
+                              "https://sandersdashandseal.com")
+    status, headers, _ = _request(app, "/")
+    assert status == "200 OK"
+    assert "img-src 'self'" in headers["Content-Security-Policy"]

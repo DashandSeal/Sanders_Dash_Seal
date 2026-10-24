@@ -46,7 +46,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             ('Cache-Control', 'no-store'), ('X-Content-Type-Options', 'nosniff'),
             ('Referrer-Policy', 'no-referrer'), ('X-Frame-Options', 'DENY'),
             ('Content-Security-Policy', "default-src 'none'; script-src 'self'; style-src 'self'; "
-             "connect-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")])
+             "connect-src 'self'; img-src 'self'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'")])
         return [body]
 
     def app(env, start):
