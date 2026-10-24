@@ -850,3 +850,7 @@ Acceptance: preserve the exact Sanders Dash & Seal law and laws 1–9; explicitl
 
 Implementation: added an owner-wide directive document, MASTER/GOVERNANCE applicability statements, standing AGENTS instructions, and structured catalog applicability. This increment changes this repository branch only; other repositories and live deployments are not asserted updated.
 
+
+## Binary founder portrait packaging repair — October 24, 2026
+
+Acceptance: retain the approved PNG unchanged at web/sds-founder.png, represent binary assets in backend/platform-source.json as validated base64 with SHA-256, restore exact bytes in the backend container, reject malformed or altered snapshots, and preserve existing UTF-8 entries and booking flows. Remove the duplicate legacy web/sds-founder-1.png so the forensic duplicate-content audit does not fail. The production deployment and integrations require independent live verification.
