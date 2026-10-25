@@ -31,6 +31,23 @@ def binding():
         budget_bytes=20000000000,max_snapshot_bytes=1000000000)
 
 
+class OCIUploadTimeoutTests(unittest.TestCase):
+    def test_stack_update_receives_upload_budget_and_reads_keep_existing_budget(self):
+        from deploy.activate_on_oracle import cli
+        from types import SimpleNamespace
+        observed = []
+        def runner(args, **kwargs):
+            observed.append((args, kwargs))
+            return SimpleNamespace(stdout='{"data": {}}')
+        cli(['resource-manager', 'stack', 'update', '--stack-id', 'test'], runner=runner)
+        cli(['resource-manager', 'stack', 'get', '--stack-id', 'test'], runner=runner)
+        upload, standard = observed
+        self.assertEqual(upload[1]['timeout'], 360)
+        self.assertEqual(standard[1]['timeout'], 180)
+        self.assertEqual(upload[0][upload[0].index('--read-timeout') + 1], '180')
+        self.assertEqual(standard[0][standard[0].index('--read-timeout') + 1], '60')
+
+
 class OracleActivationTests(unittest.TestCase):
     def test_versioned_release_rotation_is_not_customer_data_destruction(self):
         from copy import deepcopy
