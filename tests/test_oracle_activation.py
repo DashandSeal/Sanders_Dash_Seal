@@ -103,8 +103,7 @@ class OracleActivationTests(unittest.TestCase):
         self.assertNotIn('transaction',json.dumps(data))
 
     def test_generated_existing_installer_is_executable_bash_without_literal_escapes(self):
-        files=contents('a'*40,source_names=['docker-compose.yml','backend/platform-source.json',
-            'worker/package-lock.json','deploy/install_application.sh','scripts/verify_release_source.py'])
+        files=contents('a'*40,source_names=None)
         text=files['install-existing.sh.tftpl'].replace('${release_config_base64}','e30=')
         result=subprocess.run(['bash','-n'],input=text,text=True,capture_output=True)
         self.assertEqual(result.returncode,0,result.stderr)
@@ -158,8 +157,7 @@ class ActivationFlowTests(unittest.TestCase):
 
 class DirectProfileTests(unittest.TestCase):
     def test_direct_package_uses_a1_and_bundled_source_not_placeholder_clone(self):
-        files=contents('a'*40,source_names=['docker-compose.yml','backend/platform-source.json',
-            'worker/package-lock.json','deploy/install_application.sh','scripts/verify_release_source.py'],direct=True)
+        files=contents('a'*40,source_names=None,direct=True)
         self.assertIn('variable "create_instance" {\n  type = bool\n  default = true',files['variables.tf'])
         self.assertIn('variable "deploy_existing_instance" {\n  type = bool\n  default = false',files['variables.tf'])
         self.assertIn('VM.Standard.A1.Flex',files['main.tf'])
