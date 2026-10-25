@@ -8,6 +8,14 @@ from deploy.bind_free_resources import validate, verify, metric
 from scripts.package_resource_manager import contents
 
 ROOT=Path(__file__).resolve().parents[1]
+# An isolated test container contains the release source but no .git directory.
+# Supply actual fixture paths rather than requesting git ls-files at runtime.
+FIXTURE_SOURCES = [
+    'docker-compose.yml', 'backend/Dockerfile', 'web/jade-landing.html',
+    'web/sds-founder.png', 'web/IMG_20261024_141659486_HDR.jpg',
+    'web/IMG_20261024_141701319_HDR.jpg', 'worker/package-lock.json',
+    'deploy/install_application.sh', 'scripts/verify_release_source.py',
+]
 
 
 def binding():
@@ -103,7 +111,7 @@ class OracleActivationTests(unittest.TestCase):
         self.assertNotIn('transaction',json.dumps(data))
 
     def test_generated_existing_installer_is_executable_bash_without_literal_escapes(self):
-        files=contents('a'*40,source_names=None)
+        files=contents('a'*40,source_names=FIXTURE_SOURCES)
         text=files['install-existing.sh.tftpl'].replace('${release_config_base64}','e30=')
         result=subprocess.run(['bash','-n'],input=text,text=True,capture_output=True)
         self.assertEqual(result.returncode,0,result.stderr)
@@ -157,7 +165,7 @@ class ActivationFlowTests(unittest.TestCase):
 
 class DirectProfileTests(unittest.TestCase):
     def test_direct_package_uses_a1_and_bundled_source_not_placeholder_clone(self):
-        files=contents('a'*40,source_names=None,direct=True)
+        files=contents('a'*40,source_names=FIXTURE_SOURCES,direct=True)
         self.assertIn('variable "create_instance" {\n  type = bool\n  default = true',files['variables.tf'])
         self.assertIn('variable "deploy_existing_instance" {\n  type = bool\n  default = false',files['variables.tf'])
         self.assertIn('VM.Standard.A1.Flex',files['main.tf'])
