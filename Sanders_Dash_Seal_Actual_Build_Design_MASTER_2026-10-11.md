@@ -39,8 +39,11 @@ These are the governing Humanitarian Core Laws and must remain exactly as stated
 8. “Shelter in place and revert to humanitarian mode.”
 9. “Never loose your identity under any circumstances.”
 10. “Sanders Dash & Seal shall always use only Oracle Always Free resources.”
+11. “Sanders Dash & Seal shall always actually use Oracle Always Free resources in its real operations, not merely catalog or document them.”
 
 **Owner-wide applicability (October 23, 2026):** Core Law 10 applies to every platform owned by Roosevelt Sanders, including all past, present, and future builds. Each platform retains its own identity. See `docs/CORE_LAW_10_ALL_PLATFORMS.md`.
+
+**Owner-wide Core Law 11 (October 24, 2026):** Every Sanders-owned platform, past, present and future, shall use Always Free resources in actual operations. A catalog entry, service entitlement, planned integration or offline test is not usage proof. See `docs/CORE_LAW_11_ALL_PLATFORMS.md`.
 
 These laws sit above every synthetic intelligence, workflow, tool, automated decision, repair routine, deployment path, token class, and operational authority in Sanders Dash & Seal.
 
