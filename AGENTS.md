@@ -39,3 +39,9 @@ Core Law 10 applies to every platform owned by Roosevelt Sanders, including all 
 
 The owner's Oracle Always Free-only requirement is the tenth core law for every platform, not only Sanders Dash & Seal. Carry it into earlier builds being maintained, present builds, future builds, derivatives, sidecars, templates, and deployment configurations. Preserve each platform's identity and original laws 1–9. Record the law in governing sources and resource catalogs without adding blanket application startup, shutdown, execution, or extra approval gates. Do not claim source changes have updated other repositories or deployed instances without evidence. See `docs/CORE_LAW_10_ALL_PLATFORMS.md`.
 
+
+## Standing owner directive: Core Law 11 — actual Oracle Always Free usage
+
+Every platform owned by Roosevelt Sanders shall always actually use Oracle Always Free resources in its real operations, not merely catalog or document them.
+
+Core Law 11 is distinct from Law 10: Law 10 selects the Oracle Always Free resources; Law 11 requires actual operational use of those resources rather than a paper catalog, simulated adapter or unverified infrastructure declaration. Carry the law through all Sanders platforms, past, present and future, preserving each platform's own identity and Laws 1–10. Implement real resource binding, successful workload operations and truthful per-service operational evidence. A successful live API invocation or confirmed stored/retrieved data is evidence for that specific service; resource discovery, a unit test, a plan, and a catalog entry alone are not. Record unverified services as unverified. This is an implementation requirement, not an assistant-created blanket application startup, shutdown or extra approval gate. See `docs/CORE_LAW_11_ALL_PLATFORMS.md`.

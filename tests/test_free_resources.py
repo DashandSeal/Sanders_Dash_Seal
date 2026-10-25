@@ -26,6 +26,22 @@ class FreeResourcesTests(unittest.TestCase):
         self.assertFalse(value['automatic_provisioning'])
         self.assertTrue(all(item['automatic_provisioning'] is False for item in value['resources']))
 
+    def test_core_law_11_requires_real_usage_and_never_treats_catalog_as_proof(self):
+        value = catalog()
+        law = value['governing_core_law_11']
+        self.assertEqual(law['number'], 11)
+        self.assertIn('actually use Oracle Always Free resources', law['text'])
+        self.assertEqual(law['applicability']['builds'], ['past', 'present', 'future'])
+        evidence = law['evidence_requirements']
+        self.assertFalse(evidence['catalog_is_use'])
+        self.assertFalse(evidence['resource_search_is_use'])
+        self.assertTrue(evidence['live_operation_required'])
+        self.assertFalse(evidence['live_service_usage_verified'])
+        self.assertFalse(evidence['additional_approval_gate'])
+        self.assertFalse(evidence['application_shutdown_gate'])
+        self.assertEqual(len(value['resources']), 26)
+        self.assertFalse(any(item['live_configuration_verified'] for item in value['resources']))
+
     def test_shared_pools_and_account_states_are_not_summed_as_extra_capacity(self):
         entries = {item['id']:item for item in catalog()['resources']}
         self.assertEqual(entries['logging']['shared_pool'], entries['flow_logs']['shared_pool'])

@@ -854,3 +854,18 @@ Implementation: added an owner-wide directive document, MASTER/GOVERNANCE applic
 ## Binary founder portrait packaging repair — October 24, 2026
 
 Acceptance: retain the approved PNG unchanged at web/sds-founder.png, represent binary assets in backend/platform-source.json as validated base64 with SHA-256, restore exact bytes in the backend container, reject malformed or altered snapshots, and preserve existing UTF-8 entries and booking flows. Remove the duplicate legacy web/sds-founder-1.png so the forensic duplicate-content audit does not fail. The production deployment and integrations require independent live verification.
+
+
+## Owner amendment: Humanitarian Core Law 11 — October 24, 2026
+
+Owner-directed authoritative wording:
+
+> Sanders Dash & Seal shall always actually use Oracle Always Free resources in its real operations, not merely catalog or document them.
+
+Owner-wide wording:
+
+> Every platform owned by Roosevelt Sanders shall always actually use Oracle Always Free resources in its real operations, not merely catalog or document them.
+
+Acceptance criteria: retain Humanitarian Laws 1–10 verbatim, add Law 11 to MASTER §3 and GOVERNANCE, carry it to past/present/future Sanders platforms via standing engineering instructions, and incorporate it into the application's Oracle resource catalog and actual runtime resource-use evidence. The system must use Oracle Always Free services for genuine business and operational workloads, not treat documentation, discovery or a Terraform plan as proof of use. Successful real Oracle Monitoring metric submission or verified private backup upload/restore may prove use of their respective services when observed. No simulated API responses may establish live resource usage. Other integrations remain unverified until live evidence exists. Do not insert an assistant-imposed blanket startup gate or claim other repositories/instances have been updated by this repository commit.
+
+Implementation status: source and operational-evidence code are tracked separately from Oracle deployment. GitHub checks validate source behavior, not live Oracle execution. Current stack update has failed in GitHub Actions and no complete production adoption is claimed.

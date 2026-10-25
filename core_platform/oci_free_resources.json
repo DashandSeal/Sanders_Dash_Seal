@@ -1261,6 +1261,29 @@
       "universal_text": "Every platform owned by Roosevelt Sanders shall always use only Oracle Always Free resources.",
       "source": "docs/CORE_LAW_10_ALL_PLATFORMS.md"
     }
+  },
+  "governing_core_law_11": {
+    "number": 11,
+    "text": "Sanders Dash & Seal shall always actually use Oracle Always Free resources in its real operations, not merely catalog or document them.",
+    "authority": "Roosevelt Sanders — October 24, 2026",
+    "source": "Sanders_Dash_Seal_Actual_Build_Design_MASTER_2026-10-11.md §3",
+    "applicability": {
+      "platforms": "all",
+      "builds": [
+        "past",
+        "present",
+        "future"
+      ],
+      "universal_text": "Every platform owned by Roosevelt Sanders shall always actually use Oracle Always Free resources in its real operations, not merely catalog or document them.",
+      "source": "docs/CORE_LAW_11_ALL_PLATFORMS.md"
+    },
+    "evidence_requirements": {
+      "catalog_is_use": false,
+      "resource_search_is_use": false,
+      "live_operation_required": true,
+      "live_service_usage_verified": false,
+      "additional_approval_gate": false,
+      "application_shutdown_gate": false
+    }
   }
 }
-
