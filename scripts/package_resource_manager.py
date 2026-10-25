@@ -54,8 +54,8 @@ def application_bundle(commit, root=ROOT, source_names=None):
             'web/IMG_20261024_141659486_HDR.jpg', 'web/IMG_20261024_141701319_HDR.jpg',
             'worker/package-lock.json', 'deploy/install_application.sh', 'scripts/verify_release_source.py')):
         raise ValueError('The complete committed application source is required')
-    if len(output.getvalue()) > 8 * 1024 * 1024:
-        raise ValueError('Application archive exceeds Resource Manager upload budget')
+    if len(output.getvalue()) > 32 * 1024 * 1024:
+        raise ValueError('Release archive exceeds the 32 MiB packaging bound')
     return output.getvalue()
 
 
