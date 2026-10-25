@@ -125,7 +125,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Build the matching Python backend
-        run: docker build -t sds-backend-review ./backend
+        run: docker build -t sds-backend-review -f backend/Dockerfile .
       - name: Check diagnostic-only startup
         run: |
           docker run -d --name sds-backend-review -p 127.0.0.1:18000:8000 sds-backend-review

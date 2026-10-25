@@ -6,15 +6,21 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from backend.refresh_sources import snapshot
 from backend.unpack import unpack
 
 
 class OwnerStackPackagingTests(unittest.TestCase):
-    def test_backend_snapshot_matches_existing_platform_sources(self):
+    def test_backend_build_uses_canonical_sources_without_duplicate_snapshot(self):
         root = Path(__file__).resolve().parents[1]
-        saved = json.loads((root / 'backend/platform-source.json').read_text())
-        self.assertEqual(saved, snapshot(root))
+        dockerfile = (root / 'backend/Dockerfile').read_text()
+        compose = (root / 'docker-compose.yml').read_text()
+        self.assertIn('COPY core_platform/ ./core_platform/', dockerfile)
+        self.assertIn('COPY web/ ./web/', dockerfile)
+        self.assertNotIn('platform-source.json', dockerfile)
+        self.assertIn('context: .\n      dockerfile: backend/Dockerfile', compose)
+        for image in ('sds-founder.png', 'IMG_20261024_141659486_HDR.jpg',
+                      'IMG_20261024_141701319_HDR.jpg'):
+            self.assertTrue((root / 'web' / image).is_file())
 
     def test_unpack_denies_path_escape_and_changed_content(self):
         with tempfile.TemporaryDirectory() as directory:

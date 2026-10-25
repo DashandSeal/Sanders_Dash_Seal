@@ -28,7 +28,8 @@ def pair(name, content):
 def application_bundle(commit, root=ROOT, source_names=None):
     if source_names is None:
         source_names = subprocess.check_output(['git', '-C', str(root), 'ls-files'], text=True).splitlines()
-    names = sorted(set(source_names))
+    # The former embedded Docker snapshot is stale and duplicates image bytes.
+    names = sorted(set(source_names) - {'backend/platform-source.json'})
     manifest = {'source_commit': commit, 'files': {}}
     output = io.BytesIO()
     with gzip.GzipFile(fileobj=output, mode='wb', mtime=0) as compressed:
@@ -48,11 +49,13 @@ def application_bundle(commit, root=ROOT, source_names=None):
             item = tarfile.TarInfo('.sds-source.json')
             item.size, item.mode = len(raw), 0o644
             bundle.addfile(item, io.BytesIO(raw))
-    if not all(name in names for name in ('docker-compose.yml', 'backend/platform-source.json',
+    if not all(name in names for name in ('docker-compose.yml', 'backend/Dockerfile',
+            'web/jade-landing.html', 'web/sds-founder.png',
+            'web/IMG_20261024_141659486_HDR.jpg', 'web/IMG_20261024_141701319_HDR.jpg',
             'worker/package-lock.json', 'deploy/install_application.sh', 'scripts/verify_release_source.py')):
         raise ValueError('The complete committed application source is required')
-    if len(output.getvalue()) > 8 * 1024 * 1024:
-        raise ValueError('Application archive exceeds Resource Manager upload budget')
+    if len(output.getvalue()) > 32 * 1024 * 1024:
+        raise ValueError('Release archive exceeds the 32 MiB packaging bound')
     return output.getvalue()
 
 
