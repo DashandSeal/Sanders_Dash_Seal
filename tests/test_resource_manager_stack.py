@@ -16,9 +16,14 @@ from deploy.wait_application import wait
 
 ROOT = Path(__file__).resolve().parents[1]
 SHA = 'a' * 40
-NAMES = sorted(set(json.loads((ROOT / 'backend/platform-source.json').read_text())) |
-    {'docker-compose.yml', 'backend/platform-source.json', 'worker/package-lock.json',
-     'deploy/install_application.sh', 'scripts/verify_release_source.py'})
+NAMES = sorted(set(p.as_posix() for p in (
+    Path('backend/Dockerfile'), Path('backend/wsgi.py'), Path('backend/auth_session.py'),
+    Path('compose.yaml'), Path('docker-compose.yml'), Path('worker/package-lock.json'),
+    Path('worker/package.json'), Path('deploy/install_application.sh'),
+    Path('scripts/verify_release_source.py'), Path('requirements.txt'),
+    Path('requirements-server.txt'), Path('deploy/gunicorn.conf.py'),
+)) | {p.relative_to(ROOT).as_posix() for directory in ('core_platform', 'web')
+     for p in (ROOT / directory).rglob('*') if p.is_file()})
 
 
 def packaged():
@@ -39,7 +44,11 @@ class ResourceManagerStackTests(unittest.TestCase):
             bundle = tarfile.open(fileobj=io.BytesIO(blob), mode='r:gz')
             self.assertIn('core_platform/security.py', bundle.getnames())
             self.assertIn('worker/package-lock.json', bundle.getnames())
-            self.assertIn('backend/platform-source.json', bundle.getnames())
+            self.assertIn('backend/Dockerfile', bundle.getnames())
+            self.assertIn('web/IMG_20261024_141659486_HDR.jpg', bundle.getnames())
+            self.assertIn('web/IMG_20261024_141701319_HDR.jpg', bundle.getnames())
+            self.assertIn('web/sds-founder.png', bundle.getnames())
+            self.assertNotIn('backend/platform-source.json', bundle.getnames())
 
     def test_invalid_commit_and_existing_output_rejected(self):
         with self.assertRaises(ValueError): contents('PR-3-CLEAN-CANDIDATE')
