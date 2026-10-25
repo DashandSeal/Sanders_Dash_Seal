@@ -8,6 +8,12 @@ from deploy.bind_free_resources import validate, verify, metric
 from scripts.package_resource_manager import contents
 
 ROOT=Path(__file__).resolve().parents[1]
+FIXTURE_SOURCES = [
+ 'docker-compose.yml', 'backend/Dockerfile', 'web/jade-landing.html',
+ 'web/sds-founder.png', 'web/IMG_20261024_141659486_HDR.jpg',
+ 'web/IMG_20261024_141701319_HDR.jpg', 'worker/package-lock.json',
+ 'deploy/install_application.sh', 'scripts/verify_release_source.py',
+]
 # An isolated test container contains the release source but no .git directory.
 # Supply actual fixture paths rather than requesting git ls-files at runtime.
 FIXTURE_SOURCES = [
