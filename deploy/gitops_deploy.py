@@ -22,13 +22,36 @@ def diagnostic_cli(args, *, raw=False):
     try:
         return cli(args, raw=raw)
     except subprocess.CalledProcessError as error:
-        # OCI CLI stderr may include response text or provider identifiers.
-        # Only stable documented HTTP and service error codes are reported.
+        # OCI may reject the CLI invocation or respond with private identifiers.
+        # Classify known failures; never disclose unfiltered stderr.
         stderr = error.stderr or ''
-        status = re.search(r'(?m)^\s*["\x27]?status["\x27]?\s*[:=]\s*["\x27]?(\d{3})', stderr)
-        code = re.search(r'(?m)^\s*["\x27]?code["\x27]?\s*[:=]\s*["\x27]?([A-Za-z][A-Za-z0-9_]{0,79})', stderr)
-        suffix = ((' status=' + status.group(1)) if status else '')
-        suffix += ((' service_code=' + code.group(1)) if code else '')
+        status = re.search(r"""['"]?status['"]?\s*[:=]\s*['"]?(\d{3})""", stderr, re.I)
+        code = re.search(r"""['"]?code['"]?\s*[:=]\s*['"]?([A-Za-z][A-Za-z0-9_]{0,79})""", stderr, re.I)
+        low = stderr.lower()
+        if any(s in low for s in ('request entity too large', 'payload too large',
+                                  'zip file too large', 'maximum size', 'exceeds maximum')):
+            category = 'upload_size_limit'
+        elif any(s in low for s in ('no such option', 'unrecognized arguments',
+                                    'invalid value for', 'missing option')):
+            category = 'invalid_cli_argument'
+        elif 'permission denied' in low or 'notauthorizedornotfound' in low:
+            category = 'authorization_or_visibility'
+        elif any(s in low for s in ('timed out', 'timeout', 'connection error',
+                                    'connection refused', 'name resolution')):
+            category = 'network_or_timeout'
+        elif 'invalid' in low and ('key' in low or 'signature' in low):
+            category = 'signing_key_rejected'
+        elif 'serviceerror' in low or 'service error' in low:
+            category = 'oci_service_rejected'
+        elif error.returncode == 2:
+            category = 'cli_argument_or_usage'
+        else:
+            category = 'cli_failure_unclassified'
+        suffix = ' exit_code=' + str(error.returncode) + ' category=' + category
+        if status:
+            suffix += ' status=' + status.group(1)
+        if code:
+            suffix += ' service_code=' + code.group(1)
         raise OCICommandFailure('OCI command failed at ' + operation + suffix) from None
 
 from deploy.publish_provider_secrets import environment_values, publish
@@ -79,6 +102,10 @@ def release(zip_path, commit, stack_id, *, api=diagnostic_cli, activation=deploy
         raise ValueError('Exact source commit required')
     if not re.fullmatch(r'ocid1\.ormstack\.[A-Za-z0-9.]+', stack_id):
         raise ValueError('OCI_STACK_OCID must identify the actual existing Resource Manager stack')
+    release_size = Path(zip_path).stat().st_size
+    print('OCI_RESOURCE_MANAGER_STACK_ZIP_BYTES=' + str(release_size), flush=True)
+    if release_size > 11_000_000:
+        raise ValueError('Release ZIP exceeds the Oracle Resource Manager 11 MB stack limit')
     with zipfile.ZipFile(zip_path) as archive:
         manifest = json.loads(archive.read('package_manifest.json'))
         if manifest.get('source_commit') != commit:
