@@ -6,10 +6,31 @@ import json
 import os
 from pathlib import Path
 import re
+import subprocess
 import tempfile
 import zipfile
 
 from deploy.activate_on_oracle import cli, deploy
+
+
+class OCICommandFailure(RuntimeError):
+    pass
+
+
+def diagnostic_cli(args, *, raw=False):
+    operation = ' '.join(args[:3])
+    try:
+        return cli(args, raw=raw)
+    except subprocess.CalledProcessError as error:
+        # OCI CLI stderr may include response text or provider identifiers.
+        # Only stable documented HTTP and service error codes are reported.
+        stderr = error.stderr or ''
+        status = re.search(r'(?m)^\s*["\x27]?status["\x27]?\s*[:=]\s*["\x27]?(\d{3})', stderr)
+        code = re.search(r'(?m)^\s*["\x27]?code["\x27]?\s*[:=]\s*["\x27]?([A-Za-z][A-Za-z0-9_]{0,79})', stderr)
+        suffix = ((' status=' + status.group(1)) if status else '')
+        suffix += ((' service_code=' + code.group(1)) if code else '')
+        raise OCICommandFailure('OCI command failed at ' + operation + suffix) from None
+
 from deploy.publish_provider_secrets import environment_values, publish
 
 
@@ -53,7 +74,7 @@ def credentials(environment=None):
                     os.environ[name] = value
 
 
-def release(zip_path, commit, stack_id, *, api=cli, activation=deploy, provider_environment=None):
+def release(zip_path, commit, stack_id, *, api=diagnostic_cli, activation=deploy, provider_environment=None):
     if not re.fullmatch(r'[0-9a-f]{40}', commit):
         raise ValueError('Exact source commit required')
     if not re.fullmatch(r'ocid1\.ormstack\.[A-Za-z0-9.]+', stack_id):
@@ -106,10 +127,8 @@ def main():
 if __name__ == '__main__':
     try:
         main()
-    except ValueError as error:
-        # Our validation errors contain field names and public identifiers only.
+    except (ValueError, OCICommandFailure) as error:
+        # Validation and sanitized command errors contain no secret values.
         raise SystemExit('OCI_GITOPS_NOT_COMPLETED: ' + str(error))
     except Exception:
-        # OCI diagnostics can contain authentication configuration; use the job
-        # logs in the owner's console rather than echoing exceptions or secrets.
-        raise SystemExit('OCI_GITOPS_NOT_COMPLETED: inspect the configured stack and OCI job logs')
+        raise SystemExit('OCI_GITOPS_NOT_COMPLETED: unclassified Oracle deployment error; inspect OCI job logs')
