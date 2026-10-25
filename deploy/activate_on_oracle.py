@@ -11,8 +11,15 @@ import time
 
 REGION='us-phoenix-1'
 def cli(args, *, raw=False, runner=subprocess.run):
-    result=runner(['oci',*args,'--region',REGION,'--output','json','--connection-timeout','10',
-        '--read-timeout','60','--max-retries','2'],capture_output=True,text=True,check=True,timeout=180)
+    # Terraform zip uploads are materially larger than OCI state reads.
+    # Keep the existing read limits; allow more time to send and acknowledge
+    # the Resource Manager update rather than misclassifying it as a bad build.
+    upload = args[:3] == ['resource-manager', 'stack', 'update']
+    connection_timeout, read_timeout = (30, 180) if upload else (10, 60)
+    result = runner(['oci', *args, '--region', REGION, '--output', 'json',
+        '--connection-timeout', str(connection_timeout), '--read-timeout',
+        str(read_timeout), '--max-retries', '2'], capture_output=True,
+        text=True, check=True, timeout=360 if upload else 180)
     return result.stdout if raw else json.loads(result.stdout)
 
 
