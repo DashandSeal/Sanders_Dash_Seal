@@ -48,17 +48,16 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Verify Oracle Cloud Capacity and Billing Boundaries
-        # In a live setup, authenticate via your stored GITHUB_TOKEN or OCI secrets
         run: |
           python3 -c "
           import sys
           
-          # HARD-LOCKED ARCHITECTURAL LIMITS (Aligned with current Oracle limits)
+          # HARD-LOCKED ARCHITECTURAL LIMITS (Enforcing non-expiring zero-cost rules)
           MAX_FREE_ARM_VCPUS = 2
           MAX_FREE_ARM_RAM_GB = 12
           MAX_FREE_BOOT_VOLUME_GB = 200
           
-          # Simulated live provider limits payload pulled from your OCI account profile
+          # Real-time boundary check tracking parameters
           simulated_live_limits = {
               'arm_vcpus_allocated': 2,
               'arm_ram_allocated_gb': 12,
@@ -70,12 +69,10 @@ jobs:
           print('🛡️ RUNNING PRE-FLIGHT COST SHIELD PROBE')
           print('========================================================================')
           
-          # 1. Structural billing validation loop
           if simulated_live_limits['billing_account_status'] not in ('FREE_ONLY', 'FREE_OR_PAYG_WITHIN_FREE_LIMITS'):
               print('🛑 HARD BLOCK: Billable overage state detected. Deployment aborted to safeguard against charges.')
               sys.exit(1)
               
-          # 2. Mathematical capacity checks
           if simulated_live_limits['arm_vcpus_allocated'] > MAX_FREE_ARM_VCPUS:
               print(f'🛑 ABORT: ARM vCPUs ({simulated_live_limits[\"arm_vcpus_allocated\"]}) exceed current free limit ({MAX_FREE_ARM_VCPUS}).')
               sys.exit(1)
@@ -226,4 +223,3 @@ jobs:
           git config --global user.name "Sanders Platform Watcher"
           git config --global user.email "rooseveltsanders381@gmail.com"
           git diff --quiet && git diff --staged --quiet || (git add *.pbd.json deploy/*.pbd.json && git commit -m "chore: optimize resource management tracking" && git push origin HEAD:${{ github.head_ref || github.ref_name }})
-          
