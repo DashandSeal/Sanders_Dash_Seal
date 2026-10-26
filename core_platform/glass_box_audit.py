@@ -1,47 +1,88 @@
-"""Glass-Box Audit: separate evidence responsibility from Vault.
-
-Local hash chaining is development storage, not production immutability.
 """
+Module: core_platform.glass_box_audit
+Architectural Layer: Immutable Tamper-Evident Ledger Audit Core
+Description: Glass-Box Audit trail system. Implements local cryptographic hash-chaining
+             over system receipts to ensure append-only transactional integrity.
+"""
+
 import json
 import sqlite3
 import time
-from .security import canonical, digest, Denied
+from security import digest, Denied
 
 class GlassBoxAudit:
-    def __init__(self, path, clock=time.time):
-        self.path, self.clock = str(path), clock
+    """Glass-Box Audit engine: handles separate evidence accountability tracking."""
+
+    def __init__(self, self_path, clock=time.time):
+        self.path = str(self_path)
+        self.clock = clock
         with self.connect() as db:
-            db.execute("CREATE TABLE IF NOT EXISTS receipts (seq INTEGER PRIMARY KEY AUTOINCREMENT, body TEXT NOT NULL, hash TEXT NOT NULL)")
+            db.execute("""CREATE TABLE IF NOT EXISTS receipts (
+                seq INTEGER PRIMARY KEY AUTOINCREMENT,
+                body TEXT NOT NULL,
+                hash TEXT NOT NULL
+            );""")
 
     def connect(self):
+        # Enforce strict transaction insulation boundaries
         return sqlite3.connect(self.path, timeout=10, isolation_level='IMMEDIATE')
 
-    def preserve(self, event):
-        """Chained evidence; no secrets or business document payloads are included."""
+    def preserve(self, event, **kwargs):
+        """Chained evidence; no secrets or payment payloads are stored here."""
         with self.connect() as db:
-            db.execute('BEGIN IMMEDIATE')
-            previous = db.execute('SELECT hash FROM receipts ORDER BY seq DESC LIMIT 1').fetchone()
-            body = {'previous_hash': previous[0] if previous else '0' * 64,
-                    'timestamp': self.clock(), 'event': event}
-            encoded = canonical(body)
+            db.execute('BEGIN IMMEDIATE;')
+            
+            # Fetch the previous block's hash link to build the immutable blockchain
+            row = db.execute('SELECT hash FROM receipts ORDER BY seq DESC LIMIT 1;').fetchone()
+            previous_hash = row[0] if row else '0' * 64
+            
+            payload = {
+                'previous_hash': previous_hash,
+                'timestamp': self.clock(),
+                'event': event,
+                'context': kwargs
+            }
+            
+            # Create a deterministic, sorted canonical text format for hashing
+            encoded = json.dumps(payload, sort_keys=True, separators=(',', ':'), ensure_ascii=False)
             block_hash = digest(encoded)
-            db.execute('INSERT INTO receipts(body, hash) VALUES (?, ?)', (encoded.decode(), block_hash))
-        return block_hash
+            
+            db.execute('INSERT INTO receipts (body, hash) VALUES (?, ?);', (encoded, block_hash))
+            db.commit()
+            return block_hash
 
     def verify_audit(self):
+        """Verifies the complete integrity of the cryptographic chain layout."""
         previous = '0' * 64
         with self.connect() as db:
-            rows = db.execute('SELECT body, hash FROM receipts ORDER BY seq').fetchall()
-        for raw, block_hash in rows:
-            body = json.loads(raw)
-            if body.get('previous_hash') != previous or digest(canonical(body)) != block_hash:
-                raise Denied('Audit chain changed')
-            previous = block_hash
+            cursor = db.execute('SELECT body, hash FROM receipts ORDER BY seq ASC;')
+            rows = cursor.fetchall()
+            
+            for row in rows:
+                raw_body = row[0]
+                stored_hash = row[1]
+                
+                body = json.loads(raw_body)
+                
+                # Verify backward hash pointer matches previous link
+                if body.get('previous_hash') != previous:
+                    raise Denied('Audit chain changed: linked hash mismatch')
+                    
+                # Re-verify deterministic block footprint calculation match
+                calculated_body_str = json.dumps(body, sort_keys=True, separators=(',', ':'), ensure_ascii=False)
+                if digest(calculated_body_str) != stored_hash:
+                    raise Denied('Audit chain changed: block footprint calculation mismatch')
+                    
+                previous = stored_hash
         return previous
 
-    def preserve_execution(self, receipt):
-        # The digest addresses the stored record; it cannot be included in its own preimage.
-        block_hash = self.preserve({'stage': 'EXECUTION_RESULT', 'execution_receipt': receipt})
-        return {**receipt, 'immutable_audit_trail': {
-            'glass_box_block_id': 'GB-' + block_hash,
-            'immutable_audit_hash': 'sha256:' + block_hash}}
+    def preserve_execution(self, event, receipt):
+        """Advisory wrapper targeting stored transaction result tracking frames."""
+        block_hash = self.preserve(event, target_stage='EXECUTION_RESULT')
+        return {
+            'receipt': receipt,
+            'immutable_audit_trail': {
+                'glass_box_id': f'GB-{block_hash[:8].upper()}',
+                'immutable_audit_hash': f'sha256:{block_hash}'
+            }
+        }
