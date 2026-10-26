@@ -111,7 +111,14 @@ jobs:
         run: |
           python3 -c "
           import pathlib, hashlib, json
-          targets = ['nginx.conf', 'wsgi.py', 'deploy/gunicorn.conf.py', 'deploy_backup.sh']
+          targets = [
+              'nginx.conf', 
+              'wsgi.py', 
+              'deploy/gunicorn.conf.py', 
+              'deploy_backup.sh',
+              'requirements.txt',
+              'requirements-server.txt'
+          ]
           root = pathlib.Path('.').resolve()
           for target in targets:
               f_path = root / target
@@ -128,5 +135,4 @@ jobs:
         run: |
           git config --global user.name "Sanders Platform Watcher"
           git config --global user.email "rooseveltsanders381@gmail.com"
-          git diff --quiet && git diff --staged --quiet || (git add *.pbd.json deploy/*.pbd.json && git commit -m "chore: map authorized layout changes" && git push origin HEAD:${{ github.head_ref || github.ref_name }})
-          
+          git diff --quiet && git diff --staged --quiet || (git add *.pbd.json deploy/*.pbd.json && git commit -m "chore: auto-reconcile application manifest sidecars" && git push origin HEAD:${{ github.head_ref || github.ref_name }})
