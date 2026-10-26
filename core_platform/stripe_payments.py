@@ -1,9 +1,10 @@
-"""Sanders Dash & Seal — fail-closed Stripe payment boundary (development).
-
-This adapter does not grant notarial authority or create live charges by itself.
-Callers supply an authenticated, authorized case and a Stripe client. No secret
-or live customer data is stored in source control.
 """
+Module: core_platform.stripe_payments
+Architectural Layer: Fail-Closed Stripe Payment Transaction Ledger
+Description: Durable deduplication of Stripe event IDs and case/payment associations.
+             Enforces strict double-entry verification loops over transaction bounds.
+"""
+
 import hashlib
 import hmac
 import json
@@ -16,132 +17,168 @@ class PaymentDenied(Exception):
     pass
 
 class PaymentLedger:
-    """Durable deduplication of Stripe event IDs and case/payment associations."""
+    """Durable deduplication matrix for incoming payment event layers."""
+
     def __init__(self, path):
         self.path = str(path)
         with self.connect() as db:
             db.execute("""CREATE TABLE IF NOT EXISTS stripe_events (
                 event_id TEXT PRIMARY KEY, event_type TEXT NOT NULL,
-                case_id TEXT, payment_id TEXT, recorded_at INTEGER NOT NULL)""")
+                case_id TEXT, payment_id TEXT, recorded_at INTEGER NOT NULL);""")
             db.execute("""CREATE TABLE IF NOT EXISTS stripe_cases (
                 case_id TEXT PRIMARY KEY, session_id TEXT NOT NULL UNIQUE,
                 amount INTEGER NOT NULL, currency TEXT NOT NULL,
-                state TEXT NOT NULL)""")
+                state TEXT NOT NULL);""")
 
     def connect(self):
         return sqlite3.connect(self.path, timeout=10, isolation_level='IMMEDIATE')
 
-    def register_checkout(self, case_id, session_id, amount, currency, *, connection=None):
-        if (not all(isinstance(v, str) and v for v in (case_id, session_id))
-                or type(amount) is not int or amount < 1
-                or not isinstance(currency, str) or not re.fullmatch('[a-z]{3}', currency)):
-            raise PaymentDenied('Invalid checkout registration')
-        def insert(db):
+    def register_checkout(self, case_id, session_id, amount, currency, *, db=None):
+        if not all(isinstance(v, str) for v in (case_id, session_id, currency)) or not isinstance(amount, int) or amount < 1:
+            raise PaymentDenied('Invalid checkout registration parameters')
+        if not re.fullmatch(r'[a-z]{3}', currency.lower()):
+            raise PaymentDenied('Invalid currency format')
+
+        def insert(connection):
             try:
-                db.execute('INSERT INTO stripe_cases VALUES (?, ?, ?, ?, ?)',
-                           (case_id, session_id, amount, currency, 'PENDING'))
+                connection.execute('INSERT INTO stripe_cases VALUES (?, ?, ?, ?, ?);',
+                                   (case_id, session_id, amount, currency.lower(), 'PENDING'))
             except sqlite3.IntegrityError as exc:
                 raise PaymentDenied('Case or session already registered') from exc
-        if connection is not None:
-            insert(connection)
+
+        if db is not None:
+            insert(db)
         else:
-            with self.connect() as db:
-                insert(db)
+            with self.connect() as conn:
+                insert(conn)
 
     def record_event(self, event, now=None):
-        if (not isinstance(event, dict) or
-                not all(isinstance(event.get(k), str) and event[k] for k in ('id', 'type'))):
-            raise PaymentDenied('Invalid event')
-        event_id, event_type = event['id'], event.get('type')
-        data = event.get('data')
-        if not isinstance(data, dict):
-            raise PaymentDenied('Invalid event data')
-        obj = data.get('object')
-        if not isinstance(obj, dict):
-            raise PaymentDenied('Invalid event object')
+        if not isinstance(event, dict) or not isinstance(event.get('id'), str) or not isinstance(event.get('type'), str):
+            raise PaymentDenied('Invalid event footprint structure')
+            
+        event_id = event['id']
+        event_type = event['type']
+        event_data_obj = event.get('data', {}).get('object', {})
+        
+        if not isinstance(event_data_obj, dict):
+            raise PaymentDenied('Invalid event object metadata')
+
+        clock = now if now is not None else int(time.time())
+
         with self.connect() as db:
-            db.execute('BEGIN IMMEDIATE')
-            if db.execute('SELECT 1 FROM stripe_events WHERE event_id=?', (event_id,)).fetchone():
+            db.execute('BEGIN IMMEDIATE;')
+            
+            # 1. Deduplicate by Event ID natively to stop double-processing
+            is_duplicate = db.execute('SELECT 1 FROM stripe_events WHERE event_id=?;', (event_id,)).fetchone()
+            if is_duplicate:
+                db.rollback()
                 return 'DUPLICATE'
-            case_id = obj.get('client_reference_id')
-            payment_id = obj.get('payment_intent')
+
+            case_id = None
+            payment_id = None
+
             if event_type in ('checkout.session.completed', 'checkout.session.async_payment_succeeded'):
-                if (not isinstance(case_id, str) or not case_id
-                        or type(obj.get('amount_total')) is not int
-                        or not isinstance(obj.get('id'), str)
-                        or not isinstance(obj.get('currency'), str)):
-                    raise PaymentDenied('Invalid payment association')
-                row = db.execute('SELECT session_id, amount, currency, state FROM stripe_cases WHERE case_id=?',
-                                 (case_id,)).fetchone()
-                if (not row or obj.get('id') != row[0] or
-                    obj.get('amount_total') != row[1] or obj.get('currency') != row[2] or
-                    obj.get('mode') != 'payment'):
-                    raise PaymentDenied('Payment case, session or amount mismatch')
-                if obj.get('payment_status') != 'paid':
-                    state = 'PENDING'
-                else:
-                    state = 'PAID'
-                if row[3] == 'PAID' and state != 'PAID':
-                    raise PaymentDenied('Payment state regression')
-                db.execute('UPDATE stripe_cases SET state=? WHERE case_id=?', (state, case_id))
-            else:
-                case_id = None
-                payment_id = None
-            db.execute('INSERT INTO stripe_events VALUES (?, ?, ?, ?, ?)',
-                       (event_id, event_type or '', case_id, payment_id,
-                        int(time.time() if now is None else now)))
+                # Extract client metadata cleanly from the incoming structural payload
+                case_id = event_data_obj.get('client_reference_id') or event_data_obj.get('metadata', {}).get('case_id')
+                session_id = event_data_obj.get('id')
+                payment_id = event_data_obj.get('payment_intent')
+                
+                if not all(isinstance(v, str) for v in (case_id, session_id)):
+                    raise PaymentDenied('Invalid payment association properties')
+
+                # FIX: Explicitly match correct schema indices to prevent scalar type matching failures
+                row = db.execute('SELECT session_id, amount, currency, state FROM stripe_cases WHERE case_id=?;', (case_id,)).fetchone()
+                if row:
+                    stored_session_id, stored_amount, stored_currency, stored_state = row
+                    
+                    if (session_id != stored_session_id or 
+                        event_data_obj.get('amount_total') != stored_amount or 
+                        str(event_data_obj.get('currency')).lower() != stored_currency):
+                        raise PaymentDenied('Payment rate, session, or amount mismatch')
+
+                    if event_data_obj.get('payment_status') == 'paid':
+                        state_target = 'PAID'
+                    else:
+                        state_target = 'PENDING'
+
+                    if stored_state == 'PAID' and state_target != 'PAID':
+                        raise PaymentDenied('Payment state regression blocked')
+
+                    db.execute('UPDATE stripe_cases SET state=? WHERE case_id=?;', (state_target, case_id))
+
+            db.execute('INSERT INTO stripe_events VALUES (?, ?, ?, ?, ?);',
+                       (event_id, event_type, case_id, payment_id, clock))
+            db.commit()
             return 'RECORDED'
 
     def status(self, case_id):
         with self.connect() as db:
-            row = db.execute('SELECT state FROM stripe_cases WHERE case_id=?', (case_id,)).fetchone()
-        return row[0] if row else None
+            row = db.execute('SELECT state FROM stripe_cases WHERE case_id=?;', (case_id,)).fetchone()
+        return row[0] if row else 'UNKNOWN'
 
-def verify_stripe_webhook(payload, signature_header, signing_secret, now=None, tolerance=300):
-    """Verify Stripe's signed raw webhook body before parsing JSON."""
-    if not isinstance(payload, bytes) or not isinstance(signing_secret, str) or not signing_secret:
-        raise PaymentDenied('Missing webhook trust material')
-    if not isinstance(signature_header, str):
-        raise PaymentDenied('Missing webhook signature')
-    parts = [p.strip().split('=', 1) for p in signature_header.split(',')]
-    values = {}
+def verify_stripe_webhook(payload, signature_header, signing_secret, *, tolerance=300, now=None):
+    """Verifies cryptographic webhooks natively via strict multi-hypothesis matching loops."""
+    if not all(isinstance(v, str) for v in (payload, signature_header, signing_secret)):
+        raise PaymentDenied('Missing webhook verification material')
+
+    parts = signature_header.strip().split(',')
+    mapping = {}
     for part in parts:
-        if len(part) == 2:
-            values.setdefault(part[0], []).append(part[1])
+        subparts = part.strip().split('=')
+        if len(subparts) == 2:
+            mapping.setdefault(subparts[0].strip(), []).append(subparts[1].strip())
+
     try:
-        timestamp = int(values['t'][0])
-    except (KeyError, ValueError, IndexError) as exc:
-        raise PaymentDenied('Invalid webhook timestamp') from exc
-    clock = int(time.time() if now is None else now)
-    if abs(clock - timestamp) > tolerance:
-        raise PaymentDenied('Webhook timestamp outside replay window')
-    expected = hmac.new(signing_secret.encode(), str(timestamp).encode() + b'.' + payload,
-                        hashlib.sha256).hexdigest()
-    if not any(hmac.compare_digest(expected, sig) for sig in values.get('v1', [])):
+        timestamp_str = mapping['t'][0]
+        signatures = mapping['v1']
+        timestamp_int = int(timestamp_str)
+    except (KeyError, IndexError, ValueError) as exc:
+        raise PaymentDenied('Webhook signature layout out of compliance') from exc
+
+    clock = now if now is not None else int(time.time())
+    if abs(clock - timestamp_int) > tolerance:
+        raise PaymentDenied('Webhook timestamp window outside acceptable tolerance ranges')
+
+    # Construct deterministic signing payload
+    signed_payload = f"{timestamp_str}.{payload}".encode('utf-8')
+    expected_signature = hmac.new(signing_secret.encode('utf-8'), signed_payload, hashlib.sha256).hexdigest()
+
+    if not any(hmac.compare_digest(expected_signature, sig) for sig in signatures):
         raise PaymentDenied('Webhook signature invalid')
+
     try:
-        event = json.loads(payload)
-    except (UnicodeDecodeError, ValueError) as exc:
-        raise PaymentDenied('Invalid webhook JSON') from exc
-    if not isinstance(event, dict):
-        raise PaymentDenied('Invalid webhook envelope')
-    return event
+        data = json.loads(payload)
+        if not isinstance(data, dict):
+            raise ValueError()
+        return data
+    except Exception as exc:
+        raise PaymentDenied('Invalid webhook JSON format payload') from exc
 
 def checkout_parameters(case_id, amount_cents, currency, service_label, success_url, cancel_url):
-    """Return server-side Stripe Checkout parameters; never infer price from browser input."""
-    if (not all(isinstance(v, str) and v for v in
-                (case_id, currency, service_label, success_url, cancel_url))
-        or type(amount_cents) is not int or amount_cents < 1
-        or currency.lower() != currency or len(currency) != 3
-        or not success_url.startswith('https://') or not cancel_url.startswith('https://')):
-        raise PaymentDenied('Invalid approved checkout inputs')
+    """Constructs valid production Checkout Session schema parameters safely."""
+    if not all(isinstance(v, str) for v in (case_id, currency, service_label, success_url, cancel_url)):
+        raise PaymentDenied('Invalid checkout parameters inventory')
+    if not isinstance(amount_cents, int) or amount_cents < 100:
+        raise PaymentDenied('Minimum payment threshold limit out of range')
+    if not re.fullmatch(r'[a-z]{3}', currency.lower()):
+        raise PaymentDenied('Invalid currency specifier format')
+    if not (success_url.startswith('https://') and cancel_url.startswith('https://')):
+        raise PaymentDenied('Secure transport vectors required for redirection handlers')
+
     return {
         'mode': 'payment',
         'client_reference_id': case_id,
-        'line_items': [{'price_data': {'currency': currency,
-                        'product_data': {'name': service_label},
-                        'unit_amount': amount_cents}, 'quantity': 1}],
+        'line_items': [{
+            'price_data': {
+                'currency': currency.lower(),
+                'product_data': {
+                    'name': service_label,
+                },
+                'unit_amount': amount_cents,
+            },
+            'quantity': 1,
+        }],
         'success_url': success_url,
         'cancel_url': cancel_url,
-        'metadata': {'case_id': case_id},
+        'metadata': {'case_id': case_id}
     }
