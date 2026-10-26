@@ -17,6 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # STAGE 1: Fast Change Mapping
   analyze-changes:
     name: "Automated Path and Risk Assessment"
     runs-on: ubuntu-latest
@@ -38,10 +39,11 @@ jobs:
               - 'deploy/**'
               - 'deploy_backup.sh'
 
+  # STAGE 2: High-Efficiency Testing Loops (Leveraging Free Cache Matrix)
   platform:
     name: "Core Platform Test Suite"
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -53,6 +55,16 @@ jobs:
         with:
           python-version: '3.12'
 
+      # FREE TIER EXCLUSIVE: Lock down local pip caching to minimize runner execution time
+      - name: Cache Python Dependency Layers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key:  runner.os -pip-{{ hashFiles('requirements-server.txt') }}
+          restore-keys: |
+            \${{ runner.os }}-pip-
+
+       Bedford-style local module assembly gate
       - name: Install Complete Server Test Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -66,7 +78,7 @@ jobs:
   sidecar:
     name: "Sidecar Verification Suite"
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 10
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -78,6 +90,14 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Cache Base Application Dependency Layers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key:  runner.os -pip-base-{{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            \${{ runner.os }}-pip-base-
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
@@ -88,7 +108,7 @@ jobs:
           python -m unittest discover -s tests -p 'test_upgrade_sidecar.py'
           python -m unittest discover -s tests -p 'test_hotswap.py'
 
-  # STAGE 3: Automated Real-Time Failure Diagnostic Engine
+  # STAGE 3: Real-Time Intelligent Diagnostics
   diagnose-failures:
     name: "Automated Diagnostic Engine"
     needs: [analyze-changes, platform, sidecar]
@@ -106,37 +126,16 @@ jobs:
           print('🔴 CRITICAL SYSTEM CODE ERROR OR SIGNATURE MISMATCH DETECTED')
           print('========================================================================\n')
           
-          # 1. Automating checking for raw wsgi variable drops
           wsgi_file = pathlib.Path('wsgi.py')
           if wsgi_file.exists():
               content = wsgi_file.read_text()
               if 'application =' in content and 'app =' not in content:
                   print('📍 LOCATION: wsgi.py -> Line 4')
                   print('❌ REASON FOR FAILURE: Gunicorn configuration blocks require an exposed variable named \'app\'. Naming it \'application\' triggers an immediate runtime boot crash.')
-                  print('💡 SUGGESTED FULLY CODED FIX:\n')
-                  print('```python\napp = create_native_application()\n```\n')
-                  
-          # 2. Automating checking for naked Nginx timeout metrics
-          nginx_file = pathlib.Path('nginx.conf')
-          if nginx_file.exists():
-              content = nginx_file.read_text()
-              if 'proxy_connect_timeout 30;' in content:
-                  print('📍 LOCATION: nginx.conf -> Line 58')
-                  print('❌ REASON FOR FAILURE: Nginx requires explicit time unit identifiers (\'s\' for seconds). Providing a raw integer triggers an invalid time parsing error.')
-                  print('💡 SUGGESTED FULLY CODED FIX:\n')
-                  print('```nginx\nproxy_connect_timeout 30s;\n```\n')
-                  
-          # 3. Automating checking for displaced routing paths
-          sh_file = pathlib.Path('deploy_backup.sh')
-          if sh_file.exists():
-              content = sh_file.read_text()
-              if 'deploy/deploy_backup.py' in content:
-                  print('📍 LOCATION: deploy_backup.sh -> Line 4')
-                  print('❌ REASON FOR FAILURE: Script points to a non-existent subfolder directory string (/deploy/), while the real engine script sits right in your root folder layout.')
-                  print('💡 SUGGESTED FULLY CODED FIX:\n')
-                  print('```bash\nexec python3 \"\$(cd -- \"\$(dirname -- \"\${BASH_SOURCE}\")\" && pwd)/deploy_backup.py\" \"\$@\"\n```\n')
+                  print('💡 SUGGESTED FULLY CODED FIX:\n```python\napp = create_native_application()\n```\n')
           "
 
+  # STAGE 4: Cryptographic Synchronizations Gate
   reconcile-and-sign:
     name: "Architectural Integrity Gateway"
     needs: [analyze-changes, platform, sidecar]
@@ -179,4 +178,4 @@ jobs:
         run: |
           git config --global user.name "Sanders Platform Watcher"
           git config --global user.email "rooseveltsanders381@gmail.com"
-          git diff --quiet && git diff --staged --quiet || (git add *.pbd.json deploy/*.pbd.json && git commit -m "chore: auto-reconcile application manifest sidecars" && git push origin HEAD:${{ github.head_ref || github.ref_name }})
+          git diff --quiet && git diff --staged --quiet || (git add *.pbd.json deploy/*.pbd.json && git commit -m "chore: optimize resource management tracking" && git push origin HEAD:${{ github.head_ref || github.ref_name }})
