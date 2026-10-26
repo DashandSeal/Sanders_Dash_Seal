@@ -1,144 +1,124 @@
 """
-Module: core_platform.stream_api
-Architectural Layer: Secure Durable Stream Processing Matrix
-Description: Validates incoming signed transaction frames. Enforces strict JSON keys,
-             signature non-repudiation, and transactional deduplication states.
+Module: core_platform.stripe_webhook_wsgi
+Architectural Layer: Cryptographically Guarded Payment Webhook Transport
+Description: Processes incoming raw Stripe webhook stream events.
+             Validates cryptographic signatures via HMAC-SHA256 headers,
+             enforces strict size limits, and registers verified sessions.
 """
 
-from collections.abc import Mapping
 import json
-from .pipeline_api import IDENT, TransactionRejected, TransactionStore
+import logging
+import stripe
+from stripe.error import SignatureVerificationError
 
-class StreamConfigurationError(Exception):
+# Enterprise security limits: Webhook structures never require more than 64KB
+MAX_WEBHOOK_BODY_BYTES = 65536
+
+class WebhookConfigurationError(Exception):
     pass
 
-def stream_signing_payload(event):
-    """Excludes the signature itself; binds the independently registered actor and context."""
-    if not isinstance(event, dict):
-        raise TransactionRejected('Invalid signed event structure')
-        
-    required_keys = {'actor', 'transaction_id', 'transaction', 'signature'}
-    if set(event.keys()) != required_keys:
-        raise TransactionRejected('Invalid signed event structure: fields mismatch')
-        
-    if not isinstance(event['actor'], str) or not IDENT.fullmatch(event['actor']):
-        raise TransactionRejected('Invalid signed event: actor signature invalid')
-    if not isinstance(event['transaction_id'], str) or not IDENT.fullmatch(event['transaction_id']):
-        raise TransactionRejected('Invalid signed event: transactional identity mismatch')
-    if not isinstance(event['transaction'], dict):
-        raise TransactionRejected('Invalid signed event structure')
-        
-    if event['transaction'].get('request_id') != event['transaction_id']:
-        raise TransactionRejected('Invalid signed event footprint boundary')
-    if not isinstance(event['signature'], str) or len(event['signature']) < 32:
-        raise TransactionRejected('Invalid signed event: signature token empty')
-        
-    return json.dumps({
-        'actor': event['actor'],
-        'transaction': event['transaction']
-    }, sort_keys=True, separators=(',', ':'), ensure_ascii=False)
+def import_make_app(ledger_engine, webhook_secret, *, enabled=True, expected_livemode=True):
+    """
+    Factory builder initializing verified webhook receivers.
+    Ensures absolute data protection and idempotent validation structures.
+    """
+    if enabled and (not isinstance(webhook_secret, str) or not webhook_secret.startswith('whsec_')):
+        raise WebhookConfigurationError("Invalid Stripe Webhook signature token configuration parameters")
 
-def strict_json(raw):
-    """Parses raw text payloads while strictly forbidding duplicate keys or invalid structures."""
-    def pairs_hook(items):
-        result = {}
-        for key, value in items:
-            if key in result:
-                raise ValueError('Duplicate JSON key string detected')
-            result[key] = value
-        return result
+    def respond(start_response, status_string, response_dict):
+        body_bytes = json.dumps(response_dict, separators=(',', ':')).encode('utf-8')
+        start_response(status_string, [
+            ('Content-Type', 'application/json'),
+            ('Content-Length', str(len(body_bytes))),
+            ('Cache-Control', 'no-store'),
+            ('X-Content-Type-Options', 'nosniff')
+        ])
+        return [body_bytes]
 
-    def constant_hook(value):
-        raise ValueError(f'Nonfinite JSON constant value forbidden: {value}')
+    def application(environ, start_response):
+        if not enabled:
+            return respond(start_response, '503 Service Unavailable', {'error': 'webhook_gateway_disabled'})
 
-    try:
-        decoded_str = raw.decode('utf-8')
-        return json.loads(decoded_str, object_pairs_hook=pairs_hook, parse_constant=constant_hook)
-    except Exception as error:
-        raise ValueError(f'Malformed stream body format: {str(error)}') from error
+        path = environ.get('PATH_INFO', '')
+        method = environ.get('REQUEST_METHOD', '')
 
-def create_stream_app(processor=None, release_verifier=None, store=None, verifiers=None):
-    """Factory builder initializing verified processing blocks and signature keys maps."""
-    if verifiers is None:
-        verifiers = {}
-    if not isinstance(verifiers, Mapping):
-        raise StreamConfigurationError('Valid verifiers mapping configuration required')
-
-    def app(env, start):
-        def respond(status, payload):
-            raw_body = json.dumps(payload, separators=(',', ':')).encode('utf-8')
-            start(status, [
-                ('Content-Type', 'application/json'),
-                ('Content-Length', str(len(raw_body))),
-                ('Cache-Control', 'no-store'),
-                ('X-Content-Type-Options', 'nosniff')
-            ])
-            return [raw_body]
-
-        # 1. Structural Gateway Checks
-        try:
-            ready = (callable(processor) and callable(release_verifier) and
-                     release_verifier() is True and isinstance(store, TransactionStore))
-        except Exception:
-            ready = False
-
-        if not ready:
-            return respond('503 Service Unavailable', {'error': 'stream_authority_offline'})
-
-        if env.get('REQUEST_METHOD') != 'POST':
-            return respond('405 Method Not Allowed', {'error': 'post_required'})
+        if path != '/v1/payments/stripe/webhook':
+            return respond(start_response, '404 Not Found', {'error': 'endpoint_not_found'})
             
-        content_type = env.get('CONTENT_TYPE', '').split(';')[0].strip().lower()
-        if content_type != 'application/json':
-            return respond('415 Unsupported Media Type', {'error': 'json_required'})
+        if method != 'POST':
+            return respond(start_response, '405 Method Not Allowed', {'error': 'post_required'})
 
-        # 2. Extract and Enforce Ingestion Size Limits
+        # 1. Size Boundary Verification Guard
         try:
-            length_str = env.get('CONTENT_LENGTH', '0')
-            if not length_str.isdigit():
-                raise ValueError('Invalid size header')
-            length = int(length_str)
-            if not 0 < length <= 262144:
-                raise ValueError('Size boundaries out of range')
-
-            raw_input = env['wsgi.input'].read(length)
-            if len(raw_input) != length:
-                raise ValueError('Short payload frame')
-
-            event = strict_json(raw_input)
-            payload_str = stream_signing_payload(event)
-        except Exception as err:
-            return respond('400 Bad Request', {'error': f'invalid_stream_event: {str(err)}'})
-
-        # 3. Cryptographic Signature Authentication Block
-        try:
-            # FIX: Clean lookup context querying the factory-bound verifiers dictionary mapping
-            verifier = verifiers.get(event['actor'])
-            if verifier is None:
-                return respond('401 Unauthorized', {'error': 'unregistered_actor_signature'})
+            content_length_str = environ.get('CONTENT_LENGTH', '0')
+            if not content_length_str.isdigit():
+                return respond(start_response, '400 Bad Request', {'error': 'invalid_content_length_header'})
                 
-            # Execute cryptographic verification checks safely over the payload footprint
-            if not hasattr(verifier, 'verify') or verifier.verify(event['transaction_id'], payload_str, event['signature']) is not True:
-                return respond('401 Unauthorized', {'error': 'invalid_stream_signature'})
+            content_length = int(content_length_str)
+            if not 0 < content_length <= MAX_WEBHOOK_BODY_BYTES:
+                return respond(start_response, '413 Content Too Large', {'error': 'payload_exceeds_safe_boundaries'})
+        except (ValueError, TypeError):
+            return respond(start_response, '400 Bad Request', {'error': 'malformed_length_parameters'})
 
-            def committed_processor(transaction, namespaced_actor, database):
-                # Ensure existing hooks retain execution capabilities
-                return processor(transaction, namespaced_actor, database)
+        # 2. Extract Raw Body Buffer Natively (Forbid prior parsing mutations)
+        try:
+            raw_body = environ['wsgi.input'].read(content_length)
+            if len(raw_body) != content_length:
+                return respond(start_response, '400 Bad Request', {'error': 'incomplete_data_frame'})
+        except Exception as read_error:
+            return respond(start_response, '500 Internal Server Error', {'error': f'stream_read_failure: {str(read_error)}'})
 
-            # Commit the transaction safely through the persistent deduplication engine
-            receipt = store.process(
-                event['transaction'],
-                stream_type='TRANSACTION_STREAM:' + event['actor'],
-                callback=committed_processor
+        # 3. Cryptographic Signature Validation Loop
+        sig_header = environ.get('HTTP_STRIPE_SIGNATURE', '')
+        if not sig_header:
+            return respond(start_response, '401 Unauthorized', {'error': 'missing_stripe_signature_header'})
+
+        try:
+            # Force direct multi-hypothesis event reconstruction over unaltered bytes
+            event = stripe.Webhook.construct_event(
+                payload=raw_body,
+                sig_header=sig_header,
+                secret=webhook_secret
             )
-            return respond('200 OK', {
-                'transaction_id': event['transaction_id'],
-                'status': 'COMMITTED',
-                'receipt': receipt
-            })
-        except TransactionRejected as err:
-            return respond('409 Conflict', {'error': f'stream_transaction_rejected: {str(err)}'})
-        except Exception as err:
-            return respond('503 Service Unavailable', {'error': f'stream_commit_failure: {str(err)}'})
+        except (ValueError, SignatureVerificationError) as signature_error:
+            logging.warning(f"⚠️ Cryptographic verification rejected payload handshake: {str(signature_error)}")
+            return respond(start_response, '401 Unauthorized', {'error': 'invalid_cryptographic_signature'})
 
-    return app
+        # 4. Enforce Production Environment Security Bounds
+        if event.get('livemode') != expected_livemode:
+            return respond(start_response, '400 Bad Request', {'error': 'environment_livemode_mismatch'})
+
+        # 5. Idempotent Ingestion & Ledger Handoff
+        try:
+            event_id = event.get('id')
+            event_type = event.get('type')
+            event_data_object = event.get('data', {}).get('object', {})
+
+            if not event_id or not event_type:
+                raise ValueError("Malformed event identity elements")
+
+            # Route financial lifecycle metrics cleanly into your persistent accounting logs
+            with ledger_engine.connect() as db:
+                # Deduplicate by Event ID natively inside SQLite schema blocks to stop double-processing
+                is_duplicate = db.execute("SELECT 1 FROM stripe_processed_events WHERE id = ?;", (event_id,)).fetchone()
+                if is_duplicate:
+                    return respond(start_response, '200 OK', {'status': 'SUCCESS_ALREADY_PROCESSED', 'event_id': event_id})
+
+                if event_type == 'checkout.session.completed':
+                    ledger_engine.fulfill_checkout(event_data_object, db)
+                elif event_type == 'invoice.paid':
+                    ledger_engine.record_subscription_renewal(event_data_object, db)
+                elif event_type == 'charge.refunded':
+                    ledger_engine.process_reversal(event_data_object, db)
+                else:
+                    # Gracefully acknowledge un-tracked events to stop retry cycles
+                    db.execute("INSERT INTO stripe_processed_events (id, type, processed_at) VALUES (?, ?, ?);",
+                               (event_id, event_type, int(time.time())))
+
+            return respond(start_response, '200 OK', {'status': 'LEDGER_SETTLED', 'event_id': event_id})
+
+        except Exception as processing_error:
+            logging.error(f"❌ Internal accounting engine processing fault: {str(processing_error)}")
+            return respond(start_response, '500 Internal Server Error', {'error': 'ledger_reconciliation_failed'})
+
+    return application
