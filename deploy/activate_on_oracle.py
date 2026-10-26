@@ -14,8 +14,7 @@ def cli(args, *, raw=False, runner=subprocess.run):
     # Terraform zip uploads are materially larger than OCI state reads.
     # Keep the existing read limits; allow more time to send and acknowledge
     # the Resource Manager update rather than misclassifying it as a bad build.
-    upload = args[:3] == ['resource-manager', 'stack', 'update']
-    connection_timeout, read_timeout = (30, 180) if upload else (10, 60)
+    connection_timeout, read_timeout = 30, 360
     result = runner(['oci', *args, '--region', REGION, '--output', 'json',
         '--connection-timeout', str(connection_timeout), '--read-timeout',
         str(read_timeout), '--max-retries', '2'], capture_output=True,
