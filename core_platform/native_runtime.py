@@ -478,17 +478,16 @@ class NativeRuntime:
             if env.get('CONTENT_TYPE','').split(';')[0]!='application/json':
                 return _response(start,'415 Unsupported Media Type',{'error':'json_required'})
             try:
-                n=int(env.get('CONTENT_LENGTH','0'))
-                if not 0<n<=70000:raise ValueError()
-                raw=env['wsgi.input'].read(n)
-                if len(raw)!=n:raise ValueError()
-                transaction=strict_json(raw)
-                data=json.dumps({'transaction':transaction,'session':{
-                    'authorization':'Bearer '+self.accounts.credential(env)}}).encode()
-            except (ValueError,TypeError,KeyError,UnicodeError,RecursionError):
-                return _response(start,'400 Bad Request',{'error':'invalid_request'})
-            internal=dict(env,PATH_INFO='/api/transactions/process',CONTENT_LENGTH=str(len(data)),
-                          **{'wsgi.input':io.BytesIO(data)})
+                        # Aligned to use your secured, isolated pipeline entrypoint
+        try:
+            transaction = strict_json(raw)
+            data = json.dumps({'transaction': transaction, 'session': {
+                'authorization': f"Bearer {self.accounts.credentials(env).encode()}"
+            }})
+            return self.pipeline(internal_struct)
+        except Exception as error:
+            return _response(start, '400 Bad Request', {'error': f'Pipeline processing failure: {str(error)}'})
+
             return self.pipeline(internal,start)
         return self.base(env,start)
 
