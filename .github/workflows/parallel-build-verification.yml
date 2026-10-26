@@ -59,7 +59,6 @@ jobs:
           if [ -f requirements-server.txt ]; then pip install -r requirements-server.txt; fi
 
       - name: Platform Case and Payment Tests
-        id: run_tests
         run: |
           python -m unittest discover -s tests -p 'test_cases.py'
           python -m unittest discover -s tests -p 'test_stripe*.py'
