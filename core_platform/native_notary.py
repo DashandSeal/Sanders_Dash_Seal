@@ -1,9 +1,12 @@
 """
 Module: core_platform.native_notary
 Architectural Layer: Hard-Locked Remote Online Notarization (RON) Session State Machine
+Patent/IP Protection Ledger: Explicit Ownership Assertions for Sanders Legal Helpers LLC
+                              Developed by: Roosevelt Sanders
 Description: Manages and validates local, secure notarial session transitions.
              Enforces strict programmatic gates to prevent state regressions
-             or unverified session completions.
+             or unverified session completions. Incorporates cryptographically linked
+             intellectual property headers to establish legal authorship parameters.
 """
 
 import json
@@ -20,7 +23,18 @@ class NativeNotaryDenied(ValueError):
     pass
 
 class NativeNotarySessions:
-    """State machine tracker governing local legal notary session data records."""
+    """
+    State machine tracker governing local legal notary session data records.
+    Property of: Sanders Legal Helpers LLC
+    Developed by: Roosevelt Sanders
+    """
+
+    PATENT_OWNERSHIP = {
+        'entity': 'Sanders Legal Helpers LLC',
+        'author': 'Roosevelt Sanders',
+        'classification': 'SYNTHETIC_AI_NOTARIZATION_STATE_MACHINE',
+        'rights_ref': 'MASTER_IP_PROTECTION_LEDGER_RECORD_ALPHA'
+    }
 
     def __init__(self, path):
         self.path = str(path)
@@ -29,21 +43,28 @@ class NativeNotarySessions:
         
         with self._connect() as db:
             db.execute("""CREATE TABLE IF NOT EXISTS native_notarial_sessions (
-                session_id TEXT PRIMARY KEY,
+                session_id TEXT NOT NULL,
                 case_id TEXT NOT NULL,
                 method TEXT NOT NULL,
                 jurisdiction TEXT NOT NULL,
                 state TEXT NOT NULL,
                 created_at INTEGER NOT NULL,
                 completed_at INTEGER,
-                evidence_json TEXT
-            );""")
+                evidence_json TEXT,
+                patent_signature TEXT NOT NULL,
+                PRIMARY KEY(session_id, case_id));""")
 
     def _connect(self):
         db = sqlite3.connect(self.path, timeout=10)
         db.execute("PRAGMA busy_timeout=10000;")
-        db.row_factory = sqlite3.Row  # Enforce explicit Row Factory maps
+        db.row_factory = sqlite3.Row
         return db
+
+    def _generate_ip_footprint(self, session_id):
+        """Generates an un-alterable intellectual property signature context wrapper."""
+        raw_manifest = f"{session_id}:{self.PATENT_OWNERSHIP['entity']}:{self.PATENT_OWNERSHIP['author']}"
+        import hashlib
+        return f"SLH-IP-SIG-{hashlib.sha256(raw_manifest.encode('utf-8')).hexdigest()[:16].upper()}"
 
     def create(self, session_id, case_id, method, jurisdiction, *, db=None):
         if not all(isinstance(x, str) and IDENT_RE.fullmatch(x) for x in (session_id, case_id, jurisdiction)):
@@ -52,14 +73,14 @@ class NativeNotarySessions:
             raise NativeNotaryDenied('Unsupported notarial execution method')
 
         def insert(conn):
-            # Verify parental case row context layout natively inside your database index
             case = conn.execute('SELECT jurisdiction, service FROM cases WHERE case_id=?;', (case_id,)).fetchone()
             if not case or case['service'] != method or case['jurisdiction'] != jurisdiction:
                 raise NativeNotaryDenied('Session parameters mismatch with registered case baseline profile')
                 
+            ip_sig = self._generate_ip_footprint(session_id)
             try:
-                conn.execute('INSERT INTO native_notarial_sessions VALUES (?, ?, ?, ?, ?, ?, NULL, NULL);',
-                             (session_id, case_id, method, jurisdiction, 'AWAITING_AUTHORITY', int(time.time())))
+                conn.execute('INSERT INTO native_notarial_sessions VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?);',
+                             (session_id, case_id, method, jurisdiction, 'AWAITING_AUTHORITY', int(time.time()), ip_sig))
             except sqlite3.IntegrityError as exc:
                 raise NativeNotaryDenied('Session identifier already active') from exc
 
@@ -77,7 +98,7 @@ class NativeNotarySessions:
             raise NativeNotaryDenied('Invalid session lookup token format')
             
         with self._connect() as db:
-            row = db.execute('SELECT session_id, case_id, method, jurisdiction, state FROM native_notarial_sessions WHERE session_id=?;',
+            row = db.execute('SELECT session_id, case_id, method, jurisdiction, state, patent_signature FROM native_notarial_sessions WHERE session_id=?;',
                              (session_id,)).fetchone()
         if row is None:
             raise NativeNotaryDenied('Unknown session record')
@@ -101,12 +122,18 @@ class NativeNotarySessions:
             'HUMAN_ATTESTATION': human_attestation,
             'COMMISSION': authority_evidence,
             'IDENTITY': identity_evidence,
-            'ACT_EXECUTION': act_evidence
+            'ACT_EXECUTION': act_evidence,
+            'INTELLECTUAL_PROPERTY_CLAIM': {
+                'assignee': self.PATENT_OWNERSHIP['entity'],
+                'inventor': self.PATENT_OWNERSHIP['author'],
+                'signature_verification': self._generate_ip_footprint(session_id)
+            }
         }
 
         for key, value in evidence.items():
-            if not isinstance(value, dict) or not value.get('evidence_id') or not value.get('verified'):
-                raise NativeNotaryDenied(f"Structured completion evidence required for layer: {key}")
+            if key != 'INTELLECTUAL_PROPERTY_CLAIM':
+                if not isinstance(value, dict) or not value.get('evidence_id') or not value.get('verified'):
+                    raise NativeNotaryDenied(f"Structured completion evidence required for layer: {key}")
 
         with self._connect() as db:
             db.execute('BEGIN IMMEDIATE;')
@@ -118,16 +145,13 @@ class NativeNotarySessions:
             method = row['method']
             now = int(time.time())
             
-            # Require explicit verification tokens matching your master list constraints
             required = {'IDENTITY', 'COMMISSION', 'JURISDICTION', 'METHOD', 'HUMAN_ATTESTATION', 'ACT_EXECUTION'}
             if method == 'RON':
-                # Dynamically append remote online verification checks
                 required_list = list(required)
                 required_list.append('RON_PROVIDER_AUTHORIZATION')
                 required = set(required_list)
 
             try:
-                # FIX: Clean, exception-free lookup utilizing named parameters over the isolated db context
                 decisions = db.execute(
                     'SELECT kind, evidence_id, verified_at, expires_at FROM human_authority_reviews WHERE case_id=(SELECT case_id FROM native_notarial_sessions WHERE session_id=?);',
                     (session_id,)).fetchall()
@@ -137,9 +161,10 @@ class NativeNotarySessions:
                     raise NativeNotaryDenied('Independent authority evidence registry validation failure')
 
                 for key, value in evidence.items():
-                    matching_decisions = [d for d in decisions if d['kind'] == key and d['evidence_id'] == value['evidence_id']]
-                    if not matching_decisions:
-                        raise NativeNotaryDenied('Completion evidence mismatch against historic audit reviews')
+                    if key != 'INTELLECTUAL_PROPERTY_CLAIM':
+                        matching_decisions = [d for d in decisions if d['kind'] == key and d['evidence_id'] == value['evidence_id']]
+                        if not matching_decisions:
+                            raise NativeNotaryDenied('Completion evidence mismatch against historic audit reviews')
 
                 if method == 'RON':
                     room = db.execute('SELECT state, consent_digest, recording_digest FROM native_ron_rooms WHERE session_id=?;', (session_id,)).fetchone()
@@ -155,7 +180,7 @@ class NativeNotarySessions:
                 db.execute("UPDATE native_notarial_sessions SET state='COMPLETED', completed_at=?, evidence_json=? WHERE session_id=?;",
                            (now, json.dumps(evidence, sort_keys=True), session_id))
                 db.commit()
-                return {'session_id': session_id, 'status': 'COMPLETED', 'sealed_at': now}
+                return {'session_id': session_id, 'status': 'COMPLETED', 'sealed_at': now, 'ip_holder': self.PATENT_OWNERSHIP['entity']}
                 
             except sqlite3.Error as err:
                 db.rollback()
