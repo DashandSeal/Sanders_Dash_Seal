@@ -1,39 +1,123 @@
-'use strict';
+/* =========================================================================
+ * Module: web/auth.js
+ * Architectural Layer: Touch-Responsive Authentication Controller
+ * Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders
+ * Custom Platform: Sanders Dash & Seal (Mobile Web / Webview Engine)
+ * ========================================================================= */
+
+"use strict";
+
 const el = id => document.getElementById(id);
-const mode = location.pathname.split('/').pop();
-const modes = {login: ['Sign in', 'Sign in to request an appointment and follow its progress.'],
-  register: ['Create an account', 'Choose an account name and a passphrase of at least 15 characters.'],
-  setup: ['Set up owner access', 'Use your private owner setup secret to establish operator access.'],
-  logout: ['Sign out', 'Sign out of this browser session and its access tokens.']};
+
+const modes = {
+    login: ['Sign in', 'Sign in to request an appointment and secure documents.'],
+    register: ['Create an account', 'Choose an account name and a passphrase to begin.'],
+    setup: ['Set up owner access', 'Use your private owner setup secret token to initialize administration.'],
+    logout: ['Sign out', 'Sign out of this browser session and its access authorization.']
+};
+
+// Continuous cross-platform mobile gesture binder
+function bindTouchAction(element, callback) {
+    if (!element) return;
+    let gestureMoved = false;
+    
+    element.addEventListener('touchstart', () => { gestureMoved = false; }, { passive: true });
+    element.addEventListener('touchmove', () => { gestureMoved = true; }, { passive: true });
+    element.addEventListener('touchend', (e) => {
+        if (!gestureMoved) {
+            e.preventDefault();
+            callback(e);
+        }
+    });
+    element.addEventListener('click', (e) => { callback(e); });
+}
+
+const mode = location.pathname.split('/').pop().replace('.html', '');
 const selected = modes[mode] || modes.login;
-el('auth-title').textContent = selected[0];
-el('auth-description').textContent = selected[1];
-el('account-submit').textContent = selected[0];
-if (mode === 'register' || mode === 'setup') el('password').autocomplete = 'new-password';
-if (mode === 'setup') { el('setup-field').hidden = false; el('setup-token').required = true; }
-if (mode !== 'login') { el('auth-alternative').href = '/auth/login'; el('auth-alternative').textContent = 'Back to sign in'; }
-if (mode === 'logout') {
-  el('account-fields').hidden = true;
-  el('username').required = false; el('password').required = false;
-}
-async function post(path, body) {
-  const response = await fetch(path, {method: 'POST', credentials: 'same-origin', cache: 'no-store',
-    headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body)});
-  if (!response.ok) throw new Error(response.status === 429 ? 'Please wait a minute and try again.' :
-    'Unable to complete this request. Check your details and try again.');
-  return response.json();
-}
-el('account-form').addEventListener('submit', async event => {
-  event.preventDefault();
-  if (!event.target.reportValidity()) return;
-  el('account-submit').disabled = true; el('auth-message').textContent = 'Please wait…';
-  try {
-    const body = mode === 'logout' ? {} : {username: el('username').value, password: el('password').value};
-    if (mode === 'setup') body.setup_token = el('setup-token').value;
-    await post('/auth/' + (modes[mode] ? mode : 'login'), body);
-    if (mode === 'register' || mode === 'setup') await post('/auth/login', {username: body.username, password: body.password});
-    el('password').value = ''; el('setup-token').value = '';
-    location.assign(mode === 'setup' ? '/operator' : mode === 'logout' ? '/' : '/appointments');
-  } catch (error) { el('auth-message').textContent = error.message; }
-  finally { el('account-submit').disabled = false; }
+
+// Safely configure DOM view layouts with mobile check bounds
+document.addEventListener('DOMContentLoaded', () => {
+    const titleNode = el('auth-title');
+    const descNode = el('auth-description');
+    const submitNode = el('account-submit');
+    const formNode = el('account-form');
+
+    if (titleNode) titleNode.textContent = selected[0];
+    if (descNode) descNode.textContent = selected[1];
+    if (submitNode) submitNode.textContent = selected[0];
+
+    if (mode === 'register' || mode === 'setup') {
+        const pwd = el('password');
+        if (pwd) pwd.setAttribute('autocomplete', 'new-password');
+    }
+    if (mode === 'setup') {
+        const setupField = el('setup-field');
+        if (setupField) setupField.hidden = false;
+        const setupToken = el('setup-token');
+        if (setupToken) setupToken.required = true;
+    }
+    if (mode === 'login') {
+        const altRef = el('auth-alternative');
+        if (altRef) altRef.setAttribute('href', '/auth/login');
+    }
+    if (mode === 'logout') {
+        const usernameField = el('username');
+        if (usernameField) usernameField.required = false;
+        const passwordField = el('password');
+        if (passwordField) passwordField.required = false;
+        const accountFields = el('account-fields');
+        if (accountFields) accountFields.hidden = true;
+    }
+
+    if (formNode) {
+        formNode.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            if (!formNode.reportValidity()) return;
+
+            if (submitNode) submitNode.disabled = true;
+            const msgNode = el('auth-message');
+            if (msgNode) msgNode.textContent = 'Verifying credentials...';
+
+            const payload = {
+                username: el('username') ? el('username').value.trim() : '',
+                password: el('password') ? el('password').value : ''
+            };
+
+            if (mode === 'setup') {
+                payload.setup_token = el('setup-token') ? el('setup-token').value : '';
+            }
+
+            try {
+                const response = await fetch('/auth/' + (mode === 'logout' ? 'logout' : (mode === 'setup' ? 'setup' : (mode === 'register' ? 'register' : 'login'))), {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || 'Authentication loop failed');
+                }
+
+                if (msgNode) msgNode.textContent = 'Success. Redirecting...';
+                
+                // Native mobile webview routing coordination flags
+                setTimeout(() => {
+                    if (mode === 'logout') {
+                        window.location.assign('/auth/login.html');
+                    } else if (mode === 'setup' || mode === 'register' || result.role === 'OPERATOR') {
+                        window.location.assign('/operator.html');
+                    } else {
+                        window.location.assign('/index.html');
+                    }
+                }, 500);
+
+            } catch (error) {
+                if (msgNode) msgNode.textContent = error.message === 'try_again_later' ? 'Too many sign-in attempts. Try again shortly.' : 'Sign-in failed. Check details.';
+                if (submitNode) submitNode.disabled = false;
+            }
+        });
+    }
 });
