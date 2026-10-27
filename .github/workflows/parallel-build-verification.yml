@@ -47,6 +47,20 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      - name: Verify Sole Owner Operational Authorization
+        run: |
+          ACTOR_EMAIL=$(git log -1 --format='%ae')
+          EXPECTED_EMAIL="rooseveltsanders381@gmail.com"
+          
+          echo "🛡️ VERIFYING PIPELINE SIGNATURE GATEKEEPER"
+          echo "Commit Author Email: $ACTOR_EMAIL"
+          
+          if [ "$ACTOR_EMAIL" != "$EXPECTED_EMAIL" ]; then
+            echo "🛑 ACCESS DENIED: Commit author ($ACTOR_EMAIL) is not authorized to execute this deployment."
+            exit 1
+          fi
+          echo "✅ IDENTITY VERIFIED: Sovereign owner authorization confirmed. Clear to proceed."
+
       - name: Verify Oracle Cloud Capacity and Billing Boundaries
         run: |
           python3 -c "
@@ -94,7 +108,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout Code
+      - name: Checkout Code Base
         uses: actions/checkout@v4
         with:
           persist-credentials: true
@@ -118,9 +132,11 @@ jobs:
           if [ -f requirements-server.txt ]; then pip install -r requirements-server.txt; fi
 
       - name: Platform Case and Payment Tests
+        env:
+          PYTHONPATH: .
         run: |
           python -m unittest discover -s tests -p 'test_cases.py'
-          python -m unittest discover -s tests -p 'test_stripe.py'
+          python -m unittest discover -s tests -p 'test_stripe_payments.py'
 
   sidecar:
     name: "Sidecar Verification Suite"
@@ -128,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout Code
+      - name: Checkout Code Base
         uses: actions/checkout@v4
         with:
           persist-credentials: true
@@ -204,7 +220,7 @@ jobs:
           python3 -c "
           import hashlib, json
           import pathlib
-          targets = ['nginx.conf', 'wsgi.py', 'deploy/gunicorn.conf.py', 'deploy_backup.sh', 'requirements.txt', 'requirements-server.txt']
+          targets = ['nginx.conf', 'wsgi.py', 'deploy/gunicorn.conf.py', 'deploy_backup.sh', 'deploy/deploy_backup.py', 'requirements.txt', 'requirements-server.txt']
           root = pathlib.Path('.').resolve()
           for target in targets:
               f_path = root / target
@@ -215,26 +231,21 @@ jobs:
                   with open(m_path, 'w') as f:
                       json.dump(data, f, indent=4)
           "
+
       - name: Securely Push Verified Manifest Assets
         run: |
           git config --global user.name "Sanders Platform Watcher"
           git config --global user.email "rooseveltsanders381@gmail.com"
           
-          # Stage tracking changes
           git add *.pbd.json deploy/*.pbd.json 2>/dev/null || true
           
-          # Check if there are actual updates to commit
           if ! git diff --cached --quiet; then
             git commit -m "chore: optimize resource management tracking [skip ci]"
-            
-            # If in a PR, push back to the head feature branch safely
             if [ -n "${{ github.head_ref }}" ]; then
               git push origin HEAD:${{ github.head_ref }}
             else
-              # If on a branch, try pushing back to the active reference tracker path
               git push origin HEAD:${{ github.ref_name }} || echo "⚠️ Push declined by server rules. Sidecar artifact updates bypassed."
             fi
           else
             echo "✅ No sidecar structural matrix changes detected. Skipping push."
           fi
-
