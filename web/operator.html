@@ -1,3 +1,60 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Appointment review — Sanders Dash &amp; Seal</title><link rel="stylesheet" href="/assets/booking.css"><script src="/assets/operator.js" defer></script></head>
-<body><header class="top"><a class="brand" href="/">Sanders Dash &amp; Seal<small>Sanders Legal Helpers LLC</small></a><a href="/resources">Platform resources ↗</a><a href="/appointments">Customer view ↗</a></header><main><section class="intro"><p class="eyebrow">OPERATOR WORKSPACE</p><h1>Appointment review.</h1><p class="lead">Review requests and approve an itemized quote. Quote approval does not perform a notarial act or confirm a meeting time.</p></section><p id="notice" class="notice" role="status" aria-live="polite">Checking access…</p><div id="queue" class="workspace"></div></main></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Notary management control deck for Sanders Dash &amp; Seal.">
+    <title>Sanders Dash &amp; Seal - Operator Dashboard Workspace</title>
+    <link rel="stylesheet" href="/assets/booking.css">
+    <script src="/assets/operator.js" defer></script>
+</head>
+<body>
+    <!-- Unified Corporate Top Navigation Ingress Branding Bar -->
+    <header class="sds-enterprise-header">
+        <a class="sds-brand-title" href="/index.html" aria-label="Sanders Dash and Seal Home">
+            Sanders Dash <span>&amp;</span> Seal
+        </a>
+        <div class="sds-tagline-anchor" aria-hidden="true">
+            From the Road to Remote, We Seal the Deal.
+        </div>
+    </header>
+
+    <main class="sds-main-viewport">
+        <!-- Section A: Header Status Box -->
+        <section class="sds-action-card" style="margin-bottom: 2rem;">
+            <p class="sds-eyebrow" style="color: #00A3E0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">
+                Internal Notary Operations Desk
+            </p>
+            <h1 style="font-size: 2rem; margin-bottom: 1rem; font-weight: 800;">Assigned Case Queue</h1>
+            <div id="notice" class="notice status" role="status" aria-live="polite" style="color: #00A3E0; font-weight: 600;">
+                Synchronizing live assignment streams...
+            </div>
+        </section>
+
+        <!-- Section B: Live Active Case Queue Grid Feed -->
+        <section id="queue" style="display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem;">
+            <!-- Dynamic case record nodes inject cleanly here via operator.js -->
+        </section>
+
+        <!-- Section C: Dynamic RON Provider Connection Details Workspace -->
+        <section class="sds-action-card" id="details" hidden style="margin-bottom: 2rem; border-color: #00A3E0;">
+            <!-- Dynamic workspace management elements inject cleanly here at runtime -->
+        </section>
+
+        <!-- Section D: Navigation Options Footer Ingress -->
+        <p style="text-align: center; margin-bottom: 2rem;">
+            <a href="/auth/logout.html" style="color: #FF4444; font-weight: 600; text-decoration: none; font-size: 0.95rem;">
+                &larr; Terminate session and sign out
+            </a>
+        </p>
+    </main>
+
+    <!-- Patented Legal Ownership Branding Protection Fence -->
+    <footer class="sds-intellectual-property-footer">
+        <div>&copy; 2026 Sanders Dash &amp; Seal. All Rights Reserved.</div>
+        <div style="font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.7;">
+            Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders
+        </div>
+    </footer>
+</body>
+</html>
