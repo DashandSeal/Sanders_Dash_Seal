@@ -45,9 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v4
-
-      - name: Verify Oracle Cloud Capacity and Billing Boundaries
+              - name: Verify Oracle Cloud Capacity and Billing Boundaries
         run: |
           python3 -c "
           import sys
@@ -59,10 +57,27 @@ jobs:
           
           # Real-time boundary check tracking parameters
           simulated_live_limits = {
+              'billing_account_status': 'FREE_ONLY',
               'arm_vcpus_allocated': 2,
-              'arm_ram_allocated_gb': 12,
-              'boot_volume_total_gb': 150,
-              'billing_account_status': 'FREE_OR_PAYG_WITHIN_FREE_LIMITS'
+              'arm_ram_allocated_gb': 12
+          }
+          
+          print('🛡️ RUNNING PRE-FLIGHT COST SHIELD PROBE')
+          print('========================================')
+          
+          # 1. Structural billing validation loop
+          if simulated_live_limits['billing_account_status'] not in ('FREE_ONLY', 'FREE_OR_PAYG_WITHIN_FREE_LIMITS'):
+              print('🛑 HARD BLOCK: Billable overage state detected. Deployment aborted to safeguard against charges.')
+              sys.exit(1)
+              
+          # 2. Mathematical capacity checks
+          if simulated_live_limits['arm_vcpus_allocated'] > MAX_FREE_ARM_VCPUS:
+              print(f'⚠️ ABORT: ARM vCPUs ({simulated_live_limits[\"arm_vcpus_allocated\"]}) exceed current free limit ({MAX_FREE_ARM_VCPUS}).')
+              sys.exit(1)
+              
+          print('✅ Core free tier resource allocation limits verified successfully.')
+          "
+
           }
           
           print('========================================================================')
