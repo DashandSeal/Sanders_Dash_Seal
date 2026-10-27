@@ -13,7 +13,7 @@ permissions:
   pull-requests: write
 
 concurrency:
-  group: parallel-build-\${{ github.ref }}
+  group: parallel-build-v3-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -22,7 +22,7 @@ jobs:
     name: "Automated Path and Risk Assessment"
     runs-on: ubuntu-latest
     outputs:
-      structural_changes: \${{ steps.filter.outputs.structural }}
+      structural_changes: ${{ steps.filter.outputs.structural }}
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
@@ -45,7 +45,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Source Code
-              - name: Verify Oracle Cloud Capacity and Billing Boundaries
+        uses: actions/checkout@v4
+
+      - name: Verify Oracle Cloud Capacity and Billing Boundaries
         run: |
           python3 -c "
           import sys
@@ -59,48 +61,30 @@ jobs:
           simulated_live_limits = {
               'billing_account_status': 'FREE_ONLY',
               'arm_vcpus_allocated': 2,
-              'arm_ram_allocated_gb': 12
+              'arm_ram_allocated_gb': 12,
+              'boot_volume_total_gb': 150
           }
           
           print('🛡️ RUNNING PRE-FLIGHT COST SHIELD PROBE')
           print('========================================')
           
-          # 1. Structural billing validation loop
-          if simulated_live_limits['billing_account_status'] not in ('FREE_ONLY', 'FREE_OR_PAYG_WITHIN_FREE_LIMITS'):
-              print('🛑 HARD BLOCK: Billable overage state detected. Deployment aborted to safeguard against charges.')
-              sys.exit(1)
-              
-          # 2. Mathematical capacity checks
-          if simulated_live_limits['arm_vcpus_allocated'] > MAX_FREE_ARM_VCPUS:
-              print(f'⚠️ ABORT: ARM vCPUs ({simulated_live_limits[\"arm_vcpus_allocated\"]}) exceed current free limit ({MAX_FREE_ARM_VCPUS}).')
-              sys.exit(1)
-              
-          print('✅ Core free tier resource allocation limits verified successfully.')
-          "
-
-          }
-          
-          print('========================================================================')
-          print('🛡️ RUNNING PRE-FLIGHT COST SHIELD PROBE')
-          print('========================================================================')
-          
           if simulated_live_limits['billing_account_status'] not in ('FREE_ONLY', 'FREE_OR_PAYG_WITHIN_FREE_LIMITS'):
               print('🛑 HARD BLOCK: Billable overage state detected. Deployment aborted to safeguard against charges.')
               sys.exit(1)
               
           if simulated_live_limits['arm_vcpus_allocated'] > MAX_FREE_ARM_VCPUS:
-              print(f'🛑 ABORT: ARM vCPUs ({simulated_live_limits[\"arm_vcpus_allocated\"]}) exceed current free limit ({MAX_FREE_ARM_VCPUS}).')
+              print(f'🛑 ABORT: ARM vCPUs exceed current free limit.')
               sys.exit(1)
               
           if simulated_live_limits['arm_ram_allocated_gb'] > MAX_FREE_ARM_RAM_GB:
-              print(f'🛑 ABORT: ARM RAM ({simulated_live_limits[\"arm_ram_allocated_gb\"]}GB) exceeds current free limit ({MAX_FREE_ARM_RAM_GB}GB).')
+              print(f'🛑 ABORT: ARM RAM ({simulated_live_limits[\"arm_ram_allocated_gb\"]} GB) exceeds current free limit.')
               sys.exit(1)
               
           if simulated_live_limits['boot_volume_total_gb'] > MAX_FREE_BOOT_VOLUME_GB:
-              print(f'🛑 ABORT: Boot volumes exceed the 200GB absolute threshold.')
+              print('🛑 ABORT: Boot volumes exceed the 200GB absolute threshold.')
               sys.exit(1)
               
-          print('🟢 SUCCESS: All metrics reside safely within permanent zero-cost boundaries. Clear to execute deployment.')
+          print('✅ SUCCESS: All metrics reside safely within permanent zero-cost boundaries. Clear to execute deployment.')
           "
 
   # STAGE 3: High-Efficiency Testing Loops (Leveraging Free Cache Matrix)
@@ -124,9 +108,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key:  runner.os -pip-{{ hashFiles('requirements-server.txt') }}
+          key: runner.os-pip-${{ hashFiles('requirements-server.txt') }}
           restore-keys: |
-            \${{ runner.os }}-pip-
+            ${{ runner.os }}-pip-
 
       - name: Install Complete Server Test Dependencies
         run: |
@@ -136,7 +120,7 @@ jobs:
       - name: Platform Case and Payment Tests
         run: |
           python -m unittest discover -s tests -p 'test_cases.py'
-          python -m unittest discover -s tests -p 'test_stripe*.py'
+          python -m unittest discover -s tests -p 'test_stripe.py'
 
   sidecar:
     name: "Sidecar Verification Suite"
@@ -158,9 +142,9 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key:  runner.os -pip-base-{{ hashFiles('requirements.txt') }}
+          key: runner.os-pipe-base-${{ hashFiles('requirements.txt') }}
           restore-keys: |
-            \${{ runner.os }}-pip-base-
+            ${{ runner.os }}-pip-base-
 
       - name: Install Dependencies
         run: |
@@ -189,10 +173,9 @@ jobs:
           wsgi_file = pathlib.Path('wsgi.py')
           if wsgi_file.exists():
               content = wsgi_file.read_text()
-              if 'application =' in content and 'app =' not in content:
-                  print('📍 LOCATION: wsgi.py -> Line 4')
-                  print('❌ REASON FOR FAILURE: Gunicorn configurations require an exposed variable named \'app\'.')
-                  print('💡 SUGGESTED FIX:\n```python\napp = create_native_application()\n```')
+              if 'application' not in content and 'app =' not in content:
+                  print('❌ REASON FOR FAILURE: Gunicorn configurations require an exposed variable named \"app\" or \"application\".')
+                  print('💡 SUGGESTED FIX:\n    python\n    app = create_native_application()\n')
           "
 
   # STAGE 5: Cryptographic Synchronizations Gate
@@ -202,8 +185,7 @@ jobs:
     if: always() && (needs.platform.result == 'success' && needs.sidecar.result == 'success')
     runs-on: ubuntu-latest
     environment: >-
-      ${{ needs.analyze-changes.outputs.structural_changes == 'true' && 'Production-Authorization-Gate' || 'none' }}
-
+      ${{ (needs.analyze-changes.outputs.structural_changes == 'true' && 'Production-Authorization-Gate') || 'none' }}
     steps:
       - name: Checkout Targeted Branch
         uses: actions/checkout@v4
@@ -220,7 +202,8 @@ jobs:
       - name: Execute Signatures Sync
         run: |
           python3 -c "
-          import pathlib, hashlib, json
+          import hashlib, json
+          import pathlib
           targets = ['nginx.conf', 'wsgi.py', 'deploy/gunicorn.conf.py', 'deploy_backup.sh', 'requirements.txt', 'requirements-server.txt']
           root = pathlib.Path('.').resolve()
           for target in targets:
@@ -228,7 +211,7 @@ jobs:
               m_path = root / f'{target}.pbd.json'
               if f_path.exists():
                   f_hash = hashlib.sha256(f_path.read_bytes()).hexdigest()
-                  data = {'body': {'schema': 1, 'platform': 'Sanders Dash & Seal', 'artifact': f_path.name, 'payload_hash': f_hash, 'scope': {'endpoint': 'local://development', 'method': 'TEST', 'ip': '127.0.0.1', 'operation': 'DEVELOPMENT_VALIDATION'}}, 'signatures': {}, 'status': 'SIGNED_BY_OPERATOR'}
+                  data = {'body': {'schema': 1, 'platform': 'Sanders Dash & Seal', 'artifact': f_path.name, 'payload_hash': f_hash}}
                   with open(m_path, 'w') as f:
                       json.dump(data, f, indent=4)
           "
