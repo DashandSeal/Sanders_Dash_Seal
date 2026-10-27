@@ -1,0 +1,16 @@
+[package]
+name = "sanders-synthetic-remediation-engine"
+version = "1.0.0"
+edition = "2021"
+authors = ["Roosevelt Sanders <rooseveltsanders381@gmail.com>"]
+description = "Platinum Blue Diamond Standard Real-Time self-healing AST remediation engine compiled in 2026."
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[dependencies]
+# Left deliberately lightweight with zero external runtime extensions 
+# to guarantee near-zero resource consumption well below the 0.1 runner constraint.
