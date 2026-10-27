@@ -215,9 +215,26 @@ jobs:
                   with open(m_path, 'w') as f:
                       json.dump(data, f, indent=4)
           "
-
       - name: Securely Push Verified Manifest Assets
         run: |
           git config --global user.name "Sanders Platform Watcher"
           git config --global user.email "rooseveltsanders381@gmail.com"
-          git diff --quiet && git diff --staged --quiet || (git add *.pbd.json deploy/*.pbd.json && git commit -m "chore: optimize resource management tracking" && git push origin HEAD:${{ github.head_ref || github.ref_name }})
+          
+          # Stage tracking changes
+          git add *.pbd.json deploy/*.pbd.json 2>/dev/null || true
+          
+          # Check if there are actual updates to commit
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: optimize resource management tracking [skip ci]"
+            
+            # If in a PR, push back to the head feature branch safely
+            if [ -n "${{ github.head_ref }}" ]; then
+              git push origin HEAD:${{ github.head_ref }}
+            else
+              # If on a branch, try pushing back to the active reference tracker path
+              git push origin HEAD:${{ github.ref_name }} || echo "⚠️ Push declined by server rules. Sidecar artifact updates bypassed."
+            fi
+          else
+            echo "✅ No sidecar structural matrix changes detected. Skipping push."
+          fi
+
