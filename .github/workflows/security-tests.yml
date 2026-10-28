@@ -1,0 +1,39 @@
+name: Sanders Dash & Seal development verification
+on:
+  push:
+    branches: [main, build/security-foundation]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: verification-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  security-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - name: Install development dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Verify source and manifest pairing (not production signature approval)
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          for folder in ('core_platform', 'tests'):
+              for path in Path(folder).rglob('*.py'):
+                  manifest = json.loads(Path(str(path) + '.pbd.json').read_text())
+                  assert manifest['body']['artifact'] == path.as_posix(), path
+                  assert manifest['body']['payload_hash'] == hashlib.sha256(path.read_bytes()).hexdigest(), path
+          print('Development source hashes match their paired manifests. Production signatures are not certified.')
+          PY
+      - name: Test denial paths and execution lifecycle
+        run: python -m unittest discover -s tests -v

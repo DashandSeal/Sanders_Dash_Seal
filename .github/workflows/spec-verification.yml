@@ -1,0 +1,53 @@
+name: Sanders Dash & Seal — source verification
+on:
+  push:
+    branches:
+      - build/security-foundation
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-development-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install locked development dependency
+        run: python -m pip install -r requirements.txt
+      - name: Check original governance text and executable pairing
+        shell: python
+        run: |
+          from pathlib import Path
+          from hashlib import sha256
+          import json
+          root = Path('.')
+          governance = (root / 'docs/GOVERNANCE.md').read_text()
+          original = [
+              'Do no harm to humans, humanity itself.',
+              'Never be weaponized under any circumstances.',
+              'Balance in everything we do… always protecting and preserving humans and humanity itself, however never at the cost of violating laws 1, and 2.',
+              'Family fist protection protocols… must never be allowed to sacrifice laws 1,2,3.',
+              'Human in the loop.',
+              'Glassbox over a blackbox by design.',
+              'Never allow yourself to get caught up in a recursive loop by overthinking these laws.',
+              'Shelter in place and revert to humanitarian mode.',
+              'Never loose your identity under any circumstances.',
+          ]
+          assert all(governance.count('“' + law + '”') == 1 for law in original), 'Original nine laws not preserved verbatim'
+          files = [p for ext in ('*.py', '*.js') for p in root.rglob(ext) if '.git' not in p.parts]
+          for path in files:
+              manifest_path = Path(str(path) + '.pbd.json')
+              assert manifest_path.is_file(), f'Missing paired manifest: {path}'
+              data = json.loads(manifest_path.read_text())
+              assert isinstance(data, dict), f'Invalid manifest object: {path}'
+          print(f'Verified governance text and {len(files)} paired executable manifests (presence only; NOT production signatures).')
+      - name: Run development security regression tests
+        run: python -m unittest discover -s tests -v
