@@ -1,0 +1,39 @@
+[Unit]
+Description=Sanders Dash & Seal - Real-Time Synthetic AI Supervisor Manager
+Documentation=https://github.com
+After=docker.service network-online.target
+Requires=docker.service
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/home/sanders/Sanders_Dash_Seal
+
+# Real-Time Cluster Orchestration, Analysis, and Control Matrix
+ExecStartPre=-/usr/bin/docker compose down --remove-orphans
+ExecStart=/usr/bin/docker compose up --build --abort-on-container-exit
+ExecStop=/usr/bin/docker compose down
+
+# High-Resilience Failure Management & Dynamic Health Recovery
+Restart=always
+RestartSec=5s
+TimeoutStartSec=300
+TimeoutStopSec=30
+
+# Hardened Fortune 500 Resource Isolations & Kernel Sandboxing
+CPUWeight=100
+MemoryHigh=1.5G
+MemoryMax=1.8G
+TasksMax=4096
+OOMScoreAdjust=-500
+
+# Defensive System Security Constraints
+ProtectSystem=full
+ProtectHome=read-only
+PrivateTmp=true
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE CAP_SYS_CHROOT CAP_DAC_OVERRIDE
+
+[Install]
+WantedBy=multi-user.target
