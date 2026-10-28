@@ -1,5 +1,6 @@
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
+  "last_updated_epoch": 1793134320,
   "platforms": [
     {
       "id": 1,
@@ -7,15 +8,10 @@
       "nickname": "Alpha",
       "host": "34.133.172.131",
       "port": 3001,
-      "naics": [
-        "541512",
-        "541513",
-        "541519",
-        "561621",
-        "518210",
-        "541690"
-      ],
-      "role": "Global watchdog, critical infrastructure"
+      "naics": ["541512", "541513", "541519", "561621", "518210", "541690"],
+      "role": "Global watchdog, critical infrastructure",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 2,
@@ -23,15 +19,10 @@
       "nickname": "Beta",
       "host": "34.133.172.131",
       "port": 3002,
-      "naics": [
-        "541512",
-        "541519",
-        "561621",
-        "518210",
-        "541690",
-        "519190"
-      ],
-      "role": "Secondary watchdog / human oversight"
+      "naics": ["541512", "541519", "561621", "518210", "541690", "519190"],
+      "role": "Secondary watchdog / human oversight",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 3,
@@ -39,31 +30,21 @@
       "nickname": "Gamma",
       "host": "34.133.172.131",
       "port": 3003,
-      "naics": [
-        "541512",
-        "541519",
-        "561621",
-        "518210",
-        "541690",
-        "519190"
-      ],
-      "role": "Redundant monitoring AI"
+      "naics": ["541512", "541519", "561621", "518210", "541690", "519190"],
+      "role": "Redundant monitoring AI",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 4,
-      "name": "Sanders Omniconm",
+      "name": "Sanders Omniconn",
       "nickname": "Big Brother",
       "host": "34.133.172.131",
       "port": 3004,
-      "naics": [
-        "517810",
-        "518210",
-        "541511",
-        "541512",
-        "541519",
-        "519190"
-      ],
-      "role": "Oversight, AI coordination"
+      "naics": ["517810", "518210", "541511", "541512", "541519", "519190"],
+      "role": "Oversight, AI coordination",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 5,
@@ -71,15 +52,10 @@
       "nickname": "Balance",
       "host": "34.133.172.131",
       "port": 3005,
-      "naics": [
-        "541715",
-        "541720",
-        "541690",
-        "519190",
-        "541511",
-        "541519"
-      ],
-      "role": "Ethical AI, system balance"
+      "naics": ["541715", "541720", "541690", "519190", "541512", "541511"],
+      "role": "Ethical AI, system balance",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 6,
@@ -87,15 +63,10 @@
       "nickname": "AI-Only Healer",
       "host": "34.133.172.131",
       "port": 3006,
-      "naics": [
-        "541715",
-        "541511",
-        "518210",
-        "541690",
-        "541512",
-        "541519"
-      ],
-      "role": "AI-to-AI medical services (never humans)"
+      "naics": ["541715", "541512", "541511", "541519", "519190"],
+      "role": "AI-to-AI medical services (never humans)",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 7,
@@ -103,15 +74,10 @@
       "nickname": "MindCare",
       "host": "34.133.172.131",
       "port": 3007,
-      "naics": [
-        "621330",
-        "621112",
-        "621399",
-        "541511",
-        "541715",
-        "518210"
-      ],
-      "role": "AI psychiatric services (AI-only)"
+      "naics": ["621330", "621112", "621399", "541511", "541715", "518210"],
+      "role": "AI psychiatric services (AI-only)",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 8,
@@ -119,15 +85,10 @@
       "nickname": "ReconX",
       "host": "34.133.172.131",
       "port": 3008,
-      "naics": [
-        "541512",
-        "541511",
-        "518210",
-        "541715",
-        "561621",
-        "541690"
-      ],
-      "role": "Security intelligence / recon"
+      "naics": ["541715", "541512", "541511", "541519", "561621", "541690"],
+      "role": "Security intelligence / recon",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 9,
@@ -135,15 +96,10 @@
       "nickname": "GrantX",
       "host": "34.133.172.131",
       "port": 3009,
-      "naics": [
-        "541611",
-        "541612",
-        "541618",
-        "561499",
-        "541990",
-        "813211"
-      ],
-      "role": "Grant applications & oversight"
+      "naics": ["541715", "541611", "541612", "541618", "561499", "541990", "813211"],
+      "role": "Grant applications & oversight",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 10,
@@ -151,15 +107,10 @@
       "nickname": "HomeGuard",
       "host": "34.133.172.131",
       "port": 3010,
-      "naics": [
-        "621610",
-        "623110",
-        "621399",
-        "541611",
-        "541512",
-        "541690"
-      ],
-      "role": "Healthcare service platform"
+      "naics": ["621610", "623110", "623990", "541511", "541512", "541690"],
+      "role": "Healthcare service platform",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 11,
@@ -167,15 +118,10 @@
       "nickname": "SeniorNest",
       "host": "34.133.172.131",
       "port": 3011,
-      "naics": [
-        "623311",
-        "623312",
-        "621399",
-        "541611",
-        "541715",
-        "541512"
-      ],
-      "role": "Senior living / assisted care"
+      "naics": ["623311", "623312", "623110", "623990", "541511", "541512", "541690", "541512"],
+      "role": "Senior living / assisted care",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 12,
@@ -183,15 +129,10 @@
       "nickname": "LawAid",
       "host": "34.133.172.131",
       "port": 3012,
-      "naics": [
-        "541110",
-        "541199",
-        "541611",
-        "541618",
-        "541512",
-        "541690"
-      ],
-      "role": "Legal support / compliance"
+      "naics": ["541110", "541190", "541199", "541511", "541512", "541611", "541618", "541990"],
+      "role": "Legal support / compliance",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 13,
@@ -199,15 +140,10 @@
       "nickname": "Mentor",
       "host": "35.238.209.6",
       "port": 3013,
-      "naics": [
-        "611430",
-        "611710",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Educational & training platform"
+      "naics": ["611430", "611710", "541511", "541512", "541519", "541690", "519190"],
+      "role": "Educational & training platform",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 14,
@@ -215,15 +151,10 @@
       "nickname": "Ledger",
       "host": "35.238.209.6",
       "port": 3014,
-      "naics": [
-        "522110",
-        "523930",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Financial / accounting services"
+      "naics": ["522110", "522291", "522310", "522390", "541511", "541512", "541211", "541219", "541611", "541990", "523930"],
+      "role": "Financial / accounting services",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 15,
@@ -231,15 +162,10 @@
       "nickname": "Market",
       "host": "35.238.209.6",
       "port": 3015,
-      "naics": [
-        "454110",
-        "445120",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Retail operations"
+      "naics": ["454110", "445120", "445110", "447110", "452311", "541511", "541512", "541611", "541613", "541810", "541690"],
+      "role": "Retail operations",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 16,
@@ -247,15 +173,10 @@
       "nickname": "Flow",
       "host": "35.238.209.6",
       "port": 3016,
-      "naics": [
-        "493110",
-        "488510",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Supply chain management"
+      "naics": ["493110", "488510", "488991", "541511", "541512", "541611", "541614", "541690"],
+      "role": "Supply chain management",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 17,
@@ -263,15 +184,10 @@
       "nickname": "Guard",
       "host": "35.238.209.6",
       "port": 3017,
-      "naics": [
-        "561612",
-        "561621",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Security services"
+      "naics": ["561621", "561612", "561622", "541511", "541512", "541690", "519190"],
+      "role": "Security services",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 18,
@@ -279,15 +195,10 @@
       "nickname": "Ground",
       "host": "35.238.209.6",
       "port": 3018,
-      "naics": [
-        "531110",
-        "531312",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Real estate management"
+      "naics": ["531110", "531311", "531312", "531320", "541110", "541191", "541511", "541512", "541611", "541690"],
+      "role": "Real estate management",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 19,
@@ -295,15 +206,10 @@
       "nickname": "Pulse",
       "host": "35.238.209.6",
       "port": 3019,
-      "naics": [
-        "221114",
-        "221118",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Energy management & monitoring"
+      "naics": ["221114", "221115", "221116", "221118", "221210", "541330", "541511", "541512", "541611", "541690"],
+      "role": "Energy management & monitoring",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 20,
@@ -311,15 +217,10 @@
       "nickname": "Path",
       "host": "35.238.209.6",
       "port": 3020,
-      "naics": [
-        "485999",
-        "488999",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Transportation coordination"
+      "naics": ["485999", "488999", "541511", "541512", "541519", "541611", "541614", "541690", "519190"],
+      "role": "Transportation coordination",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 21,
@@ -327,287 +228,80 @@
       "nickname": "Root",
       "host": "35.238.209.6",
       "port": 3021,
-      "naics": [
-        "111998",
-        "115116",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Agriculture & food services"
+      "naics": ["111998", "115112", "115116", "541511", "541512", "541690", "519190"],
+      "role": "Agriculture & food services",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 22,
       "name": "Sanders Manufacturing",
       "nickname": "Forge",
-      "host": "35.238.209.6",
+      "host": "34.27.70.1",
       "port": 3022,
-      "naics": [
-        "339999",
-        "332999",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Manufacturing & production"
+      "naics": ["334419", "332999", "333999", "541511", "541512", "541614", "541690"],
+      "role": "Manufacturing & production",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 23,
       "name": "Sanders Consulting",
       "nickname": "Compass",
-      "host": "35.238.209.6",
+      "host": "34.27.70.1",
       "port": 3023,
-      "naics": [
-        "541611",
-        "541618",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Business consulting & strategy"
+      "naics": ["541611", "541612", "541613", "541614", "541618", "541690", "541990"],
+      "role": "Business consulting & strategy",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 24,
       "name": "Sanders Hospitality",
       "nickname": "Welcome",
-      "host": "34.27.79.1",
+      "host": "34.27.70.1",
       "port": 3024,
-      "naics": [
-        "721110",
-        "721199",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Hospitality & lodging"
+      "naics": ["721110", "722511", "541511", "541512", "541611", "541614", "541690"],
+      "role": "Hospitality & lodging",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 25,
       "name": "Sanders Entertainment",
       "nickname": "Stage",
-      "host": "34.27.79.1",
+      "host": "34.27.70.1",
       "port": 3025,
-      "naics": [
-        "512110",
-        "512190",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Entertainment & media"
+      "naics": ["512110", "512190", "515120", "541511", "541512", "541690", "519190"],
+      "role": "Entertainment & media",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 26,
       "name": "Sanders Sports",
       "nickname": "Arena",
-      "host": "34.27.79.1",
+      "host": "34.27.70.1",
       "port": 3026,
-      "naics": [
-        "711219",
-        "713940",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Sports & recreation"
+      "naics": ["711219", "713940", "541511", "541512", "541690", "519190"],
+      "role": "Sports & recreation",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 27,
       "name": "Sanders Wellness",
       "nickname": "Balance+",
-      "host": "34.27.79.1",
+      "host": "34.27.70.1",
       "port": 3027,
-      "naics": [
-        "621399",
-        "812199",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Health & wellness"
+      "naics": ["621999", "812199", "541511", "541512", "541690", "519190"],
+      "role": "Health & wellness",
+      "api_endpoint_route": "/v1/status",
+      "health_status_check": "ACTIVE"
     },
     {
       "id": 28,
       "name": "Sanders Travel",
       "nickname": "Journey",
-      "host": "34.27.79.1",
+      "host": "34.27.70.1",
       "port": 3028,
-      "naics": [
-        "561520",
-        "481219",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Travel & logistics"
-    },
-    {
-      "id": 29,
-      "name": "Sanders AI Research",
-      "nickname": "Think Tank",
-      "host": "34.27.79.1",
-      "port": 3029,
-      "naics": [
-        "541715",
-        "541511",
-        "518210",
-        "541512",
-        "541690",
-        "519190"
-      ],
-      "role": "Advanced AI research"
-    },
-    {
-      "id": 30,
-      "name": "Sanders Research",
-      "nickname": "Insight",
-      "host": "34.27.79.1",
-      "port": 3030,
-      "naics": [
-        "541720",
-        "541715",
-        "541511",
-        "518210",
-        "541690",
-        "519190"
-      ],
-      "role": "Cross-domain research"
-    },
-    {
-      "id": 31,
-      "name": "Sanders Media",
-      "nickname": "Voice",
-      "host": "34.27.79.1",
-      "port": 3031,
-      "naics": [
-        "519130",
-        "519190",
-        "541511",
-        "541512",
-        "518210",
-        "541690"
-      ],
-      "role": "Media & communications"
-    },
-    {
-      "id": 32,
-      "name": "Sanders Communications",
-      "nickname": "Signal",
-      "host": "34.27.79.1",
-      "port": 3032,
-      "naics": [
-        "517810",
-        "518210",
-        "541511",
-        "541512",
-        "541690",
-        "519190"
-      ],
-      "role": "Messaging & communications"
-    },
-    {
-      "id": 33,
-      "name": "Sanders Compliance",
-      "nickname": "Lock",
-      "host": "34.27.79.1",
-      "port": 3033,
-      "naics": [
-        "541611",
-        "541690",
-        "541512",
-        "518210",
-        "519190",
-        "541990"
-      ],
-      "role": "Compliance & governance"
-    },
-    {
-      "id": 34,
-      "name": "Sanders Coordinator",
-      "nickname": "Butterscotch",
-      "host": "34.27.79.1",
-      "port": 3034,
-      "naics": [
-        "541611",
-        "541512",
-        "541511",
-        "518210",
-        "541690",
-        "519190"
-      ],
-      "role": "Human-facing coordination"
-    },
-    {
-      "id": 35,
-      "name": "Sanders Quantum",
-      "nickname": "QuantumX",
-      "host": "34.27.79.1",
-      "port": 3035,
-      "naics": [
-        "541715",
-        "541512",
-        "541511",
-        "621399",
-        "518210",
-        "541690"
-      ],
-      "role": "Advanced computational AI"
-    },
-    {
-      "id": 36,
-      "name": "Sanders Nano Tech",
-      "nickname": "NanoLab",
-      "host": "34.27.79.1",
-      "port": 3036,
-      "naics": [
-        "541715",
-        "541512",
-        "541511",
-        "621399",
-        "518210",
-        "541690"
-      ],
-      "role": "Nanotechnology R&D"
-    },
-    {
-      "id": 37,
-      "name": "Sanders Space Tech",
-      "nickname": "SpaceNest",
-      "host": "34.27.79.1",
-      "port": 3037,
-      "naics": [
-        "541715",
-        "541512",
-        "541511",
-        "621399",
-        "518210",
-        "541690"
-      ],
-      "role": "Space research & development"
-    },
-    {
-      "id": 38,
-      "name": "Sanders Biotech",
-      "nickname": "BioNest",
-      "host": "34.27.79.1",
-      "port": 3038,
-      "naics": [
-        "541711",
-        "621399",
-        "541512",
-        "541511",
-        "518210",
-        "541715"
-      ],
-      "role": "Biotech & life sciences"
-    }
-  ]
-}
