@@ -1,6 +1,6 @@
 {
   "body": {
-    "schema": 1,
+    "schema": "1.1",
     "platform": "Sanders Dash & Seal",
     "artifact": ".github/workflows/parallel-build-verification.yml",
     "scope": {
@@ -9,7 +9,7 @@
       "ip": "127.0.0.1",
       "operation": "DEVELOPMENT_VALIDATION"
     },
-    "payload_hash": "a72505207ec55be3a2ef9d3009100e328f6123df41338322fd5d89c0d6326fb9"
+    "payload_hash": "c0663dbefc92a95c96033481236814b7e801269389da3b9cde185a539951cb2c"
   },
   "signatures": {},
   "status": "UNSIGNED_SOURCE_MANIFEST"
