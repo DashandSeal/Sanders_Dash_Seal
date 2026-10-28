@@ -1,0 +1,11 @@
+{
+  "platform": "Sanders Dash & Seal",
+  "artifact": "tests/test_durable_audit.py",
+  "status": "DEVELOPMENT_ONLY_NOT_EXECUTION_AUTHORIZED",
+  "payload_sha256": "PENDING_REPRODUCIBLE_BUILD_HASH",
+  "governance_signatures": {
+    "it_manager": null,
+    "minotaur": null
+  },
+  "execution_allowed": false
+}
