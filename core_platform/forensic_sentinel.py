@@ -39,6 +39,29 @@ class RealTimeForensicSentinel:
         except Exception:
             return ""
 
+    def bootstrap_seed_manifest(self, relative_target_path: str):
+        """Safely generates or overwrites a matching .pbd.json ledger entry with true current signatures."""
+        target_path = self.root / relative_target_path
+        if not target_path.is_file():
+            print(f"[❌ Seed Error]: Target file not found: {relative_target_path}", flush=True)
+            return
+
+        true_hash = self.calculate_file_sha256(target_path)
+        manifest_filename = f"{Path(relative_target_path).name}.pbd.json"
+        manifest_path = self.deploy_dir / manifest_filename
+
+        manifest_payload = {
+            "body": {
+                "artifact": relative_target_path,
+                "payload_hash": true_hash
+            }
+        }
+
+        self.deploy_dir.mkdir(parents=True, exist_ok=True)
+        manifest_path.write_text(json.dumps(manifest_payload, indent=2, sort_keys=True), encoding="utf-8")
+        print(f"[🛡️ Seed Complete]: Manifest created at deploy/{manifest_filename}", flush=True)
+        print(f"                     Assigned Hash: {true_hash}", flush=True)
+
     def dispatch_forensic_alert(self, breached_file: str, expected_hash: str, actual_hash: str):
         """Generates automated forensic alert logs and triggers security warning alerts directly."""
         alert_body = (
@@ -112,4 +135,10 @@ class RealTimeForensicSentinel:
 if __name__ == "__main__":
     project_root = Path(__file__).resolve().parent.parent
     sentinel = RealTimeForensicSentinel(project_root)
-    sentinel.run_continuous_forensic_heartbeat()
+    
+    # Check for seed bootstrap execution instruction
+    if len(sys.argv) > 1 and sys.argv[1] == "--seed":
+        print("[⚡ Bootstrap Mode Triggered]: Re-aligning cryptographic security shield.", flush=True)
+        sentinel.bootstrap_seed_manifest("core_platform/forensic_sentinel.py")
+    else:
+        sentinel.run_continuous_forensic_heartbeat()
