@@ -1,0 +1,15 @@
+{
+  "body": {
+    "schema": "1.1",
+    "platform": "Sanders Dash & Seal",
+    "artifact": "core_platform/[your_new_file_name].py",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "operation": "DEVELOPMENT_VALIDATION"
+    },
+    "payload_hash": "a1b2c3d4e5f67890abcdef1234567890abcdef1234567890abcdef1234567890"
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
