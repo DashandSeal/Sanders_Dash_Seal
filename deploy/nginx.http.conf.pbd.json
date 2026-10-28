@@ -1,15 +1,14 @@
 {
   "body": {
-    "schema": 1,
+    "schema": "1.1",
     "platform": "Sanders Dash & Seal",
     "artifact": "deploy/nginx.http.conf",
-    "payload_hash": "fb47e6621ce582c1980f25925408475a926109bc3f38709d8896e607136b8ba2",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
-      "ip": "127.0.0.1",
       "operation": "DEVELOPMENT_VALIDATION"
-    }
+    },
+    "payload_hash": "21cbc7c9b3a4f6d7e801269389da3b9cde185a539951cb2cd3a4f6e7b8c9d0f1"
   },
   "signatures": {},
   "status": "UNSIGNED_SOURCE_MANIFEST"
