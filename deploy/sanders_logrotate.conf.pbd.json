@@ -1,0 +1,15 @@
+{
+  "body": {
+    "schema": "1.1",
+    "platform": "Sanders Dash & Seal",
+    "artifact": "deploy/sanders_logrotate.conf",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "operation": "DEVELOPMENT_VALIDATION"
+    },
+    "payload_hash": "ea49b934ca495991b7852b855e3b0c44298fc1c149afbf4c8996fb92427ae41e"
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
