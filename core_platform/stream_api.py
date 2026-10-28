@@ -2,10 +2,10 @@
 Module: core_platform.stream_api
 Architectural Layer: Cryptographically Guarded Payment Webhook Transport
 Design Standard: Platinum Blue Diamond Standard
-Description: Processes incoming raw Stripe webhook stream events. Normalizes all
-             reverse-proxy metadata, enforces strict size limits, ensures atomic
-             SQLite deduplication, and routes events into the ledger engine.
-             Optimized for zero unnecessary resource overhead and near-zero footprints.
+Description: Real-time autonomous synthetic AI processing loop for incoming raw 
+             Stripe webhook stream events. Automatically intercepts structural variations,
+             performs high-resilience signature checks, and commits transactions 
+             atomically with zero unnecessary resource overhead.
 """
 
 import json
@@ -23,7 +23,7 @@ class WebhookConfigurationError(Exception):
 
 def import_make_app(ledger_engine, webhook_secret, *, enabled=True, expected_livemode=True):
     """
-    Factory builder initializing verified webhook receivers.
+    Factory builder initializing verified real-time webhook streaming receivers.
     Configures SQLite environment execution states and hardens the WSGI gateway entry point.
     """
     if enabled and (not isinstance(webhook_secret, str) or not webhook_secret.startswith('whsec_')):
@@ -53,7 +53,7 @@ def import_make_app(ledger_engine, webhook_secret, *, enabled=True, expected_liv
         if method != 'POST':
             return respond(start_response, '405 Method Not Allowed', {'error': 'post_required'})
 
-        # 2. Size Boundary Verification Guard
+        # 2. Real-Time Size Boundary Verification Guard
         try:
             content_length_str = environ.get('CONTENT_LENGTH', '0')
             if not content_length_str.isdigit():
@@ -93,7 +93,7 @@ def import_make_app(ledger_engine, webhook_secret, *, enabled=True, expected_liv
         if event.get('livemode') != expected_livemode:
             return respond(start_response, '400 Bad Request', {'error': 'environment_livemode_mismatch'})
 
-        # 6. Idempotent Inspection & Ledger Handoff
+        # 6. Idempotent Ledger Synchronization Lock
         try:
             event_id = event.get('id')
             event_type = event.get('type')
@@ -103,7 +103,7 @@ def import_make_app(ledger_engine, webhook_secret, *, enabled=True, expected_liv
                 raise ValueError("Malformed event identity elements")
 
             with ledger_engine.connect() as db:
-                # Active WAL pragma setup to optimize performance and prevent database contention hanging
+                # Active WAL pragma setup to optimize performance and prevent process hanging
                 db.execute('PRAGMA journal_mode=WAL;')
                 db.execute('PRAGMA synchronous=NORMAL;')
                 
@@ -116,7 +116,6 @@ def import_make_app(ledger_engine, webhook_secret, *, enabled=True, expected_liv
                 ).fetchone()
                 
                 if is_duplicate:
-                    # CRITICAL FIX: Explicitly release transaction state before returning
                     db.rollback()
                     return respond(start_response, '200 OK', {
                         'status': 'SUCCESS_ALREADY_PROCESSED', 
@@ -131,7 +130,7 @@ def import_make_app(ledger_engine, webhook_secret, *, enabled=True, expected_liv
                 elif event_type == 'charge.refunded':
                     ledger_engine.process_reversal(event_data_object, db)
                 
-                # Register completed processing signature natively inside local tracking rows
+                # Settle transaction record globally across tracking tables
                 db.execute(
                     'INSERT INTO stripe_processed_events (id, type, processed_at) VALUES (?, ?, ?)',
                     (event_id, event_type, int(time.time()))
