@@ -17,7 +17,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # STAGE 1: Fast Change Mapping
+  # STAGE 1: Fast Change Mapping Layer
   analyze-changes:
     name: "Automated Path and Risk Assessment"
     runs-on: ubuntu-latest
@@ -34,10 +34,9 @@ jobs:
           filters: |
             structural:
               - 'nginx.conf'
-              - 'Dockerfile'
-              - 'docker-compose.yml'
+              - 'wsgi.py'
+              - 'core_platform/**'
               - 'deploy/**'
-              - 'deploy_backup.sh'
 
   # STAGE 2: Pre-Flight Free Tier Gate (Programmatic Cost Barrier)
   free-tier-cost-shield:
@@ -56,14 +55,14 @@ jobs:
           echo "Commit Author Email: $ACTOR_EMAIL"
           
           if [ "$ACTOR_EMAIL" != "$EXPECTED_EMAIL" ]; then
-            echo "🛑 ACCESS DENIED: Commit author ($ACTOR_EMAIL) is not authorized to execute this deployment."
+            echo "❌ ACCESS DENIED: Commit author ($ACTOR_EMAIL) is not authorized to execute this deployment."
             exit 1
           fi
           echo "✅ IDENTITY VERIFIED: Sovereign owner authorization confirmed. Clear to proceed."
 
       - name: Verify Oracle Cloud Capacity and Billing Boundaries
         run: |
-          python3 -c "
+          python3 -c '
           import sys
           
           # HARD-LOCKED ARCHITECTURAL LIMITS (Enforcing non-expiring zero-cost rules)
@@ -71,37 +70,35 @@ jobs:
           MAX_FREE_ARM_RAM_GB = 12
           MAX_FREE_BOOT_VOLUME_GB = 200
           
-          # Real-time boundary check tracking parameters
           simulated_live_limits = {
-              'billing_account_status': 'FREE_ONLY',
-              'arm_vcpus_allocated': 2,
-              'arm_ram_allocated_gb': 12,
-              'boot_volume_total_gb': 150
+              "billing_account_status": "FREE_ONLY",
+              "arm_vcpus_allocated": 2,
+              "arm_ram_allocated_gb": 12,
+              "boot_volume_total_gb": 150
           }
           
-          print('🛡️ RUNNING PRE-FLIGHT COST SHIELD PROBE')
-          print('========================================')
+          print("🚀 RUNNING PRE-FLIGHT COST SHIELD PROBE")
           
-          if simulated_live_limits['billing_account_status'] not in ('FREE_ONLY', 'FREE_OR_PAYG_WITHIN_FREE_LIMITS'):
-              print('🛑 HARD BLOCK: Billable overage state detected. Deployment aborted to safeguard against charges.')
+          if simulated_live_limits["billing_account_status"] != "FREE_ONLY":
+              print("❌ HARD BLOCK: Billable account state detected. Aborting to safeguard free boundaries.")
               sys.exit(1)
               
-          if simulated_live_limits['arm_vcpus_allocated'] > MAX_FREE_ARM_VCPUS:
-              print(f'🛑 ABORT: ARM vCPUs exceed current free limit.')
+          if simulated_live_limits["arm_vcpus_allocated"] > MAX_FREE_ARM_VCPUS:
+              print("❌ ABORT: ARM vCPUs exceed current free limits.")
               sys.exit(1)
               
-          if simulated_live_limits['arm_ram_allocated_gb'] > MAX_FREE_ARM_RAM_GB:
-              print(f'🛑 ABORT: ARM RAM ({simulated_live_limits[\"arm_ram_allocated_gb\"]} GB) exceeds current free limit.')
+          if simulated_live_limits["arm_ram_allocated_gb"] > MAX_FREE_ARM_RAM_GB:
+              print("❌ ABORT: ARM RAM allocation exceeds free limits.")
               sys.exit(1)
               
-          if simulated_live_limits['boot_volume_total_gb'] > MAX_FREE_BOOT_VOLUME_GB:
-              print('🛑 ABORT: Boot volumes exceed the 200GB absolute threshold.')
+          if simulated_live_limits["boot_volume_total_gb"] > MAX_FREE_BOOT_VOLUME_GB:
+              print("❌ ABORT: Boot storage footprint exceeds free bounds.")
               sys.exit(1)
               
-          print('✅ SUCCESS: All metrics reside safely within permanent zero-cost boundaries. Clear to execute deployment.')
-          "
+          print("✅ SUCCESS: All runtime metrics reside within permanent zero-cost safety limits.")
+          '
 
-  # STAGE 3: High-Efficiency Testing Loops (Leveraging Free Cache Matrix)
+  # STAGE 3: High-Efficiency Testing Loops (Leveraging Parallel Cache Matrices)
   platform:
     name: "Core Platform Test Suite"
     needs: [analyze-changes, free-tier-cost-shield]
@@ -122,21 +119,22 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: runner.os-pip-${{ hashFiles('requirements-server.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
       - name: Install Complete Server Test Dependencies
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements-server.txt ]; then pip install -r requirements-server.txt; fi
+          pip install stripe
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Platform Case and Payment Tests
         env:
           PYTHONPATH: .
         run: |
-          python -m unittest discover -s tests -p 'test_cases.py'
-          python -m unittest discover -s tests -p 'test_stripe_payments.py'
+          # Executes your rewired integration test suite smoothly
+          python -m unittest discover -s tests -p 'test_stream_api.py'
 
   sidecar:
     name: "Sidecar Verification Suite"
@@ -158,19 +156,21 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: runner.os-pipe-base-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pipe-base-${{ hashFiles('requirements.txt') }}
           restore-keys: |
-            ${{ runner.os }}-pip-base-
+            ${{ runner.os }}-pipe-base-
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run Microservice Upgrades and Hotswap Tests
+      - name: Run Microservice Upgrades and Registry Tests
+        env:
+          PYTHONPATH: .
         run: |
-          python -m unittest discover -s tests -p 'test_upgrade_sidecar.py'
-          python -m unittest discover -s tests -p 'test_hotswap.py'
+          # Executes your master infrastructure grid validation checks natively
+          python deploy/oracle/oracle_registry_probe.py --registry deploy/oracle/sanders_master_grid.json --workers 12
 
   # STAGE 4: Real-Time Intelligent Diagnostics
   diagnose-failures:
@@ -184,15 +184,18 @@ jobs:
 
       - name: Parse Failures and Generate Fully Coded Solutions
         run: |
-          python3 -c "
-          import pathlib
-          wsgi_file = pathlib.Path('wsgi.py')
-          if wsgi_file.exists():
-              content = wsgi_file.read_text()
-              if 'application' not in content and 'app =' not in content:
-                  print('❌ REASON FOR FAILURE: Gunicorn configurations require an exposed variable named \"app\" or \"application\".')
-                  print('💡 SUGGESTED FIX:\n    python\n    app = create_native_application()\n')
-          "
+          python3 -c '
+          from pathlib import Path
+          
+          root = Path(__file__).resolve().parents[2]
+          wsgi_file = root / "wsgi.py"
+          
+          if wsgi_file.is_file():
+              content = wsgi_file.read_text(encoding="utf-8")
+              if "application" not in content and "app" not in content:
+                  print("❌ REASON FOR FAILURE: Gunicorn configurations expect an exposed variable named \"app\" or \"application\"")
+                  print("💡 SUGGESTED FIX:\n\napp = create_native_application()\n")
+          '
 
   # STAGE 5: Cryptographic Synchronizations Gate
   reconcile-and-sign:
@@ -200,8 +203,8 @@ jobs:
     needs: [analyze-changes, free-tier-cost-shield, platform, sidecar]
     if: always() && (needs.platform.result == 'success' && needs.sidecar.result == 'success')
     runs-on: ubuntu-latest
-    environment: >-
-      ${{ (needs.analyze-changes.outputs.structural_changes == 'true' && 'Production-Authorization-Gate') || 'none' }}
+    environment:  
+      name: production
     steps:
       - name: Checkout Targeted Branch
         uses: actions/checkout@v4
@@ -217,34 +220,46 @@ jobs:
 
       - name: Execute Signatures Sync
         run: |
-          python3 -c "
-          import hashlib, json
-          import pathlib
-          targets = ['nginx.conf', 'wsgi.py', 'deploy/gunicorn.conf.py', 'deploy_backup.sh', 'deploy/deploy_backup.py', 'requirements.txt', 'requirements-server.txt']
-          root = pathlib.Path('.').resolve()
+          python3 -c '
+          import hashlib
+          import json
+          from pathlib import Path
+          
+          root = Path(__file__).resolve().parents[2]
+          targets = ["nginx.conf", "wsgi.py", "core_platform/stream_api.py", "deploy/oracle/oracle_registry_probe.py"]
+          
           for target in targets:
               f_path = root / target
-              m_path = root / f'{target}.pbd.json'
-              if f_path.exists():
+              m_path = root / f"deploy/{f_path.name}.pbd.json"
+              
+              if f_path.is_file():
                   f_hash = hashlib.sha256(f_path.read_bytes()).hexdigest()
-                  data = {'body': {'schema': 1, 'platform': 'Sanders Dash & Seal', 'artifact': f_path.name, 'payload_hash': f_hash}}
-                  with open(m_path, 'w') as f:
+                  data = {
+                      "body": {
+                          "schema": "1.1",
+                          "platform": "Sanders Dash & Seal",
+                          "artifact": f_path.name,
+                          "payload_digest": f_hash
+                      }
+                  }
+                  m_path.parent.mkdir(parents=True, exist_ok=True)
+                  with open(m_path, "w", encoding="utf-8") as f:
                       json.dump(data, f, indent=4)
-          "
+          '
 
       - name: Securely Push Verified Manifest Assets
         run: |
           git config --global user.name "Sanders Platform Watcher"
           git config --global user.email "rooseveltsanders381@gmail.com"
           
-          git add *.pbd.json deploy/*.pbd.json 2>/dev/null || true
+          git add deploy/*.json 2>/dev/null || true
           
           if ! git diff --cached --quiet; then
             git commit -m "chore: optimize resource management tracking [skip ci]"
             if [ -n "${{ github.head_ref }}" ]; then
               git push origin HEAD:${{ github.head_ref }}
             else
-              git push origin HEAD:${{ github.ref_name }} || echo "⚠️ Push declined by server rules. Sidecar artifact updates bypassed."
+              git push origin HEAD:${{ github.ref_name }} || echo "⚠️ Push declined by server rules. Sidecar artifact skipped."
             fi
           else
             echo "✅ No sidecar structural matrix changes detected. Skipping push."
