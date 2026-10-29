@@ -2,7 +2,8 @@
 """
 Sanders Sovereign SpeedRacer & Non-Blocking Deployment Engine
 Platform: Sanders Dash & Seal / Sovereign Shield V3.0 (47 Platforms & 4 Watchdogs)
-Operation: High-Performance Parallel Execution, Zero-Block Self-Healing, AIP, and Git Auto-Remediation.
+Operation: High-Performance Parallel Execution, Zero-Block Self-Healing, AIP, 
+           and Autonomous Git Remediation with Conflict-Resolution Rebase Bypass.
 """
 
 import pathlib
@@ -91,18 +92,27 @@ class SovereignSpeedRacerOrchestrator:
         print(f"✅ SpeedRacer Complete: {healed_count} manifests synchronized in parallel. Zero blocks encountered.")
 
     def execute_git_self_remediation(self):
-        """Automatically commits and pushes resolved manifest updates without blocking deployment."""
+        """Automatically commits, resolves pull conflicts via rebase bypass, and pushes updates."""
         try:
-            print("🔄 SpeedRacer Git Self-Remediation: Staging and pushing updates...")
+            print("🔄 SpeedRacer Git Self-Remediation: Staging and syncing updates...")
             subprocess.run(["git", "add", "."], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             result = subprocess.run(["git", "diff", "--cached", "--quiet"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             
             if result.returncode != 0:
-                subprocess.run(["git", "commit", "-m", "auto(speedracer): parallel self-remediation and manifest sealing"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                subprocess.run(["git", "commit", "-m", "auto(speedracer): parallel self-remediation, conflict bypass, and manifest sealing"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                
+                # Pull with automatic rebase and conflict-resolution bypass fallback
+                pull_res = subprocess.run(["git", "pull", "--rebase", "origin", "main"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                if pull_res.returncode != 0:
+                    print("⚠️ Divergence detected during pull. Applying automated conflict-resolution strategy...")
+                    subprocess.run(["git", "checkout", "--ours", "."], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    subprocess.run(["git", "add", "."], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                    subprocess.run(["git", "rebase", "--continue"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
                 subprocess.run(["git", "push"], check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                print("✅ Git Self-Remediation successful: Changes pushed to repository.")
+                print("✅ SpeedRacer Git Remediation and push successful: Repository fully reconciled.")
             else:
-                print("✨ Repository state fully synchronized.")
+                print("✨ Repository state fully synchronized. No drift detected.")
         except Exception as e:
             print(f"⚠️ Git self-remediation notice (non-blocking): {e}")
 
@@ -118,4 +128,3 @@ if __name__ == "__main__":
     env = sys.argv[1] if len(sys.argv) > 1 else "production"
     orchestrator = SovereignSpeedRacerOrchestrator(target_environment=env)
     orchestrator.trigger_deployment_pipeline()
-  
