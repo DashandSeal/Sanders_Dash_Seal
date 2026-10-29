@@ -1,9 +1,11 @@
-# Design Standard: Platinum Blue Diamond Standard (2026 Resilient Guard Core)
-# Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders
-# Description: Intercepts active file system telemetry, continuously verifies local
-#              file signatures against checked-in .pbd.json manifest ledgers,
-#              and automatically executes atomic restoration rollbacks to head blocks
-#              upon catching any unauthorized script drift or tampering vectors.
+"""
+Design Standard: Platinum Blue Diamond Standard (2026 Resilient Guard Core)
+Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders
+Description: Intercepts active file system telemetry, continuously verifies local
+file signatures against checked-in .pbd.json manifest ledgers,
+and automatically executes atomic restoration rollbacks to head blocks
+upon catching any unauthorized script drift or tampering vectors.
+"""
 
 import os
 import sys
@@ -15,11 +17,10 @@ import subprocess
 from pathlib import Path
 
 # Hardlocked System Constraints (Permanent Always Free Limits)
-FORENSIC_TICK_RATE_SEC = 2.0 # Real-time sub-second structural loop monitoring cadence
+FORENSIC_TICK_RATE_SEC = 2.0  # Real-time sub-second structural loop monitoring cadence
 
 class ForensicTamperException(Exception):
     pass
-
 
 class RealTimeForensicSentinel:
     def __init__(self, repository_root: Path):
@@ -43,7 +44,7 @@ class RealTimeForensicSentinel:
         """Safely generates or overwrites a matching .pbd.json ledger entry with true current signatures."""
         target_path = self.root / relative_target_path
         if not target_path.is_file():
-            print(f"[❌ Seed Error]: Target file not found: {relative_target_path}", flush=True)
+            print(f"[❌ Seed Error]: Target File not found: {relative_target_path}", flush=True)
             return
 
         true_hash = self.calculate_file_sha256(target_path)
@@ -60,16 +61,16 @@ class RealTimeForensicSentinel:
         self.deploy_dir.mkdir(parents=True, exist_ok=True)
         manifest_path.write_text(json.dumps(manifest_payload, indent=2, sort_keys=True), encoding="utf-8")
         print(f"[🛡️ Seed Complete]: Manifest created at deploy/{manifest_filename}", flush=True)
-        print(f"                     Assigned Hash: {true_hash}", flush=True)
+        print(f"               Assigned Hash: {true_hash}", flush=True)
 
     def dispatch_forensic_alert(self, breached_file: str, expected_hash: str, actual_hash: str):
         """Generates automated forensic alert logs and triggers security warning alerts directly."""
         alert_body = (
-            f"⚠️ CRITICAL ARCHITECTURAL INTEGRITY VIOLATION DETECTED ⚠️\n\n"
+            "🚨 CRITICAL ARCHITECTURAL INTEGRITY VIOLATION DETECTED 🚨\n\n"
             f"Platform Module: {breached_file}\n"
             f"Expected Signature Manifest Hash: {expected_hash}\n"
-            f"Actual Malicious/Drifted Hash: {actual_hash}\n"
-            f"Action Executed: Triggering Autonomous Self-Healing Pipeline Rollback Grid.\n"
+            f"Actual Malicious/Drifted Hash: {actual_hash}\n\n"
+            "Action Executed: Triggering Autonomous Self-Healing Pipeline Rollback Grid.\n"
         )
         print(f"[Forensic Alert Dispatched]: Unauthorized modification captured in {breached_file}!", flush=True)
         # Low-overhead pipeline print logging to prevent resource thrashing
@@ -121,7 +122,7 @@ class RealTimeForensicSentinel:
 
     def run_continuous_forensic_heartbeat(self):
         """Primary real-time sub-second continuous file verification loop."""
-        print("[🛡️ Forensic Shield Active]: Continuous AI Integrity Safeguards online and monitoring.", flush=True)
+        print(f"🛡️ [Forensic Shield Active]: Continuous AI Integrity Safeguards online and monitoring.", flush=True)
         while self.is_monitoring:
             try:
                 self.audit_active_file_system_matrix()
@@ -131,14 +132,13 @@ class RealTimeForensicSentinel:
             except Exception as system_drift_error:
                 print(f"⚠️ [Sentinel Mitigator]: Managing check drift: {str(system_drift_error)}", flush=True)
 
-
 if __name__ == "__main__":
     project_root = Path(__file__).resolve().parent.parent
     sentinel = RealTimeForensicSentinel(project_root)
-    
+
     # Check for seed bootstrap execution instruction
     if len(sys.argv) > 1 and sys.argv[1] == "--seed":
-        print("[⚡ Bootstrap Mode Triggered]: Re-aligning cryptographic security shield.", flush=True)
+        print("[🛡️ Bootstrap Mode Triggered]: Re-aligning cryptographic security shield.", flush=True)
         sentinel.bootstrap_seed_manifest("core_platform/forensic_sentinel.py")
     else:
         sentinel.run_continuous_forensic_heartbeat()
