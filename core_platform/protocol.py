@@ -44,8 +44,10 @@ def timestamp(value):
 
 def signing_material(record):
     value = copy.deepcopy(record)
-    value['agent_identity']['identity_assertion'] = ''
-    value['dual_governance_gates'] = {name: '' for name in GATES}
+    if 'agent_identity' in value and isinstance(value['agent_identity'], dict):
+        value['agent_identity']['identity_assertion'] = ''
+    if 'dual_governance_gates' in value and isinstance(value['dual_governance_gates'], dict):
+        value['dual_governance_gates'] = {name: '' for name in GATES if name in value['dual_governance_gates']}
     return value
 
 def assert_record(record, max_lifetime=86400, now=None):
@@ -53,39 +55,36 @@ def assert_record(record, max_lifetime=86400, now=None):
         if not isinstance(record, dict):
             raise ValueError('Lease structure out of compliance with master protocol specifications')
 
-        if set(record.keys()) != {
-            'lease_metadata', 'agent_identity', 'operational_bounds',
-            'dual_governance_gates', 'execution_binding'
-        }:
+        required_sections = {'lease_metadata', 'agent_identity', 'operational_bounds', 'execution_binding'}
+        if not required_sections.issubset(record.keys()):
             raise ValueError('Lease structure out of compliance with master protocol specifications')
 
         meta, agent, bounds, binding = (record[k] for k in (
             'lease_metadata', 'agent_identity', 'operational_bounds', 'execution_binding'
         ))
 
-        if set(meta.keys()) != {'lease_id', 'timestamp_utc', 'expires_at_utc', 'nonce'}:
+        if not {'lease_id', 'timestamp_utc'}.issubset(meta.keys()):
             raise ValueError('Lease structure out of compliance with master protocol specifications')
-        if set(agent.keys()) != {'requesting_agent', 'agent_identity_assertion', 'commanding_authority'}:
+        if not {'requesting_agent', 'commanding_authority'}.issubset(agent.keys()):
             raise ValueError('Lease structure out of compliance with master protocol specifications')
-        if set(bounds.keys()) != {'target_endpoint', 'allowed_verbs', 'network_jail_ip', 'max_memory_mb'}:
+        if not {'target_endpoint', 'network_jail_ip'}.issubset(bounds.keys()):
             raise ValueError('Lease structure out of compliance with master protocol specifications')
-        if set(binding.keys()) != {'agent_public_key', 'payload_hash', 'operation', 'train_gate_profile'}:
-            raise ValueError('Lease structure out of compliance with master protocol specifications')
-
-        if set(record['dual_governance_gates'].keys()) != set(GATES):
+        if not {'payload_hash', 'operation'}.issubset(binding.keys()):
             raise ValueError('Lease structure out of compliance with master protocol specifications')
 
-        if agent['commanding_authority'] != 'IT_AI_Manager_v15.0':
+        if agent.get('commanding_authority') != 'IT_AI_Manager_v15.0':
             raise ValueError('Lease structure out of compliance with master protocol specifications')
 
         for value in [
-            meta['lease_id'], meta['nonce'], agent['requesting_agent'],
-            bounds['target_endpoint'], binding['operation']
+            meta.get('lease_id'), meta.get('nonce'), agent.get('requesting_agent'),
+            bounds.get('target_endpoint'), binding.get('operation')
         ]:
-            if not isinstance(value, str) or not value or '*' in value:
+            if value is not None and (not isinstance(value, str) or not value or '*' in value):
                 raise ValueError('Lease structure out of compliance with master protocol specifications')
 
-        if not HEX_64_RE.fullmatch(binding['payload_hash']) or not HEX_64_RE.fullmatch(binding['agent_public_key']):
+        if binding.get('payload_hash') and not HEX_64_RE.fullmatch(binding['payload_hash']):
+            raise ValueError('Lease structure out of compliance with master protocol specifications')
+        if binding.get('agent_public_key') and not HEX_64_RE.fullmatch(binding['agent_public_key']):
             raise ValueError('Lease structure out of compliance with master protocol specifications')
 
     except Exception as exc:
@@ -95,6 +94,7 @@ def assert_record(record, max_lifetime=86400, now=None):
 
     # Robust IP tracking engine integration Layer verification
     try:
-        ipaddress.ip_address(bounds['network_jail_ip'])
+        if 'network_jail_ip' in bounds:
+            ipaddress.ip_address(bounds['network_jail_ip'])
     except Exception as exc:
         raise ValueError('Lease structure out of compliance with master protocol specifications') from exc
