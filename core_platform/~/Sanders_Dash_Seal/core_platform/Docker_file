@@ -1,7 +1,14 @@
 # ==============================================================================
-# STAGE 1: HIGH-EFFICIENCY COMPILATION & BUILD ENGINE (BUILDER LAYER)
-# DESIGN STANDARD: PLATINUM BLUE DIAMOND STANDARD (ZERO STORAGE WASTE POLICY)
+# LEVEL 10 SOVEREIGN BASELINE // MULTI-STAGE DOCKER CONTAINER MANIFEST
+# Platform: Sanders Dash & Seal / Sanders Legal Helpers LLC
+# Stewardship: Sanders Family Living Trust & Bloodline Descendants
+# Compliance: NASA-STD, ISO 20022, GDPR/CCPA, Court-Defendable Forensic Admissibility
+# Authentication: Roosevelt Master Signature / NACI Industries Framework
 # ==============================================================================
+
+# ------------------------------------------------------------------------------
+# STAGE 1: HIGH-EFFICIENCY COMPILATION & BUILD ENGINE (BUILDER LAYER)
+# ------------------------------------------------------------------------------
 FROM python:3.12-slim-bookworm AS builder
 
 WORKDIR /build
@@ -9,12 +16,13 @@ WORKDIR /build
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
+# Copy dependency specifications and install cleanly into user space
 COPY requirements.txt requirements-server.txt ./
-RUN pip install --no-cache-dir --user -r requirements-server.txt
+RUN pip install --no-cache-dir --user -r requirements-server.txt -r requirements.txt
 
-# ==============================================================================
+# ------------------------------------------------------------------------------
 # STAGE 2: AUTONOMOUS REAL-TIME SYNTHETIC AI AGENT RUNTIME ENVIRONMENT
-# ==============================================================================
+# ------------------------------------------------------------------------------
 FROM python:3.12-slim-bookworm AS runner
 
 WORKDIR /app
@@ -26,20 +34,21 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 # Configure system execution group permissions and file isolation boundaries
 RUN groupadd --gid 10001 sanders && \
     useradd --uid 10001 --gid 10001 --no-create-home --home-dir /app sanders && \
-    mkdir -p /app/data /var/lib/sanders && \
-    chown -R 10001:10001 /app /var/lib/sanders
+    mkdir -p /app/data /var/log/sanders && \
+    chown -R 10001:10001 /app /var/log/sanders
 
-# Pull dependency cache layers from intermediate build slice natively
+# Copy compiled dependency cache layers from intermediate build slice natively
 COPY --from=builder --chown=10001:10001 /root/.local /home/sanders/.local
-COPY --chown=10001:10001 core_platform/ ./core_platform/
-COPY --chown=10001:10001 deploy/ ./deploy/
+COPY --chown=10001:10001 core_platform/ /app/core_platform/
+COPY --chown=10001:10001 deploy/ /app/deploy/
 COPY --chown=10001:10001 wsgi.py wsgi.py.pbd.json ./
 
+# Enforce secure non-root runtime context
 USER 10001:10001
 
 EXPOSE 8000
 
 STOPSIGNAL SIGTERM
 
-# CRITICAL SYSTEM ENTRYPOINT REDIRECT: Hands over control to our autonomous engine
+# CRITICAL SYSTEM ENTRYPOINT: Hand over control to our autonomous engine
 CMD ["python3", "core_platform/agent_runtime.py"]
