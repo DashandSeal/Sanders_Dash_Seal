@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  # 🌐 Hardened Reverse Proxy Firewall Layer
+  # Hardened Reverse Proxy Firewall Layer
   nginx-edge:
     image: nginx:1.25-alpine
     container_name: sds_nginx_edge
@@ -17,22 +17,39 @@ services:
     depends_on:
       - wsgi-core
 
-  # 💎 High-Throughput Hardened WSGI Platform Core
+  # High-Throughput Hardened WSGI Platform Core
   wsgi-core:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: backend/Dockerfile
     container_name: sds_wsgi_core
     restart: always
     environment:
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
       - STRIPE_WEBHOOK_SECRET=whsec_your_live_production_key_here
+      - OPERATOR_EMAIL=daddydik323@gmail.com
     volumes:
       - sds-ledger-volume:/app/data
     networks:
       - sds-secure-bridge
     # No ports exposed to the host interface. Traffic can ONLY be routed by Nginx via the bridge.
+
+  # Level 10 Real-Time Continuous Forensic Sync & Self-Healing Daemon
+  l10-forensic-daemon:
+    image: python:3.12-slim-bookworm
+    container_name: sds_forensic_daemon
+    working_dir: /app
+    restart: always
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OPERATOR_EMAIL=daddydik323@gmail.com
+    volumes:
+      - .:/app
+    networks:
+      - sds-secure-bridge
+    command: python3 security/sovereign_runtime.py
+    stop_grace_period: 10s
 
 networks:
   sds-secure-bridge:
