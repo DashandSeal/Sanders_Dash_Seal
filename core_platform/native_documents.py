@@ -27,16 +27,17 @@ class NativeDocuments:
     def __init__(self, db_path, storage_dir):
         self.db_path = str(db_path)
         self.storage_dir = pathlib.Path(storage_dir).resolve()
-        
+
         # Enforce highly restricted local folder access metrics natively
         self.storage_dir.mkdir(parents=True, exist_ok=True)
         os.chmod(self.storage_dir, 0o0700)
-        
+
         with self._connect() as db:
             db.execute("""CREATE TABLE IF NOT EXISTS native_documents (
                 session_id TEXT NOT NULL, document_id TEXT NOT NULL,
                 sha256 TEXT NOT NULL, size INTEGER NOT NULL, created_at INTEGER NOT NULL,
-                PRIMARY KEY(session_id, document_id));""")
+                PRIMARY KEY(session_id, document_id)
+            );""")
 
     def _connect(self):
         db = sqlite3.connect(self.db_path, timeout=10)
@@ -47,9 +48,9 @@ class NativeDocuments:
     def _calculate_filename(self, session_id, document_id):
         """Constructs safe, absolute deterministic path targets to isolate from traversal risks."""
         # Use proper explicit byte combination instead of broken string null tokens
-        combined = f"{session_id}:{document_id}".encode('utf-8')
+        combined = f"{session_id}:{document_id}".encode("utf-8")
         secure_hash = hashlib.sha256(combined).hexdigest()
-        
+
         target_path = (self.storage_dir / secure_hash).resolve()
         # Enforce that the calculated absolute file destination resides strictly within the vault folder boundaries
         if not str(target_path).startswith(str(self.storage_dir)):
@@ -66,14 +67,14 @@ class NativeDocuments:
         filename = self._calculate_filename(session_id, document_id)
 
         with self._connect() as db:
-            db.execute('BEGIN IMMEDIATE;')
-            
-            # Check the parental notarization session baseline states safely
-            session = db.execute('SELECT 1 FROM native_notarial_sessions WHERE session_id=?;', (session_id,)).fetchone()
+            db.execute("BEGIN IMMEDIATE;")
+
+            # Check the parental notarial session baseline states safely
+            session = db.execute("SELECT 1 FROM native_notarial_sessions WHERE session_id = ?;", (session_id,)).fetchone()
             if not session:
                 raise DocumentDenied('Associated notarial session identifier not found or inactive')
 
-            existing = db.execute('SELECT sha256, size FROM native_documents WHERE session_id=? AND document_id=?;',
+            existing = db.execute("SELECT sha256, size FROM native_documents WHERE session_id = ? AND document_id = ?;",
                                   (session_id, document_id)).fetchone()
             if existing:
                 if existing['sha256'] != digest or existing['size'] != len(content):
@@ -83,18 +84,18 @@ class NativeDocuments:
                     return {'session_id': session_id, 'document_id': document_id, 'sha256': digest, 'status': 'EXISTS'}
 
             # Execute safe enterprise atomic file streams
-            fd, tmp_path_str = tempfile.mkstemp(dir=str(self.storage_dir), prefix='.tmp_sds_')
+            fd, tmp_path_str = tempfile.mkstemp(dir=str(self.storage_dir), prefix="tmp_sdm_")
             tmp_path = pathlib.Path(tmp_path_str)
             try:
-                with os.fdopen(fd, 'wb') as out:
-                    os.chmod(out.fileno(), 0o0600)
+                with os.fdopen(fd, "wb") as out:
+                    os.fchmod(out.fileno(), 0o0600)
                     out.write(content)
                     out.flush()
                     os.fsync(out.fileno())
-                
-                # Atomic hotswap via filesystem rename
+
+                # Atomic Hotswap via filesystem rename
                 tmp_path.replace(filename)
-                db.execute('INSERT OR REPLACE INTO native_documents VALUES (?, ?, ?, ?, ?);',
+                db.execute("INSERT OR REPLACE INTO native_documents VALUES (?, ?, ?, ?, ?);",
                            (session_id, document_id, digest, len(content), int(time.time())))
                 db.commit()
             except Exception as exc:
@@ -109,10 +110,10 @@ class NativeDocuments:
             raise DocumentDenied('Invalid document tracking identities')
 
         with self._connect() as db:
-            row = db.execute('SELECT sha256, size FROM native_documents WHERE session_id=? AND document_id=?;',
+            row = db.execute("SELECT sha256, size FROM native_documents WHERE session_id = ? AND document_id = ?;",
                              (session_id, document_id)).fetchone()
-        if not row:
-            raise DocumentDenied('Document record not found inside database index')
+            if not row:
+                raise DocumentDenied('Document record not found inside database index')
 
         filename = self._calculate_filename(session_id, document_id)
         try:
