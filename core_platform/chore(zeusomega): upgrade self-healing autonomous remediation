@@ -1,0 +1,16 @@
+# Navigate to your local repository directory
+cd Sanders_Dash_Seal
+
+# Ensure you are on main or your working branch
+git checkout main
+git pull origin main
+
+# Place your updated ZeusOmega auto-repair script into its directory (e.g., core_platform/)
+# Stage the file changes
+git add core_platform/
+
+# Commit with immutable tracking signature
+git commit -m "chore(zeusomega): activate autonomous self-healing remediation engine"
+
+# Push to trigger the ExpressWay pipeline securely
+git push origin main
