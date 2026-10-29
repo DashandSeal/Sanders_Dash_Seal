@@ -27,15 +27,16 @@ class RepairDenied(PermissionError):
     pass
 
 def digest(data):
-    return hashlib.sha256(json.dumps(data, sort_keys=True, separators=(",", ":"),
-                                    allow_nan=False).encode()).hexdigest()
+    return hashlib.sha256(json.dumps(data, sort_keys=True, separators=(',', ':'),
+                         allow_nan=False).encode()).hexdigest()
 
 def validate_evidence(evidence):
     if not isinstance(evidence, dict) or any(
-            not isinstance(evidence.get(k), dict) or not evidence[k] for k in DIMENSIONS):
+        not isinstance(evidence.get(k), dict) or not evidence[k] for k in DIMENSIONS
+    ):
         raise RepairDenied("All fifteen independent reasoning evidence records are required")
     # FIX: Corrected NameError from _digest to your defined digest function
-    return digest({key: evidence[key] for key in DIMENSIONS})
+    return digest({k: evidence[k] for k in DIMENSIONS})
 
 @dataclass(frozen=True)
 class RepairProposal:
@@ -52,21 +53,23 @@ class RepairProposal:
 
     def __post_init__(self):
         if not all(isinstance(getattr(self, name), str) and getattr(self, name).strip()
-                   for name in ("incident_id", "principal_id", "sidecar_id",
-                                "action", "capability", "evidence_digest")):
+            for name in ("incident_id", "principal_id", "sidecar_id",
+                         "action", "capability", "evidence_digest")):
             raise RepairDenied("Complete repair identity and action required")
-            
+
         if self.principal_id == self.sidecar_id:
             raise RepairDenied("Sidecar and principal identities must remain distinct")
-            
+
         if len(self.evidence_digest) != 64 or any(
-                c not in "0123456789abcdef" for c in self.evidence_digest):
+            c not in "0123456789abcdef" for c in self.evidence_digest
+        ):
             raise RepairDenied("Invalid evidence digest")
-            
+
         for name in ("preconditions", "blast_radius", "rollback_steps", "postconditions"):
             value = getattr(self, name)
             if not isinstance(value, tuple) or not value or any(
-                    not isinstance(v, str) or not v.strip() for v in value):
+                not isinstance(v, str) or not v.strip() for v in value
+            ):
                 raise RepairDenied("Preconditions, blast radius, rollback and postconditions required")
 
 class RepairSession:
@@ -77,11 +80,11 @@ class RepairSession:
             raise RepairDenied("RepairProposal required")
         if validate_evidence(evidence) != proposal.evidence_digest:
             raise RepairDenied("Evidence mismatch")
-            
+
         self.proposal = proposal
         self.phase = "observe"
         self.audit = []
-        self._prior = "0" * 64
+        self._prior = '0' * 64
         self._record("created", {"incident_id": proposal.incident_id})
 
     def _record(self, kind, details):
@@ -94,19 +97,19 @@ class RepairSession:
         current = PHASES.index(self.phase)
         if current + 1 >= len(PHASES) or PHASES[current + 1] != next_phase:
             raise RepairDenied("Out-of-order repair lifecycle transition")
-            
+
         if next_phase in ("authorize", "repair", "commit_or_rollback"):
             raise RepairDenied("Authorization and execution unavailable in dry-run engine")
-            
+
         if next_phase in ("challenge", "verify_postcondition", "prove") and independent_review is not True:
             raise RepairDenied("Independent review required")
-            
+
         self.phase = next_phase
         self._record("phase", {"phase": next_phase})
         return self.phase
 
     def audit_valid(self):
-        prior = "0" * 64
+        prior = '0' * 64
         for entry in self.audit:
             if entry.get("prior") != prior or entry.get("digest") != digest(
                 {k: v for k, v in entry.items() if k != "digest"}
