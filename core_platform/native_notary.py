@@ -1,5 +1,5 @@
 """
-Module: core_platform.native_notary
+Module: core_platform/native_notary
 Architectural Layer: Hard-Locked Remote Online Notarization (RON) Session State Machine & Level 10 Root of Trust
 Patent/IP Protection Ledger: Explicit Ownership Assertions for Sanders Legal Helpers LLC
 Developed by: Roosevelt Sanders
@@ -16,17 +16,19 @@ import hashlib
 from pathlib import Path
 from datetime import datetime, timezone
 
-METHODS = frozenset(('E_NOTARY', 'RON'))
-STATES = frozenset(('DRAFT', 'AWAITING_AUTHORITY', 'READY', 'COMPLETED'))
+METHODS = frozenset({'E_NOTARY', 'RON'})
+STATES = frozenset({'DRAFT', 'AWAITING_AUTHORITY', 'READY', 'COMPLETED', 'CANCELLED'})
 IDENT_RE = re.compile(r'^[A-Za-z0-9_-]{1,128}$')
+
 
 class NativeNotaryDenied(ValueError):
     """Custom exception raised when native notary verification or IP boundaries fail."""
     pass
 
+
 class NativeNotary:
     """Level 10 Master Notary & Sidecar Sealing Engine with IP protection and pairing verification."""
-    
+
     def __init__(self, authority_id="Roosevelt_Sanders_Master_Authority"):
         self.authority_id = authority_id
 
@@ -44,14 +46,14 @@ class NativeNotary:
         m_path = Path(manifest_path)
         if not s_path.exists() or not m_path.exists():
             return False
-        
+
         actual_hash = NativeNotary.compute_sha256(s_path)
         try:
             manifest_data = json.loads(m_path.read_text(encoding='utf-8'))
             payload_hash = (
-                manifest_data.get("body", {}).get("payload_hash") or 
-                manifest_data.get("manifest_payload_hash") or 
-                manifest_data.get("payload_hash")
+                manifest_data.get('body', {}).get('payload_hash') or
+                manifest_data.get('manifest_payload_hash') or
+                manifest_data.get('payload_hash')
             )
             return actual_hash == payload_hash
         except Exception:
@@ -151,31 +153,28 @@ class NativeNotarySessions:
 
     def create(self, session_id, case_id, method, jurisdiction, *, db=None):
         if not all(isinstance(x, str) and IDENT_RE.fullmatch(x) for x in (session_id, case_id, jurisdiction)):
-            raise NativeNotaryDenied('Invalid session tracking identity strings')
+            raise NativeNotaryDenied("Invalid session tracking identity strings")
         if method not in METHODS:
-            raise NativeNotaryDenied('Unsupported notarial execution method')
+            raise NativeNotaryDenied("Unsupported notarial execution method")
 
         def insert(conn):
             try:
-                cursor = conn.execute("SELECT jurisdiction FROM native_notarial_sessions WHERE case_id = ?", (case_id,))
+                cursor = conn.execute("SELECT jurisdiction FROM native_notarial_sessions WHERE case_id = ?;", (case_id,))
                 row = cursor.fetchone()
                 if row and row['jurisdiction'] != jurisdiction:
-                    raise NativeNotaryDenied('Session parameters mismatch with registered case baseline profile')
+                    raise NativeNotaryDenied("Session parameters mismatch with registered case baseline profile")
             except sqlite3.OperationalError:
                 pass
 
             ip_sig = self._generate_ip_footprint(session_id)
             try:
-                conn.execute(
-                    """
-                    INSERT INTO native_notarial_sessions 
+                conn.execute("""
+                    INSERT INTO native_notarial_sessions
                     (session_id, case_id, method, jurisdiction, state, created_at, completed_at, evidence_json, patent_signature)
                     VALUES (?, ?, ?, ?, 'AWAITING_AUTHORITY', ?, NULL, NULL, ?)
-                    """,
-                    (session_id, case_id, method, jurisdiction, int(time.time()), ip_sig)
-                )
+                """, (session_id, case_id, method, jurisdiction, int(time.time()), ip_sig))
             except sqlite3.IntegrityError as exc:
-                raise NativeNotaryDenied('Session identifier already active') from exc
+                raise NativeNotaryDenied("Session identifier already active") from exc
 
         if db is not None:
             insert(db)
@@ -189,32 +188,32 @@ class NativeNotarySessions:
 
     def get(self, session_id):
         if not isinstance(session_id, str) or not IDENT_RE.fullmatch(session_id):
-            raise NativeNotaryDenied('Invalid session lookup token format')
+            raise NativeNotaryDenied("Invalid session lookup token format")
 
         with self._connect() as db:
-            row = db.execute(
-                "SELECT session_id, case_id, method, jurisdiction, state, patent_signature FROM native_notarial_sessions WHERE session_id = ?",
-                (session_id,)
-            ).fetchone()
+            row = db.execute("""
+                SELECT session_id, case_id, method, jurisdiction, state, patent_signature
+                FROM native_notarial_sessions WHERE session_id = ?
+            """, (session_id,)).fetchone()
             if row is None:
-                raise NativeNotaryDenied('Unknown session record')
+                raise NativeNotaryDenied("Unknown session record")
             return {key: row[key] for key in row.keys()}
 
     def cancel(self, session_id):
         with self._connect() as db:
             db.execute("BEGIN IMMEDIATE;")
-            result = db.execute(
-                "UPDATE native_notarial_sessions SET state = 'DRAFT' WHERE session_id = ? AND state != 'COMPLETED'",
-                (session_id,)
-            )
+            result = db.execute("""
+                UPDATE native_notarial_sessions SET state = 'CANCELLED'
+                WHERE session_id = ? AND state != 'COMPLETED'
+            """, (session_id,))
             if result.rowcount != 1:
-                raise NativeNotaryDenied('Session state cannot be canceled or modified')
+                raise NativeNotaryDenied("Session state cannot be canceled or modified")
             db.commit()
         return session_id
 
     def complete(self, session_id, *, human_attestation=None, authority_evidence=None, identity_evidence=None, act_evidence=None):
         if not isinstance(session_id, str) or not IDENT_RE.fullmatch(session_id):
-            raise NativeNotaryDenied('Invalid completion target identity handle')
+            raise NativeNotaryDenied("Invalid completion target identity handle")
 
         evidence = {
             "HUMAN_ATTESTATION": human_attestation,
@@ -230,22 +229,19 @@ class NativeNotarySessions:
 
         with self._connect() as db:
             db.execute("BEGIN IMMEDIATE;")
-            row = db.execute(
-                "SELECT method, state FROM native_notarial_sessions WHERE session_id = ?",
-                (session_id,)
-            ).fetchone()
+            row = db.execute("""
+                SELECT method, state FROM native_notarial_sessions WHERE session_id = ?
+            """, (session_id,)).fetchone()
+
             if row is None or row['state'] not in ('AWAITING_AUTHORITY', 'READY'):
-                raise NativeNotaryDenied('Session state configuration does not permit completion changes')
+                raise NativeNotaryDenied("Session state configuration does not permit completion changes")
 
             now = int(time.time())
-            db.execute(
-                """
-                UPDATE native_notarial_sessions 
-                SET state = 'COMPLETED', completed_at = ?, evidence_json = ? 
+            db.execute("""
+                UPDATE native_notarial_sessions
+                SET state = 'COMPLETED', completed_at = ?, evidence_json = ?
                 WHERE session_id = ?
-                """,
-                (now, json.dumps(evidence, sort_keys=True), session_id)
-            )
+            """, (now, json.dumps(evidence, sort_keys=True), session_id))
             db.commit()
 
         return {
