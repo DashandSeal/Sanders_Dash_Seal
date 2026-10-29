@@ -67,7 +67,6 @@ jobs:
           echo "🛡️ INITIALIZING LEVEL 10 SOVEREIGN GATEKEEPER"
           echo "Commit Author Email: $ACTOR_EMAIL"
           echo "Stewardship Entity: Sanders Family Living Trust"
-
           if [ "$ACTOR_EMAIL" != "daddydik323@gmail.com" ] && [ "$ACTOR_EMAIL" != "rooseveltsanders381@gmail.com" ]; then
             echo "❌ ACCESS DENIED: Commit author ($ACTOR_EMAIL) lacks bloodline/operational authorization under Level 10 protocols."
             exit 1
@@ -78,38 +77,29 @@ jobs:
         run: |
           python3 -c '
           import sys
-
-          # LEVEL 10 HARD-LOCKED ARCHITECTURAL LIMITS
           MAX_FREE_ARM_VCPUS = 2
           MAX_FREE_ARM_RAM_GB = 12
           MAX_BOOT_VOLUME_GB = 200
-
           simulated_live_limits = {
               "billing_account_status": "FREE_ONLY",
               "arm_vcpu_allocated": 2,
               "arm_ram_allocated_gb": 12,
               "boot_volume_total_gb": 150
           }
-
           print("🔄 RUNNING LEVEL 10 PRE-FLIGHT COST SHIELD PROBE")
           print("-------------------------------------------------")
-
           if simulated_live_limits["billing_account_status"] not in ("FREE_ONLY", "FREE_OR_PAYG_WITHIN_FREE_LIMITS"):
               print("❌ HARD BLOCK: Billable overage state detected. Execution aborted to maintain zero-cost compliance.")
               sys.exit(1)
-
           if simulated_live_limits["arm_vcpu_allocated"] > MAX_FREE_ARM_VCPUS:
               print("❌ ABORT: ARM vCPUs exceed current free tier ceiling.")
               sys.exit(1)
-
           if simulated_live_limits["arm_ram_allocated_gb"] > MAX_FREE_ARM_RAM_GB:
               print("❌ ABORT: ARM RAM exceeds current free tier ceiling.")
               sys.exit(1)
-
           if simulated_live_limits["boot_volume_total_gb"] > MAX_BOOT_VOLUME_GB:
               print("❌ ABORT: Boot volumes exceed the 200GB absolute sovereign limit.")
               sys.exit(1)
-
           print("✅ SUCCESS: All metrics reside safely within permanent zero-cost boundaries.")
           '
 
@@ -232,11 +222,9 @@ jobs:
           import json
           import pathlib
           import datetime
-
           targets = ["nginx.conf", "wsgi.py", "deploy/gunicorn.conf.py", "deploy_backup.sh", "deploy/deploy_backup.sh"]
           root = pathlib.Path(".").resolve()
           timestamp = datetime.datetime.utcnow().isoformat() + "Z"
-
           for target in targets:
               f_path = root / target
               m_path = root / f"{target}.pbd.json"
@@ -263,9 +251,7 @@ jobs:
         run: |
           git config --global user.name "Sanders Platform Watcher"
           git config --global user.email "daddydik323@gmail.com"
-
           git add '*.pbd.json' deploy/*.pbd.json 2>/dev/null || true
-
           if git diff --cached --quiet; then
             echo "✅ No structural matrix changes detected. Skipping push."
           else
@@ -276,5 +262,3 @@ jobs:
               git push origin HEAD:${{ github.ref_name }}
             fi
           fi
-defaults:
-  
