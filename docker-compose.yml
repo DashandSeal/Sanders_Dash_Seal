@@ -7,8 +7,8 @@ services:
     container_name: sds_nginx_edge
     restart: always
     ports:
-      - "80:80"     # Securly exposes web standard HTTP traffic to host interface
-      - "443:443"   # Securely exposes encrypted TLS traffic to host interface
+      - "80:80"
+      - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
@@ -34,7 +34,6 @@ services:
       - .:/app
     networks:
       - sds-secure-bridge
-    # No ports exposed to the host interface. Traffic can ONLY be routed by Nginx via the bridge.
 
   # Level 10 Real-Time Continuous Forensic Sync & Self-Healing Daemon
   l10-forensic-daemon:
