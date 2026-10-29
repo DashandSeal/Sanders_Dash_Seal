@@ -23,35 +23,72 @@ jobs:
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
       - name: Verify Sole Owner Operational Authorization
         run: |
           ACTOR_EMAIL=$(git log -1 --format='%ae')
-          if [ "$ACTOR_EMAIL" != "rooseveltsanders381@gmail.com" ]; then
-            echo "❌ ACCESS DENIED"
+          echo "Verifying deployment authority for actor: $ACTOR_EMAIL"
+          
+          # Securely allow both verified configurations for your profile
+          if [ "$ACTOR_EMAIL" != "daddydik323@gmail.com" ] && [ "$ACTOR_EMAIL" != "rooseveltsanders381@gmail.com" ]; then
+            echo "❌ ACCESS DENIED: Unauthorized platform modification signature."
             exit 1
+          fi
+          echo "✅ Authorization confirmed. Processing execution matrix."
+
+  autonomous-remediation:
+    name: "WP-CORE Configuration Auto-Healing"
+    needs: [free-tier-cost-shield]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Repair Nginx Configuration Token Anomaly
+        run: |
+          TARGET_FILE="Sanders_Dash_Seal/deploy/nginx.http.conf"
+          if [ -f "$TARGET_FILE" ]; then
+            echo "Scanning $TARGET_FILE for structural syntax regressions..."
+            # Safely swap out the broken 1n token with standard compliant 1m space allocation
+            sed -i 's/client_max_body_size 1n;/client_max_body_size 1m;/g' "$TARGET_FILE"
+          else
+            echo "Target server specification not found at path, skipping."
+          fi
+
+      - name: Commit and Securely Push Structural Compliance Patch
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git config --global user.name "White Phoenix Conductor"
+            git config --global user.email "daddydik323@gmail.com"
+            git add .
+            git commit -m "chore(auto-fix): wp-core autonomous compliance enforcement"
+            git push origin HEAD:${{ github.head_ref || github.ref_name }}
+          else
+            echo "Workspace structural state perfectly clean. Zero mutations needed."
           fi
 
   security-tests:
     name: "Adaptive Parallel Execution Core"
-    needs: [free-tier-cost-shield]
+    needs: [autonomous-remediation]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code Base
         uses: actions/checkout@v4
+
       - name: Set up Python Runtime
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: "3.12"
+
       - name: Verify Discovered Manifest Alignment
         run: |
           python3 -c '
           import json
           from pathlib import Path
-          
-          print("🚀 Running Platinum Signature Audit...")
-          deploy_dir = Path("deploy")
-          
-          # Dynamically inspects all manifests currently existing in deploy folder
+          deploy_dir = Path("Sanders_Dash_Seal/deploy")
+          print("🔍 Running Platinum Signature Audit...")
           if deploy_dir.is_dir():
               for manifest in deploy_dir.glob("*.pbd.json"):
                   try:
@@ -60,6 +97,7 @@ jobs:
                   except Exception as e:
                       print(f"❌ Malformed JSON structural element found in {manifest.name}: {e}")
           '
+
       - name: Run Test Suites
         run: |
-          python -m unittest discover -s tests -p 'test_*.py' || echo "⚠️ Non-blocking unit checks accommodated safely."
+          python -m unittest discover -s tests -p 'test_*.py' || echo "⚠ Non-blocking unit checks accommodated safely."
