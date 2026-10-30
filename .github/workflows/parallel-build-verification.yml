@@ -85,6 +85,7 @@ jobs:
       - name: Checkout Targeted Branch
         uses: actions/checkout@v4
         with:
+          repository: ${{ github.repository }}
           token: ${{ secrets.PAT_TOKEN }}
           ref: ${{ github.head_ref || github.ref_name }}
           persist-credentials: true
