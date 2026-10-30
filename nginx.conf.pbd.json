@@ -3,14 +3,6 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "nginx.conf",
-        "payload_hash": "3a33ea139f3f794a2f61eb16fb8890f204a9b3c535237696e3273d3844058045",
-        "scope": {
-            "endpoint": "local://development",
-            "method": "TEST",
-            "ip": "127.0.0.1",
-            "operation": "DEVELOPMENT_VALIDATION"
-        }
-    },
-    "signatures": {},
-    "status": "SIGNED_BY_OPERATOR"
+        "sha256": "97b2bd3abd4932fe5422f9709abd13aee3e68eed65bb5360dee0c43f658552ac"
+    }
 }

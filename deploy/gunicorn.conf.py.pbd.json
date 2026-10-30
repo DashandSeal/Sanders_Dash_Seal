@@ -2,15 +2,7 @@
     "body": {
         "schema": 1,
         "platform": "Sanders Dash & Seal",
-        "artifact": "gunicorn.conf.py",
-        "payload_hash": "b1dcfd857ad9d0251950a78a7d648f1e250ad9f755e23aec4a1dacb615acf704",
-        "scope": {
-            "endpoint": "local://development",
-            "method": "TEST",
-            "ip": "127.0.0.1",
-            "operation": "DEVELOPMENT_VALIDATION"
-        }
-    },
-    "signatures": {},
-    "status": "SIGNED_BY_OPERATOR"
+        "artifact": "deploy/gunicorn.conf.py",
+        "sha256": "3432f645a4b74ceaa2fb72597a8e9d870c925726fe7dc879a7d7e0900cd96963"
+    }
 }
