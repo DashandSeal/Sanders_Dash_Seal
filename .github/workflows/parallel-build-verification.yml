@@ -81,13 +81,12 @@ jobs:
     name: "Architectural Integrity Gateway"
     needs: [analyze-changes, platform, sidecar]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - name: Checkout Targeted Branch
+      - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository }}
-          token: ${{ secrets.PAT_TOKEN }}
-          ref: ${{ github.head_ref || github.ref_name }}
           persist-credentials: true
 
       - name: Setup System Python
