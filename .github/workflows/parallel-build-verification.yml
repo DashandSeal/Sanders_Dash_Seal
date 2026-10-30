@@ -1,1 +1,30 @@
+name: Sanders Platinum Integrity Verification
 
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  speedracer-auto-heal:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Execute SpeedRacer & ZeusOmega Remediation Sweep
+        run: |
+          python3 core_platform/speedracer_remediator.py
+          git config --global user.name "Sanders Platform Watchdogs [ZeusOmega/SpeedRacer]"
+          git config --global user.email "watchdogs@sanderssecurestack.com"
+          git add -A
+          git commit -m "chore(remediation): auto-heal verification gaps via ZeusOmega & SpeedRacer" || echo "No changes needed"
+          
