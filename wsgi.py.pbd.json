@@ -3,6 +3,14 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "wsgi.py",
-        "sha256": "a4b79b748c746d7f5375ab92d2dc51bcb73cff373d4e0e6bc2ecd977fe9a1e93"
-    }
+        "payload_hash": "a4b79b748c746d7f5375ab92d2dc51bcb73cff373d4e0e6bc2ecd977fe9a1e93",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "SIGNED_BY_OPERATOR"
 }
