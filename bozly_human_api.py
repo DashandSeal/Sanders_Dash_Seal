@@ -170,7 +170,7 @@ def application(environ,start_response):
                 collected_by=actor["sub"],
             ))
         if method=="POST" and action=="forensic-investigate":
-            require_access(actor,entity,"view")
+            require_access(actor,entity,"operate")
             return _respond(start_response,200,forensic.investigate(
                 case_id=data["case_id"],entity_id=entity,
             ))
