@@ -24,8 +24,8 @@ class GeographicPolicy:
     policy_version: str
 
     def __post_init__(self) -> None:
-        if not self.allowed_countries or not self.allowed_cloud_regions:
-            raise ValueError("Explicit country and cloud-region allowlists required")
+        if not self.allowed_cloud_regions:
+            raise ValueError("Cloud-region restrictions must be configured for data residency")
         if not self.policy_version.strip():
             raise ValueError("Geographic policy version required")
 
@@ -55,7 +55,7 @@ class GeoFence:
         allowed = (
             location.trusted
             and bool(location.source)
-            and location.country in self.policy.allowed_countries
+            and (not self.policy.allowed_countries or location.country in self.policy.allowed_countries)
             and location.cloud_region in self.policy.allowed_cloud_regions
             and (
                 not self.policy.allowed_regions
