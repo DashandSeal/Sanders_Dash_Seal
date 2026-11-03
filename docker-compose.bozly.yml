@@ -19,6 +19,46 @@ services:
     ports:
       - "127.0.0.1:8185:8000"
 
+  bozly-human-api:
+    image: sanders-bozly-cfo:local
+    build:
+      context: .
+      dockerfile: Dockerfile.bozly
+    container_name: sanders_bozly_human_api
+    restart: unless-stopped
+    command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "bozly_human_api:application"]
+    environment:
+      BOZLY_CONTROL_DB: /app/secure_ledgers/bozly_controls.db
+      BOZLY_OIDC_ISSUER: ${BOZLY_OIDC_ISSUER:?Configure real identity issuer}
+      BOZLY_OIDC_AUDIENCE: ${BOZLY_OIDC_AUDIENCE:?Configure audience}
+      BOZLY_OIDC_PUBLIC_KEY_FILE: /run/bozly-keys/oidc-public.pem
+      BOZLY_SIGNAL_FERNET_KEY: ${BOZLY_SIGNAL_FERNET_KEY:?Provide protected encrypted signaling key}
+    volumes:
+      - bozly-ledgers:/app/secure_ledgers
+      - ${BOZLY_OIDC_PUBLIC_KEY_FILE:?Mount identity verifier public key}:/run/bozly-keys/oidc-public.pem:ro
+    networks:
+      - bozly-internal
+    ports:
+      - "127.0.0.1:8186:8000"
+
+  bozly-satellite-uplink:
+    profiles: ["satellite"]
+    image: sanders-bozly-cfo:local
+    build:
+      context: .
+      dockerfile: Dockerfile.bozly
+    container_name: sanders_bozly_uplink
+    restart: unless-stopped
+    command: ["python", "bozly_uplink.py"]
+    environment:
+      BOZLY_CONTROL_DB: /app/secure_ledgers/bozly_controls.db
+      BOZLY_UPLINK_GATEWAY_URL: ${BOZLY_UPLINK_GATEWAY_URL:?Configure real satellite or terrestrial gateway}
+      BOZLY_UPLINK_BEARER_TOKEN: ${BOZLY_UPLINK_BEARER_TOKEN:?Configure actual gateway credential}
+    volumes:
+      - bozly-ledgers:/app/secure_ledgers
+    networks:
+      - bozly-internal
+
   bozly-worker:
     image: sanders-bozly-cfo:local
     build:
