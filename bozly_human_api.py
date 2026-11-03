@@ -20,6 +20,7 @@ import bozly_purchasing as purchasing
 import bozly_global_transactions as global_finance
 import bozly_diversion_guard as diversion_guard
 import bozly_legal_intelligence as legal_intelligence
+import bozly_financial_ethics as ethics
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -149,6 +150,59 @@ def application(environ,start_response):
         if not isinstance(entity,str) or len(entity)>180:
             raise ValueError()
         action=path.removeprefix("/bozly/v1/")
+        if method=="POST" and action=="ethics-principles":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,ethics.ethical_operating_principles())
+        if method=="POST" and action=="ethics-cases":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,ethics.list_cases(
+                entity_id=entity,topic=data.get("topic"),limit=data.get("limit",100)
+            ))
+        if method=="POST" and action=="ethics-record-concern":
+            require_access(actor,entity,"operate")
+            result=ethics.record_concern(
+                entity_id=entity,topic=data["topic"],concern=data["concern"],
+                subject_reference=data["subject_reference"],
+                described_observation=data["described_observation"],
+                source_record_sha256=data["source_record_sha256"],
+                business_effect=data["business_effect"],
+                request_actor=actor["sub"],
+                exact_amount_minor=data.get("exact_amount_minor"),
+                currency=data.get("currency"),
+            )
+            # Only authenticated, evidence-grounded financial diversion or
+            # concealment incidents reach the established executive P0 path.
+            if data["concern"] in ethics.SERIOUS:
+                category=(
+                    "unauthorized_money_diversion"
+                    if data["concern"]=="unauthorized_asset_diversion"
+                    else "suppressed_financial_notification"
+                )
+                incident=diversion_guard.report_diversion_attempt(
+                    entity_id=entity,category=category,
+                    subject_id=data["subject_reference"],
+                    request_actor=actor["sub"],
+                    evidence_sha256=data["source_record_sha256"],
+                    incident_id="ethics_"+result["case_id"],
+                )
+                result["diversion_incident"]=incident
+            return _respond(start_response,201,result)
+        if method=="POST" and action=="ethics-record-screening":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,ethics.record_screening_observation(
+                case_id=data["case_id"],entity_id=entity,
+                screening_source=data["screening_source"],
+                screening_list_version=data["screening_list_version"],
+                checked_at=data["checked_at"],outcome=data["outcome"],
+                result_evidence_sha256=data["result_evidence_sha256"],
+            ))
+        if method=="POST" and action=="ethics-update-case":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,200,ethics.resolve_case(
+                case_id=data["case_id"],entity_id=entity,
+                status=data["status"],conclusion=data["conclusion"],
+                actor=actor["sub"],
+            ))
         if method=="POST" and action=="legal-sources":
             require_access(actor,entity,"view")
             legal_intelligence.seed_authorities()
