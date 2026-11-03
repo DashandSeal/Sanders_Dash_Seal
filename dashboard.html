@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; connect-src 'self' wss:; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'">
+<title>BOZLY Global CFO — Native Operations</title>
+<style>
+:root{--bg:#0b1220;--panel:#142333;--green:#075c42;--gold:#e5be6c;--light:#f0f5fa;--muted:#aec0cf}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--light);font-family:system-ui,Arial,sans-serif}
+header{padding:22px 18px;border-bottom:1px solid #385069;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+h1{font-size:23px;margin:0;color:var(--gold)}h2{font-size:15px;margin:0 0 12px}
+.subtitle,.hint{font-size:12px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:15px;padding:18px;max-width:1250px;margin:auto}
+.card{padding:18px;background:var(--panel);border:1px solid #395064;border-radius:12px}
+.metric{font-size:28px;font-weight:700;color:var(--gold);margin:9px 0}
+button{width:100%;background:var(--green);color:white;border:1px solid var(--gold);padding:12px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:10px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--gold)}
+input,select{width:100%;background:#0e1a28;color:white;padding:11px;border-radius:7px;border:1px solid #537083;margin-top:6px;font:inherit}
+label{font-size:12px;color:var(--muted);display:block;margin-top:10px}ul{list-style:none;padding:0;margin:0}li{padding:10px 8px;border-bottom:1px solid #344457;font-size:13px}
+pre{background:#030a12;border-radius:7px;padding:12px;color:#a3e2bc;height:210px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px}
+.badge{font-size:12px;color:var(--muted)}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#af7a30;margin-right:5px}
+.warning{color:#f5cb79;font-size:12px}
+</style>
+</head>
+<body>
+<header><div><h1>BOZLY Global CFO</h1><div class="subtitle">Native financial operations control center</div></div>
+<div class="badge"><span class="dot"></span><span id="connection">Disconnected — no live status claimed</span></div></header>
+<main class="grid">
+<section class="card"><h2>Corporate Treasury Allocation</h2><div id="treasury" class="metric">Not connected</div>
+<p class="hint">Separate LLC financial books. No consolidated balance is inferred without actual records.</p>
+<label for="entity">Financial entity</label>
+<select id="entity">
+<option value="sanders_legal_helpers">Sanders Legal Helpers LLC / DBA Sanders Dash &amp; Seal</option>
+<option value="sanders_home_healthcare">Sanders Home Healthcare &amp; Caregivers LLC</option>
+<option value="sanders_senior_living">Sanders Senior Living LLC</option>
+</select>
+<label for="jwt">Authenticated CFO session token (kept in this page only)</label><input type="password" id="jwt" autocomplete="off">
+<label for="currency">Currency</label><select id="currency"><option>USD</option><option>EUR</option><option>GBP</option></select>
+<button id="statements">Load recorded CFO statements</button><p id="finance-status" class="hint">No authenticated financial data requested.</p>
+</section>
+<section class="card"><h2>Owner Financial Control</h2>
+<p class="hint">Bozly's existing authenticated per-entity operations apply. No additional multi-signature or assistant-selected approval workflow has been added.</p>
+<button id="refresh">Refresh recorded financial statements</button>
+<p class="warning">This interface does not initiate payouts, trading, or claim an actual financial authorization.</p></section>
+<section class="card"><h2>Separately Accounted LLC Books</h2><ul>
+<li>Sanders Legal Helpers LLC — <span id="l1">Unobserved</span></li>
+<li>Sanders Home Healthcare &amp; Caregivers LLC — <span id="l2">Unobserved</span></li>
+<li>Sanders Senior Living LLC — <span id="l3">Unobserved</span></li></ul>
+<p class="hint">Sanders Dash &amp; Seal is the DBA of Sanders Legal Helpers, not an invented fourth LLC.</p></section>
+<section class="card"><h2>Actual Telemetry Stream</h2>
+<label for="stream-token">Entity-scoped stream credential</label>
+<input type="password" id="stream-token" autocomplete="off">
+<button id="connect">Connect native WebSocket</button>
+<button id="disconnect">Disconnect</button>
+<pre id="log-stream" aria-live="polite">No telemetry connection. No market feeds or security clearances assumed.</pre>
+</section>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+let socket=null;
+const ids={sanders_legal_helpers:"l1",sanders_home_healthcare:"l2",sanders_senior_living:"l3"};
+function log(message){const el=$("log-stream");el.textContent+="\n"+new Date().toISOString()+" "+message;el.scrollTop=el.scrollHeight;}
+async function statements(){
+ const entity=$("entity").value,jwt=$("jwt").value.trim(),currency=$("currency").value;
+ if(!jwt){$("finance-status").textContent="Authenticated session required.";return;}
+ $("finance-status").textContent="Requesting recorded data...";
+ try{
+  const r=await fetch("/bozly/v1/cfo-statements",{
+   method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+jwt},
+   body:JSON.stringify({entity_id:entity,currency}),cache:"no-store"});
+  if(!r.ok)throw Error("CFO service HTTP "+r.status);
+  const o=await r.json();
+  if(!o.trial_balance?.balanced)throw Error("No balanced trial balance returned");
+  $("treasury").textContent=new Intl.NumberFormat("en-US",{style:"currency",currency}).format(o.assets_minor/100);
+  $("finance-status").textContent="Recorded assets from Bozly journals; not a bank-confirmed treasury balance.";
+  $(ids[entity]).textContent="Journal records read";
+ }catch(e){$("treasury").textContent="Unavailable";$("finance-status").textContent=e.message;}
+}
+$("statements").addEventListener("click",statements);
+$("refresh").addEventListener("click",statements);
+$("connect").addEventListener("click",()=>{
+ if(socket){socket.close();socket=null;}
+ const entity=$("entity").value,token=$("stream-token").value.trim();
+ if(!token){log("Stream credential required.");return;}
+ const wsUrl="wss://"+location.host+"/v1/telemetry/stream";
+ socket=new WebSocket(wsUrl,["bozly-reader",entity,token]);
+ $("connection").textContent="Connecting (not yet live)";
+ socket.onopen=()=>{$("connection").textContent="Transport connected";log("Socket connected. Waiting for actual events.");};
+ socket.onmessage=e=>{
+  try{const data=JSON.parse(e.data);
+   if(data.entity_id!==entity)return;
+   log("EVENT "+JSON.stringify(data));
+  }catch(_){log("Rejected malformed telemetry frame");}
+ };
+ socket.onerror=()=>{log("Socket error — no health status inferred.");};
+ socket.onclose=()=>{$("connection").textContent="Disconnected";log("Socket closed.");};
+ $("stream-token").value="";
+});
+$("disconnect").addEventListener("click",()=>{if(socket)socket.close();socket=null;});
+window.addEventListener("pagehide",()=>{if(socket)socket.close();});
+</script>
+</body></html>
