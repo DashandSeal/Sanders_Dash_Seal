@@ -19,6 +19,7 @@ import bozly_operations as ops
 import bozly_purchasing as purchasing
 import bozly_global_transactions as global_finance
 import bozly_diversion_guard as diversion_guard
+import bozly_legal_intelligence as legal_intelligence
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -148,6 +149,23 @@ def application(environ,start_response):
         if not isinstance(entity,str) or len(entity)>180:
             raise ValueError()
         action=path.removeprefix("/bozly/v1/")
+        if method=="POST" and action=="legal-sources":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,{
+                "entity_id":entity,
+                "sources":legal_intelligence.source_status(
+                    jurisdiction=data.get("jurisdiction"),
+                    topic=data.get("topic")
+                ),
+                "disclaimer":"Source dates and digests do not prove legal completeness or applicability."
+            })
+        if method=="POST" and action=="legal-source-refresh":
+            require_access(actor,entity,"operate")
+            source_id=data["source_id"]
+            if not isinstance(source_id,str) or len(source_id)>180:
+                raise ValueError("Invalid official source ID")
+            return _respond(start_response,200,
+                legal_intelligence.refresh_source(source_id))
         if method=="POST" and action=="diversion-incident":
             require_access(actor,entity,"operate")
             result=diversion_guard.report_diversion_attempt(
