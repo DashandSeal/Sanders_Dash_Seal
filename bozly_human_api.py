@@ -27,6 +27,11 @@ import bozly_multimodal_integrity as multimodal
 import bozly_native_cfo as native_cfo
 import bozly_native_broker as native_broker
 import bozly_native_investment_intelligence as investments
+import bozly_wizardry_engine as wizardry
+import bozly_market_ingestor as market_news
+import bozly_onboarding as onboarding
+import bozly_forensic_dashboard as forensic_dashboard
+import bozly_native_backup as native_backup
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -282,6 +287,54 @@ def application(environ,start_response):
                 monthly_contribution_minor=data["monthly_contribution_minor"],
                 months=data["months"],
                 annual_return_percent=data["annual_return_percent"]))
+        if method=="POST" and action=="wizard-allocation":
+            require_access(actor,entity,"view")
+            model=wizardry.BozlyWizardryEngine(
+                global_benchmark_yields=data.get("benchmark_yields"),
+                aggressive_allocations=data.get("aggressive_allocations"))
+            return _respond(start_response,200,model.model_global_equity_allocation(
+                data["capital_pool_usd"],data["profile_key"]))
+        if method=="POST" and action=="wizard-accumulation":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,wizardry.BozlyWizardryEngine(
+                ).model_capital_accumulation(
+                    data["initial_usd"],data["monthly_addition_usd"],
+                    data["years"],data["annual_rate"]))
+        if method=="POST" and action=="wizard-debt-retirement":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,wizardry.BozlyWizardryEngine(
+                ).model_debt_acceleration(
+                    data["principal_usd"],data["annual_interest_rate"],
+                    data["monthly_payment_usd"],
+                    data.get("extra_payment_usd","0")))
+        if method=="POST" and action=="market-news-ingest":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,200,market_news.BozlyMarketIngestor(
+                ).fetch_and_analyze_feed(data["feed_name"],entity))
+        if method=="POST" and action=="client-license-create":
+            require_access(actor,entity,"manage")
+            return _respond(start_response,201,onboarding.BozlyOnboardingEngine(
+                ).provision_new_client(
+                    entity_id=entity,
+                    contact_reference=data["contact_reference"],
+                    license_name=data["license_name"],actor=actor["sub"],
+                    expires_at=data.get("expires_at")))
+        if method=="POST" and action=="client-license-revoke":
+            require_access(actor,entity,"manage")
+            return _respond(start_response,200,onboarding.BozlyOnboardingEngine(
+                ).revoke(entity_id=entity,client_id=data["client_id"],
+                         actor=actor["sub"]))
+        if method=="POST" and action=="forensic-dashboard":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,forensic_dashboard.forensic_snapshot(
+                entity_id=entity,limit=data.get("limit",100)))
+        if method=="POST" and action=="cfo-online-backup":
+            require_access(actor,entity,"manage")
+            # Multi-LLC physical backup cannot be safely scoped to one entity;
+            # no backup is exposed through an entity-scoped HTTP endpoint.
+            return _respond(start_response,403,{
+                "error":"BACKUP_REQUIRES_LOCAL_OPERATOR_CONTEXT",
+                "detail":"Use the native local Bozly backup service on the host"})
         if method=="POST" and action=="multimodal-integrity":
             require_access(actor,entity,"operate")
             return _respond(start_response,201,multimodal.assess_interaction(
