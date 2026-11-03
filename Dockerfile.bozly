@@ -1,11 +1,11 @@
 FROM python:3.11-slim
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
-RUN pip install --no-cache-dir gunicorn==23.0.0 \
+RUN pip install --no-cache-dir gunicorn==26.2.0 PyJWT==2.15.1 cryptography==47.0.0 \
     && useradd --system --create-home --home /home/bozly bozly \
     && mkdir -p /app/secure_ledgers \
     && chown -R bozly:bozly /app/secure_ledgers
-COPY --chown=bozly:bozly bozly_cfo.py bozly_stripe_webhook_wsgi.py /app/
+COPY --chown=bozly:bozly bozly_cfo.py bozly_stripe_webhook_wsgi.py bozly_operations.py bozly_human_api.py bozly_uplink.py bozly_pq_identity.py /app/
 USER bozly
 EXPOSE 8000
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--worker-class", "sync", "--access-logfile", "-", "bozly_stripe_webhook_wsgi:application"]
