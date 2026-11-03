@@ -6,6 +6,7 @@ No simulated model output, fallback text, or implicit tool execution.
 from __future__ import annotations
 
 import json
+import math
 import os
 import ssl
 import time
@@ -53,8 +54,9 @@ class DaedalusClaudeTransport:
             raise ValueError("DAEDALUS_CLAUDE_MODEL must identify a real available model")
         if not self._api_key:
             raise ValueError("ANTHROPIC_API_KEY is required for live reasoning")
-        if not 0 < timeout_seconds <= 120:
-            raise ValueError("timeout_seconds must be in (0, 120]")
+        if (not isinstance(timeout_seconds, (int, float))
+                or not math.isfinite(timeout_seconds) or timeout_seconds <= 0):
+            raise ValueError("timeout_seconds must be a finite positive duration")
         self.timeout_seconds = timeout_seconds
         self.audit = audit
 
@@ -68,8 +70,8 @@ class DaedalusClaudeTransport:
     ) -> DaedalusResponse:
         if not system.strip() or not user_message.strip():
             raise ValueError("System and user messages must not be empty")
-        if not 1 <= max_tokens <= 8192:
-            raise ValueError("max_tokens must be between 1 and 8192")
+        if type(max_tokens) is not int or max_tokens <= 0:
+            raise ValueError("max_tokens must be a positive integer; provider model limits apply")
         payload = {
             "model": self.model,
             "max_tokens": max_tokens,
