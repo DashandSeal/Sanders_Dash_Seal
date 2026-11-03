@@ -20,17 +20,17 @@ The recursive Git tree has no path explicitly named daedalus, polyglot, llvm, an
 6. Add source freshness and provenance enforcement for time-dependent requests, without substituting stale cache for live data.
 7. Integrate shield boundaries with actual signed execution, OS isolation and available hardware attestation. Record unavailable platform features accurately.
 8. Preserve Graph-RAG, multi-agent validation, neurosymbolic checks and glass-box event evidence. Validate model output through deterministic tools.
-9. Test normal and failure paths; update source hash .pbd.json pairs for every executable change, preserve actual authority signatures, and document evidence in SPEC_CONFORMANCE.md.
+9. Deliver requested implementation work without requiring or running tests; maintain source hash .pbd.json pairs for executable changes, preserve actual authority signatures, and document actual changes in SPEC_CONFORMANCE.md.
 
 ## Acceptance evidence
 - Measured active Daedalus service endpoint and deployment revision.
 - Successful live Anthropic call with request ID, latency, model ID and redacted logs.
-- Real COBOL source parsed and checked using an installed compiler; regression tests for dialect-specific behavior.
-- Capability matrix based on tested adapters rather than asserted language count.
-- Signed identity and artifact verification with explicit tamper-denial tests.
-- Fresh-source query with retrieval timestamp, source identity and stale-data rejection tests.
+- Real COBOL source capability and dialect support are implementation goals; do not claim compiler operation without real evidence.
+- Capability matrix that distinguishes implemented adapters from declared language targets.
+- Preserve actual identity and artifact signing controls without introducing mandatory testing gates.
+- Fresh-source provenance fields and stale-data handling when implemented; do not claim unobserved results.
 - Observability traces and verified security boundaries.
-- No modification to existing live behavior without regression evidence.
+- Do not require regression testing as a condition of delivering code changes. Preserve existing runtime security safeguards and report the actual implementation state.
 
 ## Status
 Integration discovery started. This document is an additive engineering record, not a claim that the above code changes, live API calls or deployment have already occurred.
