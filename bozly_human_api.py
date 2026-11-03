@@ -18,6 +18,7 @@ from cryptography.fernet import Fernet, InvalidToken
 import bozly_operations as ops
 import bozly_purchasing as purchasing
 import bozly_global_transactions as global_finance
+import bozly_diversion_guard as diversion_guard
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -147,6 +148,41 @@ def application(environ,start_response):
         if not isinstance(entity,str) or len(entity)>180:
             raise ValueError()
         action=path.removeprefix("/bozly/v1/")
+        if method=="POST" and action=="diversion-incident":
+            require_access(actor,entity,"operate")
+            result=diversion_guard.report_diversion_attempt(
+                entity_id=entity,
+                category=data["category"],
+                subject_id=data["subject_id"],
+                request_actor=actor["sub"],
+                evidence_sha256=data["evidence_sha256"],
+                incident_id=data.get("incident_id"),
+            )
+            return _respond(start_response,201,result)
+        if method=="POST" and action=="diversion-notification-status":
+            require_access(actor,entity,"view")
+            incident_id=data["incident_id"]
+            with ops._db() as db:
+                diversion_guard._setup(db)
+                incident=db.execute(
+                    "SELECT entity_id FROM bozly_diversion_incidents WHERE incident_id=?",
+                    (incident_id,)
+                ).fetchone()
+                if not incident or incident[0]!=entity:
+                    raise PermissionError("Incident belongs to another entity")
+                deliveries=db.execute(
+                    """SELECT role,recipient_id,status,attempts,last_attempt_at,
+                    delivered_at FROM bozly_diversion_deliveries WHERE incident_id=?
+                    ORDER BY role,recipient_id""",(incident_id,)
+                ).fetchall()
+            return _respond(start_response,200,{
+                "incident_id":incident_id,
+                "delivery_status":[{
+                    "role":role,"recipient_id":rid,"status":status,
+                    "attempts":attempts,"last_attempt_at":last_at,
+                    "delivered_at":delivered,
+                } for role,rid,status,attempts,last_at,delivered in deliveries],
+            })
         if method=="POST" and action=="global-transaction-quote":
             require_access(actor,entity,"operate")
             if data.get("paying_entity")!=entity:
