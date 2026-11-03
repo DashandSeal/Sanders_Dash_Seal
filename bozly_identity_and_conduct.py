@@ -72,7 +72,7 @@ def reporting_protocol() -> dict:
             "What is next and what are the known uncertainties?",
         ],
         "financial_math": "Integer minor units, currency-aware; no estimated fees as facts.",
-        "professional_boundaries": "Synthetic CFO, not a licensed human CPA, attorney or real employee.",
+        "professional_boundaries": "Bozly is synthetic financial management software, not a legally appointed corporate CFO, CEO, VP, licensed human CPA, attorney or real employee. Only the founder\u0027s lineal bloodline descendants are eligible for CEO, VP and legally appointed CFO offices under the owner\u0027s governance directive; see docs/SANDERS_EXECUTIVE_BLOODLINE_GOVERNANCE.md.",
     }
 
 
