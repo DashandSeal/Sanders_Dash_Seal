@@ -24,6 +24,8 @@ import bozly_financial_ethics as ethics
 import bozly_forensic_accounting as forensic
 import bozly_claim_integrity as claims
 import bozly_multimodal_integrity as multimodal
+import bozly_native_cfo as native_cfo
+import bozly_native_broker as native_broker
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -153,6 +155,111 @@ def application(environ,start_response):
         if not isinstance(entity,str) or len(entity)>180:
             raise ValueError()
         action=path.removeprefix("/bozly/v1/")
+        # Owner-native CFO accounting, planning and investment books.
+        # Existing entity-scoped authentication applies; no new approval chain.
+        if method=="POST" and action=="cfo-account-register":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,native_cfo.register_account(
+                entity_id=entity,currency=data["currency"],code=data["code"],
+                name=data["name"],kind=data["kind"]))
+        if method=="POST" and action=="cfo-journal-post":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,native_cfo.post_journal(
+                entity_id=entity,currency=data["currency"],
+                journal_id=data["journal_id"],posting_date=data["posting_date"],
+                source_reference=data["source_reference"],
+                source_sha256=data["source_sha256"],
+                explanation=data["explanation"],actor=actor["sub"],
+                lines=data["lines"]))
+        if method=="POST" and action=="cfo-trial-balance":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,native_cfo.trial_balance(
+                entity_id=entity,currency=data["currency"],
+                through_date=data.get("through_date")))
+        if method=="POST" and action=="cfo-statements":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,native_cfo.financial_statements(
+                entity_id=entity,currency=data["currency"],
+                through_date=data.get("through_date")))
+        if method=="POST" and action=="cfo-budget-set":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,native_cfo.set_budget(
+                entity_id=entity,currency=data["currency"],month=data["month"],
+                code=data["code"],planned_net_minor=data["planned_net_minor"],
+                source_reference=data["source_reference"],actor=actor["sub"]))
+        if method=="POST" and action=="cfo-budget-variance":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,native_cfo.budget_variance(
+                entity_id=entity,currency=data["currency"],month=data["month"]))
+        if method=="POST" and action=="cfo-cash-plan-set":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,native_cfo.set_cash_plan(
+                entity_id=entity,currency=data["currency"],month=data["month"],
+                opening_cash_minor=data["opening_cash_minor"],
+                projected_inflows_minor=data["projected_inflows_minor"],
+                projected_outflows_minor=data["projected_outflows_minor"],
+                source_reference=data["source_reference"],actor=actor["sub"]))
+        if method=="POST" and action=="cfo-cash-plan":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,native_cfo.cash_plan(
+                entity_id=entity,currency=data["currency"],month=data["month"]))
+        if method=="POST" and action=="broker-account-register":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,native_broker.register_account(
+                account_id=data["account_id"],entity_id=entity,
+                currency=data["currency"],
+                account_reference=data["account_reference"]))
+        if method=="POST" and action=="broker-market-quote":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,native_broker.record_market_price(
+                quote_id=data["quote_id"],venue_mic=data["venue_mic"],
+                symbol=data["symbol"],currency=data["currency"],
+                price_minor=data["price_minor"],
+                observed_unix=data["observed_unix"],
+                source_reference=data["source_reference"],
+                source_sha256=data["source_sha256"]))
+        if method=="POST" and action=="broker-cash-record":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,native_broker.record_cash_movement(
+                entity_id=entity,account_id=data["account_id"],
+                event_id=data["event_id"],direction=data["direction"],
+                amount_minor=data["amount_minor"],
+                source_reference=data["source_reference"],
+                source_sha256=data["source_sha256"],
+                event_kind=data["event_kind"],actor=actor["sub"]))
+        if method=="POST" and action=="broker-limit-order":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,native_broker.create_limit_order(
+                entity_id=entity,account_id=data["account_id"],
+                order_id=data["order_id"],venue_mic=data["venue_mic"],
+                symbol=data["symbol"],side=data["side"],
+                quantity_micro=data["quantity_micro"],
+                limit_price_minor=data["limit_price_minor"],
+                trade_reason=data["trade_reason"],actor=actor["sub"]))
+        if method=="POST" and action=="broker-record-execution":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,native_broker.record_execution(
+                entity_id=entity,order_id=data["order_id"],
+                execution_id=data["execution_id"],
+                venue_mic=data["venue_mic"],
+                executed_micro=data["executed_micro"],
+                executed_price_minor=data["executed_price_minor"],
+                fee_minor=data["fee_minor"],
+                executed_at_unix=data["executed_at_unix"],
+                source_sha256=data["source_sha256"]))
+        if method=="POST" and action=="broker-cancel-request":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,200,native_broker.request_cancel(
+                entity_id=entity,order_id=data["order_id"],actor=actor["sub"]))
+        if method=="POST" and action=="broker-confirm-cancel":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,200,native_broker.confirm_cancel(
+                entity_id=entity,order_id=data["order_id"],
+                source_sha256=data["source_sha256"]))
+        if method=="POST" and action=="broker-portfolio":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,native_broker.portfolio(
+                entity_id=entity,account_id=data["account_id"]))
         if method=="POST" and action=="multimodal-integrity":
             require_access(actor,entity,"operate")
             return _respond(start_response,201,multimodal.assess_interaction(
