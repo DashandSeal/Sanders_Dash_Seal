@@ -22,6 +22,7 @@ import bozly_diversion_guard as diversion_guard
 import bozly_legal_intelligence as legal_intelligence
 import bozly_financial_ethics as ethics
 import bozly_forensic_accounting as forensic
+import bozly_claim_integrity as claims
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -151,6 +152,13 @@ def application(environ,start_response):
         if not isinstance(entity,str) or len(entity)>180:
             raise ValueError()
         action=path.removeprefix("/bozly/v1/")
+        if method=="POST" and action=="claim-integrity":
+            require_access(actor,entity,"operate")
+            result=claims.assess_documented_claim(
+                entity_id=entity,record_type=data["record_type"],
+                record_id=data["record_id"],claimed_field=data["claimed_field"],
+                claimed_value=data["claimed_value"],requested_by=actor["sub"])
+            return _respond(start_response,200,result)
         if method=="POST" and action=="forensic-open-case":
             require_access(actor,entity,"operate")
             return _respond(start_response,201,forensic.open_case(
