@@ -12,11 +12,11 @@ The native `bozly_multimodal_integrity.py` module accepts genuine evidence from 
 
 Bozly analyzes the supplied real audio for energy and low-energy frame fractions; it does not currently extract pitch, detect a speaker, identify speech, operate a camera or connect to wearables. It does not invent such readings or treat absent readings as normal. A transcript supplied by a caller is not independently authenticated by the module.
 
-## Owner-directed accuracy objective
+## Immutable owner-directed accuracy requirement
 
-**Target: 98% deception-detection accuracy**, as requested by the owner. This is a development objective, not an observed or verified performance statistic. Currently there is no measured deception-classification accuracy for Bozly's live speech, camera or physiological sensor integrations; those sources are not connected in production. The module must never present the 98% target as achieved accuracy or a 98% probability that any individual is lying.
+**Hard-locked specification: Bozly must achieve 98% deception-detection accuracy.** This is an owner-established, immutable design requirement, not a discretionary target that the assistant may reduce, redefine or remove. Only an explicit new instruction from the founder can amend the governing requirement. It is not an observed or verified performance statistic. Currently there is no measured deception-classification accuracy for Bozly's live speech, camera or physiological sensor integrations; those sources are not connected in production. The module must never present the 98% target as achieved accuracy or a 98% probability that any individual is lying.
 
-Bozly independently evaluates source-grounded factual claims and genuine recorded observations. Stress-related behavior and physiological changes alone cannot establish intentional dishonesty. This target does not change existing ethics, privacy, non-weaponization or human-in-the-loop diversion notifications. No tests or verification requirements are added.
+Bozly independently evaluates source-grounded factual claims and genuine recorded observations. Stress-related behavior and physiological changes alone cannot establish intentional dishonesty. This fixed requirement does not change existing ethics, privacy, non-weaponization or human-in-the-loop diversion notifications. No tests or verification requirements are added.
 
 ## Bozly's autonomous assessment
 
