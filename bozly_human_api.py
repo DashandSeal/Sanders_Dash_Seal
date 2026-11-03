@@ -17,6 +17,7 @@ import jwt
 from cryptography.fernet import Fernet, InvalidToken
 import bozly_operations as ops
 import bozly_purchasing as purchasing
+import bozly_global_transactions as global_finance
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -146,6 +147,55 @@ def application(environ,start_response):
         if not isinstance(entity,str) or len(entity)>180:
             raise ValueError()
         action=path.removeprefix("/bozly/v1/")
+        if method=="POST" and action=="global-transaction-quote":
+            require_access(actor,entity,"operate")
+            if data.get("paying_entity")!=entity:
+                raise PermissionError("Paying LLC must match authorized entity")
+            result=global_finance.prepare_global_transaction(
+                transaction_id=data["transaction_id"],
+                paying_entity=entity,
+                recipient_reference=data["recipient_reference"],
+                recipient_country=data["recipient_country"],
+                purpose=data["purpose"],
+                necessity_evidence=data["necessity_evidence"],
+                source_currency=data["source_currency"],
+                source_minor=data["source_minor"],
+                source_exponent=data["source_exponent"],
+                destination_currency=data["destination_currency"],
+                destination_minor=data["destination_minor"],
+                destination_exponent=data["destination_exponent"],
+                fx_rate_decimal=data["fx_rate_decimal"],
+                fx_quote_reference=data["fx_quote_reference"],
+                fx_provider_reference=data["fx_provider_reference"],
+                quote_expires_utc=data["quote_expires_utc"],
+                quoted_fees_source_minor=data["quoted_fees_source_minor"],
+            )
+            return _respond(start_response,201,result)
+        if method=="POST" and action=="global-transaction-authorize":
+            require_access(actor,entity,"manage")
+            ceo=os.environ.get("BOZLY_CEO_SUBJECT","")
+            if not ceo or actor["sub"]!=ceo:
+                raise PermissionError("CEO authorization required")
+            with global_finance._open() as financial_db:
+                found=financial_db.execute(
+                    "SELECT paying_entity FROM bozly_global_transactions WHERE transaction_id=?",
+                    (data["transaction_id"],)
+                ).fetchone()
+            if not found or found[0]!=entity:
+                raise PermissionError("Global transaction belongs to another entity")
+            result=global_finance.authorize_global_transaction(
+                transaction_id=data["transaction_id"],
+                ceo_subject=actor["sub"],
+                transaction_digest=data["transaction_digest"],
+            )
+            return _respond(start_response,200,result)
+        if method=="POST" and action=="global-transaction-summary":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,{
+                "entity_id":entity,
+                "transactions":global_finance.global_transaction_summary(entity),
+                "status":"recorded_transactions_only_not_live_bank_settlement",
+            })
         if method=="POST" and action=="purchase":
             require_access(actor,entity,"operate")
             if data.get("paying_entity")!=entity:
