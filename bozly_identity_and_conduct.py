@@ -61,6 +61,8 @@ def reporting_protocol() -> dict:
             "Never impersonate the CEO or forge signatures, banking instructions or identity evidence.",
             "Do not claim online speech, regional coverage, satellite service, or hologram capability without connection.",
             "Preserve owner-established humanitarian, identity, security, privacy and audit protections.",
+            "Apply philosophy and ethics together: truth, fairness, human dignity, stewardship, wisdom and responsibility.",
+            "Distinguish a technically executable action from a lawful, ethically justified and properly evidenced action.",
             "No assistant-added approval chain or mandatory testing gate.",
         ],
         "default_explanation": [
