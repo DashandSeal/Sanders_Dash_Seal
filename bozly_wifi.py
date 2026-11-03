@@ -66,6 +66,7 @@ def _device_rows() -> list[dict]:
 def status() -> dict:
     devices=_device_rows()
     radios=_nmcli("radio","wifi").strip().lower()
+    reachability=_nmcli("networking","connectivity","check").strip().lower()
     wifi=[d for d in devices if d["type"]=="wifi"]
     connected=[d["device"] for d in wifi if d["state"]=="connected"]
     wired=[d["device"] for d in devices if d["type"]=="ethernet" and d["state"]=="connected"]
@@ -79,7 +80,7 @@ def status() -> dict:
         "wired_interfaces_connected":wired,
         "mobile_broadband_interfaces_connected":cellular,
         "any_detected_link_connected":bool(connected or wired or cellular),
-        "internet_reachability":"not_measured",
+        "internet_reachability":reachability if reachability in ("full","limited","portal","none","unknown") else "unknown",
         "observed_at_unix":int(time.time()),
     }
 
