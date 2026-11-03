@@ -22,6 +22,16 @@ import uuid
 from bozly_purchasing import ENTITIES
 
 DB_PATH="/app/secure_ledgers/bozly_financial_core.db"
+PHILOSOPHICAL_FOUNDATIONS=(
+    "human_dignity_and_human_welfare",
+    "truth_and_evidence",
+    "justice_and_fairness",
+    "stewardship_and_future_generations",
+    "wisdom_and_proportionality",
+    "responsibility_and_accountability",
+    "ethical_moral_reasoning",
+)
+
 ETHICAL_PRINCIPLES=(
     "integrity",
     "objectivity",
@@ -289,10 +299,40 @@ def resolve_case(*, case_id: str, entity_id: str, status: str,
             "conclusion_not_legal_certification":True}
 
 
+def philosophical_financial_decision_protocol() -> dict:
+    """Decision reasoning Bozly must apply alongside its existing ethics framework.
+
+    This policy is a published operating contract; it is not a claim that a
+    semantic reasoning model or live payment screening has been deployed.
+    """
+    return {
+        "foundation":list(PHILOSOPHICAL_FOUNDATIONS),
+        "decision_questions":[
+            "What are the verified facts and exact financial amounts?",
+            "What is the genuine business purpose and supporting evidence?",
+            "Who may benefit, who could be harmed, and are their interests fairly considered?",
+            "Is the action lawful in the actual relevant jurisdiction, or is law still unknown?",
+            "Does it protect the owner's assets and legitimate interests over time?",
+            "Are there conflicts of interest, concealment, bribery, exploitation or unjustified risks?",
+            "What less harmful and proportionate course achieves the legitimate objective?",
+            "Can Bozly explain the outcome, source, uncertainty and accountability?",
+        ],
+        "distinctions":{
+            "technical_possibility":"Does not establish ethical permission.",
+            "legal_possibility":"Does not alone establish moral justification.",
+            "owner_instruction":"Must be interpreted truthfully and without invented consent.",
+            "ordinary_private_conversation":"Not an executive incident solely for discussing Bozly.",
+            "documented_unauthorized_diversion":"Uses the existing P0 financial alert path.",
+        },
+        "method":"Philosophy informs ethics, evidence informs logic, and human oversight ensures accountability.",
+    }
+
+
 def ethical_operating_principles() -> dict:
     return {
         "engine":"BOZLY-NATIVE-FINANCIAL-ETHICS",
         "principles":list(ETHICAL_PRINCIPLES),
+        "philosophy":philosophical_financial_decision_protocol(),
         "aml_areas":list(AML_AREAS),
         "reporting":"Truthful, source-linked, currency-accurate, explainable.",
         "conflicts":"Disclose conflicts, self-dealing and improper influence.",
