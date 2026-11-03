@@ -1,0 +1,24 @@
+[Unit]
+Description=Sanders AI Minotaur Sentinel Patrol Core
+After=network.target bozly-cfo.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root/DashandSeal/Sanders_Dash_Seal
+ExecStart=/usr/bin/python3 -c "import time, minotaur_sentinel; ms = minotaur_sentinel.MinotaurSentinel(); \
+while True: \
+    alerts = ms.execute_patrol_cycle(); \
+    if alerts: print(f'ALERT: {alerts}'); \
+    time.sleep(10);"
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Zero-Resource Constraints Optimization
+CPUWeight=5
+MemoryMax=32M
+
+[Install]
+WantedBy=multi-user.target
