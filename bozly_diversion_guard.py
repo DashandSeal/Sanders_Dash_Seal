@@ -172,7 +172,7 @@ def dispatch_pending(incident_id: str | None = None) -> dict:
         scheduled.append((iid, role, rid, target["url"], target["token"], payload))
     results = []
     if scheduled:
-        with ThreadPoolExecutor(max_workers=len(scheduled)) as pool:
+        with ThreadPoolExecutor(max_workers=min(len(scheduled), 16)) as pool:
             futures = [pool.submit(_send_one, item) for item in scheduled]
             for future in as_completed(futures):
                 results.append(future.result())
