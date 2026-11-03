@@ -11,6 +11,10 @@ from decimal import Decimal, ROUND_HALF_EVEN, InvalidOperation
 import hashlib
 import json
 import os
+import ssl
+import urllib.request
+import urllib.error
+from urllib.parse import urlsplit
 from pathlib import Path
 import sqlite3
 import time
@@ -171,6 +175,113 @@ def authorize_global_transaction(*, transaction_id, ceo_subject, transaction_dig
                    (ceo_subject,int(time.time()),transaction_id))
         db.commit()
     return {"transaction_id":transaction_id,"status":"CEO_AUTHORIZED"}
+
+
+class _NoPaymentRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *args, **kwargs):
+        return None
+
+
+def submit_global_transaction(transaction_id: str) -> dict:
+    """Submit one CEO-authorized cross-border transfer to a real configured rail.
+
+    Sender and recipient eligibility, sanctions/AML compliance, beneficiary
+    validation, and corridor availability are enforced by the actual regulated
+    payments institution. Never mark transfer settled from an acceptance alone.
+    """
+    raw_routes=os.getenv("BOZLY_GLOBAL_RAILS_JSON","")
+    try:
+        routes=json.loads(raw_routes) if raw_routes else {}
+    except ValueError as exc:
+        raise GlobalTransactionError("Payment rail configuration invalid") from exc
+    with _open() as db:
+        row=db.execute(
+            """SELECT paying_entity,recipient_reference,recipient_country,purpose,
+               source_currency,source_minor,destination_currency,destination_minor,
+               fx_quote_reference,fx_provider_reference,quote_expires_utc,
+               quoted_fees_source_minor,transaction_digest,ceo_subject,
+               status FROM bozly_global_transactions WHERE transaction_id=?""",
+            (transaction_id,)
+        ).fetchone()
+    if not row:
+        raise KeyError("Unknown global transaction")
+    (entity,recipient,country,purpose,source_currency,source_minor,
+     destination_currency,destination_minor,quote_ref,quote_provider,expires,
+     quoted_fee,digest,ceo,status)=row
+    if status!="CEO_AUTHORIZED":
+        return {"transaction_id":transaction_id,"status":status,"submitted":False}
+    if not ceo or expires<=int(time.time()):
+        raise GlobalTransactionError("CEO authorization or live FX quote missing")
+    route=routes.get(entity) if isinstance(routes,dict) else None
+    if not isinstance(route,dict):
+        raise GlobalTransactionError("No actual global payments rail for paying LLC")
+    endpoint=route.get("endpoint")
+    token=route.get("bearer_token")
+    p=urlsplit(endpoint or "")
+    if (not token or p.scheme!="https" or not p.hostname
+            or p.username or p.password or p.fragment):
+        raise GlobalTransactionError("Real authenticated global payment gateway required")
+    key=hashlib.sha256(("bozly-global:"+transaction_id+":"+digest).encode()).hexdigest()
+    with _open() as db:
+        db.execute("BEGIN IMMEDIATE")
+        changed=db.execute(
+            """UPDATE bozly_global_transactions SET status='SUBMISSION_UNKNOWN'
+            WHERE transaction_id=? AND status='CEO_AUTHORIZED' AND quote_expires_utc>?""",
+            (transaction_id,int(time.time()))
+        ).rowcount
+        db.commit()
+    if changed!=1:
+        return {"transaction_id":transaction_id,"status":"NOT_SUBMITTED"}
+    payload=json.dumps({
+        "transaction_id":transaction_id,
+        "paying_entity":entity,"recipient_reference":recipient,
+        "recipient_country":country,"purpose":purpose,
+        "source_currency":source_currency,"source_minor":source_minor,
+        "destination_currency":destination_currency,"destination_minor":destination_minor,
+        "fx_quote_reference":quote_ref,"fx_provider_reference":quote_provider,
+        "quoted_fees_source_minor":quoted_fee,
+        "transaction_digest":digest,"idempotency_key":key,
+    },separators=(",",":")).encode()
+    req=urllib.request.Request(endpoint,data=payload,method="POST",headers={
+        "Authorization":"Bearer "+token,
+        "Content-Type":"application/json",
+        "Idempotency-Key":key,
+        "Accept":"application/json",
+    })
+    opener=urllib.request.build_opener(
+        urllib.request.ProxyHandler({}),
+        urllib.request.HTTPSHandler(context=ssl.create_default_context()),
+        _NoPaymentRedirect(),
+    )
+    try:
+        with opener.open(req,timeout=25) as response:
+            raw=response.read(65537)
+            if not 200<=response.status<300 or len(raw)>65536:
+                raise GlobalTransactionError("Transfer acceptance not confirmed")
+            receipt=json.loads(raw)
+            if not isinstance(receipt,dict):
+                raise ValueError("Malformed transfer receipt")
+            bank_id=receipt.get("payment_id")
+            state=receipt.get("status")
+            if (not isinstance(bank_id,str) or not bank_id
+                    or state not in {"accepted","submitted","processing"}):
+                raise GlobalTransactionError("Transfer acceptance not confirmed")
+    except (urllib.error.URLError,TimeoutError,OSError,ValueError,
+            GlobalTransactionError):
+        return {"transaction_id":transaction_id,"status":"SUBMISSION_UNKNOWN",
+                "idempotency_key":key,
+                "note":"Reconcile with the payment institution before any retry"}
+    with _open() as db:
+        db.execute("BEGIN IMMEDIATE")
+        db.execute(
+            """UPDATE bozly_global_transactions SET status='SUBMITTED',
+            payment_reference=? WHERE transaction_id=?
+            AND status='SUBMISSION_UNKNOWN'""",
+            (bank_id,transaction_id)
+        )
+        db.commit()
+    return {"transaction_id":transaction_id,"status":"SUBMITTED",
+            "payment_reference":bank_id,"settled":False}
 
 
 def record_global_settlement(*, transaction_id, event_id, payment_reference,
