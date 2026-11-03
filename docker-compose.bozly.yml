@@ -1,0 +1,44 @@
+# Isolated Bozly overlay. Start with:
+# docker compose -f docker-compose.bozly.yml up -d --build
+# Do not publish this service directly to the internet.
+services:
+  bozly-webhook:
+    build:
+      context: .
+      dockerfile: Dockerfile.bozly
+    image: sanders-bozly-cfo:local
+    container_name: sanders_bozly_webhook
+    restart: unless-stopped
+    environment:
+      BOZLY_DB_PATH: /app/secure_ledgers/bozly_financial_core.db
+      BOZLY_STRIPE_ROUTES_JSON: ${BOZLY_STRIPE_ROUTES_JSON:?Configure server-owned Stripe route bindings}
+    volumes:
+      - bozly-ledgers:/app/secure_ledgers
+    networks:
+      - bozly-internal
+    ports:
+      - "127.0.0.1:8185:8000"
+
+  bozly-worker:
+    image: sanders-bozly-cfo:local
+    build:
+      context: .
+      dockerfile: Dockerfile.bozly
+    container_name: sanders_bozly_cfo_worker
+    command: ["python", "bozly_cfo.py", "worker"]
+    restart: unless-stopped
+    environment:
+      BOZLY_DB_PATH: /app/secure_ledgers/bozly_financial_core.db
+      BOZLY_POLL_SECONDS: ${BOZLY_POLL_SECONDS:-2}
+    volumes:
+      - bozly-ledgers:/app/secure_ledgers
+    networks:
+      - bozly-internal
+
+networks:
+  bozly-internal:
+    driver: bridge
+
+volumes:
+  bozly-ledgers:
+    driver: local
