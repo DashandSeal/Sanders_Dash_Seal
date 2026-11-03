@@ -151,6 +151,7 @@ def application(environ,start_response):
         action=path.removeprefix("/bozly/v1/")
         if method=="POST" and action=="legal-sources":
             require_access(actor,entity,"view")
+            legal_intelligence.seed_authorities()
             return _respond(start_response,200,{
                 "entity_id":entity,
                 "sources":legal_intelligence.source_status(
@@ -161,6 +162,7 @@ def application(environ,start_response):
             })
         if method=="POST" and action=="legal-source-refresh":
             require_access(actor,entity,"operate")
+            legal_intelligence.seed_authorities()
             source_id=data["source_id"]
             if not isinstance(source_id,str) or len(source_id)>180:
                 raise ValueError("Invalid official source ID")
