@@ -26,6 +26,7 @@ import bozly_claim_integrity as claims
 import bozly_multimodal_integrity as multimodal
 import bozly_native_cfo as native_cfo
 import bozly_native_broker as native_broker
+import bozly_native_investment_intelligence as investments
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -260,6 +261,27 @@ def application(environ,start_response):
             require_access(actor,entity,"view")
             return _respond(start_response,200,native_broker.portfolio(
                 entity_id=entity,account_id=data["account_id"]))
+        if method=="POST" and action=="investment-policy-set":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,investments.set_policy(
+                entity_id=entity,account_id=data["account_id"],
+                currency=data["currency"],
+                minimum_liquidity_minor=data["minimum_liquidity_minor"],
+                maximum_single_holding_bps=data["maximum_single_holding_bps"],
+                maximum_equity_exposure_bps=data["maximum_equity_exposure_bps"],
+                rebalance_threshold_bps=data["rebalance_threshold_bps"],
+                thesis=data["thesis"],actor=actor["sub"]))
+        if method=="POST" and action=="investment-portfolio-analyze":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,investments.portfolio_analysis(
+                entity_id=entity,account_id=data["account_id"]))
+        if method=="POST" and action=="investment-scenario-project":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,investments.compound_projection(
+                starting_minor=data["starting_minor"],
+                monthly_contribution_minor=data["monthly_contribution_minor"],
+                months=data["months"],
+                annual_return_percent=data["annual_return_percent"]))
         if method=="POST" and action=="multimodal-integrity":
             require_access(actor,entity,"operate")
             return _respond(start_response,201,multimodal.assess_interaction(
