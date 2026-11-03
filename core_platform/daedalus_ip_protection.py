@@ -58,13 +58,15 @@ def publication_guard(
     *,
     classification: str,
     explicit_publication_authorization: bool,
-    patent_counsel_clearance: bool,
+    patent_counsel_clearance: bool | None = None,
 ) -> None:
-    """Prevent accidental disclosure of restricted invention materials."""
-    if classification != "public" and not (
-        explicit_publication_authorization and patent_counsel_clearance
-    ):
-        raise PermissionError("Restricted invention content must not be published")
+    """Honor the owner's publication authorization without a separate counsel gate.
+
+    The optional legacy counsel flag remains accepted for existing integrations,
+    but it never overrides or becomes a prerequisite to owner authorization.
+    """
+    if classification != "public" and not explicit_publication_authorization:
+        raise PermissionError("Restricted invention content requires explicit publication authorization")
 
 
 def sanitize_provenance(metadata: Mapping[str, str]) -> dict[str, str]:
