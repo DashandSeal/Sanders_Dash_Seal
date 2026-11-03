@@ -270,6 +270,15 @@ def run_worker() -> None:
         raise ValueError("Invalid polling interval")
     while True:
         core.process_pending()
+        # P0 officer notifications are retried independently of an API request.
+        # Delivery attempts are non-transactional; failures do not stop the CFO.
+        try:
+            from bozly_diversion_guard import dispatch_pending
+            dispatch_pending()
+        except Exception:
+            # Keep the worker available; undelivered incidents remain durable.
+            import logging
+            logging.getLogger("bozly").exception("P0 diversion alert retry unavailable")
         time.sleep(poll)
 
 
