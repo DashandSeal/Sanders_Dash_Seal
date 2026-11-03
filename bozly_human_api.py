@@ -189,6 +189,20 @@ def application(environ,start_response):
                 transaction_digest=data["transaction_digest"],
             )
             return _respond(start_response,200,result)
+        if method=="POST" and action=="global-transaction-submit":
+            require_access(actor,entity,"manage")
+            ceo=os.environ.get("BOZLY_CEO_SUBJECT","")
+            if not ceo or actor["sub"]!=ceo:
+                raise PermissionError("Actual CEO identity required for transfer initiation")
+            with global_finance._open() as financial_db:
+                found=financial_db.execute(
+                    "SELECT paying_entity FROM bozly_global_transactions WHERE transaction_id=?",
+                    (data["transaction_id"],)
+                ).fetchone()
+            if not found or found[0]!=entity:
+                raise PermissionError("Transaction belongs to another LLC")
+            result=global_finance.submit_global_transaction(data["transaction_id"])
+            return _respond(start_response,200,result)
         if method=="POST" and action=="global-transaction-summary":
             require_access(actor,entity,"view")
             return _respond(start_response,200,{
