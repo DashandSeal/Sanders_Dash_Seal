@@ -1,0 +1,9 @@
+FROM python:3.11-slim
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
+WORKDIR /app
+RUN pip install --no-cache-dir gunicorn==23.0.0 \
+    && useradd --system --create-home --home /home/bozly bozly
+COPY --chown=bozly:bozly bozly_cfo.py bozly_stripe_webhook_wsgi.py /app/
+USER bozly
+EXPOSE 8000
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--worker-class", "sync", "--access-logfile", "-", "bozly_stripe_webhook_wsgi:application"]
