@@ -21,6 +21,7 @@ import bozly_global_transactions as global_finance
 import bozly_diversion_guard as diversion_guard
 import bozly_legal_intelligence as legal_intelligence
 import bozly_financial_ethics as ethics
+import bozly_forensic_accounting as forensic
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -150,6 +151,29 @@ def application(environ,start_response):
         if not isinstance(entity,str) or len(entity)>180:
             raise ValueError()
         action=path.removeprefix("/bozly/v1/")
+        if method=="POST" and action=="forensic-open-case":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,forensic.open_case(
+                entity_id=entity,title=data["title"],scope=data["scope"],
+                opened_by=actor["sub"],case_id=data.get("case_id"),
+            ))
+        if method=="POST" and action=="forensic-attach-evidence":
+            require_access(actor,entity,"operate")
+            with forensic._db() as fdb:
+                if forensic._entity(fdb,data["case_id"])!=entity:
+                    raise PermissionError("Case is outside authenticated LLC")
+            return _respond(start_response,201,forensic.attach_evidence(
+                case_id=data["case_id"],evidence_id=data["evidence_id"],
+                evidence_type=data["evidence_type"],
+                source_reference=data["source_reference"],
+                source_sha256=data["source_sha256"],
+                collected_by=actor["sub"],
+            ))
+        if method=="POST" and action=="forensic-investigate":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,forensic.investigate(
+                case_id=data["case_id"],entity_id=entity,
+            ))
         if method=="POST" and action=="ethics-principles":
             require_access(actor,entity,"view")
             return _respond(start_response,200,ethics.ethical_operating_principles())
