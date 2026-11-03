@@ -16,6 +16,7 @@ import uuid
 import jwt
 from cryptography.fernet import Fernet, InvalidToken
 import bozly_operations as ops
+import bozly_purchasing as purchasing
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -145,6 +146,58 @@ def application(environ,start_response):
         if not isinstance(entity,str) or len(entity)>180:
             raise ValueError()
         action=path.removeprefix("/bozly/v1/")
+        if method=="POST" and action=="purchase":
+            require_access(actor,entity,"operate")
+            if data.get("paying_entity")!=entity:
+                raise PermissionError("Paying entity must match authenticated entity scope")
+            result=purchasing.create_purchase(
+                order_id=data["order_id"],
+                paying_entity=entity,
+                merchant_id=data["merchant_id"],
+                merchant_invoice=data["merchant_invoice"],
+                description=data["description"],
+                category=data["category"],
+                necessity_reason=data["necessity_reason"],
+                evidence_reference=data["evidence_reference"],
+                amount_minor=data["amount_minor"],
+                currency=data["currency"],
+                destination_token=data["destination_token"],
+                line_items=data["line_items"],
+                beneficiary_allocations_minor=data["beneficiary_allocations_minor"],
+                creator_subject=actor["sub"],
+            )
+            return _respond(start_response,201,result)
+        if method=="POST" and action=="purchase-ceo-authorize":
+            require_access(actor,entity,"manage")
+            ceo_id=os.environ.get("BOZLY_CEO_SUBJECT","")
+            if not ceo_id or actor["sub"]!=ceo_id:
+                raise PermissionError("CEO identity required for purchasing authorization")
+            order_id=data["order_id"]
+            with purchasing._db() as order_db:
+                existing=purchasing._order_row(order_db,order_id)
+            if existing[0]!=entity:
+                raise PermissionError("Purchase belongs to another legal entity")
+            result=purchasing.ceo_authorize_purchase(
+                order_id=order_id,ceo_subject=actor["sub"],
+                authorized_purchase_digest=data["authorized_purchase_digest"],
+            )
+            return _respond(start_response,200,result)
+        if method=="POST" and action=="purchase-submit":
+            require_access(actor,entity,"manage")
+            ceo_id=os.environ.get("BOZLY_CEO_SUBJECT","")
+            if not ceo_id or actor["sub"]!=ceo_id:
+                raise PermissionError("CEO identity required for purchase submission")
+            order_id=data["order_id"]
+            with purchasing._db() as order_db:
+                existing=purchasing._order_row(order_db,order_id)
+            if existing[0]!=entity:
+                raise PermissionError("Purchase belongs to another legal entity")
+            result=purchasing.submit_authorized_purchase(order_id)
+            return _respond(start_response,200,result)
+        if method=="POST" and action=="purchase-monthly-review":
+            require_access(actor,entity,"view")
+            return _respond(start_response,200,
+                purchasing.monthly_purchases(paying_entity=entity,month=data["month"]))
         if method=="POST" and action=="workflows":
             require_access(actor,entity,"operate")
             result=ops.new_workflow(entity,data["title"],data["category"],actor["sub"])
