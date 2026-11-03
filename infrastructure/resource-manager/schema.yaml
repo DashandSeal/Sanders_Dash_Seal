@@ -1,9 +1,8 @@
-schema // True OCI stack dashboard integration blueprint schema
 schemaVersion: 1.1.0
-version: "1.15.0"
+version: "1.0.0"
 locale: en
 title: Sanders Dash & Seal application deployment
-description: Install and start the bundled Sanders Dash & Seal application on an Always Free compute node.
+description: Install and start the bundled Sanders Dash & Seal application on a new A1 node. No separate private Git access, custom authorizer or runtime factory is required.
 variableGroups:
   - title: Existing tenancy and network
     variables: [tenancy_ocid, compartment_ocid, region, existing_subnet_ocid, existing_nsg_ocid]
@@ -11,7 +10,6 @@ variableGroups:
     variables: [deploy_existing_instance, existing_instance_ocid, create_instance, create_network, availability_domain_index, image_ocid, assign_public_ip]
   - title: First boot and recovery
     variables: [deployment_name, ssh_public_key]
-
 variables:
   tenancy_ocid:
     type: string
@@ -21,7 +19,7 @@ variables:
     title: Actual target compartment or root tenancy OCID
   region:
     type: string
-    title: Target OCI home or deployment region
+    title: Phoenix home region
   existing_subnet_ocid:
     type: string
     title: Existing public subnet OCID
@@ -30,7 +28,7 @@ variables:
     title: Existing ig-quick-action-NSG OCID
   create_instance:
     type: boolean
-    title: Provision one additional Always Free instance
+    title: Provision one additional A1 instance
   create_network:
     type: boolean
     title: Provision a separate VCN instead of reusing the existing network
@@ -49,9 +47,10 @@ variables:
   ssh_public_key:
     type: string
     title: Optional recovery public key
+
   deploy_existing_instance:
     type: boolean
     title: Install on the existing Sanders Dash & Seal VM
   existing_instance_ocid:
     type: string
-    title: Existing compute instance OCID
+    title: Existing Phoenix instance OCID
