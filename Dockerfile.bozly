@@ -6,6 +6,7 @@ RUN pip install --no-cache-dir gunicorn==26.2.0 PyJWT==2.15.1 cryptography==47.0
     && mkdir -p /app/secure_ledgers \
     && chown -R bozly:bozly /app/secure_ledgers
 COPY --chown=bozly:bozly bozly_cfo.py bozly_stripe_webhook_wsgi.py bozly_operations.py bozly_human_api.py bozly_uplink.py bozly_pq_identity.py bozly_purchasing.py bozly_global_transactions.py bozly_identity_and_conduct.py bozly_global_presence.py bozly_diversion_guard.py bozly_legal_intelligence.py bozly_financial_ethics.py bozly_forensic_accounting.py bozly_claim_integrity.py bozly_multimodal_integrity.py bozly_native_cfo.py bozly_native_broker.py bozly_native_investment_intelligence.py /app/
+COPY --chown=bozly:bozly labyrinth_shield.py minotaur_sentinel.py bozly_security_response.py bozly_shield_wsgi.py /app/
 USER bozly
 EXPOSE 8000
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--worker-class", "sync", "--access-logfile", "-", "bozly_stripe_webhook_wsgi:application"]
