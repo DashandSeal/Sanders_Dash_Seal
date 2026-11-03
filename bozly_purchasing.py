@@ -284,6 +284,135 @@ def submit_authorized_purchase(order_id: str) -> dict:
             "payment_reference":external_ref,"settled":False}
 
 
+def reconcile_bank_purchase_receipt(
+    *, order_id: str, bank_event_id: str, payment_reference: str,
+    payment_key: str, amount_minor: int, currency: str,
+    outcome: str, actual_bank_receipt_digest: str
+) -> dict:
+    """Record an external financial institution's settled/returned payment fact.
+
+    This function must only be called by a genuine authenticated bank connector.
+    It does not itself authenticate bank webhooks or settle any funds.
+    """
+    if outcome not in {"SETTLED", "RETURNED", "FAILED"}:
+        raise ValueError("Unsupported bank outcome")
+    if (not all(isinstance(x,str) and x for x in
+                (order_id, bank_event_id, payment_reference, payment_key, currency))
+            or type(amount_minor) is not int or amount_minor<0
+            or len(actual_bank_receipt_digest)!=64
+            or any(c not in "0123456789abcdef" for c in actual_bank_receipt_digest)):
+        raise ValueError("Bank settlement identity and exact evidence required")
+    with _db() as conn:
+        conn.execute("BEGIN IMMEDIATE")
+        row=conn.execute(
+            """SELECT paying_entity,amount_minor,currency,status,
+               provider_reference,idempotency_key FROM bozly_purchases WHERE order_id=?""",
+            (order_id,)
+        ).fetchone()
+        if row is None:
+            raise KeyError("Unknown Bozly order")
+        entity, expected, expected_currency, state, provider_ref, order_key=row
+        if order_key!=payment_key or expected_currency!=currency.upper():
+            raise PurchaseError("Receipt does not match the authorized order")
+        if provider_ref and provider_ref!=payment_reference:
+            raise PurchaseError("Receipt payment reference conflicts with order")
+        prior=conn.execute(
+            "SELECT order_id,event_type,event_digest FROM bozly_purchase_events WHERE event_id=?",
+            (bank_event_id,)
+        ).fetchone()
+        if prior:
+            if prior!=(order_id,outcome,actual_bank_receipt_digest):
+                raise PurchaseError("Conflicting bank event identity")
+            return {"order_id":order_id,"status":state,"duplicate":True}
+        if state not in {"SUBMITTED","SUBMISSION_UNKNOWN","SETTLED"}:
+            raise PurchaseError("Order not submitted to a real payment gateway")
+        if state=="SETTLED" and outcome!="SETTLED":
+            raise PurchaseError("Later reversal must be a separately classified ledger event")
+        new_state=outcome
+        if outcome=="SETTLED" and amount_minor!=expected:
+            new_state="AMOUNT_DISCREPANCY"
+        conn.execute(
+            """INSERT INTO bozly_purchase_events
+            (event_id,order_id,event_type,event_digest,recorded_at)
+            VALUES (?,?,?,?,?)""",
+            (bank_event_id,order_id,outcome,actual_bank_receipt_digest,int(time.time()))
+        )
+        conn.execute(
+            """UPDATE bozly_purchases SET status=?,provider_reference=?,
+               bank_receipt_id=?,
+               settled_at=CASE WHEN ?='SETTLED' THEN ? ELSE settled_at END
+               WHERE order_id=?""",
+            (new_state,payment_reference,bank_event_id,
+             new_state,int(time.time()),order_id)
+        )
+        conn.commit()
+    return {"order_id":order_id,"entity_id":entity,"status":new_state,
+            "actual_amount_minor":amount_minor,"currency":currency.upper(),
+            "settlement_reference":bank_event_id}
+
+
+def monthly_settled_spending(*, paying_entity: str, month: str) -> dict:
+    """Cents spent, settled in calendar month UTC, with grounded necessity.
+
+    Pending purchases and ambiguous payment requests are excluded.
+    """
+    from datetime import datetime, timezone
+    if paying_entity not in ENTITIES:
+        raise ValueError("Unknown Sanders LLC")
+    start=datetime.strptime(month,"%Y-%m").replace(tzinfo=timezone.utc)
+    if start.strftime("%Y-%m")!=month:
+        raise ValueError("Expected YYYY-MM")
+    year,month_number=start.year,start.month
+    end=datetime(year+(month_number==12),month_number%12+1,1,tzinfo=timezone.utc)
+    with _db() as conn:
+        paid=conn.execute(
+            """SELECT order_id,merchant_id,merchant_invoice,amount_minor,currency,
+               category,necessity_reason,evidence_reference,settled_at,
+               bank_receipt_id,beneficiary_allocations_json
+               FROM bozly_purchases
+               WHERE paying_entity=? AND status='SETTLED'
+               AND settled_at>=? AND settled_at<? ORDER BY settled_at,order_id""",
+            (paying_entity,int(start.timestamp()),int(end.timestamp()))
+        ).fetchall()
+        pending=conn.execute(
+            """SELECT status,currency,COUNT(*),COALESCE(SUM(amount_minor),0)
+               FROM bozly_purchases
+               WHERE paying_entity=? AND status NOT IN ('SETTLED','FAILED','RETURNED')
+               GROUP BY status,currency ORDER BY status,currency""",
+            (paying_entity,)
+        ).fetchall()
+    totals={}
+    by_category={}
+    line_items=[]
+    for (oid,merchant,invoice,cents,curr,category,why,evidence,
+         settled_at,receipt,allocations) in paid:
+        totals[curr]=totals.get(curr,0)+cents
+        by_category.setdefault(curr,{})
+        by_category[curr][category]=by_category[curr].get(category,0)+cents
+        line_items.append({
+            "order_id":oid,"merchant_id":merchant,"invoice_reference":invoice,
+            "amount_minor":cents,"currency":curr,
+            "category":category,"necessity_reason":why,
+            "necessity_evidence":evidence,"bank_receipt_id":receipt,
+            "beneficiary_allocations_minor":json.loads(allocations),
+            "settled_at":datetime.fromtimestamp(settled_at,timezone.utc).isoformat(),
+        })
+    return {
+        "entity_id":paying_entity,"month":month,
+        "basis":"reported financial institution settlement receipts",
+        "settled_total_minor_by_currency":totals,
+        "settled_expenses":line_items,
+        "spending_by_category_minor":by_category,
+        "outstanding_status_counts":[
+            {"status":status,"currency":curr,"count":count,"amount_minor":cents}
+            for status,curr,count,cents in pending
+        ],
+        "note":"Necessity is recorded from the business reason and evidence; "
+               "provider bank receipts must be independently authentic, "
+               "and these figures are not a complete GAAP financial statement.",
+    }
+
+
 def monthly_purchases(*, paying_entity: str, month: str) -> dict:
     """Monthly overview of cent-exact expense intents and proven settlements."""
     if paying_entity not in ENTITIES:
