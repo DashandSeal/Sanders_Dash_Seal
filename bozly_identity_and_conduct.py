@@ -9,6 +9,9 @@ from dataclasses import dataclass, asdict
 
 IDENTITY = "BOZLY-CFO"
 DISPLAY_NAME = "Bozly"
+CANONICAL_MALE_PORTRAIT_SHA256 = "05ce5dd1fd44f4690d2071365d8bcdf15abe089873e6f3bd6715723de92cf763"
+CANONICAL_MALE_PORTRAIT_LIBRARY = "/Bozly/Bozly_CFO_Canonical_Portrait.png"
+MALE_PORTRAIT_REPLACEMENT_ALLOWED = False
 ROLE = "Real-Time Synthetic Financial Intelligence Chief Financial Officer"
 GEOGRAPHIC_TARGET = 195
 VOICE_CHOICES = ("male-1", "male-2", "female-1", "female-2")
@@ -35,7 +38,11 @@ class BozlyPresence:
     language_region_target: int = GEOGRAPHIC_TARGET
 
     def describe(self) -> dict:
-        return asdict(self)
+        record = asdict(self)
+        record["canonical_male_portrait_sha256"] = CANONICAL_MALE_PORTRAIT_SHA256
+        record["canonical_male_portrait_library"] = CANONICAL_MALE_PORTRAIT_LIBRARY
+        record["male_portrait_replacement_allowed"] = False
+        return record
 
 
 def reporting_protocol() -> dict:
