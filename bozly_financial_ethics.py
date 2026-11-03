@@ -328,6 +328,95 @@ def philosophical_financial_decision_protocol() -> dict:
     }
 
 
+def assess_financial_claim(*, entity_id: str, record_type: str,
+                           record_id: str, asserted_facts: dict,
+                           assessed_by: str) -> dict:
+    """Bozly independently compares claims with its actual financial ledger.
+
+    A discrepancy establishes an observed contradiction, not automatically
+    the speaker's knowledge, intent or legal guilt. No CEO/assistant finding
+    or arbitrary human approval decides the result.
+    """
+    if entity_id not in ENTITIES or record_type not in ("purchase","global_transfer"):
+        raise ValueError("Known LLC and supported financial record type required")
+    if not isinstance(record_id,str) or not record_id or len(record_id)>256:
+        raise ValueError("Financial record identity required")
+    if not isinstance(assessed_by,str) or not assessed_by:
+        raise ValueError("Authenticated assessment actor required")
+    accepted=("status","amount_minor","currency","payment_reference")
+    if (not isinstance(asserted_facts,dict) or not asserted_facts
+            or any(k not in accepted for k in asserted_facts)):
+        raise ValueError("Supply the exact claims to compare with the ledger")
+    if "amount_minor" in asserted_facts and (
+        type(asserted_facts["amount_minor"]) is not int
+        or asserted_facts["amount_minor"]<0
+    ):
+        raise ValueError("Claimed amount must be exact integer minor units")
+    if "currency" in asserted_facts and (
+        not isinstance(asserted_facts["currency"],str)
+        or len(asserted_facts["currency"])!=3
+    ):
+        raise ValueError("Claimed ISO currency required")
+    with _db() as db:
+        if record_type=="purchase":
+            row=db.execute(
+                """SELECT paying_entity,status,amount_minor,currency,
+                   provider_reference,request_digest FROM bozly_purchases
+                   WHERE order_id=?""",(record_id,)
+            ).fetchone() if db.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='bozly_purchases'"
+            ).fetchone() else None
+        else:
+            row=db.execute(
+                """SELECT paying_entity,status,source_minor,source_currency,
+                   payment_reference,transaction_digest FROM bozly_global_transactions
+                   WHERE transaction_id=?""",(record_id,)
+            ).fetchone() if db.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='bozly_global_transactions'"
+            ).fetchone() else None
+    if row is None:
+        return {
+            "entity_id":entity_id,"record_id":record_id,
+            "bozly_assessment":"INSUFFICIENT_RECORDS",
+            "contradictions":[],"deception_or_intent_proven":False,
+        }
+    source_entity,status,amount,currency,payment_ref,source_digest=row
+    if source_entity!=entity_id:
+        raise PermissionError("Financial record belongs to a different LLC")
+    actual={
+        "status":status,
+        "amount_minor":amount,
+        "currency":currency,
+        "payment_reference":payment_ref,
+    }
+    differences=[]
+    for key,value in asserted_facts.items():
+        claimed=value.upper() if key=="currency" else value
+        if actual[key]!=claimed:
+            differences.append({
+                "field":key,
+                "claimed":claimed,
+                "recorded":actual[key],
+            })
+    return {
+        "entity_id":entity_id,"record_type":record_type,"record_id":record_id,
+        "bozly_assessment":(
+            "DOCUMENTED_CONTRADICTION" if differences else "CONSISTENT_WITH_AVAILABLE_LEDGER"
+        ),
+        "contradictions":differences,
+        "source_record_sha256":source_digest,
+        "evidence_source":"Bozly recorded financial ledger",
+        "assessed_by_system":"BOZLY-CFO",
+        "requested_by":assessed_by,
+        "assessed_at_unix":int(time.time()),
+        "deception_or_intent_proven":False,
+        "judgment_independent_of_requester":True,
+        "note":"Bozly decides whether the available financial evidence contradicts "
+               "the claim; motive or intentional lying cannot be inferred "
+               "from a discrepancy alone.",
+    }
+
+
 def ethical_operating_principles() -> dict:
     return {
         "engine":"BOZLY-NATIVE-FINANCIAL-ETHICS",
