@@ -23,6 +23,7 @@ import bozly_legal_intelligence as legal_intelligence
 import bozly_financial_ethics as ethics
 import bozly_forensic_accounting as forensic
 import bozly_claim_integrity as claims
+import bozly_multimodal_integrity as multimodal
 
 ISSUER = os.getenv("BOZLY_OIDC_ISSUER", "")
 AUDIENCE = os.getenv("BOZLY_OIDC_AUDIENCE", "")
@@ -152,6 +153,21 @@ def application(environ,start_response):
         if not isinstance(entity,str) or len(entity)>180:
             raise ValueError()
         action=path.removeprefix("/bozly/v1/")
+        if method=="POST" and action=="multimodal-integrity":
+            require_access(actor,entity,"operate")
+            return _respond(start_response,201,multimodal.assess_interaction(
+                entity_id=entity,
+                session_reference=data["session_reference"],
+                subject_reference=data["subject_reference"],
+                capture_source=data["capture_source"],
+                capture_time_unix=data["capture_time_unix"],
+                observed_by=actor["sub"],
+                measurement_values=data.get("measurement_values"),
+                baseline_values=data.get("baseline_values"),
+                wav_pcm16_base64=data.get("wav_pcm16_base64"),
+                transcript=data.get("transcript"),
+                financial_claim=data.get("financial_claim"),
+            ))
         if method=="POST" and action=="claim-integrity":
             require_access(actor,entity,"operate")
             result=claims.assess_documented_claim(
