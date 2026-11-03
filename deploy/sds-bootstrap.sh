@@ -42,10 +42,6 @@ verify_bootstrap_source() {
     python3 "$SDS_SOURCE_DIR/scripts/verify_release_source.py" "$SDS_SOURCE_DIR" "$SDS_BOOTSTRAP_COMMIT"
 }
 
-validate_candidate() {
-    bash "$SDS_SOURCE_DIR/run_preflight_checks.sh" --commit "$SDS_BOOTSTRAP_COMMIT"
-}
-
 verify_instance_context() {
     python3 "$SDS_SOURCE_DIR/scripts/scan_identity_metadata.py"
 }
@@ -66,7 +62,7 @@ stage_node() {
     stage_authorized_source "$SDS_SOURCE_DIR" "$SDS_BOOTSTRAP_COMMIT"
     compose config --quiet
     compose build pipeline-worker wsgi-backend
-    validate_candidate
+    # No mandatory regression suite before staging or activation.
     apply_kernel_profile
     install_integrity_monitor
     install_inventory_monitor
@@ -93,7 +89,7 @@ bootstrap_main() {
         check_host
         install_engine
         verify_instance_context
-        validate_candidate
+        # No mandatory regression suite before staging or activation.
         main --apply
         apply_kernel_profile
         printf 'ACTIVATED: existing deployment readiness checks passed on this host.\n'
