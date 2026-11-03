@@ -42,8 +42,10 @@ MEASURES = frozenset({
     "body_movement_rate", "heart_rate_bpm", "respirations_per_min",
     "skin_conductance_us",
 })
-OWNER_REQUESTED_DECEPTION_ACCURACY_TARGET_PERCENT=98
-# A target is not a measured result. Never publish this as achieved accuracy.
+# Owner-directed hard lock: 98% deception-detection accuracy is a fixed
+# specification requirement. No assistant-selected downgrade or replacement.
+# This setting does not itself establish measured performance.
+OWNER_IMMUTABLE_DECEPTION_ACCURACY_REQUIREMENT_PERCENT=98
 VERIFIED_DECEPTION_ACCURACY_PERCENT=None
 
 MAX_WAV_BYTES=100_000
@@ -280,9 +282,11 @@ def assess_interaction(*, entity_id,session_reference,subject_reference,
         "audio_sha256":audio["audio_sha256"] if audio else None,
         "audio_note":audio["signal_note"] if audio else None,
         "observation_sha256":digest,
-        "requested_accuracy_target_percent":OWNER_REQUESTED_DECEPTION_ACCURACY_TARGET_PERCENT,
+        "required_deception_accuracy_percent":OWNER_IMMUTABLE_DECEPTION_ACCURACY_REQUIREMENT_PERCENT,
+        "requirement_immutable_by_design":True,
+        "requirement_change_authority":"founder_only",
         "verified_accuracy_percent":VERIFIED_DECEPTION_ACCURACY_PERCENT,
-        "target_achieved":False,
+        "requirement_achieved":False,
         "lie_or_deceptive_intent_proven":False,
         "behavior_is_not_proof_of_lying":True,
         "automatic_diversion_alert_triggered":False,
