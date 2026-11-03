@@ -14,12 +14,12 @@ from .daedalus_ip_protection import InventionRecord, sign_evidence, publication_
 
 
 PRICE_USD_MONTHLY = {
-    "enterprise_api": Decimal("50000"),
-    "cobol_bridge_enterprise": Decimal("150000"),
-    "global_infrastructure": Decimal("300000"),
-    "sovereign_deployment": Decimal("500000"),
+    "enterprise_api": Decimal("100000"),
+    "cobol_bridge_enterprise": Decimal("350000"),
+    "global_infrastructure": Decimal("750000"),
+    "sovereign_deployment": Decimal("1500000"),
 }
-PRICE_USD_ANNUAL = {"strategic_enterprise_license": Decimal("5000000")}
+PRICE_USD_ANNUAL = {"strategic_enterprise_license": Decimal("20000000")}
 IP_SERVICE_USD = {
     "portfolio_ip_governance_annual": Decimal("250000"),
     "invention_intake_per_subsystem": Decimal("2500"),
@@ -99,6 +99,11 @@ def proposed_rate_card() -> Mapping[str, object]:
         "monthly": {k: str(v) for k, v in PRICE_USD_MONTHLY.items()},
         "annual": {k: str(v) for k, v in PRICE_USD_ANNUAL.items()},
         "ip_services": {k: str(v) for k, v in IP_SERVICE_USD.items()},
+        "core_ip_safeguards": "included_in_enterprise_license",
+        "specialist_ip_services": "optional_separately_negotiated",
+        "scenario_customers": {"enterprise_api": 10, "cobol_bridge_enterprise": 5, "global_infrastructure": 3, "sovereign_deployment": 2, "strategic_enterprise_license": 2},
+        "scenario_annual_revenue_usd": "136000000",
+        "scenario_status": "illustrative_not_forecast",
         "scope": "all registered past present and future platforms and subsystems",
         "legal_patent_fees": "excluded_quoted_separately",
         "ownership": "no transfer of underlying IP by subscription",
