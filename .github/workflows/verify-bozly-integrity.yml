@@ -1,22 +1,29 @@
-name: Verify Bozly Integrity
+name: "Platinum Blue Diamond Standard: Infrastructure Validation Pipeline"
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
 
 jobs:
-  bozly-synthetic-guard:
+  infrastructure-audit:
+    name: "Validate Security Invariants"
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Checkout Bozly Source
+      - name: "Ingest Repository Tree"
         uses: actions/checkout@v4
 
-      - name: "Execute Real-Time Synthetic AI Guard & Code Purification Mesh"
+      - name: "Initialize Python Runtime Environment"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: "Execute Asset Integration Scan"
         run: |
-          if [ ! -f "bozly_synthetic_guard.py" ]; then
-            echo "::error::Bozly Synthetic Guard Core file missing from tree root context!"
-            exit 1
-          fi
-          python3 bozly_synthetic_guard.py
+          cd infrastructure/resource-manager
+          python3 verify_assets.py
