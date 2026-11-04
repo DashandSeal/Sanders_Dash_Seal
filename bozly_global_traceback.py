@@ -33,7 +33,7 @@ STATE_PATH = "/app/secure_ledgers/security"
 SERVICE_PATH = "/bozly/v1/security/global-evidence"
 KEY_PATTERN = re.compile(r"^[a-zA-Z0-9._:@/-]{1,180}$")
 HEX64 = re.compile(r"^[a-f0-9]{64}$")
-MAX_RECORD = 16384
+MAX_RECORD = None
 MAX_CLOCK_SKEW = 300
 
 
@@ -129,15 +129,13 @@ def _body(record):
         raise ValueError("Global evidence must be an object")
     data = json.dumps(record, sort_keys=True, separators=(",", ":"),
                       ensure_ascii=False, allow_nan=False).encode()
-    if len(data) > MAX_RECORD:
-        raise ValueError("Evidence exceeds size limit")
     return data
 
 
 def ingest_authenticated(raw: bytes, source_id: str, timestamp: int,
                          signature: str):
     """Ingest an authenticated origin observation; do not infer perpetrator."""
-    if not isinstance(raw, bytes) or not 0 < len(raw) <= MAX_RECORD:
+    if not isinstance(raw, bytes) or not raw:
         raise ValueError("Invalid evidence body")
     if type(timestamp) is not int or abs(int(time.time()) - timestamp) > MAX_CLOCK_SKEW:
         raise PermissionError("Expired or future source message")
@@ -214,7 +212,7 @@ def correlate(*,entity_id,incident_reference,maximum=500):
     if entity_id not in ENTITIES:
         raise ValueError("Unknown LLC")
     _identifier(incident_reference, "incident reference")
-    if type(maximum) is not int or maximum < 1 or maximum > 500:
+    if type(maximum) is not int or maximum < 1:
         raise ValueError("Invalid result count")
     with _db() as db:
         seeds = db.execute("""SELECT event_id,session_reference,
@@ -238,7 +236,7 @@ def correlate(*,entity_id,incident_reference,maximum=500):
             session_reference,transaction_reference,trace_reference,
             incident_reference,original_evidence_sha256,entry_sha256
             FROM bozly_global_evidence
-            WHERE entity_id=? ORDER BY received_unix_ns DESC LIMIT 20000""",
+            WHERE entity_id=? ORDER BY received_unix_ns DESC""",
             (entity_id,)).fetchall()
     linked=[]
     for row in rows:
@@ -291,7 +289,7 @@ def application(environ, start_response):
         return _respond(start_response,"404 Not Found",{"error":"UNKNOWN_PATH"})
     try:
         size=int(environ.get("CONTENT_LENGTH","0") or "0")
-        if not 0 < size <= MAX_RECORD:
+        if size <= 0:
             return _respond(start_response,"413 Content Too Large",{"error":"BODY_SIZE"})
         raw=environ["wsgi.input"].read(size)
         if len(raw)!=size:
