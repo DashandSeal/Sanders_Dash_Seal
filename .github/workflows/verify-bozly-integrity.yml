@@ -1,0 +1,22 @@
+name: Verify Bozly Integrity
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  bozly-synthetic-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Bozly Source
+        uses: actions/checkout@v4
+
+      - name: "Execute Real-Time Synthetic AI Guard & Code Purification Mesh"
+        run: |
+          if [ ! -f "bozly_synthetic_guard.py" ]; then
+            echo "::error::Bozly Synthetic Guard Core file missing from tree root context!"
+            exit 1
+          fi
+          python3 bozly_synthetic_guard.py
