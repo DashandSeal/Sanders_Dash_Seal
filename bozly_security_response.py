@@ -177,8 +177,8 @@ def isolation_state() -> dict:
 def _isolate(event: dict, target: str):
     """Persist isolation readable by every Bozly web-worker process.
 
-    The WSGI shield will reject requests while isolated. This is an actual
-    local application containment action when the shield entrypoints run.
+    Records the affected target for the owner's forensic response.
+    This does not impose an assistant-designed global shutdown on Bozly.
     """
     _private_dir()
     destination = STATE / "minotaur_isolation.json"
@@ -222,7 +222,7 @@ def patrol_once(sentinel: MinotaurSentinel, approved: dict) -> list[dict]:
     if anomalies and fingerprint != prior:
         record = _event("MINOTAUR_FILE_INTEGRITY_ALERT", {
             "anomalies": anomalies, "detection_source": "LOCAL_FILE_INTEGRITY",
-            "traceback_scope": "LOCAL_AUTHORIZED_HOST_EVIDENCE_ONLY",
+            "traceback_scope": "LOCAL_EVIDENCE_AVAILABLE_FOR_GLOBAL_CORRELATION",
             "no_actor_attribution_without_additional_CORROBORATION": True,
         }, "P0")
         _isolate(record, anomalies[0]["target"])
@@ -232,8 +232,8 @@ def patrol_once(sentinel: MinotaurSentinel, approved: dict) -> list[dict]:
 
 
 def daemon():
-    if not 1 <= INTERVAL <= 3600:
-        raise ValueError("Scan interval must be 1–3600 seconds")
+    if INTERVAL <= 0:
+        raise ValueError("Scan interval must be positive")
     os.chdir(ROOT)
     sentinel = MinotaurSentinel()
     approved = _baseline()
