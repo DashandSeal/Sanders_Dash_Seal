@@ -10,11 +10,9 @@ services:
     container_name: sanders_bozly_webhook
     restart: unless-stopped
     command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "bozly_shield_wsgi:webhook_application_shielded"]
-    depends_on:
-      - bozly-minotaur
     environment:
       BOZLY_DB_PATH: /app/secure_ledgers/bozly_financial_core.db
-      BOZLY_STRIPE_ROUTES_JSON: ${BOZLY_STRIPE_ROUTES_JSON:?Configure server-owned Stripe route bindings}
+      BOZLY_STRIPE_ROUTES_JSON: ${BOZLY_STRIPE_ROUTES_JSON:-}
     volumes:
       - bozly-ledgers:/app/secure_ledgers
     networks:
@@ -30,17 +28,14 @@ services:
     container_name: sanders_bozly_human_api
     restart: unless-stopped
     command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "bozly_shield_wsgi:human_application_shielded"]
-    depends_on:
-      - bozly-minotaur
     environment:
       BOZLY_CONTROL_DB: /app/secure_ledgers/bozly_controls.db
-      BOZLY_OIDC_ISSUER: ${BOZLY_OIDC_ISSUER:?Configure real identity issuer}
-      BOZLY_OIDC_AUDIENCE: ${BOZLY_OIDC_AUDIENCE:?Configure audience}
-      BOZLY_OIDC_PUBLIC_KEY_FILE: /run/bozly-keys/oidc-public.pem
-      BOZLY_SIGNAL_FERNET_KEY: ${BOZLY_SIGNAL_FERNET_KEY:?Provide protected encrypted signaling key}
+      BOZLY_OIDC_ISSUER: ${BOZLY_OIDC_ISSUER:-}
+      BOZLY_OIDC_AUDIENCE: ${BOZLY_OIDC_AUDIENCE:-}
+      BOZLY_OIDC_PUBLIC_KEY_FILE: ${BOZLY_OIDC_PUBLIC_KEY_FILE:-}
+      BOZLY_SIGNAL_FERNET_KEY: ${BOZLY_SIGNAL_FERNET_KEY:-}
     volumes:
       - bozly-ledgers:/app/secure_ledgers
-      - ${BOZLY_OIDC_PUBLIC_KEY_FILE:?Mount identity verifier public key}:/run/bozly-keys/oidc-public.pem:ro
     networks:
       - bozly-internal
     ports:
@@ -57,8 +52,8 @@ services:
     command: ["python", "bozly_uplink.py"]
     environment:
       BOZLY_CONTROL_DB: /app/secure_ledgers/bozly_controls.db
-      BOZLY_UPLINK_GATEWAY_URL: ${BOZLY_UPLINK_GATEWAY_URL:?Configure real satellite or terrestrial gateway}
-      BOZLY_UPLINK_BEARER_TOKEN: ${BOZLY_UPLINK_BEARER_TOKEN:?Configure actual gateway credential}
+      BOZLY_UPLINK_GATEWAY_URL: ${BOZLY_UPLINK_GATEWAY_URL:-}
+      BOZLY_UPLINK_BEARER_TOKEN: ${BOZLY_UPLINK_BEARER_TOKEN:-}
     volumes:
       - bozly-ledgers:/app/secure_ledgers
     networks:
