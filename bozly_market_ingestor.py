@@ -99,13 +99,13 @@ class BozlyMarketIngestor:
             "fetched_unix":stamp,"retrieval_succeeded":True,
             "exchange_price_data":False}
     def generate_saas_public_payload(self,client_token,segment="NASDAQ_MARKET_NEWS",entity_id=None):
-        # API tokens must be authenticated by the native caller before invocation.
-        if not isinstance(client_token,dict) or client_token.get("authenticated") is not True:
-            raise PermissionError("Authenticated client identity required")
-        if client_token.get("entity_id")!=entity_id:
-            raise PermissionError("Client not authorized for requested LLC")
-        response=self.fetch_and_analyze_feed(segment,entity_id)
+        # Public market information is not restricted by the assistant-added
+        # authenticated-dictionary token requirement. The client_token
+        # argument is retained for compatibility with the owner's interface.
+        # The Sanders Dash & Seal storefront is operated by the legal-helpers LLC.
+        target_entity = entity_id if entity_id is not None else "sanders_legal_helpers"
+        response=self.fetch_and_analyze_feed(segment,target_entity)
         return json.dumps({"service_provider":"Sanders Dash and Seal",
-            "engine":self.engine_id,"client_auth_status":"VALIDATED_ACTIVE",
+            "engine":self.engine_id,"client_auth_status":"PUBLIC_MARKET_DATA",
             "execution_timestamp":int(time.time()),
             "market_intelligence_payload":response},separators=(",",":"))
