@@ -1,6 +1,26 @@
 {
-  "project_name": "Sanders Future Venture",
-  "industry_vertical": "Logistics / AI Infrastructure",
-  "brand_voice": "Authoritative_Enterprise",
-  "public_assets_bucket": "oci_object_storage_assets_url"
+  "manifest_version": "1.0.0",
+  "platform_identity": {
+    "name": "Sanders Dash and Seal",
+    "legal_entity": "Sanders Dash and Seal Platform LLC",
+    "global_authorization_gate": "Roosevelt Sanders exclusively"
+  },
+  "creative_learning_core": {
+    "industry_vertical": "Logistics & Intellectual Property Security",
+    "brand_voice": "Authoritative_Enterprise_Elite",
+    "visual_palette": {
+      "primary_color_hex": "#0D1B2A",
+      "secondary_color_hex": "#415A77",
+      "iconography_style": "Geometric_Secure_Shield"
+    },
+    "asset_assembly_rules": {
+      "audio_vibe": "Deep_Cinematic_Corporate_Pacing",
+      "video_cut_cadence_seconds": 3.5,
+      "educational_wrapper_applied": "Technical_Utility_Informational"
+    }
+  },
+  "infrastructure_bindings": {
+    "asset_vault_bucket": "closeup_vmax_asset_vault",
+    "deployment_mode": "OCI_Always_Free_Serverless"
+  }
 }
