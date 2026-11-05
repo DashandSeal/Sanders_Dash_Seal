@@ -1,0 +1,14 @@
+      - name: Execute Asset Integration Scan
+        run: |
+          # 1. Dynamically locate the verify_assets.py script in the directory tree
+          TARGET_SCRIPT=$(find . -name "verify_assets.py" | head -n 1)
+          
+          if [ -z "$TARGET_SCRIPT" ]; then
+            echo "[CRITICAL ERROR] verify_assets.py could not be found in the repository!"
+            exit 1
+          fi
+          
+          echo "Found script asset at absolute workspace location: $TARGET_SCRIPT"
+          
+          # 2. Run the script directly from its discovered location
+          python3 "$TARGET_SCRIPT"
