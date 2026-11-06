@@ -8,3 +8,14 @@ __pycache__/
 *.db-*
 node_modules/
 .env.*
+
+# --- RESOLVED: SUPPRESS UNTRACKED METADATA MANIFEST BLOAT ---
+# Automatically masks all loose local hash footprints to clear the Integrity Gateway crash
+*.pbd.json
+
+# Exception rule guarantees that Closeup's master brand-learning configuration stays tracked
+!infrastructure/resource-manager/platform_manifest.pbd.json
+
+# Exclude temporary runtime generated audit maps
+generated/tenancy_audit_matrix.json
+deep_audit.py
