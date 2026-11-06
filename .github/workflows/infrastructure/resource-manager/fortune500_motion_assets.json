@@ -1,0 +1,30 @@
+{
+  "design_system_identifier": "sanders_premium_f500_identity",
+  "global_aesthetic_tier": "Enterprise_Elite",
+  "typography_hierarchy": {
+    "primary_header_font": "Helvetica Neue Bold / Inter SemiBold",
+    "body_data_font": "SF Pro Display Regular / Roboto Mono",
+    "title_safe_padding_percent": 10
+  },
+  "motion_language": {
+    "entry_transition": "Cubic-Bezier(0.25, 1, 0.5, 1) Smooth Slide-In",
+    "lower_third_animation": "Asymmetric Mask Reveal with subtle blur",
+    "video_cut_cadence_seconds": 3.5,
+    "color_overlay_opacity": 0.15
+  },
+  "brand_visual_blocks": {
+    "sanders_home_healthcare": {
+      "hex_palette": ["#0B2545", "#134074", "#EEF4F8"],
+      "watermark_position": "Top_Right_Embedded",
+      "lower_third_layout": "Dual-Line Corporate Ribbon (Dark Indigo text on Frost White)",
+      "qr_frame_style": "Minimalist Matte White Frame with subtle background shadow"
+    },
+    "sanders_dash_and_seal": {
+      "hex_palette": ["#0A0F1D", "#1E293B", "#38BDF8"],
+      "watermark_position": "Bottom_Left_Data_Overlay",
+      "lower_third_layout": "Monochromatic Tech Block with cyan indicator line",
+      "qr_frame_style": "High-Contrast Blueprint Mesh"
+    }
+  }
+}
+
