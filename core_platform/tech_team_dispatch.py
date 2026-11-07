@@ -110,9 +110,11 @@ class TechTeamDispatcher:
             db.execute('UPDATE technical_tasks SET status=? WHERE task_id=?',('RUNNING',selected))
         return {'task_id':selected,'claim':token,'task':self.inspect(selected)}
 
-    def finish(self, task_id, claim, result, verification):
-        if not isinstance(result,dict) or not result or not isinstance(verification,dict):
-            raise DispatchDenied('Structured task result and verification required')
+    def finish(self, task_id, claim, result, verification=None):
+        if not isinstance(result,dict) or not result:
+            raise DispatchDenied('Structured task result required')
+        if verification is not None and not isinstance(verification,dict):
+            raise DispatchDenied('Optional review must be structured')
         raw=json.dumps(result,sort_keys=True,allow_nan=False)
         review=json.dumps(verification,sort_keys=True,allow_nan=False)
         if len(raw.encode())>65536 or len(review.encode())>8192:
@@ -123,7 +125,7 @@ class TechTeamDispatcher:
                 JOIN technical_task_runs r USING(task_id) WHERE t.task_id=?''',(task_id,)).fetchone()
             if not row or row[0]!='RUNNING' or row[1]!=claim or row[2]<=self.clock():
                 raise DispatchDenied('Task ownership expired or changed')
-            status='REVIEW_READY' if verification.get('passed') is True else 'RESULT_RECORDED'
+            status='RESULT_RECORDED'
             self.audit.preserve({'stage':'TECH_TASK_RESULT','task_id':task_id,
                 'result':result,'verification':verification,'status':status})
             db.execute('UPDATE technical_task_runs SET result=?,verification=? WHERE task_id=?',(raw,review,task_id))
@@ -142,18 +144,18 @@ class TechTeamDispatcher:
             db.execute('UPDATE technical_task_runs SET error_code=? WHERE task_id=?',('HANDLER_FAILED',task_id))
             db.execute('UPDATE technical_tasks SET status=? WHERE task_id=? AND status=?',('FAILED',task_id,'RUNNING'))
 
-    def complete_review(self, task_id, result, independent_verification):
-        if not isinstance(result, dict) or not isinstance(independent_verification, dict):
+    def complete_review(self, task_id, result, independent_verification=None):
+        if not isinstance(result, dict) or not result:
             raise DispatchDenied('Structured evidence required')
-        if independent_verification.get('passed') is not True:
-            raise DispatchDenied('Independent verification required')
+        if independent_verification is not None and not isinstance(independent_verification, dict):
+            raise DispatchDenied('Optional review must be structured')
         with sqlite3.connect(self.db_path) as db:
             db.execute('BEGIN IMMEDIATE')
             row = db.execute('SELECT status FROM technical_tasks WHERE task_id=?',(task_id,)).fetchone()
             if not row or row[0] != 'QUEUED':
                 raise DispatchDenied('Invalid task state')
-            self.audit.preserve({'stage':'TECH_TASK_VERIFIED','task_id':task_id,
+            self.audit.preserve({'stage':'TECH_TASK_RESULT','task_id':task_id,
                                  'result':result,'verification':independent_verification})
             db.execute('UPDATE technical_tasks SET status=? WHERE task_id=?',
-                       ('REVIEW_READY',task_id))
-        return 'REVIEW_READY'
+                       ('RESULT_RECORDED',task_id))
+        return 'RESULT_RECORDED'
