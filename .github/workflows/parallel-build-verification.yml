@@ -96,38 +96,38 @@ jobs:
 
       - name: Autonomous Storefront Unpack & Sort Engine
         run: |
-          echo "[+] Scanning repository root for deployment archives..."
+          echo "[*] Scanning repository root for deployment archives..."
           ZIP_FILE=$(ls *.zip 2>/dev/null | head -n 1)
-          
+
           if [ -n "$ZIP_FILE" ]; then
             echo "[*] Unpacking master structure payload: $ZIP_FILE"
             mkdir -p temp_unpack
             unzip -q "$ZIP_FILE" -d temp_unpack
-            
+
             echo "[*] Commencing cryptographic path sort..."
-            
+
             # 1. Map Frontend Storefront Web Assets
             mkdir -p web
-            find temp_unpack -name "jade-landing.*" -o -name "sds-founder.*" -o -name "*.html" -o -name "*.css" -o -name "*.js" -o -name "*.webp" | while read -r asset; do
-              mv "$asset" web/ 2>/dev/null || true
+            find temp_unpack -name "jade-landing.*" -o -name "sds-founder.*" -o -name "A.html" -o -name "*.css" -o -name "*.js" | while read -r asset_file; do
+              mv "$asset_file" web/ 2>/dev/null || true
             done
-            
+
             # 2. Map Core Infrastructure Configurations
             mkdir -p infrastructure
-            find temp_unpack -name "*.tf" -o -name "schema.yaml" -o -name "package_manifest.json" | while read -r infra; do
-              mv "$infra" infrastructure/ 2>/dev/null || true
+            find temp_unpack -name "*.tf" -o -name "schema.yaml" -o -name "package_manifest.json" | while read -r infra_file; do
+              mv "$infra_file" infrastructure/ 2>/dev/null || true
             done
-            
+
             # 3. Map Compliance Registries
             mkdir -p compliance
-            find temp_unpack -name "*cms274.xml" | while read -r compliance_file; do
+            find temp_unpack -name "cms274.xml" | while read -r compliance_file; do
               mv "$compliance_file" compliance/ 2>/dev/null || true
             done
-            
+
             # Clean up raw archive artifact container
             rm -rf temp_unpack
             rm -f "$ZIP_FILE"
-            echo "[✅] Structural Sort and Cleanup Complete."
+            echo "[✓] Structural Sort and Cleanup Complete."
           else
             echo "[*] No compressed zip payload detected in root. Running baseline validation rules."
           fi
@@ -137,19 +137,19 @@ jobs:
           python3 -c '
           import pathlib, hashlib, json
           targets = [
-            "nginx.conf",
-            "wsgi.py",
-            "deploy/gunicorn.conf.py",
-            "deploy_backup.sh",
-            "requirements.txt",
-            "requirements-server.txt"
+              "nginx.conf",
+              "wsgi.py",
+              "deploy/gunicorn.conf.py",
+              "deploy_backup.sh",
+              "requirements.txt",
+              "requirements-server.txt"
           ]
-          
+
           # Dynamically inspect sorted folders to auto-sign new zip extractions
           for path in pathlib.Path(".").glob("**/*"):
               if path.is_file() and path.suffix in [".tf", ".xml", ".html", ".css", ".js", ".py"] and not path.name.endswith(".pbd.json"):
                   targets.append(str(path))
-                  
+
           root = pathlib.Path(".").resolve()
           for target in set(targets):
               f_path = root / target
@@ -170,22 +170,22 @@ jobs:
         run: |
           # Only run if your GoDaddy secrets are active and present
           if [ -n "$GODADDY_API_KEY" ] && [ -f "web/jade-landing.html" ]; then
-            echo "[+] Executing secure edge domain discovery update..."
+            echo "[*] Executing secure edge domain discovery update..."
             python3 -c '
-            import os, json, urllib.request
-            api_key = os.environ.get("GODADDY_API_KEY")
-            api_secret = os.environ.get("GODADDY_API_SECRET")
-            public_ip = os.environ.get("OCI_INSTANCE_PUBLIC_IP")
-            domains = ["sanderslegalhelpersllc.com", "sandersdashandseal.com"]
-            headers = {"Authorization": f"sso-key {api_key}:{api_secret}", "Content-Type": "application/json", "accept": "application/json"}
-            for d in domains:
-                try:
-                    req = urllib.request.Request(f"https://godaddy.com{d}/records/A/%40", data=json.dumps([{"data": public_ip, "ttl": 600, "type": "A", "name": "@"}]).encode("utf-8"), headers=headers, method="PUT")
-                    with urllib.request.urlopen(req) as resp:
-                        if resp.status == 200: print(f"[✅] Connected: {d} -> {public_ip}")
-                except Exception as e: print(f"[❌] Sync skipped for {d}: Check configuration bounds.")
+          import os, json, urllib.request
+          api_key = os.environ.get("GODADDY_API_KEY")
+          api_secret = os.environ.get("GODADDY_API_SECRET")
+          public_ip = os.environ.get("OCI_INSTANCE_PUBLIC_IP")
+          domains = ["sanderslegalhelpersllc.com", "sandersdashandseal.com"]
+          headers = {"Authorization": f"sso-key {api_key}:{api_secret}", "Content-Type": "application/json", "Accept": "application/json"}
+          for d in domains:
+              try:
+                  req = urllib.request.Request(f"https://godaddy.com{d}/records/A/%40", data=json.dumps([{"data": public_ip, "ttl": 600}]).encode(), headers=headers, method="PUT")
+                  with urllib.request.urlopen(req) as resp:
+                      if resp.status == 200: print(f"[✓] Connected: {d} -> {public_ip}")
+              except Exception as e: print(f"[X] Sync skipped for {d}: Check configuration bounds.")
             '
-          else:
+          else
             echo "[*] GoDaddy integration gateway idle. Proceeding."
           fi
 
@@ -193,5 +193,15 @@ jobs:
         run: |
           git config --global user.name "Sanders Platform Watcher"
           git config --global user.email "rooseveltsanders381@gmail.com"
-          git add web/ infrastructure/ compliance/ deploy/ *.pbd.json 2>/dev/null || true
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-extracted, sorted, and cryptographically signed assets [Verified Suite]" && git push origin main)
+          
+          # Stage all deep and loose metadata manifest files
+          git add "**/*.pbd.json"
+          
+          # Check for changes, pull latest to protect against racing workflows, then push safely
+          if ! git diff-index --quiet HEAD; then
+            git commit -m "Auto-extracted, sorted, and cryptographically signed assets [Verified Suite]"
+            git pull --rebase origin main
+            git push origin main
+          else
+            echo "No changes to commit. Working tree is clean."
+          fi
