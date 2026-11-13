@@ -2,7 +2,7 @@
   "schema": 1,
   "platform": "Sanders Dash & Seal",
   "artifact": "manifest.json",
-  "generated_from_commit": "aa4a470a47a101917a630c05b1dc87a898113205",
+  "generated_from_commit": "1b9c906c9ab4851fba0b44c34090b4c657f53e75",
   "generated_from_branch": "manifest/include-everything-20261113",
   "note": "Central index of every artifact on main. Files under .github/workflows/ are recorded here only, never as .pbd.json sidecars under that path (GitHub App token has no workflows permission; see Gateway exit 1, 2026-11-13). This file itself is covered by manifest.json.pbd.json, not by an entry in itself.",
   "scope": {
@@ -114,7 +114,7 @@
       "status": "UNSIGNED_SOURCE_MANIFEST"
     },
     ".github/workflows/parallel-build-verification.yml": {
-      "payload_hash": "b27cb623c9140f9fddf47ae85065739f34a098f51097d89e42363da75f6aef4b",
+      "payload_hash": "413047f92d78f226b5d4c21fcfb9ca44aa08b018e1d308e8967c3684024ff40b",
       "scope": {
         "endpoint": "local://development",
         "method": "TEST",
@@ -367,7 +367,7 @@
       "status": "UNSIGNED_SOURCE_MANIFEST"
     },
     "backend/platform-source.json": {
-      "payload_hash": "622652a4d0c26051729fa3bfe0f4dfea4d6b388d878ae223f06a903b8636cf2a",
+      "payload_hash": "4d6d6c564961d30c255a3ae6145e45ea4041a92b8f15c32fef6db1b54ceb68d2",
       "scope": {
         "endpoint": "local://development",
         "method": "TEST",
