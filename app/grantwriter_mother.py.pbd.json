@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "app/grantwriter_mother.py",
-    "payload_hash": "07f15465b4ce65d474505796cb7e5596f1d650b0e09cd5ef0173d6e02019da83",
+    "payload_hash": "6fe1283031a634dcc06c11f169ec19d0ab4df061d6dd50daf8d619310afec494",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
