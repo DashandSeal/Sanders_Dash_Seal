@@ -1,0 +1,28 @@
+[Unit]
+Description=Sanders Dash & Seal WSGI application (gunicorn, systemd, no Docker)
+Documentation=https://github.com/DashandSeal/Sanders_Dash_Seal
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=sanders
+Group=sanders
+WorkingDirectory=/opt/sanders-dash-seal
+# Secrets live outside the repo. The leading "-" means the service still
+# starts when the file is absent; the Stripe webhook endpoint then answers
+# 503 (disabled) instead of failing startup.
+EnvironmentFile=-/etc/sanders-dash-seal/environment
+ExecStart=/opt/sanders-dash-seal/.venv/bin/gunicorn --config deploy/gunicorn.conf.py wsgi:application
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=on-failure
+RestartSec=5s
+TimeoutStopSec=30
+# The app writes its ledger SQLite database to data/ under the working dir.
+ProtectSystem=full
+ReadWritePaths=/opt/sanders-dash-seal/data
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

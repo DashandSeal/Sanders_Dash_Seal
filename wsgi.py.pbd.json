@@ -1,16 +1,16 @@
 {
-    "body": {
-        "schema": 1,
-        "platform": "Sanders Dash & Seal",
-        "artifact": "wsgi.py",
-        "payload_hash": "a4b79b748c746d7f5375ab92d2dc51bcb73cff373d4e0e6bc2ecd977fe9a1e93",
-        "scope": {
-            "endpoint": "local://development",
-            "method": "TEST",
-            "ip": "127.0.0.1",
-            "operation": "DEVELOPMENT_VALIDATION"
-        }
-    },
-    "signatures": {},
-    "status": "SIGNED_BY_OPERATOR"
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "wsgi.py",
+    "payload_hash": "7f2fd3dc5962e69fa48c84ecee48b60b557d809b2d8628660e5ad71c45f9c752",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

@@ -12,7 +12,7 @@ import json
 import logging
 import time
 import stripe
-from stripe.error import SignatureVerificationError
+from stripe import SignatureVerificationError
 
 # Enterprise security boundaries: Webhook payloads never require more than 64KB
 MAX_WEBHOOK_BODY_BYTES = 65536
@@ -85,6 +85,9 @@ def import_make_app(ledger_engine, webhook_secret, *, enabled=True, expected_liv
                 sig_header=sig_header,
                 secret=webhook_secret
             )
+            # stripe-python >= 12 returns a StripeObject, not a dict; the
+            # handler below uses dict access throughout.
+            event = event.to_dict()
         except (ValueError, SignatureVerificationError) as signature_error:
             logging.warning(f"⚠️ Cryptographic verification rejected payload handshake: {str(signature_error)}")
             return respond(start_response, '401 Unauthorized', {'error': 'invalid_cryptographic_signature'})

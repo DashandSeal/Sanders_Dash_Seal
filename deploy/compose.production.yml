@@ -31,7 +31,7 @@ services:
       - certbot_validation_volume:/var/www/certbot
     networks: [sds_production_network]
   acme-bootstrap:
-    image: nginx:1.25-alpine
+    image: nginx:1.30-alpine
     profiles: [maintenance]
     ports: ["80:80"]
     volumes:

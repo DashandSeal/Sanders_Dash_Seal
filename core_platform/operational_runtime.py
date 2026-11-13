@@ -43,7 +43,7 @@ def validated(value):
     for key, number in value['metrics'].items():
         if not isinstance(key, str) or not key or len(key) > 64 \
             or not key.replace('_', '').isalnum() \
-            or not key.key.replace('_', '').islower() \
+            or not key.replace('_', '').islower() \
             or type(number) not in (int, float) \
             or not math.isfinite(number) or number < 0:
             raise ObservationError("Invalid observation metric")
@@ -133,11 +133,12 @@ class OperationalRuntime:
     def status(self):
         now = self.clock()
         with self.connect() as db:
-            rows = agent, (cycle, observed, json.loads(raw)) for agent, cycle, observed, raw \
-                in db.execute("SELECT agent, cycle_id, observed, observation FROM ai_observer_state;")
+            rows = {agent: (cycle, observed, json.loads(raw)) for agent, cycle, observed, raw \
+                in db.execute("SELECT agent, cycle_id, observed, observation FROM ai_observer_state;")}
             latest = db.execute("SELECT cycle_id, finished FROM ai_observation_cycles WHERE state='COMPLETED' ORDER BY cycle_id DESC;").fetchall()
+            recovered = db.execute("SELECT COUNT(*) FROM ai_operational_incidents WHERE state='OBSERVED_RECOVERY';").fetchone()[0]
             incidents = [dict(zip(('incident_id', 'agent', 'code', 'state', 'opened_cycle', 'closed_cycle'), row))
-                         for row in db.execute("SELECT incident_id, agent, code, state, opened_cycle, closed_cycle FROM ai_operational_incidents WHERE state!='OBSERVED_RECOVERY';"].fetchall()
+                         for row in db.execute("SELECT incident_id, agent, code, state, opened_cycle, closed_cycle FROM ai_operational_incidents WHERE state!='OBSERVED_RECOVERY';").fetchall()]
             return {
                 'platform': 'Sanders Dash & Seal',
                 'mode': 'READ_ONLY_OPERATIONAL_OBSERVATION',

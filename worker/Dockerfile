@@ -1,5 +1,5 @@
 # --- Stage 1: Safe Dependency Resolution & Lockfile Verification ---
-FROM node:20.12.2-alpine AS build_env
+FROM node:20.20.2-alpine AS build_env
 
 WORKDIR /usr/src/app
 
@@ -10,7 +10,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --only=production
 
 # --- Stage 2: Hardened Sandbox Runtime ---
-FROM node:20.12.2-alpine
+FROM node:20.20.2-alpine
 
 WORKDIR /usr/src/app
 
