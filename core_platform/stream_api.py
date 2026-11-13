@@ -12,7 +12,7 @@ import json
 import logging
 import time
 import stripe
-from stripe.error import SignatureVerificationError
+from stripe import SignatureVerificationError
 
 # Enterprise security boundaries: Webhook payloads never require more than 64KB
 MAX_WEBHOOK_BODY_BYTES = 65536
