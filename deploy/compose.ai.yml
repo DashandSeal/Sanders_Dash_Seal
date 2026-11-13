@@ -1,0 +1,1392 @@
+{
+  "services": {
+    "ai-uptimeagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "UptimeAgent"
+      ],
+      "network_mode": "service:wsgi-backend",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/UptimeAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/UptimeAgent:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-applicationagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "ApplicationAgent"
+      ],
+      "network_mode": "service:wsgi-backend",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/ApplicationAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/ApplicationAgent:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-databaseagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "DatabaseAgent"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/DatabaseAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/DatabaseAgent:/run/sds-role/output:rw,z",
+        "sqlite_storage:/app/data:ro"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-deploymentagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "DeploymentAgent"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/DeploymentAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/DeploymentAgent:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-infrastructureagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "InfrastructureAgent"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/InfrastructureAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/InfrastructureAgent:/run/sds-role/output:rw,z",
+        "sqlite_storage:/app/data:ro"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-integrationagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "IntegrationAgent"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/IntegrationAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/IntegrationAgent:/run/sds-role/output:rw,z",
+        "sqlite_storage:/app/data:ro"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-performanceagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "PerformanceAgent"
+      ],
+      "network_mode": "service:wsgi-backend",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/PerformanceAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/PerformanceAgent:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-backuprecoveryagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "BackupRecoveryAgent"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/BackupRecoveryAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/BackupRecoveryAgent:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-observabilityagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "ObservabilityAgent"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/ObservabilityAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/ObservabilityAgent:/run/sds-role/output:rw,z",
+        "sqlite_storage:/app/data:ro"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-qualityagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "QualityAgent"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/QualityAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/QualityAgent:/run/sds-role/output:rw,z",
+        "sqlite_storage:/app/data:ro"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-configurationagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "ConfigurationAgent"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/ConfigurationAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/ConfigurationAgent:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-itsupportagent": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "ITSupportAgent"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/ITSupportAgent.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/ITSupportAgent:/run/sds-role/output:rw,z",
+        "sqlite_storage:/app/data:ro"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-it-ai-manager-v15-0": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "IT_AI_Manager_v15.0"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/IT_AI_Manager_v15.0.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/IT_AI_Manager_v15.0:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-architect": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "ARCHITECT"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/ARCHITECT.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/ARCHITECT:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-archimedes-43": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "ARCHIMEDES #43"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/ARCHIMEDES #43.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/ARCHIMEDES #43:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-promethean": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "PROMETHEAN"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/PROMETHEAN.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/PROMETHEAN:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-hydra-q": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "HYDRA-Q"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/HYDRA-Q.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/HYDRA-Q:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-labyrinth": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "LABYRINTH"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/LABYRINTH.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/LABYRINTH:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-cerberus": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "CERBERUS"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/CERBERUS.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/CERBERUS:/run/sds-role/output:rw,z",
+        "sqlite_storage:/app/data:ro"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-minotaur": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "MINOTAUR"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/MINOTAUR.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/MINOTAUR:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-chorus": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "CHORUS"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/CHORUS.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/CHORUS:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-cobol-synthetic-ai": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "COBOL Synthetic AI"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/COBOL Synthetic AI.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/COBOL Synthetic AI:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-surn": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "SURN"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/SURN.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/SURN:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-juggernaut": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "JUGGERNAUT"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/JUGGERNAUT.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/JUGGERNAUT:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-sanders-labyrinth-shield": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "Sanders Labyrinth Shield 🛡️"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/Sanders Labyrinth Shield 🛡️.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/Sanders Labyrinth Shield 🛡️:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-fraud-rtsa": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "Fraud RTSA 🚨"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/Fraud RTSA 🚨.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/Fraud RTSA 🚨:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-operations-rtsa": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "Operations RTSA 📊"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/Operations RTSA 📊.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/Operations RTSA 📊:/run/sds-role/output:rw,z",
+        "sqlite_storage:/app/data:ro"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-globalpbdsentinel": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "GlobalPBDSentinel"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/GlobalPBDSentinel.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/GlobalPBDSentinel:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-sanderssyntheticaisidecar": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "SandersSyntheticAISidecar"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/SandersSyntheticAISidecar.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/SandersSyntheticAISidecar:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    },
+    "ai-michael-angelo-49": {
+      "image": "${SDS_COMPOSE_PROJECT:-sanders-dash-seal}-wsgi-backend:latest",
+      "profiles": [
+        "ai"
+      ],
+      "restart": "unless-stopped",
+      "user": "10001:10001",
+      "read_only": true,
+      "cap_drop": [
+        "ALL"
+      ],
+      "security_opt": [
+        "no-new-privileges:true"
+      ],
+      "pids_limit": 32,
+      "mem_limit": "128m",
+      "cpus": 0.05,
+      "command": [
+        "python",
+        "-m",
+        "core_platform.ai_role_workers",
+        "--role",
+        "MICHAEL ANGELO #49"
+      ],
+      "network_mode": "none",
+      "volumes": [
+        "/etc/sanders-dash-seal/ai-roles/identities/MICHAEL ANGELO #49.json:/run/sds-role/identity.json:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z",
+        "/etc/sanders-dash-seal/ai-roles/public/results/MICHAEL ANGELO #49:/run/sds-role/output:rw,z"
+      ],
+      "tmpfs": [
+        "/tmp:rw,noexec,nosuid,size=16m"
+      ],
+      "healthcheck": {
+        "test": [
+          "CMD",
+          "python",
+          "-c",
+          "import time,pathlib; p=pathlib.Path('/run/sds-role/output/latest.json'); assert p.is_file() and 0<=time.time()-p.stat().st_mtime<=90"
+        ],
+        "interval": "60s",
+        "timeout": "5s",
+        "retries": 2,
+        "start_period": "30s"
+      }
+    }
+  }
+}
