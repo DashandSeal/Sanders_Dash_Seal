@@ -30,6 +30,8 @@ export SDS_SOURCE_DIR="$source_dir"
 commit=$(python3 -c 'import json;print(json.load(open("/etc/sanders-dash-seal/release.json"))["commit"])')
 python3 "$source_dir/scripts/verify_release_source.py" "$source_dir" "$commit"
 python3 "$source_dir/deploy/bootstrap_agent_installer.py" --release-config /etc/sanders-dash-seal/release.json
+# Identity provisioning runs as the host administrator, never as an AI agent.
+# Use the built backend's cryptography dependency after the normal image build.
 source "$source_dir/deploy.sh"
 check_source "$source_dir"
 check_host
@@ -40,8 +42,11 @@ bash "$source_dir/run_preflight_checks.sh" --commit "$commit"
 install -d -m 0755 "$SDS_STATE_DIR/public"
 python3 "$source_dir/deploy/init_runtime.py"
 python3 "$source_dir/deploy/refresh_provider_secrets.py" || echo 'Provider credential refresh unavailable; customer intake remains available.'
-compose config --quiet
 compose build pipeline-worker wsgi-backend
+# Core startup remains independent of AI worker/model availability. Prepare public
+# mount points before Compose so an absent file is never created as a directory.
+install -d -m 0750 -o 0 -g 10001 /etc/sanders-dash-seal/ai-roles /etc/sanders-dash-seal/ai-roles/public
+compose config --quiet
 if [[ ! -s "$SDS_STATE_DIR/nginx.active.conf" ]]; then
     install -m 0644 "$SDS_PROJECT_DIR/deploy/nginx.http.conf" "$SDS_STATE_DIR/nginx.active.conf"
 fi
@@ -123,4 +128,18 @@ Path(sys.argv[1]).write_text(json.dumps({'platform':'Sanders Dash & Seal','commi
     'application_installed':True,'started_services':['nginx','node','python','sqlite'],
     'business_integrations_verified':False})+'\n')
 STATUS
+# Start every distinct observation worker without making the web app wait on AI.
+if compose run -T --rm --no-deps --user 0 -e PYTHONPATH=/app --entrypoint python \
+    -v "$SDS_PROJECT_DIR/deploy/init_ai_roles.py:/run/init-ai.py:ro,z" \
+    -v /etc/sanders-dash-seal/ai-roles:/run/ai-config:rw,z \
+    wsgi-backend /run/init-ai.py --directory /run/ai-config; then
+    mapfile -t ai_services < <(python3 - "$SDS_PROJECT_DIR/deploy/compose.ai.yml" <<'AI_SERVICES'
+import json,sys
+print('\n'.join(json.load(open(sys.argv[1]))['services']))
+AI_SERVICES
+    )
+    compose up -d "${ai_services[@]}" || echo 'AI_ROLE_WORKERS_PENDING: inspect individual role status.'
+else
+    echo 'AI_ROLE_IDENTITIES_PENDING: application remains available; inspect administrator initialization.'
+fi
 echo 'APPLICATION_INSTALLED: Node, Python, SQLite and Nginx started; review /readyz for business integration readiness.'
