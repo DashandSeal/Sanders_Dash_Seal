@@ -22,6 +22,15 @@ source with the live runtime -> speak the reply — via
 :class:`VoiceTurnRunner`. The transport backend is chosen by
 ``DaedalusEngineConfig.transport_backend`` (``auto`` prefers the
 official Anthropic SDK when installed, else the stdlib client).
+
+Live approval (added 2026-11-13): building an engine with a
+live-looking Anthropic key (``sk-ant-`` prefix) requires the
+``daedalus_live`` and ``anthropic_live_model`` approval gates to be
+APPROVED (see ``core_platform.ai_platform_approval``); otherwise
+``build_engine``/``build_voice_runner`` raise ``ApprovalRequiredError``
+before any transport is built. :func:`build_live_engine` requires
+those gates regardless of key shape. Fake/test keys used by local
+unit tests are not live operation and are not gated.
 """
 
 from __future__ import annotations
@@ -30,6 +39,11 @@ import logging
 from dataclasses import dataclass
 from typing import Callable, FrozenSet, Mapping
 
+from .ai_platform_approval import (
+    ApprovalStore,
+    load_store,
+    require_approval,
+)
 from .daedalus_claude_transport import build_transport
 from .daedalus_continuity import continuity_manifest
 from .daedalus_geofence import LocationAttestation
@@ -55,6 +69,7 @@ __all__ = [
     "VoiceTurnRunner",
     "build_context",
     "build_engine",
+    "build_live_engine",
     "build_voice_runner",
     "describe",
 ]
@@ -80,6 +95,32 @@ class DaedalusEngineConfig:
     transport_backend: str = "auto"
 
 
+def _looks_like_live_key(api_key: str | None) -> bool:
+    """True when the key looks like a real Anthropic live key.
+
+    Live Anthropic keys start with ``sk-ant-``. Fake/test keys used by
+    local unit tests (e.g. ``"test-key-not-real"``) never touch the
+    network, so they are not live operation and are not gated here.
+    """
+    return isinstance(api_key, str) and api_key.startswith("sk-ant-")
+
+
+def _require_live_daedalus_approval(
+    config: DaedalusEngineConfig,
+    approval_store: ApprovalStore | None,
+) -> None:
+    """Require the live gates for a real Daedalus call.
+
+    A live Daedalus call is also a live Anthropic call, so both the
+    ``daedalus_live`` gate and the ``anthropic_live_model`` gate must
+    be APPROVED. Each raises :class:`ApprovalRequiredError` (a
+    ``ValueError``) naming the missing approval.
+    """
+    store = approval_store if approval_store is not None else load_store()
+    require_approval("daedalus_live", store=store)
+    require_approval("anthropic_live_model", store=store)
+
+
 def _build_runtime(config: DaedalusEngineConfig) -> DaedalusRuntimeIntegration:
     """Build the transport + runtime pair shared by engine and voice."""
     if len(config.signing_key) < 32:
@@ -97,12 +138,26 @@ def _build_runtime(config: DaedalusEngineConfig) -> DaedalusRuntimeIntegration:
     )
 
 
-def build_engine(config: DaedalusEngineConfig) -> UnifiedDaedalusEngine:
+def build_engine(
+    config: DaedalusEngineConfig,
+    *,
+    approval_store: ApprovalStore | None = None,
+) -> UnifiedDaedalusEngine:
     """Assemble the full Daedalus chain from caller-supplied adapters.
 
     Raises ``ValueError`` when the Claude model/key are absent, when the
     signing key is shorter than 32 bytes, or when any callback is missing.
+
+    Live approval: when the config carries a live-looking Anthropic key
+    (``sk-ant-`` prefix) and a model, the ``daedalus_live`` and
+    ``anthropic_live_model`` gates must both be APPROVED in
+    ``approval_store`` (default: the on-disk state file) — otherwise
+    :class:`ApprovalRequiredError` is raised before any transport is
+    built. Fake/test keys used by local unit tests are not live
+    operation and are not gated.
     """
+    if config.model and _looks_like_live_key(config.api_key):
+        _require_live_daedalus_approval(config, approval_store)
     runtime = _build_runtime(config)
     protection = PortfolioProtection(
         signing_key=config.signing_key,
@@ -130,6 +185,24 @@ def build_engine(config: DaedalusEngineConfig) -> UnifiedDaedalusEngine:
         capability=capability,
         audit=config.audit,
     )
+
+
+def build_live_engine(
+    config: DaedalusEngineConfig,
+    *,
+    approval_store: ApprovalStore | None = None,
+) -> UnifiedDaedalusEngine:
+    """Build a Daedalus engine explicitly declared as a live call.
+
+    Unlike :func:`build_engine` — which gates only when the key looks
+    live — this entry point requires the ``daedalus_live`` and
+    ``anthropic_live_model`` gates to be APPROVED regardless of key
+    shape. Callers that intend a real provider call use this; it
+    raises :class:`ApprovalRequiredError` naming the missing approval
+    when either gate is UNAPPROVED.
+    """
+    _require_live_daedalus_approval(config, approval_store)
+    return build_engine(config, approval_store=approval_store)
 
 
 class VoiceTurnRunner:
@@ -202,13 +275,18 @@ def build_voice_runner(
     *,
     transcriber: Transcriber,
     speaker: Speaker,
+    approval_store: ApprovalStore | None = None,
 ) -> VoiceTurnRunner:
     """Build a :class:`VoiceTurnRunner` from engine config + voice adapters.
 
     Raises ``ValueError`` exactly like :func:`build_engine` when the
     Claude model/key or the signing key is absent — a voice turn never
-    silently falls back to a fake generator.
+    silently falls back to a fake generator. A live-looking key also
+    requires the ``daedalus_live`` and ``anthropic_live_model`` gates
+    to be APPROVED (see :func:`build_engine`).
     """
+    if config.model and _looks_like_live_key(config.api_key):
+        _require_live_daedalus_approval(config, approval_store)
     return VoiceTurnRunner(
         runtime=_build_runtime(config),
         transcriber=transcriber,

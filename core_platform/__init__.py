@@ -17,6 +17,7 @@ __all__: list[str] = [
     "DaedalusSettings",
     "VoiceTurnRunner",
     "build_engine",
+    "build_live_engine",
     "build_voice_runner",
     "describe",
 ]
@@ -26,6 +27,7 @@ _LAZY_EXPORTS: dict[str, str] = {
     "DaedalusSettings": ".daedalus_config",
     "VoiceTurnRunner": ".daedalus_engine",
     "build_engine": ".daedalus_engine",
+    "build_live_engine": ".daedalus_engine",
     "build_voice_runner": ".daedalus_engine",
     "describe": ".daedalus_engine",
 }

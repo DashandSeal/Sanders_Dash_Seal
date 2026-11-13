@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/daedalus_engine.py",
-    "payload_hash": "4a647a079d9850b7dcd58eba1b3f77656c5b64fa9b0122a93962de572d620b41",
+    "payload_hash": "f62a523ab7e6eb6b317f98f0d41302d57811f75c594021cb7fb98af74006de7b",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
