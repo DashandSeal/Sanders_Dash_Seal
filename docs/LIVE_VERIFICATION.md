@@ -1,4 +1,11 @@
-# Owner's dependency fix and live deployment verification
+# Live verification procedures (not yet executed) — dependency fix notes
+
+> **Title corrected 2026-11-13 (C7).** The previous title, "Owner's dependency
+> fix and live deployment verification", implied a live deployment had been
+> verified. It had not: no live rollout, OCI identity query, transaction,
+> archive check or recovery drill has been executed from any session
+> (see the closing section of this document). This file records the
+> dependency fix and the *procedures* to run when live access exists.
 
 The owner's ws 8.17.1-or-later instruction authorizes replacing the earlier exact
 8.16.0 pin. package.json and overrides now select **8.22.0**, with a regenerated
@@ -115,7 +122,10 @@ must not be counted as a successful live test.
 
 ## Inspect the actual durable volume
 
-SQLite lives in **sqlite_storage:/app/data/sds_production.db** inside wsgi-backend,
+SQLite lives in **sds-ledger-volume:/app/data/sds_production.db** inside wsgi-backend
+(named volume `sds_production_ledger_data`; corrected 2026-11-13, P3
+fix-everything — the volume was converged from `sqlite_storage` by P2,
+see `docs/COMPOSE_RECONCILIATION.md` §5),
 not in /opt/sanders-dash-seal/backend/data on the host. The host-path sqlite3
 command could create a different empty database. Use a read-only connection in
 the running backend and pass the actual transaction ID and actor as arguments:

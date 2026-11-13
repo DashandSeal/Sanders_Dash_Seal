@@ -9,7 +9,7 @@ services:
     image: sanders-bozly-cfo:local
     container_name: sanders_bozly_webhook
     restart: unless-stopped
-    command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "bozly_shield_wsgi:webhook_application_shielded"]
+    command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "web.bozly_shield_wsgi:webhook_application_shielded"]
     environment:
       BOZLY_DB_PATH: /app/secure_ledgers/bozly_financial_core.db
       BOZLY_STRIPE_ROUTES_JSON: ${BOZLY_STRIPE_ROUTES_JSON:-}
@@ -27,7 +27,7 @@ services:
       dockerfile: Dockerfile.bozly
     container_name: sanders_bozly_human_api
     restart: unless-stopped
-    command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "bozly_shield_wsgi:human_application_shielded"]
+    command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "web.bozly_shield_wsgi:human_application_shielded"]
     environment:
       BOZLY_CONTROL_DB: /app/secure_ledgers/bozly_controls.db
       BOZLY_OIDC_ISSUER: ${BOZLY_OIDC_ISSUER:-}
@@ -49,7 +49,7 @@ services:
       dockerfile: Dockerfile.bozly
     container_name: sanders_bozly_uplink
     restart: unless-stopped
-    command: ["python", "bozly_uplink.py"]
+    command: ["python", "-m", "core_platform.bozly.bozly_uplink"]
     environment:
       BOZLY_CONTROL_DB: /app/secure_ledgers/bozly_controls.db
       BOZLY_UPLINK_GATEWAY_URL: ${BOZLY_UPLINK_GATEWAY_URL:-}
@@ -65,7 +65,7 @@ services:
       context: .
       dockerfile: Dockerfile.bozly
     container_name: sanders_bozly_minotaur
-    command: ["python", "-u", "bozly_security_response.py"]
+    command: ["python", "-u", "-m", "core_platform.bozly.bozly_security_response"]
     restart: unless-stopped
     environment:
       BOZLY_SECURITY_ROOT: /app
@@ -82,7 +82,7 @@ services:
       context: .
       dockerfile: Dockerfile.bozly
     container_name: sanders_bozly_cfo_worker
-    command: ["python", "bozly_cfo.py", "worker"]
+    command: ["python", "-m", "core_platform.bozly.bozly_cfo", "worker"]
     restart: unless-stopped
     environment:
       BOZLY_DB_PATH: /app/secure_ledgers/bozly_financial_core.db

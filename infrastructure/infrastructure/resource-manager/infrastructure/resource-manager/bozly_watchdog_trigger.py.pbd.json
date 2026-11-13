@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "infrastructure/infrastructure/resource-manager/infrastructure/resource-manager/bozly_watchdog_trigger.py",
+    "payload_hash": "994a0fa8a955eb4c8860b8fd5ca687edaa0cb91ed9468fa3d29b9eec5076dedd",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

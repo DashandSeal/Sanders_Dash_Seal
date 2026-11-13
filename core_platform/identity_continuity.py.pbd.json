@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/identity_continuity.py",
-    "payload_hash": "550c75a7e8785993e7947ad2f02f5ba1baf5f415ecbe649153c36dcc436d5636",
+    "payload_hash": "28dffa71cd3284e189f149317da08f3ae1221ff1955a0bb5302f23be7b505b1d",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

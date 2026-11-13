@@ -8,13 +8,25 @@ StartLimitBurst=3
 
 [Service]
 Type=simple
+# Root is required to drive docker compose, matching the other
+# deploy/systemd/*.service units in this repository. A dedicated
+# least-privilege docker-group user is an owner decision; no such user
+# is created by the installer, so inventing one here would break startup.
 User=root
-WorkingDirectory=/home/sanders/Sanders_Dash_Seal
+WorkingDirectory=/opt/sanders-dash-seal
+# Environment file for compose-time secrets. The leading "-" means the
+# unit still starts if the file is absent; no such file is created by
+# the installer yet -- compose environment in docker-compose.yml applies
+# until the provider-secrets flow writes /etc/sanders-dash-seal/runtime.env.
+EnvironmentFile=-/etc/sanders-dash-seal/runtime.env
 
-# Real-Time Cluster Orchestration, Analysis, and Control Matrix
-ExecStartPre=-/usr/bin/docker compose down --remove-orphans
-ExecStart=/usr/bin/docker compose up --build --abort-on-container-exit
-ExecStop=/usr/bin/docker compose down
+# Real-Time Cluster Orchestration, Analysis, and Control Matrix.
+# Explicit project flags: without them `docker compose` in this working
+# directory would use the default project name instead of
+# sanders-dash-seal, and ExecStartPre could tear down a different stack.
+ExecStartPre=-/usr/bin/docker compose -p sanders-dash-seal --project-directory /opt/sanders-dash-seal -f docker-compose.yml -f deploy/compose.production.yml down --remove-orphans
+ExecStart=/usr/bin/docker compose -p sanders-dash-seal --project-directory /opt/sanders-dash-seal -f docker-compose.yml -f deploy/compose.production.yml up --build --abort-on-container-exit
+ExecStop=/usr/bin/docker compose -p sanders-dash-seal --project-directory /opt/sanders-dash-seal -f docker-compose.yml -f deploy/compose.production.yml down
 
 # High-Resilience Failure Management & Dynamic Health Recovery
 Restart=always

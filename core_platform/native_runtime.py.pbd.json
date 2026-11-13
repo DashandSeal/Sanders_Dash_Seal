@@ -3,13 +3,13 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/native_runtime.py",
+    "payload_hash": "778aa6e1f0cdbead779f61623dcab138509276ce5762842c948895626599a5d1",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
       "ip": "127.0.0.1",
       "operation": "DEVELOPMENT_VALIDATION"
-    },
-    "payload_hash": "de77867a30037f8112f345f1f808931a94b84444bc436981ab1ed6fbafeab0c0"
+    }
   },
   "signatures": {},
   "status": "UNSIGNED_SOURCE_MANIFEST"

@@ -28,7 +28,11 @@ These application rules do not create DNS records or certificates.
 ## Intentional default state
 
 With no `SANDERS_RUNTIME_FACTORY` configured, startup exposes the existing
-customer/operator static assets, `GET /healthz` and `GET /readyz`. Health reports
+customer/operator static assets, `GET /healthz` and `GET /readyz`. (Note
+2026-11-13, C8: per the October 22 owner correction in the banner above,
+the factory is a *production-binding mechanism*, not a deployment
+prerequisite — this paragraph describes the default state, it does not make
+the factory a requirement for starting the platform.) Health reports
 process liveness only. Readiness returns 503. All service APIs, authentication
 routes and the payment webhook remain unavailable. No database, Stripe account,
 signing identity, login credential or paid hosting resource is created.
@@ -41,7 +45,10 @@ Do not publish this state as an operational booking/payment platform.
 
 Install an administrator-controlled adapter package on the selected host. Set
 `SANDERS_RUNTIME_FACTORY` in protected server configuration to its existing
-`module:factory` reference. Never derive it from a request, customer field,
+`module:factory` reference. (Note 2026-11-13, C8: this is the *optional*
+trusted-production-binding mechanism. Per the October 22 owner correction in
+the banner above, it is not a deployment prerequisite and must not be read as
+one.) Never derive it from a request, customer field,
 untrusted configuration file or uploaded document. An explicitly configured
 factory must return a `core_platform.deployment.RuntimeBindings` instance; an
 invalid reference, failed import or missing bindings fails startup.

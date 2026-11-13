@@ -1,14 +1,15 @@
 {
   "body": {
-    "schema": "1.1",
+    "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "deploy/sanders_manager.service",
+    "payload_hash": "18d826d263f97acbeedccd761067ca78b4b9a63bfff67d4f36d08c261b8371af",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
+      "ip": "127.0.0.1",
       "operation": "DEVELOPMENT_VALIDATION"
-    },
-    "payload_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
   },
   "signatures": {},
   "status": "UNSIGNED_SOURCE_MANIFEST"

@@ -1,16 +1,16 @@
 {
-    "body": {
-        "schema": 1,
-        "platform": "Sanders Dash & Seal",
-        "artifact": "gunicorn.conf.py",
-        "payload_hash": "3432f645a4b74ceaa2fb72597a8e9d870c925726fe7dc879a7d7e0900cd96963",
-        "scope": {
-            "endpoint": "local://development",
-            "method": "TEST",
-            "ip": "127.0.0.1",
-            "operation": "DEVELOPMENT_VALIDATION"
-        }
-    },
-    "signatures": {},
-    "status": "SIGNED_BY_OPERATOR"
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "deploy/gunicorn.conf.py",
+    "payload_hash": "982b4c85c134f8425679cf98dbdf8710fe519ddfb0c022e40df5d69c98c7b001",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

@@ -36,10 +36,20 @@ check_host
 configure_firewall
 stage_authorized_source "$source_dir" "$commit"
 # Regressions use an isolated project, no production volumes, ports or secrets.
-bash "$source_dir/run_preflight_checks.sh" --commit "$commit"
+bash "$source_dir/deploy/run_preflight_checks.sh" --commit "$commit"
 install -d -m 0755 "$SDS_STATE_DIR/public"
 python3 "$source_dir/deploy/init_runtime.py"
 python3 "$source_dir/deploy/refresh_provider_secrets.py" || echo 'Provider credential refresh unavailable; customer intake remains available.'
+# Export the Vault-provisioned webhook secret (if any) into this install
+# shell so the initial `compose up -d` below can pass it into wsgi-backend
+# through compose.yaml. The value is never printed; it comes from
+# /etc/sanders-dash-seal/runtime/runtime.json, written by the refresh above.
+# On later boots the systemd unit supplies it via runtime.env instead.
+if [[ -f /etc/sanders-dash-seal/runtime/runtime.json ]]; then
+    _sds_webhook_secret=$(python3 -c 'import json;print(json.load(open("/etc/sanders-dash-seal/runtime/runtime.json")).get("stripe_webhook_secret",""))') 2>/dev/null || _sds_webhook_secret=''
+    if [[ -n "$_sds_webhook_secret" ]]; then export STRIPE_WEBHOOK_SECRET="$_sds_webhook_secret"; fi
+    unset _sds_webhook_secret
+fi
 compose config --quiet
 compose build pipeline-worker wsgi-backend
 if [[ ! -s "$SDS_STATE_DIR/nginx.active.conf" ]]; then
@@ -112,7 +122,13 @@ if [[ -f /etc/sanders-dash-seal/resources.json ]]; then
 fi
 install -m 0644 "$SDS_PROJECT_DIR/deploy/systemd/sanders-tls-activate.service" /etc/systemd/system/
 install -m 0644 "$SDS_PROJECT_DIR/deploy/systemd/sanders-tls-activate.timer" /etc/systemd/system/
+# Install the compose supervisor unit (deploy/sanders_manager.service).
+# Enabled but not started here: this script already started the stack
+# with `compose up -d` above, so starting the unit too would double-start
+# it. On the next boot the unit brings the stack up.
+install -m 0644 "$SDS_PROJECT_DIR/deploy/sanders_manager.service" /etc/systemd/system/
 systemctl daemon-reload
+systemctl enable sanders_manager.service
 systemctl enable --now sanders-tls-activate.timer
 # TLS waits for actual DNS ownership/routing. It never substitutes a self-signed certificate.
 systemctl start sanders-tls-activate.service || echo 'TLS_PENDING_DNS: see sanders-tls-activate journal.'

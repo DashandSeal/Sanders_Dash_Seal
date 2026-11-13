@@ -43,8 +43,19 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - SQLITE_DB_PATH=/app/data/sds_production.db
+      # STRIPE_WEBHOOK_SECRET is supplied by the host environment
+      # (systemd EnvironmentFile /etc/sanders-dash-seal/runtime.env, or
+      # exported by the installer). Empty default: the app fails closed
+      # at startup when no secret is present; never bake one in here.
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:-}
     volumes:
-      - sqlite_storage:/app/data:rw
+      # P2 (2026-11-13): ledger volume converged on sds-ledger-volume
+      # (named sds_production_ledger_data), the same volume
+      # docker-compose.yml uses, so the installer stack and the
+      # legacy/backup stack no longer keep separate ledger data.
+      # Existing data lives in sds-ledger-volume; a host that previously
+      # ran this stack under the old volume name must copy that data over once.
+      - sds-ledger-volume:/app/data:rw
     networks:
       - sds_production_network
 
@@ -53,7 +64,8 @@ volumes:
     driver: local
   certbot_validation_volume:
     driver: local
-  sqlite_storage:
+  sds-ledger-volume:
+    name: sds_production_ledger_data
     driver: local
 
 networks:
