@@ -6,7 +6,7 @@ Description: Connects existing intake, human authority review, technical dispatc
              Guarantees fail-closed orchestration metrics.
 """
 
-from upgrade_sidecar import require_core_laws
+from .upgrade_sidecar import require_core_laws
 
 class IntegrationDenied(Exception):
     pass

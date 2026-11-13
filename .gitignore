@@ -1,11 +1,70 @@
-# 1. Clear git's cache for all files matching the manifest pattern
-git rm --cached **/*.pbd.json 2>/dev/null || true
+# Sanders Dash & Seal — .gitignore
+# Replaced 2026-11-13 (P3): the previous file was shell commands
+# (git rm --cached / git add / git commit / git push), not gitignore
+# patterns, so it ignored nothing.
+#
+# NOTE: *.pbd.json manifests are deliberately NOT ignored. They are tracked
+# source-hash evidence (AGENTS.md rule 7 pairs every executable source change
+# with its .pbd.json hash update). Adding *.pbd.json here would silently stop
+# new pairs from being committed, so it is left out on purpose.
 
-# 2. Re-stage your updated configurations
-git add .gitignore .github/workflows/parallel-build-verification.yml
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
 
-# 3. Commit the tracking fix
-git commit -m "chore: untrack generated pbd manifests and reinforce pipeline rebase"
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/
 
-# 4. Push the branch fix
-git push origin main
+# Environment and secrets — never commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa*
+*.secret
+runtime.env
+*credentials*.json
+
+# Build / deploy artifacts (tracked archives already in the repo stay tracked;
+# gitignore never untracks a file — these rules only keep new ones out)
+*.zip
+*.tgz
+*.tar.gz
+*.log
+*.sqlite3
+*.db
+
+# Local editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Runtime data (P3 fix-everything, 2026-11-13): the ledger and other
+# runtime state live in data/ (e.g. data/ledger.db, created at startup
+# by the WSGI app). It is never committed; *.db above already covered
+# the database files, this covers any other runtime file in data/.
+data/

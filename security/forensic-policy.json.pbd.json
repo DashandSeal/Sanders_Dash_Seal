@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "security/forensic-policy.json",
-    "payload_hash": "b6bdf7c389789a2350d0507dc257ca2ce252a1afd8be7f3ee3ba3e66a15c9592",
+    "payload_hash": "1bf24909acbd03f92bc9cee469f28d5b8436b6a7ef11592f0eb1112b0dec0a6a",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

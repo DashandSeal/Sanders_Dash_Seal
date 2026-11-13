@@ -1,8 +1,11 @@
 version: '3.8'
 
 services:
-  # Hardened Reverse Proxy Firewall Layer
-  nginx-edge:
+  # Hardened Reverse Proxy Firewall Layer.
+  # Service names match compose.yaml and the upstreams in nginx.conf
+  # (wsgi-backend:8000, pipeline-worker:3000); the previous names
+  # (nginx-edge, wsgi-core) matched nothing nginx proxied to.
+  reverse-proxy:
     image: nginx:1.25-alpine
     container_name: sds_nginx_edge
     restart: always
@@ -15,10 +18,11 @@ services:
     networks:
       - sds-secure-bridge
     depends_on:
-      - wsgi-core
+      - wsgi-backend
+      - pipeline-worker
 
   # High-Throughput Hardened WSGI Platform Core
-  wsgi-core:
+  wsgi-backend:
     build:
       context: .
       dockerfile: Dockerfile
@@ -27,7 +31,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
-      - STRIPE_WEBHOOK_SECRET=whsec_your_live_production_key_here
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:?STRIPE_WEBHOOK_SECRET must be set in the environment or .env file}
       - OPERATOR_EMAIL=daddydik323@gmail.com
     volumes:
       - sds-ledger-volume:/app/data
@@ -35,21 +39,24 @@ services:
     networks:
       - sds-secure-bridge
 
-  # Level 10 Real-Time Continuous Forensic Sync & Self-Healing Daemon
-  l10-forensic-daemon:
-    image: python:3.12-slim-bookworm
-    container_name: sds_forensic_daemon
-    working_dir: /app
-    volumes:
-      - .:/app
-    environment:
-      - PYTHONUNBUFFERED=1
-      - OPERATOR_EMAIL=daddydik323@gmail.com
-    command: python3 security/sovereign_runtime.py
+  # Node pipeline worker: serves the WebSocket ingest path and calls the
+  # Python backend at http://wsgi-backend:8000 (worker/src/index.js).
+  # Matches the pipeline-worker service in compose.yaml.
+  pipeline-worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: sds_pipeline_worker
     restart: always
-    stop_grace_period: 10s
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - PYTHON_BACKEND_URL=http://wsgi-backend:8000
+      - MEMORY_LIMIT_MB=512
     networks:
       - sds-secure-bridge
+    depends_on:
+      - wsgi-backend
 
 networks:
   sds-secure-bridge:

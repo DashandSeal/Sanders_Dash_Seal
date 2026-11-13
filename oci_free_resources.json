@@ -1,0 +1,91 @@
+{
+  "catalog_date": "2026-11-13",
+  "governing_core_Law": {
+    "number": 11,
+    "text": "Platforms shall actually use Oracle Always Free resources in real operations, not merely catalog them."
+  },
+  "governing_core_law": {
+    "number": 10,
+    "text": "Always Free resources only: every platform shall use Oracle Always Free resources."
+  },
+  "platform": "Sanders Dash & Seal",
+  "resources": [
+    {
+      "allowances": {
+        "memory_gb": 12,
+        "memory_gb_hours_per_month": 9000,
+        "ocpu": 2,
+        "ocpu_hours_per_month": 1500
+      },
+      "id": "oracle-a1-compute",
+      "inventory_types": [
+        "compute_instance"
+      ],
+      "resource_id": "oracle-a1-compute",
+      "resource_type": "compute_instance"
+    },
+    {
+      "allowances": {
+        "backups": 5,
+        "total_gb": 200
+      },
+      "id": "oracle-block-volume",
+      "inventory_types": [
+        "block_volume",
+        "boot_volume"
+      ],
+      "resource_id": "oracle-block-volume",
+      "resource_type": "block_volume"
+    },
+    {
+      "allowances": {
+        "api_requests_per_month": 50000,
+        "total_gb": 10
+      },
+      "id": "oracle-object-storage",
+      "inventory_types": [
+        "object_storage"
+      ],
+      "resource_id": "oracle-object-storage",
+      "resource_type": "object_storage"
+    },
+    {
+      "allowances": {
+        "tb_per_month": 10
+      },
+      "id": "oracle-egress",
+      "inventory_types": [
+        "network_egress"
+      ],
+      "resource_id": "oracle-egress",
+      "resource_type": "network_egress"
+    },
+    {
+      "allowances": {
+        "databases": 2,
+        "gb_each": 20,
+        "ocpu_each": 1
+      },
+      "id": "oracle-autonomous-db",
+      "inventory_types": [
+        "autonomous_database"
+      ],
+      "resource_id": "oracle-autonomous-db",
+      "resource_type": "autonomous_database"
+    },
+    {
+      "allowances": {
+        "gb_per_table": 25,
+        "reads_writes_per_month": 133000000,
+        "tables": 3
+      },
+      "id": "oracle-nosql",
+      "inventory_types": [
+        "nosql_table"
+      ],
+      "resource_id": "oracle-nosql",
+      "resource_type": "nosql_table"
+    }
+  ],
+  "schema": 1
+}
