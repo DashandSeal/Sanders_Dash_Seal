@@ -1,5 +1,7 @@
 # Host Nginx server blocks. Install only after real certificates are provisioned.
 # Do not replace the entire host nginx.conf with this include file.
+# 2026-11-13 (upgrade/sota-web-nginx-20261113): modern 'http2 on' form,
+# HSTS + security headers on the TLS server.
 server {
     listen 80 default_server;
     server_name _;
@@ -18,7 +20,12 @@ server {
 }
 server {
     listen 443 ssl;
+    http2 on;
     server_name sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com;
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     # One genuine certificate must cover all four names; host-managed renewal.
     ssl_certificate /etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/sandersdashandseal.com/privkey.pem;

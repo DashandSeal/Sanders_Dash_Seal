@@ -1,5 +1,5 @@
 # --- Stage 1: Safe Dependency Resolution & Lockfile Verification ---
-FROM node:20.12.2-alpine AS build_env
+FROM node:24-alpine AS build_env  # 2026-11-13: Node 20 EOL -> 24 LTS
 
 WORKDIR /usr/src/app
 
@@ -7,10 +7,10 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 
 # Enforce clean snapshot replication using the locked tracking manifests
-RUN npm ci --only=production
+RUN npm ci --omit=dev  # 2026-11-13: --only removed in npm 11 (Node 24); --omit=dev is the replacement
 
 # --- Stage 2: Hardened Sandbox Runtime ---
-FROM node:20.12.2-alpine
+FROM node:24-alpine
 
 WORKDIR /usr/src/app
 

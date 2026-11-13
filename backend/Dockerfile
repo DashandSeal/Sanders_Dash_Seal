@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bookworm
+FROM python:3.14-slim-bookworm  # 2026-11-13: 3.12 -> 3.14 (3.14.10 current; arm64 image published)
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 

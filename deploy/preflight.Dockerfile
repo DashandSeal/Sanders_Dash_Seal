@@ -1,6 +1,6 @@
-FROM node:20.12.2-bookworm-slim AS node-runtime
+FROM node:24-bookworm-slim AS node-runtime  # 2026-11-13: Node 20 EOL -> 24 LTS
 
-FROM python:3.12-slim-bookworm AS validation
+FROM python:3.14-slim-bookworm AS validation  # 2026-11-13: 3.12 -> 3.14
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/validation
 RUN apt-get update && apt-get install -y --no-install-recommends libstdc++6 libatomic1 git \
     && rm -rf /var/lib/apt/lists/*

@@ -2,8 +2,8 @@
   "body": {
     "schema": 1,
     "platform": "Sanders Dash & Seal",
-    "artifact": "Dockerfile",
-    "payload_hash": "180087d87b4204996c5bc6d62d50fbc042c5754298a658a4e65e48f2761e6bf1",
+    "artifact": "generate_pipeline_matrix.py",
+    "payload_hash": "9ac54e611ce1d359bbfddd24a85f34cea6d05060df039c055a4c2305132ad0e2",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

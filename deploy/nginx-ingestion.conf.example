@@ -2,7 +2,8 @@
 # ingestion profile has started and independent Python runtime bindings verify.
 # Do not replace nginx.conf. Alias WebSocket upgrades are denied by the worker.
 location = /ingest {
-    proxy_pass http://127.0.0.1:3000;
+    # 2026-11-13: container-DNS name; host-nginx installs use 127.0.0.1:3000.
+    proxy_pass http://pipeline-worker:3000;
     proxy_http_version 1.1;
     proxy_set_header Upgrade $http_upgrade;
     proxy_set_header Connection "upgrade";
