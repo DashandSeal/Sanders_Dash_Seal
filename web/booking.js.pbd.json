@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "web/booking.js",
-    "payload_hash": "76b4ce4d8b58bfe1c4e200e2baab83c9f566d5ea564f949ccb1681f9716a659b",
+    "payload_hash": "2ba4774977de10f6e4fb67dae64b97b577403307dfe5677dbab7d0ed134d1a9c",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
