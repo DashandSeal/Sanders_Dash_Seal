@@ -18,6 +18,7 @@ services:
   wsgi-backend:
     volumes:
       - /etc/sanders-dash-seal/runtime:/run/sds:ro,Z
+      - /etc/sanders-dash-seal/ai-roles/public:/run/sds-ai:ro,z
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/healthz',headers={'Host':'sandersdashandseal.com'}),timeout=3)"]
       interval: 30s

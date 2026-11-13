@@ -1,5 +1,21 @@
 # Owner-directed audit — October 22, 2026
 
+## October 23 recovered AI architecture and dedicated-worker increment
+
+The earlier foundation branch contains the original fourteen distinct RTSA
+registrations, deterministic assessment handlers and conductor references. These
+were absent from current main; recovered source and role/missions now carry
+forward rather than treating the twelve IT agents as the whole AI architecture.
+MICHAEL ANGELO #49 remains the separate conductor. Wider remembered platforms
+and dated counts are preserved in `RECOVERED_PLATFORM_HISTORY_2026-10-23.md`.
+
+Thirty distinct observation services now have separate observation keys/output
+streams, role-bound signatures, restart-safe sequences, replay/freshness checks
+and an operator-only API. Local process/crypto behavior is tested; source wiring
+is not a live Oracle/container isolation claim. This increment does not complete
+named inference engines, measured SLAs, autonomous learning, independent authority
+services, full L15 execution or governed production repairs. See `AI_ROLE_WORKERS.md`.
+
 ## October 23 model diagnostic recovery increment
 
 Reproduced and corrected: an unavailable model result previously completed its
