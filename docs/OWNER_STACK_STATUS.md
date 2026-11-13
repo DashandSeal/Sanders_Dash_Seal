@@ -1,5 +1,14 @@
 # Owner-selected Node/Python design: source assembly
 
+> **Correction 2026-11-13 (C3).** The opening paragraph below was written in
+> October 2026, when this design lived on a review branch. That is no longer
+> true: this document and the design it describes are on `main`, and the
+> design has since been repaired and extended on the November 13, 2026
+> fix branches (P0/P1/P2). Read "review branch" / "not merged into main" as
+> dated October 2026 wording, not as the current state. The remaining
+> "not installed on Oracle" clause is still true: no Oracle installation has
+> been performed.
+
 The selected design is now assembled on the review branch. It is not installed
 on Oracle and has not been merged into main. No paid service has been added.
 
@@ -9,8 +18,12 @@ on Oracle and has not been merged into main. No paid service has been added.
   following the owner's later 8.17.1-or-later remediation instruction.
 - worker/Dockerfile retains the supplied node:20.12.2-alpine multi-stage definition.
 - docker-compose.yml retains the supplied three service definitions, names,
-  restart policies, network, volumes and configuration. compose.yaml now matches
-  it byte-for-byte so default selection does not start the assistant's old stack.
+  restart policies, network, volumes and configuration. compose.yaml does
+  **not** match it byte-for-byte — the two files differ in service/container
+  names, networks, volumes, build contexts and the wsgi-backend Dockerfile
+  (see `docs/COMPOSE_RECONCILIATION.md`; corrected 2026-11-13, C3) — so
+  default selection *does* matter, and each path must name its file
+  explicitly.
 - worker/src/index.js incorporates the supplied latest receipt, Python request,
   heartbeat and shutdown code. The imports, diagnostics, upgrade verification,
   session attachment, initial message parsing and pong handler are explicitly

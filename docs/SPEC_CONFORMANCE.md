@@ -1,5 +1,17 @@
 # Original-specification conformance audit
 
+> **STATUS 2026-11-13 (C2).** This file is the binding build record and a
+> dated acceptance log, not a current conformance statement. The test counts
+> inside it — **407** (line 17), **401** (line 42), **379** (line 94) and
+> **325** (line 804) Python tests — are October 2026 snapshots from a `tests/`
+> directory deleted in commit `c28e61a`. They are mutually inconsistent and
+> none can be re-run or re-verified against this checkout. Read every
+> "Verification: N tests passed" line below as "N tests passed on the stated
+> October 2026 date, on that date's baseline", never as a result for the
+> current HEAD. Current suites on this branch: `tests/` 36 Python tests,
+> sharpshooter 5 tests. Full per-contradiction record:
+> `docs/P3_CORRECTIONS_2026-11-13.md`.
+
 ## Model diagnostic recovery — October 23, 2026
 
 Source: MASTER §§6–8 and 19–20; owner instruction to continue the real-time AIs.

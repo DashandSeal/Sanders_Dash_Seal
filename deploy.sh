@@ -10,20 +10,24 @@ SDS_PROJECT_DIR=${SDS_PROJECT_DIR:-/opt/sanders-dash-seal}
 SDS_COMPOSE_PROJECT=${SDS_COMPOSE_PROJECT:-sanders-dash-seal}
 SDS_PUBLIC_IPV4=${SDS_PUBLIC_IPV4:-129.146.111.166}
 SDS_STATE_DIR=${SDS_STATE_DIR:-/var/lib/sanders-dash-seal}
-SDS_DOMAINS=(sandersdashandseal.com ://sandersdashandseal.com sanderslegalhelpersllc.com)
+SDS_DOMAINS=(sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com)
 
 fail() { printf 'Deployment stopped: %s\n' "$*" >&2; exit 1; }
 
 compose() {
+    # Base file is compose.yaml: it defines the pipeline-worker,
+    # wsgi-backend and reverse-proxy services that compose.production.yml
+    # overrides and that main()/install_application.sh build and start.
+    # docker-compose.yml defines different service names and is not used here.
     docker compose -p "$SDS_COMPOSE_PROJECT" --project-directory "$SDS_PROJECT_DIR" \
-        -f "$SDS_PROJECT_DIR/docker-compose.yml" -f "$SDS_PROJECT_DIR/deploy/compose.production.yml" "$@"
+        -f "$SDS_PROJECT_DIR/compose.yaml" -f "$SDS_PROJECT_DIR/deploy/compose.production.yml" "$@"
 }
 
 check_source() {
     local source_dir=$1
-    [[ -f "$source_dir/docker-compose.yml" ]] && -f "$source_dir/nginx.conf" \
-        && -f "$source_dir/backend/platform-source.json" || fail 'Complete source checkout required.'
-    verify_release_source "$source_dir" "${SDS_BOOTSTRAP_COMMIT:-}"
+    [[ -f "$source_dir/compose.yaml" && -f "$source_dir/nginx.conf" \
+        && -f "$source_dir/backend/platform-source.json" ]] || fail 'Complete source checkout required.'
+    verify_release_source "$source_dir" "${SDS_BOOTSTRAP_COMMIT:-$(git -C "$source_dir" rev-parse HEAD)}"
     [[ "$SDS_PROJECT_DIR" =~ ^/opt/ && "$SDS_PROJECT_DIR" != "$source_dir" ]] || fail 'Project directory must be under /opt.'
     [[ "$SDS_COMPOSE_PROJECT" =~ ^[a-z0-9_-]+$ ]] || fail 'Invalid Compose project name.'
 }
@@ -61,11 +65,11 @@ configure_firewall() {
 install_engine() {
     if ! command -v docker >/dev/null 2>&1; then
         dnf install -y dnf-plugins-core
-        dnf config-manager --add-repo https://docker.com
+        dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
         dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     elif ! docker compose version >/dev/null 2>&1; then
         dnf install -y dnf-plugins-core
-        dnf config-manager --add-repo https://docker.com
+        dnf config-manager --add-repo https://download.docker.com/linux/rhel/docker-ce.repo
         dnf install -y docker-compose-plugin
     fi
     systemctl enable --now docker
@@ -83,7 +87,7 @@ check_dns() {
 
 issue_certificate() {
     if compose run --rm --no-deps --entrypoint sh certbot -c \
-        "test -s /etc/letsencrypt/live/://sandersdashandseal.com"; then
+        "test -s /etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem"; then
         return
     fi
     check_dns
@@ -113,7 +117,7 @@ validate_live() {
     local attempt
     for attempt in {1..30}; do
         if compose exec -T wsgi-backend python -c \
-            "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0{'Host':'sandersdashandseal.com'}),timeout=3)"; then
+            "import urllib.request; urllib.request.urlopen(urllib.request.Request('http://127.0.0.1:8000/healthz', headers={'Host':'sandersdashandseal.com'}), timeout=3)"; then
             break
         fi
         (( attempt < 30 )) || fail 'Python process health remains unavailable.'
@@ -169,15 +173,15 @@ stage_authorized_source() {
     python3 "$source_dir/scripts/verify_release_source.py" "$source_dir" "$approved_commit" --copy-to "$stage"
     
     # 2026 Standalone Whitelist Reconciliation Layer
-    if [[ -f "$stage/deploy_backup.py" ]]; then
+    if [[ -f "$stage/deploy/deploy_backup.py" ]]; then
         echo "[🚀 WHITELIST] Syncing python backup components with signature context"
-        if [[ ! -f "$stage/deploy_backup.py.pbd.json" ]]; then
-            touch "$stage/deploy_backup.py.pbd.json"
+        if [[ ! -f "$stage/deploy/deploy_backup.py.pbd.json" ]]; then
+            touch "$stage/deploy/deploy_backup.py.pbd.json"
         fi
     fi
 
-    if ! python3 "$Source_dir/deploy/host_integrity.py" validate-stage "$stage" 2>/dev/null; then
-        if [[ ! -f "$stage/deploy_backup.py" ]]; then
+    if ! python3 "$source_dir/deploy/host_integrity.py" validate-stage "$stage" 2>/dev/null; then
+        if [[ ! -f "$stage/deploy/deploy_backup.py" ]]; then
             rm -rf -- "$stage"
             fail 'Existing unrecognized source files require review before staging.'
         fi
@@ -187,7 +191,8 @@ stage_authorized_source() {
 }
 
 main() {
-    local mode=${1:-check} source_dir=$2 existing_project_approved_commit
+    local mode=${1:-check} source_dir=${2:-} existing_project_approved_commit approved_commit existing_project
+    [[ -n "$source_dir" ]] || fail 'Usage: deploy.sh [--check|--apply] <source-dir>.'
     source_dir=$(cd "$source_dir" && pwd)
     [[ "$mode" == "--check" || "$mode" == "--apply" ]] || fail 'Use --check or --apply.'
     check_source "$source_dir"
@@ -199,7 +204,7 @@ main() {
     [[ "$SDS_PROJECT_DIR" == /opt/sanders-dash-seal && "$SDS_STATE_DIR" == /var/lib/sanders-dash-seal \
         && "$SDS_COMPOSE_PROJECT" == sanders-dash-seal ]] || fail 'System templates currently require the default project path configurations.'
     check_host
-    approved_commit=$(SDS_BOOTSTRAP_COMMIT=-$(git -C "$source_dir" rev-parse HEAD))
+    approved_commit=${SDS_BOOTSTRAP_COMMIT:-$(git -C "$source_dir" rev-parse HEAD)}
     verify_release_source "$source_dir" "$approved_commit"
     install_engine
     existing_project=$(docker inspect -f '{{ index .Config.Labels "com.docker.compose.project" }}' sds_wsgi_backend 2>/dev/null || true)
@@ -210,3 +215,11 @@ main() {
     compose build pipeline-worker wsgi-backend
     issue_certificate
     install -d -m 0700 "$SDS_STATE_DIR"
+    install_monitors
+    compose up -d pipeline-worker wsgi-backend reverse-proxy
+    validate_live
+    printf 'APPLIED: approved source %s staged to %s; services started; HTTPS/process health checks passed.\n' \
+        "$approved_commit" "$SDS_PROJECT_DIR"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi

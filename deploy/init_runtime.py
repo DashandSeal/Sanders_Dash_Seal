@@ -40,7 +40,7 @@ def initialize(folder,*,clock=time.time,chown=os.chown):
         os.chmod(settings,0o640);chown(settings,0,10001)
         existing.update({'owner_setup_digest':hashlib.sha256(token.encode()).hexdigest(),
                          'owner_setup_expires':expires})
-        existing.setdefault('stripe_livemode',True)
+        existing.setdefault('stripe_livemode',False)
         json.dump(existing,output)
         output.write('\n')
 

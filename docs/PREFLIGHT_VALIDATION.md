@@ -8,7 +8,7 @@ HEAD and drift, archives that exact commit into a temporary build context and
 uses `deploy/compose.preflight.yml` under a unique disposable project name.
 
 ```bash
-sudo bash /opt/sanders-dash-seal/run_preflight_checks.sh --commit "$APPROVED_COMMIT"
+sudo bash /opt/sanders-dash-seal/deploy/run_preflight_checks.sh --commit "$APPROVED_COMMIT"
 sudo systemctl status sanders-oci-inventory.timer
 ```
 

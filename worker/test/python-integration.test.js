@@ -8,7 +8,13 @@ const { WebSocket } = require('ws');
 const { createWorker, HOST, ORIGIN } = require('../src/worker');
 
 async function runtime(t, mode) {
-    const python = spawn('python3', [path.join(__dirname, 'python_fixture.py'), mode],
+    // The fixture imports deploy.deployment, which imports stripe; use the
+    // venv python when SDS_TEST_PYTHON points at it, else system python3.
+    // (Found 2026-11-13: hardcoded 'python3' has no stripe installed, so
+    // both python-integration tests failed at fixture import even though
+    // the application code itself imports fine.)
+    const pythonBin = process.env.SDS_TEST_PYTHON || 'python3';
+    const python = spawn(pythonBin, [path.join(__dirname, 'python_fixture.py'), mode],
         { stdio: ['ignore', 'pipe', 'pipe'] });
     let error = '';
     python.stderr.on('data', data => { error += data; });

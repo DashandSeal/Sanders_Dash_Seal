@@ -2,7 +2,7 @@
   "body": {
     "schema": 1,
     "platform": "Sanders Dash & Seal",
-    "artifact": "release.tf",
+    "artifact": "infrastructure/resource-manager/release.tf",
     "payload_hash": "74faa948c8b0c294f15be0632c9d8f2312905e8c6a71d45f57bbeda79b7f1ed3",
     "scope": {
       "endpoint": "local://development",

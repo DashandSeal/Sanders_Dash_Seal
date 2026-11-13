@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/local_upgrade_executor.py",
-    "payload_hash": "4e76d19fbfef19ed2d893413c4c6f6d9e50f6d4f749e13f036c9a8ce077e92a5",
+    "payload_hash": "c32aed7dfd5e74fa058e8b44a758cc14ae61a993bf7438360fdc04b61433c69f",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

@@ -2,8 +2,8 @@
   "body": {
     "schema": 1,
     "platform": "Sanders Dash & Seal",
-    "artifact": "main.tf",
-    "payload_hash": "7574bfc5c8bf3ae4ba41aaadad4b8db9e022e2e3f9674e29d36a2d682a2e47c7",
+    "artifact": "infrastructure/resource-manager/main.tf",
+    "payload_hash": "98a671c4adaff9f8e36f30f6a917757a7d437d327724932f87fceb44c64ccd4d",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
