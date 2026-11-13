@@ -1,0 +1,35 @@
+# Sanders Dash & Seal — optional AI-service dependencies (Task 5, 2026-11-13)
+#
+# Install ONLY the providers the owner enables.  Nothing in
+# core_platform requires these at import time: every adapter raises an
+# honest ImportError/ValueError when its package or key is missing, and
+# the stdlib transports (Anthropic Messages API, OpenAI chat) work
+# without any of them.  Free-tier-first: prefer the $0 paths
+# (faster-whisper local, system TTS, LiveKit self-host, Stripe test
+# mode) before any paid service.  Versions below are the pinned
+# versions verified in the 2026-11-13 state-of-the-art research
+# (workspace/version-research-2026-11-13.md); re-check before upgrading.
+#
+# Anthropic Claude SDK (optional; stdlib transport is the default)
+anthropic==2.8.0
+# OpenAI SDK (optional; stdlib chat transport is the default; also
+# provides gpt-transcribe. Do NOT use whisper-1 — removed 26 Feb 2027 —
+# and do NOT use tts-1/tts-1-hd — shutdown 6 Jan 2027.)
+openai==3.49.0
+# Deepgram Nova-3 speech-to-text. Pinned to the 3.x API the adapter in
+# daedalus_voice.py targets (DeepgramClient.listen.prerecorded.v("1"));
+# the 4.x/7.x SDKs changed that call shape, so upgrading needs an
+# adapter change first. Latest 3.x verified on PyPI 2026-11-13.
+deepgram-sdk==3.11.0
+# Google Cloud Text-to-Speech (WaveNet). Latest verified on PyPI 2026-11-13.
+google-cloud-texttospeech==2.38.0
+# ElevenLabs text-to-speech
+elevenlabs==2.78.0
+# Local/offline speech-to-text (no key, $0 after model download)
+faster-whisper==1.2.1
+# Local/offline text-to-speech (needs espeak-ng on the host)
+pyttsx3==2.99
+# LiveKit server SDK for token helpers (optional; token issuance in
+# core_platform/livekit_video.py is stdlib-only and needs no SDK).
+# Latest verified on PyPI 2026-11-13.
+livekit-api==1.2.2

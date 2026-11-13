@@ -1,0 +1,57 @@
+# Sanders Dash & Seal — AI platform service environment (EXAMPLE ONLY, no real values).
+# Task 5, 2026-11-13.  Copy to /etc/sanders-dash-seal/environment on the
+# Oracle host, owned by root, mode 0600, and fill in ONLY the services
+# the owner enables:
+#   sudo install -d -m 0750 -o root -g sanders /etc/sanders-dash-seal
+#   sudo install -m 0600 -o root -g sanders <this file> /etc/sanders-dash-seal/environment
+# Then: sudo systemctl restart sanders-dash-seal
+#
+# ALL KEYS ARE UNSET BELOW.  Every adapter refuses to run without its
+# key and reports MISSING_KEY; nothing here spends money or makes a
+# live call on its own.  Free-tier-first: enable the $0 paths
+# (faster-whisper local, system TTS, LiveKit self-host, Stripe test
+# mode) before any paid service.
+#
+# --- Daedalus / role workers / Grantwriter: Anthropic Claude ---
+# ANTHROPIC_API_KEY=
+# DAEDALUS_CLAUDE_MODEL=
+# DAEDALUS_TIMEOUT_SECONDS=45.0
+#
+# --- Daedalus / role workers / Grantwriter: OpenAI chat ---
+# OPENAI_API_KEY=
+# OPENAI_CHAT_MODEL=
+# DAEDALUS_OPENAI_MODEL=
+# OPENAI_TIMEOUT_SECONDS=45.0
+# OPENAI_REALTIME_MODEL=
+# Role-worker backend selection: "claude" (default) or "openai".
+# LLM_BACKEND=claude
+#
+# --- Voice: speech-to-text ---
+# DEEPGRAM_API_KEY=
+# (OpenAI transcription reuses OPENAI_API_KEY; model is gpt-transcribe.
+#  Do NOT set whisper-1 — deprecated, removed 26 Feb 2027.)
+# faster-whisper and system TTS need no key.
+#
+# --- Voice: text-to-speech ---
+# ELEVENLABS_API_KEY=
+# GOOGLE_APPLICATION_CREDENTIALS=/etc/sanders-dash-seal/google-tts.json
+# (Do NOT use OpenAI tts-1 / tts-1-hd — deprecated, shutdown 6 Jan 2027.)
+#
+# --- Video: LiveKit / WebRTC (signalling + session tokens only) ---
+# LIVEKIT_URL=
+# LIVEKIT_API_KEY=
+# LIVEKIT_API_SECRET=
+#
+# --- Payments: Stripe (TEST MODE FIRST) ---
+# STRIPE_SECRET_KEY=
+#   Must start with sk_test_ unless the verifier gate below is set.
+# STRIPE_WEBHOOK_SECRET=
+# STRIPE_LIVEMODE=false
+# STRIPE_LIVE_VERIFIED=
+#   Set to "1" ONLY after a verifier confirms the live webhook secret,
+#   prices and success URLs.  Live keys are refused without it.
+#
+# --- Hosting: Oracle Always Free only (Core Law 10/11) ---
+# No provider keys are needed for the Always Free host itself; the
+# systemd unit reads this file with EnvironmentFile=- (absent file =
+# service still starts, provider endpoints answer 503/MISSING_KEY).
