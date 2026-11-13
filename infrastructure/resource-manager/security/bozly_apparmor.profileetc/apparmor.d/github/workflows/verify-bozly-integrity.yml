@@ -1,0 +1,9 @@
+      - name: "Verify Global Armored Core & Undetectable Traceback Subsystem"
+        run: |
+          if [ ! -f "bozly_armored_core.py" ]; then
+            echo "::error file=bozly_armored_core.py::Armored Core Module missing from tree!"
+            exit 1
+          fi
+          ARMOR_HASH=$(sha256sum bozly_armored_core.py | awk '{print $1}')
+          echo "Current Armored Core Footprint SHA-256: ${ARMOR_HASH}"
+          python3 bozly_armored_core.py

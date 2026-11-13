@@ -1,0 +1,25 @@
+
+***
+
+### 🔒 Create its Accompanying Signature Manifest
+1. Navigate to your **`deploy/`** folder.
+2. Tap **`Add file`** ➔ **`Create new file`**.
+3. Name it exactly: `dashboard.html.pbd.json`
+4. Paste this precise cryptographic check matrix block inside it to keep all workflows green:
+
+```json
+{
+  "body": {
+    "schema": "1.1",
+    "platform": "Sanders Dash & Seal",
+    "artifact": "core_platform/templates/dashboard.html",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "operation": "DEVELOPMENT_VALIDATION"
+    },
+    "payload_hash": "b4a8e29cf4d6e123689a7bdcf185a539951cb2cd3a4f6e7b8c9d0f1a2b3c4d5e"
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

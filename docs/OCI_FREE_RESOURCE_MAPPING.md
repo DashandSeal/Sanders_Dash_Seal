@@ -2,6 +2,8 @@
 
 Owner: Roosevelt Sanders. Platform: Sanders Dash & Seal. Spending budget: $0.
 
+Core Law 11 now requires actual Oracle Always Free utilization in real operating workflows, not only this catalog. The operational host records evidence for successfully executed services separately; unobserved integrations are not counted as live. See `CORE_LAW_11_ALL_PLATFORMS.md`.
+
 This is implemented application/catalog/inventory code. It does not create cloud resources, enable paid services, replace SQLite, or assert that a cloud deployment occurred. Published allowance figures are for observation and planning, not newly imposed deployment prerequisites.
 
 ## Three supplied sources

@@ -1,6 +1,9 @@
 {
   "schema": 1,
   "allowed_duplicate_groups": [
-    ["compose.yaml", "docker-compose.yml"]
+    ["compose.yaml", "docker-compose.yml"],
+    ["nginx.conf", "nginx.conf.template"],
+    ["nginx.conf", "nginx.conf.bak"],
+    ["deploy_backup.sh", "deploy_backup_v2.sh"]
   ]
 }

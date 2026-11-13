@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "source_commit": "0be92167e082a08940bcd1e2826141f169f25e98",
+  "files": {
+    "README.md": "5165d483c7325db68c09ab95ba382c7061d71871f3dd663c379117b8d3417058",
+    "application.tgz": "b7920409de1fdb7bdff0010bd612af49a07e6264ad2a810232a273711af3c159",
+    "cloud-init-application.yaml.tftpl": "92f420d601efe6b247f7ce8ade091953c86cd3de14223ee81cdd91dea1558c07",
+    "cloud-init-application.yaml.tftpl.pbd.json": "01e67e32137b62efc8fa6984a66230420476c6cba8efe74997db9de0059b39ae",
+    "free-platform.tf": "639e0cf1426c498b0fa96f3dfb0d8f2b1493169dc0a282e13686f65ae64197c1",
+    "free-platform.tf.pbd.json": "f6e97e5248b3bc1ca9f59ed90fd4cb043d2c18334aff8ae4fa92feeb32d65a8f",
+    "install-existing.sh.tftpl": "c18b03e0487e1e041ceae3bbbb16128730bc5be5392cf8d56bb624e4af29b0e1",
+    "install-existing.sh.tftpl.pbd.json": "51c0c061b6b63cd567245db294873a22cb88b8c697523171711541b083d290d9",
+    "main.tf": "7574bfc5c8bf3ae4ba41aaadad4b8db9e022e2e3f9674e29d36a2d682a2e47c7",
+    "main.tf.pbd.json": "8f0b6f71e717bdece2ce6b402a96084f221776c13cc2a12cee13dd67c44aa6b8",
+    "outputs.tf": "661546b3c74d5c9c847d2142e838b379caa5f7b694d2b32bce1adfebb839bf12",
+    "outputs.tf.pbd.json": "27376327932d3b69319d04b5f1e781ca9dc73b25c3a23373f703f311a61d72de",
+    "release.tf": "0154d13d29ad1ef33731a2d69cf082acbd3f718d5c0ee5a3f26f5720d9477a09",
+    "release.tf.pbd.json": "59b0d3a1fa664da40ea0b2ad37a2112ee5cafbf8fb45054ba7a05fb3e847c087",
+    "schema.yaml": "c455287dc136c91e49799906b7f0f41a58c9a22b669231d9c973a466c55ae005",
+    "schema.yaml.pbd.json": "6e12d44ebe4429058fe7b345f0422e5f0f5b31e593daf3ce53263eaae5217dc9",
+    "variables.tf": "00bfefa3fc579c8197c8f6c88d5b57f4168bdc0da660e69b457ed45a8b0ec476",
+    "variables.tf.pbd.json": "5721bce8188da7994f54d5daa165d9fc8ce495b6902d2488a5c626083a41312a",
+    "versions.tf": "dcdfc589f48d4366def98cb7a48aad10cc891a1a6bbcf74e7af6b7fa69ee143f",
+    "versions.tf.pbd.json": "2fa22295166ba62fea59ee6fe6c8d362167cab45b99198b9bbd959419159dc4c",
+    "wait_application.py": "d860cbba8608383f594a913d139a885cf323b9f4cc878c7a642919059bd1d243",
+    "wait_application.py.pbd.json": "2141ad599fba14beed56d91d95ecc5f43d5a2a091203dc96dc4d03fa34146e65"
+  },
+  "production_signatures_verified": false,
+  "cloud_resources_created": false
+}

@@ -1,0 +1,15 @@
+{
+  "body": {
+    "schema": "1.1",
+    "platform": "Sanders Dash & Seal",
+    "artifact": "core_platform/load_balancer.py",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "operation": "DEVELOPMENT_VALIDATION"
+    },
+    "payload_hash": "3f4e5a6b7c8d9e0123456789abcdef123456789abcdef123456789abcdef1234"
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

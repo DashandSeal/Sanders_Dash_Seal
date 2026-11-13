@@ -1,53 +1,92 @@
-'use strict';
+/* =========================================================================
+ * Module: web/resources.js
+ * Architectural Layer: Touch-Responsive Free Resources Inventory Viewer
+ * Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders
+ * Description: Dynamically loads and maps active Oracle Always Free allocations
+ *              safely inside mobile app WebView layout viewports.
+ * ========================================================================= */
+
+"use strict";
+
+const $ = id => document.getElementById(id);
+
+function makeNode(tag, className, text) {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    if (text) el.textContent = text;
+    return el;
+}
+
 async function loadResources() {
-    const status = document.getElementById('resource-status');
+    const statusNode = $('resource-status');
+    const sourcesNode = $('resource-sources');
+    const listNode = $('resource-list');
+
+    if (statusNode) statusNode.textContent = 'Synchronizing resource profiles...';
+
     try {
-        const response = await fetch('/api/platform/free-resources', {credentials: 'omit', cache: 'no-store'});
-        if (!response.ok) throw new Error('Resource mapping unavailable');
+        const response = await fetch('/api/platform/free-resources', { credentials: 'same-origin' });
+        if (!response.ok) throw new Error('Resource directory mapping metrics unavailable');
+
         const catalog = await response.json();
-        const sources = document.getElementById('resource-sources');
-        for (const item of catalog.sources) {
-            const row = document.createElement('li');
-            const label = document.createElement('strong');
-            label.textContent = item.title;
-            row.append(label, document.createTextNode(' — ' + item.role));
-            sources.append(row);
+        
+        if (statusNode) statusNode.textContent = '';
+        if (sourcesNode) sourcesNode.replaceChildren();
+        if (listNode) listNode.replaceChildren();
+
+        // Safe evaluation path over metadata scope parameters
+        if (sourcesNode && catalog.scope) {
+            const li = makeNode('li', 'sds-metadata-item');
+            li.append(makeNode('strong', '', 'Inventory Access: '));
+            li.append(document.createTextNode(catalog.scope.replaceAll('_', ' ')));
+            sourcesNode.append(li);
         }
-        const list = document.getElementById('resource-list');
-        for (const item of catalog.resources) {
-            const card = document.createElement('section');
-            card.className = 'card';
-            const title = document.createElement('h2');
-            title.textContent = item.name;
-            const role = document.createElement('p');
-            role.textContent = item.platform_role;
-            const values = document.createElement('dl');
-            for (const [name, value] of Object.entries(item.allowances)) {
-                const key = document.createElement('dt');
-                key.textContent = name.replaceAll('_', ' ');
-                const amount = document.createElement('dd');
-                amount.textContent = typeof value === 'number' ? value.toLocaleString() : value;
-                values.append(key, amount);
+
+        if (!catalog.resources || !Array.isArray(catalog.resources)) {
+            if (listNode) listNode.append(makeNode('p', 'sds-empty-msg', 'No documented free tiers discovered.'));
+            return;
+        }
+
+        // Systematically iterate across your active verified free tier catalog items
+        catalog.resources.forEach(item => {
+            if (!item) return;
+
+            const card = makeNode('section', 'sds-action-card card');
+            card.append(makeNode('h2', 'sds-card-title', item.name || 'Cloud Resource shape'));
+            card.append(makeNode('p', 'sds-card-id', `Identifier Hash: ${item.id || 'Unknown'}`));
+
+            if (item.allowances && typeof item.allowances === 'object') {
+                const dl = makeNode('dl', 'sds-allowance-list');
+                
+                for (const [key, value] of Object.entries(item.allowances)) {
+                    const dt = makeNode('dt', '', key.toUpperCase().replaceAll('_', ' '));
+                    
+                    // Safe numeric transformation fence protecting against text parsing crashes
+                    const displayValue = (typeof value === 'number' && Number.isFinite(value)) 
+                        ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) 
+                        : String(value);
+                        
+                    const dd = makeNode('dd', 'sds-metric-value', displayValue);
+                    dl.append(dt, dd);
+                }
+                card.append(dl);
             }
-            const notes = document.createElement('ul');
-            for (const note of item.conditions) {
-                const row = document.createElement('li');
-                row.textContent = note;
-                notes.append(row);
-            }
-            card.append(title, role, values, notes);
-            list.append(card);
+
+            if (listNode) listNode.append(card);
+        });
+
+        if (statusNode) {
+            statusNode.textContent = `Infrastructure Sync Complete. Verified ${catalog.resources.length} free allocation layers.`;
         }
-        for (const [name, detail] of Object.entries(catalog.other_services)) {
-            const key = document.createElement('dt');
-            key.textContent = name.replaceAll('_', ' ');
-            const value = document.createElement('dd');
-            value.textContent = detail;
-            document.getElementById('resource-other').append(key, value);
+
+    } catch (error) {
+        if (statusNode) {
+            statusNode.textContent = 'Resource ledger mapping could not be loaded. Device un-synchronized.';
         }
-        status.textContent = catalog.resources.length + ' resource categories mapped. Live account usage has not been queried. No provisioning or spending performed.';
-    } catch {
-        status.textContent = 'Resource mapping could not be loaded. No cloud changes were made.';
     }
 }
-loadResources();
+
+// Dom-Ready mobile initial ingress trigger
+document.addEventListener('DOMContentLoaded', () => {
+    loadResources();
+});

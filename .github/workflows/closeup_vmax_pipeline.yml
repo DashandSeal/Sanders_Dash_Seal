@@ -1,0 +1,47 @@
+name: Closeup vMax Autonomous Deployment & Learning Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/resource-manager/platform_manifest.pbd.json'
+      - 'infrastructure/resource-manager/closeup_media_assembler.py'
+
+jobs:
+  validate_and_trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python Runtime Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install System Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests flask
+
+      - name: Execute Local Security & Validation Gates
+        run: |
+          echo "Verifying structural authorization profiles..."
+          python -c "
+          import json
+          with open('infrastructure/resource-manager/platform_manifest.pbd.json') as f:
+              data = json.load(f)
+          if data['platform_identity']['global_authorization_gate'] != 'Roosevelt Sanders exclusively':
+              raise PermissionError('CRITICAL SECURITY GATE BREACH: Unauthorized identity token.')
+          print('Authorization gate verified successfully for Roosevelt Sanders exclusively.')
+          "
+
+      - name: Trigger Serverless OCI Asset Pipeline
+        env:
+          OCI_WEBHOOK_URL: ${{ secrets.OCI_CLOSEUP_WEBHOOK_URL }}
+        run: |
+          echo "Transmitting platform creative rules matrix to Always Free Oracle Compute Node..."
+          # In full execution, this posts the data directly to your running OCI instance
+          echo "Pipeline sequence initiated with zero out-of-pocket overhead."
+          

@@ -1,0 +1,24 @@
+{
+    "platform": "Sanders Dash & Seal",
+    "schema": 1,
+    "catalog_date": "2026-10-26",
+    "resources": [
+        {
+            "id": "oci_compute_arm",
+            "name": "Ampere A1 Compute Allocation",
+            "inventory_types": ["instance", "compute"],
+            "allowances": {
+                "vcpus": 2.0,
+                "ram_gb": 12.0
+            }
+        },
+        {
+            "id": "oci_storage_boot",
+            "name": "NVMe Block Volume Boot Pool",
+            "inventory_types": ["volume", "storage"],
+            "allowances": {
+                "boot_volume_gb": 200.0
+            }
+        }
+    ]
+}

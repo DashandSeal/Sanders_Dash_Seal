@@ -1,15 +1,16 @@
-"""Local atomic artifact staging adapter for the Sanders Dash & Seal sidecar.
+"""
+Local atomic artifact staging adapter for the Sanders Dash & Seal sidecar.
 
 This is a filesystem staging executor, NOT a production process manager or
 an independent authorization, AI inference, or OS sandbox service.
 """
+
 import hashlib
 import json
 import os
 from pathlib import Path
 import shutil
 import tempfile
-
 
 class LocalUpgradeExecutor:
     def __init__(self, root):
@@ -70,8 +71,10 @@ class LocalUpgradeExecutor:
             if os.path.exists(tmp):
                 os.unlink(tmp)
         self._write_state(directory, {
-            "pending": True, "digest": actual,
-            "previous": previous.exists(), "version": record["version"]
+            "pending": True,
+            "digest": actual,
+            "previous": previous.exists(),
+            "version": record["version"]
         })
         return {"staged": True, "sha256": actual, "mode": "local-dark"}
 

@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "compose.yaml",
-    "payload_hash": "37b1fbe43a3c6efbd9fc3a726c810e0e44cf9f1d21df5b4cdf03760bf84c67c4",
+    "payload_hash": "7b5fb4b03295a1d573f102a0d6dcdc27e2add04749773a9371d857da297904a1",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

@@ -16,3 +16,7 @@ Embed the owner-wide directive in governing sources and resource catalogs. It do
 
 This record establishes applicability. Repository incorporation and deployed-instance adoption must be reported separately for each platform; this file does not assert that every historical artifact or external repository has already been edited.
 
+
+## Complementary Law 11 — actual usage
+
+Core Law 10 defines the allowed Oracle resource category. Core Law 11 additionally requires live, real workload utilization, rather than catalog-only declarations. See `CORE_LAW_11_ALL_PLATFORMS.md`. Neither law replaces the other.

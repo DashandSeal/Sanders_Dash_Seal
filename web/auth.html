@@ -1,3 +1,81 @@
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Account — Sanders Dash &amp; Seal</title><link rel="stylesheet" href="/assets/booking.css"><script src="/assets/auth.js" defer></script></head>
-<body><header class="top"><a class="brand" href="/">Sanders Dash &amp; Seal</a><a href="/appointments">Appointments</a></header><main><section class="card"><p class="eyebrow">YOUR ACCOUNT</p><h1 id="auth-title">Sign in</h1><p id="auth-description">Sign in to request an appointment and follow its progress.</p><form id="account-form"><div id="account-fields"><label for="username">Account name</label><input id="username" name="username" autocomplete="username" minlength="3" maxlength="64" pattern="[a-z0-9][a-z0-9_.\-]{2,63}" required><small>Use lowercase letters, numbers, dots, dashes or underscores.</small><label for="password">Passphrase</label><input id="password" name="password" type="password" autocomplete="current-password" minlength="15" maxlength="128" required><div id="setup-field" hidden><label for="setup-token">Owner setup secret</label><input id="setup-token" type="password" autocomplete="off" maxlength="43"></div></div><button id="account-submit" class="primary" type="submit">Sign in</button><p id="auth-message" role="status" aria-live="polite"></p></form><p><a id="auth-alternative" href="/auth/register">Create an account</a></p></section></main><footer>Sanders Dash &amp; Seal · Sanders Legal Helpers LLC</footer></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Secure credential entry gate for Sanders Dash &amp; Seal.">
+    <title>Sanders Dash &amp; Seal - Identity Authorization Gateway</title>
+    <link rel="stylesheet" href="/assets/booking.css">
+    <script src="/assets/auth.js" defer></script>
+</head>
+<body>
+    <!-- Unified Corporate Top Navigation Ingress Branding Bar -->
+    <header class="sds-enterprise-header">
+        <a class="sds-brand-title" href="/index.html" aria-label="Sanders Dash and Seal Home">
+            Sanders Dash <span>&amp;</span> Seal
+        </a>
+        <div class="sds-tagline-anchor" aria-hidden="true">
+            From the Road to Remote, We Seal the Deal.
+        </div>
+    </header>
+
+    <main class="sds-main-viewport" style="max-width: 500px; margin: 4rem auto;">
+        <!-- Centered Authentication Card Frame -->
+        <section class="sds-action-card">
+            <h1 id="auth-title" style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center;">
+                Sign In
+            </h1>
+            <p id="auth-description" style="font-size: 0.95rem; color: #E5E5E5; text-align: center; margin-bottom: 2rem;">
+                Sign in to request an appointment and secure documents.
+            </p>
+
+            <form id="account-form" novalidate>
+                <fieldset id="account-fields" style="border: none;">
+                    
+                    <!-- Username Text Block Input -->
+                    <div style="margin-bottom: 1.25rem;">
+                        <label for="username" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Account Identity Name</label>
+                        <input type="text" id="username" name="username" required autocomplete="username" placeholder="Enter your username" style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;">
+                    </div>
+
+                    <!-- Cryptographic Passphrase Entry Field -->
+                    <div style="margin-bottom: 1.5rem;">
+                        <label for="password" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Passphrase</label>
+                        <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your secret passphrase" style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;">
+                    </div>
+
+                    <!-- Dynamic Volatile Owner Setup Key Container -->
+                    <div id="setup-field" hidden style="margin-bottom: 1.5rem;">
+                        <label for="setup-token" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #00A3E0;">Private Owner Setup Key</label>
+                        <input type="password" id="setup-token" name="setup-token" placeholder="Enter administrative authorization token" style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #00A3E0; border: 1px solid #00A3E0; border-radius: 4px;">
+                    </div>
+
+                    <!-- Dynamic Real-Time Feedback Text Node -->
+                    <div id="auth-message" role="status" aria-live="polite" style="margin-bottom: 1.5rem; min-height: 1.5rem; font-size: 0.95rem; font-weight: 600; color: #00A3E0; text-align: center;"></div>
+
+                    <!-- High-Contrast Touch Control Action Button -->
+                    <button class="sds-button-primary" id="account-submit" type="submit" style="width: 100%; padding: 1rem;">
+                        Sign In
+                    </button>
+                    
+                </fieldset>
+            </form>
+        </section>
+
+        <!-- Dynamic Alternative Alternative Interface Route Tracing -->
+        <p style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
+            <a id="auth-alternative" href="/index.html" style="color: #888; text-decoration: none; transition: color 0.2s;">
+                &larr; Cancel and return to home screen
+            </a>
+        </p>
+    </main>
+
+    <!-- Patented Legal Ownership Branding Protection Fence -->
+    <footer class="sds-intellectual-property-footer">
+        <div>&copy; 2026 Sanders Dash &amp; Seal. All Rights Reserved.</div>
+        <div style="font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.7;">
+            Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders
+        </div>
+    </footer>
+</body>
+</html>

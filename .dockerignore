@@ -5,8 +5,15 @@
 !core_platform/
 !core_platform/*.py
 !core_platform/*.py.pbd.json
+!core_platform/oci_free_resources.json
+!core_platform/oci_free_resources.json.pbd.json
 !web/
 !web/**
+!backend/
+!backend/Dockerfile
+!backend/wsgi.py
+!backend/wsgi.py.pbd.json
+!backend/auth_session.py
 !wsgi.py
 !wsgi.py.pbd.json
 !deploy/

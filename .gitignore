@@ -1,10 +1,11 @@
-__pycache__/
-*.pyc
-.venv/
-.env
-*.pem
-*.key
-*.db
-*.db-*
-node_modules/
-.env.*
+# 1. Clear git's cache for all files matching the manifest pattern
+git rm --cached **/*.pbd.json 2>/dev/null || true
+
+# 2. Re-stage your updated configurations
+git add .gitignore .github/workflows/parallel-build-verification.yml
+
+# 3. Commit the tracking fix
+git commit -m "chore: untrack generated pbd manifests and reinforce pipeline rebase"
+
+# 4. Push the branch fix
+git push origin main

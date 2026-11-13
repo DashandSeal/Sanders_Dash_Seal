@@ -1,0 +1,101 @@
+# Isolated Bozly overlay. Start with:
+# docker compose -f docker-compose.bozly.yml up -d --build
+# Do not publish this service directly to the internet.
+services:
+  bozly-webhook:
+    build:
+      context: .
+      dockerfile: Dockerfile.bozly
+    image: sanders-bozly-cfo:local
+    container_name: sanders_bozly_webhook
+    restart: unless-stopped
+    command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "bozly_shield_wsgi:webhook_application_shielded"]
+    environment:
+      BOZLY_DB_PATH: /app/secure_ledgers/bozly_financial_core.db
+      BOZLY_STRIPE_ROUTES_JSON: ${BOZLY_STRIPE_ROUTES_JSON:-}
+    volumes:
+      - bozly-ledgers:/app/secure_ledgers
+    networks:
+      - bozly-internal
+    ports:
+      - "127.0.0.1:8185:8000"
+
+  bozly-human-api:
+    image: sanders-bozly-cfo:local
+    build:
+      context: .
+      dockerfile: Dockerfile.bozly
+    container_name: sanders_bozly_human_api
+    restart: unless-stopped
+    command: ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "bozly_shield_wsgi:human_application_shielded"]
+    environment:
+      BOZLY_CONTROL_DB: /app/secure_ledgers/bozly_controls.db
+      BOZLY_OIDC_ISSUER: ${BOZLY_OIDC_ISSUER:-}
+      BOZLY_OIDC_AUDIENCE: ${BOZLY_OIDC_AUDIENCE:-}
+      BOZLY_OIDC_PUBLIC_KEY_FILE: ${BOZLY_OIDC_PUBLIC_KEY_FILE:-}
+      BOZLY_SIGNAL_FERNET_KEY: ${BOZLY_SIGNAL_FERNET_KEY:-}
+    volumes:
+      - bozly-ledgers:/app/secure_ledgers
+    networks:
+      - bozly-internal
+    ports:
+      - "127.0.0.1:8186:8000"
+
+  bozly-satellite-uplink:
+    profiles: ["satellite"]
+    image: sanders-bozly-cfo:local
+    build:
+      context: .
+      dockerfile: Dockerfile.bozly
+    container_name: sanders_bozly_uplink
+    restart: unless-stopped
+    command: ["python", "bozly_uplink.py"]
+    environment:
+      BOZLY_CONTROL_DB: /app/secure_ledgers/bozly_controls.db
+      BOZLY_UPLINK_GATEWAY_URL: ${BOZLY_UPLINK_GATEWAY_URL:-}
+      BOZLY_UPLINK_BEARER_TOKEN: ${BOZLY_UPLINK_BEARER_TOKEN:-}
+    volumes:
+      - bozly-ledgers:/app/secure_ledgers
+    networks:
+      - bozly-internal
+
+  bozly-minotaur:
+    image: sanders-bozly-cfo:local
+    build:
+      context: .
+      dockerfile: Dockerfile.bozly
+    container_name: sanders_bozly_minotaur
+    command: ["python", "-u", "bozly_security_response.py"]
+    restart: unless-stopped
+    environment:
+      BOZLY_SECURITY_ROOT: /app
+      BOZLY_SECURITY_STATE_DIR: /app/secure_ledgers/security
+      BOZLY_SECURITY_SCAN_SECONDS: "10"
+    volumes:
+      - bozly-ledgers:/app/secure_ledgers
+    networks:
+      - bozly-internal
+
+  bozly-worker:
+    image: sanders-bozly-cfo:local
+    build:
+      context: .
+      dockerfile: Dockerfile.bozly
+    container_name: sanders_bozly_cfo_worker
+    command: ["python", "bozly_cfo.py", "worker"]
+    restart: unless-stopped
+    environment:
+      BOZLY_DB_PATH: /app/secure_ledgers/bozly_financial_core.db
+      BOZLY_POLL_SECONDS: ${BOZLY_POLL_SECONDS:-2}
+    volumes:
+      - bozly-ledgers:/app/secure_ledgers
+    networks:
+      - bozly-internal
+
+networks:
+  bozly-internal:
+    driver: bridge
+
+volumes:
+  bozly-ledgers:
+    driver: local

@@ -1,0 +1,39 @@
+name: "Platinum Blue Diamond Standard: Environment Validation Pipeline"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  environment-audit:
+    name: "Validate Sovereign Laws"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: "Ingest Repository Tree"
+        uses: actions/checkout@v4
+
+      - name: "Initialize Python Runtime Environment"
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: "Execute Asset Integration Scan"
+        run: |
+          # 1. Dynamically locate verify_assets.py anywhere in the workspace tree
+          TARGET_SCRIPT=$(find . -name "verify_assets.py" | head -n 1)
+          
+          if [ -z "$TARGET_SCRIPT" ]; then
+            echo "[CRITICAL ERROR] verify_assets.py could not be found!"
+            exit 1
+          fi
+          
+          echo "Discovered verification script path at: $TARGET_SCRIPT"
+          
+          # 2. Run the validation engine from its discovered home location
+          python3 "$TARGET_SCRIPT"
