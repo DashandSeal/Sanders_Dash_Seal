@@ -21,7 +21,15 @@ threads = 2
 
 # Anti-Slowloris Keepalive Gateways
 # Synchronized with Nginx proxy_read_timeout and client_body_timeout variables
-timeout = 30
+# 2026-11-13: 30 -> 75 to match nginx location / proxy_read_timeout 75s.
+# A 30s worker timeout with a 75s proxy timeout produced 502s on slow
+# requests (gunicorn killed the worker while nginx was still waiting).
+timeout = 75
+graceful_timeout = 30
+# Behind the nginx container on the private Compose network, trust the
+# X-Forwarded-* headers it sets (scheme/host). Without this, gunicorn
+# treats every proxied request as plain http from the proxy's IP.
+forwarded_allow_ips = "*"
 keepalive = 4
 
 # Payload Transfer Optimization Boundaries

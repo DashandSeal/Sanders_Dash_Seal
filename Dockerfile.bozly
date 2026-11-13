@@ -1,7 +1,7 @@
-FROM python:3.11-slim
+FROM python:3.14-slim-bookworm  # 2026-11-13: 3.11 -> 3.14
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 WORKDIR /app
-RUN pip install --no-cache-dir gunicorn==26.2.0 PyJWT==2.15.1 cryptography==47.0.0 \
+RUN pip install --no-cache-dir gunicorn==26.2.0 PyJWT==2.15.1 cryptography==50.0.2  # 2026-11-13: align with requirements.txt (50.0.2 is latest) \
     && useradd --system --create-home --home /home/bozly bozly \
     && mkdir -p /app/secure_ledgers \
     && chown -R bozly:bozly /app/secure_ledgers
