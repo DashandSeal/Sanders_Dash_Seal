@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/pbd_validation.py",
-    "payload_hash": "5a5e0d30db8cc626873243ed5ddd43b482508fa6ff6dd43bd6549d132d45ba1a",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/pbd_validation.py",
+        "payload_hash": "5a5e0d30db8cc626873243ed5ddd43b482508fa6ff6dd43bd6549d132d45ba1a",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

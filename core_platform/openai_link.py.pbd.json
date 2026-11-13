@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/openai_link.py",
-    "payload_hash": "693091020001ba33dd4ac89fe71229c093e925e7b8f084772212392a1e635615",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/openai_link.py",
+        "payload_hash": "693091020001ba33dd4ac89fe71229c093e925e7b8f084772212392a1e635615",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/native_seals.py",
-    "payload_hash": "68dc6c38691bc483302799c8083d2f1fa13a36bfd20225cc1b11f338e00e799d",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/native_seals.py",
+        "payload_hash": "68dc6c38691bc483302799c8083d2f1fa13a36bfd20225cc1b11f338e00e799d",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

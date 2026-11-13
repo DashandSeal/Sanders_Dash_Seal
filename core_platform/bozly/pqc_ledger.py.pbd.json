@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/bozly/pqc_ledger.py",
-    "payload_hash": "58aa21b92ec973d49d1498f37e311d90e1be55cba845253f51dbe53c06a49ab8",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/bozly/pqc_ledger.py",
+        "payload_hash": "58aa21b92ec973d49d1498f37e311d90e1be55cba845253f51dbe53c06a49ab8",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

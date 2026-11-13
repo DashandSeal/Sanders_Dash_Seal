@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/role_worker_llm.py",
-    "payload_hash": "6951d23a67b196736e886501960f06ac4f8c3d38e9ba7889e5a0eb51d0fc8f28",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/role_worker_llm.py",
+        "payload_hash": "6951d23a67b196736e886501960f06ac4f8c3d38e9ba7889e5a0eb51d0fc8f28",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

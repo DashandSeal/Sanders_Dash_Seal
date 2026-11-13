@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/bozly/bozly_quantum_armor.py",
-    "payload_hash": "837a14fe9c58db1f0268c9c9cae214ad82508c021b4410a34ad9ba19cbd4038e",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/bozly/bozly_quantum_armor.py",
+        "payload_hash": "837a14fe9c58db1f0268c9c9cae214ad82508c021b4410a34ad9ba19cbd4038e",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/bozly/bozly_human_api.py",
-    "payload_hash": "e444cfb253132605482eebc1a7ee654ba5037e31ee69cc7a7747e9d1f6d898fb",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/bozly/bozly_human_api.py",
+        "payload_hash": "e444cfb253132605482eebc1a7ee654ba5037e31ee69cc7a7747e9d1f6d898fb",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

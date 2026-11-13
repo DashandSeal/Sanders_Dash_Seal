@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "speedracer_remediator.py",
+        "payload_hash": "57a93e33a718e25b3f5f096c90e19ccdacf2abb7d6410b87f38b37ba30cce444",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

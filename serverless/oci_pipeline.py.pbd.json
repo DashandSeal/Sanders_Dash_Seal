@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "serverless/oci_pipeline.py",
-    "payload_hash": "69d858a4acf919ac0a8801d96620fef8ec1525499a7d1414aa347823207dd359",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "serverless/oci_pipeline.py",
+        "payload_hash": "69d858a4acf919ac0a8801d96620fef8ec1525499a7d1414aa347823207dd359",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

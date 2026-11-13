@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "sovereign_reconciliation.py",
+        "payload_hash": "c52b2a074ea0299203f5fbcd8a606ea9ab1851a7b7bf243847a37abb6f8b80de",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

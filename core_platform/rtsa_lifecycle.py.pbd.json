@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/rtsa_lifecycle.py",
-    "payload_hash": "074cd1c0021804a775c4f7f8d13856e98fc44e4b84da2f254edfdf398f2729d3",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/rtsa_lifecycle.py",
+        "payload_hash": "074cd1c0021804a775c4f7f8d13856e98fc44e4b84da2f254edfdf398f2729d3",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

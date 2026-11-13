@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "bozly_forensic_accounting.py",
+        "payload_hash": "09940ff2b6d5fea8dbdd384a3ea4c399b78584924a3a27007a0614e908d57f87",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

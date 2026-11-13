@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "web/auth.js",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
-    },
-    "payload_hash": "5fa1ec29fd8926dc3ca5fe29072f4ded836711af78e40d957f2c2591c5300fdc"
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/auth.js",
+        "payload_hash": "5fa1ec29fd8926dc3ca5fe29072f4ded836711af78e40d957f2c2591c5300fdc",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }

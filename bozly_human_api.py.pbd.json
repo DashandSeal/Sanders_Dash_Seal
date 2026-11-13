@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "bozly_human_api.py",
+        "payload_hash": "b8841807f25ba067efebb534466b2713cb6aa9a4ecec6a976e518cab2c7df24a",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "web/jade-landing.html",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
-    },
-    "payload_hash": "f96c79c840f6afd4bf7c26b6ddd3ee176f5e0749d48bfa4e0a6a3e845c4eaea1"
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/jade-landing.html",
+        "payload_hash": "f96c79c840f6afd4bf7c26b6ddd3ee176f5e0749d48bfa4e0a6a3e845c4eaea1",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }

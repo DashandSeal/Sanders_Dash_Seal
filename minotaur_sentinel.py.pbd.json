@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "minotaur_sentinel.py",
-    "payload_hash": "ded5663c527450294b0ec62cf7b2982b4ed6a42f8d7e4b3b31e3f4857d1ac50f",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "minotaur_sentinel.py",
+        "payload_hash": "ded5663c527450294b0ec62cf7b2982b4ed6a42f8d7e4b3b31e3f4857d1ac50f",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

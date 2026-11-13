@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/daedalus_claude_transport.py",
-    "payload_hash": "917c8d3ae204c9bc91bdb72485b6866766e156c3f5be3242e6440f8a00b33eac",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/daedalus_claude_transport.py",
+        "payload_hash": "917c8d3ae204c9bc91bdb72485b6866766e156c3f5be3242e6440f8a00b33eac",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

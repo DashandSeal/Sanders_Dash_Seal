@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/native_ron_rooms.py",
-    "payload_hash": "093ea0c20e9ebbf05bb2178c4f636fde143eff4a34a537f67f2dc5e9303afb8c",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/native_ron_rooms.py",
+        "payload_hash": "093ea0c20e9ebbf05bb2178c4f636fde143eff4a34a537f67f2dc5e9303afb8c",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }
