@@ -195,9 +195,8 @@ jobs:
           git config --global user.name "Sanders Platform Watcher"
           git config --global user.email "rooseveltsanders381@gmail.com"
           
-          # Stage ALL sync/unpack output before any pull --rebase (staging only .pbd.json left other changes behind, causing exit 128)
-          git add -A
-          
+          # Stage ALL sync/unpack output before any pull --rebase (staging only .pbd.json left other changes behind, causing exit 128) Exclude .github/workflows: its .pbd.json is rejected without workflows permission.
+          git add -A -- ':!.github/workflows'
           # Commit all staged changes first, guard the tree, then pull --rebase and push
           if ! git diff-index --quiet HEAD; then
             git commit -m "Auto-extracted, sorted, and cryptographically signed assets [Verified Suite]"
@@ -205,9 +204,9 @@ jobs:
             echo "No changes to commit. Working tree is clean."
           fi
           # Clean-tree guard: git pull --rebase fails exit 128 on unstaged changes, so fail loudly here.
-          if [ -n "$(git status --porcelain)" ]; then
+          if [ -n "$(git status --porcelain -- ':!.github/workflows')" ]; then
             echo "::error::Working tree is not clean before git pull --rebase. Unstaged/uncommitted changes remain:"
-            git status --porcelain
+            git status --porcelain -- ':!.github/workflows'
             exit 1
           fi
           git pull --rebase origin "${{ github.ref_name }}"
