@@ -339,6 +339,15 @@ def _combined_platform_status(env):
         payload["free_first"] = free_first_status()
     except Exception as exc:
         payload["free_first_error"] = f"{type(exc).__name__}: {exc}"
+    try:
+        # PQC (2026-11-13): post-quantum cryptography status, read-only.
+        # Reports honestly whether this runtime can perform ML-KEM-768 /
+        # ML-DSA-65. No keys are ever returned. If the runtime cannot do
+        # PQC, "available" is False and nothing claims otherwise.
+        from core_platform.pqc import status as pqc_status
+        payload["pqc"] = pqc_status()
+    except Exception as exc:
+        payload["pqc_error"] = f"{type(exc).__name__}: {exc}"
     return payload
 
 def create_application(bindings=None):
@@ -555,6 +564,21 @@ def create_application(bindings=None):
             except Exception:
                 return _response(start, '503 Service Unavailable',
                                  {'error': 'resource_catalog_unavailable'})
+        if path == '/api/pqc/status':
+            # Post-quantum cryptography status (ML-KEM-768 / ML-DSA-65),
+            # read-only and key-free. Reports honestly whether this
+            # runtime can perform PQC; 200 with available:false when it
+            # cannot — never a fake claim of quantum safety.
+            if method != 'GET':
+                return _response(start, '405 Method Not Allowed', {'error': 'read_only'}, [('Allow', 'GET')])
+            try:
+                from core_platform.pqc import status as pqc_status
+                payload = pqc_status()
+                payload['generated_at_utc'] = _utcnow_iso()
+                return _response(start, '200 OK', payload)
+            except Exception:
+                return _response(start, '503 Service Unavailable',
+                                 {'error': 'pqc_status_unavailable'})
         if path in ('/healthz', '/readyz'):
             if method != 'GET':
                 return _response(start, '405 Method Not Allowed', {'error': 'method_not_allowed'}, [('Allow', 'GET')])

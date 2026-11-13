@@ -122,6 +122,104 @@ class PaymentLedger:
                 db.commit()
                 return 'RECORDED'
 
+    def sign_recorded_event(self, event_id, signing_key_der, now=None):
+        """Attach an ML-DSA-65 signature to an already-recorded event.
+
+        The signature covers the stored record (event id, type, case,
+        payment, recorded time) as canonical JSON. The webhook path is
+        untouched: this is called explicitly by ledger tooling after an
+        event is recorded, never during webhook verification. Raises
+        PQCUnavailableError if PQC cannot run in this runtime, and
+        PaymentDenied if the event was never recorded.
+        """
+        from core_platform.pqc import (
+            PQCUnavailableError,
+            SIGNATURE_ALGORITHM,
+            sign_record,
+        )
+        from core_platform.pqc import _load_private_key
+        from cryptography.hazmat.primitives import serialization
+
+        if not isinstance(event_id, str) or not event_id:
+            raise PaymentDenied("Invalid event id")
+        clock = now if now is not None else int(time.time())
+        with self._connect() as db:
+            self._ensure_tables(db)
+            row = db.execute(
+                "SELECT event_id, event_type, case_id, payment_id, recorded_at"
+                " FROM stripe_events WHERE event_id = ?;",
+                (event_id,),
+            ).fetchone()
+            if row is None:
+                raise PaymentDenied("Event not recorded; cannot sign")
+            record = {
+                "event_id": row[0],
+                "event_type": row[1],
+                "case_id": row[2],
+                "payment_id": row[3],
+                "recorded_at": row[4],
+            }
+            private_key = _load_private_key(signing_key_der)
+            public_der = private_key.public_key().public_bytes(
+                serialization.Encoding.DER,
+                serialization.PublicFormat.SubjectPublicKeyInfo,
+            )
+            signature = sign_record(signing_key_der, record)
+            db.execute(
+                "INSERT OR REPLACE INTO stripe_events_pqc"
+                " (event_id, algorithm, signature_hex, public_key_hex, signed_at)"
+                " VALUES (?, ?, ?, ?, ?);",
+                (event_id, SIGNATURE_ALGORITHM, signature.hex(),
+                 public_der.hex(), clock),
+            )
+            db.commit()
+            return {"event_id": event_id, "algorithm": SIGNATURE_ALGORITHM}
+
+    def verify_recorded_event(self, event_id):
+        """Verify the PQC signature on a recorded event.
+
+        Returns True only if a signature is stored and it verifies
+        against the stored record. False if no signature is stored, if
+        the record changed since signing, or if PQC is unavailable here.
+        """
+        if not isinstance(event_id, str) or not event_id:
+            return False
+        try:
+            from core_platform.pqc import verify_record
+        except Exception:
+            return False
+        with self._connect() as db:
+            self._ensure_tables(db)
+            row = db.execute(
+                "SELECT event_id, event_type, case_id, payment_id, recorded_at"
+                " FROM stripe_events WHERE event_id = ?;",
+                (event_id,),
+            ).fetchone()
+            sig = db.execute(
+                "SELECT algorithm, signature_hex, public_key_hex"
+                " FROM stripe_events_pqc WHERE event_id = ?;",
+                (event_id,),
+            ).fetchone()
+        if row is None or sig is None:
+            return False
+        from core_platform.pqc import SIGNATURE_ALGORITHM
+
+        if sig[0] != SIGNATURE_ALGORITHM:
+            return False
+        record = {
+            "event_id": row[0],
+            "event_type": row[1],
+            "case_id": row[2],
+            "payment_id": row[3],
+            "recorded_at": row[4],
+        }
+        try:
+            signature = bytes.fromhex(sig[1])
+            public_der = bytes.fromhex(sig[2])
+        except (TypeError, ValueError):
+            return False
+        return verify_record(public_der, record, signature)
+
     def _ensure_tables(self, db):
         """Create every table the dispatch methods touch, on the given
         connection. The webhook path hands these methods a bare connection
@@ -167,6 +265,18 @@ class PaymentLedger:
             refund_ids TEXT,
             recorded_at INTEGER NOT NULL,
             updated_at INTEGER NOT NULL
+        );""")
+        # Post-quantum signature layer (ML-DSA-65) for recorded events.
+        # Alongside, never replacing, the Stripe HMAC webhook verification:
+        # a signature here proves the stored record itself was signed by
+        # the ledger signing key and has not been altered since. No key is
+        # stored in this table's rows beyond the public key needed to verify.
+        db.execute("""CREATE TABLE IF NOT EXISTS stripe_events_pqc (
+            event_id TEXT PRIMARY KEY,
+            algorithm TEXT NOT NULL,
+            signature_hex TEXT NOT NULL,
+            public_key_hex TEXT NOT NULL,
+            signed_at INTEGER NOT NULL
         );""")
         columns = [row[1] for row in db.execute(
             "PRAGMA table_info(stripe_cases)").fetchall()]

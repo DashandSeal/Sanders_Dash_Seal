@@ -1,4 +1,8 @@
-cryptography==47.0.0
+# cryptography 50.0.2 is the minimum version verified to actually perform
+# ML-KEM-768 / ML-DSA-65 (post-quantum cryptography) on this host.
+# 47.0.0 ships the PQC classes but its backend raises UnsupportedAlgorithm
+# for every PQC operation on OpenSSL 3.0. Free, open, NIST FIPS 203/204.
+cryptography==50.0.2
 PyJWT==2.15.1
 requests==2.32.5
 stripe==15.6.0

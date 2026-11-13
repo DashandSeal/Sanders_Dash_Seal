@@ -278,7 +278,7 @@ def run_worker() -> None:
         except Exception:
             # Keep the worker available; undelivered incidents remain durable.
             import logging
-            logging.getLogger("bozly").exception("P0 diversion alert retry unavailable")
+            logging.getLogger("bozly").error("P0 diversion alert retry unavailable")
         time.sleep(poll)
 
 

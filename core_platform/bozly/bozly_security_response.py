@@ -249,7 +249,7 @@ def daemon():
         except Exception as error:
             record = _event("MINOTAUR_PATROL_FAILED", {
                 "error_type": type(error).__name__,
-                "details": str(error)[:250]}, "P0")
+                "details": "PATROL_FAILED"}, "P0")
             _isolate(record, "minotaur_patrol")
         time.sleep(INTERVAL)
 
