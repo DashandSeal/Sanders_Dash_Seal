@@ -21,8 +21,8 @@ compose() {
 
 check_source() {
     local source_dir=$1
-    [[ -f "$source_dir/docker-compose.yml" ]] && -f "$source_dir/nginx.conf" \
-        && -f "$source_dir/backend/platform-source.json" || fail 'Complete source checkout required.'
+    [[ -f "$source_dir/docker-compose.yml" && -f "$source_dir/nginx.conf" \
+        && -f "$source_dir/backend/platform-source.json" ]] || fail 'Complete source checkout required.'
     verify_release_source "$source_dir" "${SDS_BOOTSTRAP_COMMIT:-}"
     [[ "$SDS_PROJECT_DIR" =~ ^/opt/ && "$SDS_PROJECT_DIR" != "$source_dir" ]] || fail 'Project directory must be under /opt.'
     [[ "$SDS_COMPOSE_PROJECT" =~ ^[a-z0-9_-]+$ ]] || fail 'Invalid Compose project name.'
@@ -210,3 +210,11 @@ main() {
     compose build pipeline-worker wsgi-backend
     issue_certificate
     install -d -m 0700 "$SDS_STATE_DIR"
+    install_monitors
+    compose up -d pipeline-worker wsgi-backend reverse-proxy
+    validate_live
+    printf 'APPLIED: approved source %s staged to %s; services started; HTTPS/process health checks passed.\n' \
+        "$approved_commit" "$SDS_PROJECT_DIR"
+}
+
+if [[ "${BASH_SOURCE[0]}" == "$0" ]]; then main "$@"; fi
