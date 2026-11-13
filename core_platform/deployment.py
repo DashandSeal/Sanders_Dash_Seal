@@ -70,17 +70,18 @@ def create_application(bindings=None):
         verifier = _denied
         customer = create_customer_app(
             None, lambda env: None,
-            _unavailable, ORIGIN, release_verifier=verifier
+            _unavailable, lambda env, start: _unavailable(env, start),
+            ORIGIN, release_verifier=verifier
         )
 
     pipeline = create_pipeline_app(bindings.authenticate if bindings else None,
-                                  bindings.transaction_processor if bindings else None,
-                                  bindings.transaction_store if bindings else None,
-                                  bindings.stream_verifier if bindings else None)
+                                   bindings.transaction_processor if bindings else None,
+                                   release_verifier=verifier,
+                                   store=bindings.transaction_store if bindings else None)
 
     stream = create_stream_app(bindings.transaction_processor if bindings else None,
                                verifier, bindings.transaction_store if bindings else None,
-                               bindings.stream_verifiers if bindings else None)
+                               bindings.stream_verifier if bindings else None)
 
     def ready():
         try:
@@ -105,18 +106,33 @@ def create_application(bindings=None):
             return _response(start, '421 Misdirected Request', {'error': 'host_denied'})
 
         method, path = env.get('REQUEST_METHOD', ''), env.get('PATH_INFO', '')
-        if host in CANONICAL_HOST:
-            if method not in ('GET', 'HEAD'):
-                return _response(start, '421 Misdirected Request',
-                                 {'error': 'canonical_origin_required'})
-            start('308 Permanent Redirect', [('Location', ORIGIN + '/'),
-                                               ('Content-Length', '0'), ('Cache-Control', 'no-store')])
-            return [b'']
+        # Canonical host over plain HTTP upgrades to HTTPS. The previous code
+        # redirected unconditionally, so even HTTPS requests behind nginx (which
+        # proxies with X-Forwarded-Proto: https) 308-looped to the same URL and
+        # no canonical-host route below was ever reachable. Only upgrade when
+        # the request is not already HTTPS; HTTPS requests fall through to the
+        # normal routes. The redirect preserves the requested path.
+        if host == CANONICAL_HOST:
+            scheme = env.get('HTTP_X_FORWARDED_PROTO', env.get('wsgi.url_scheme', ''))
+            if scheme != 'https':
+                if method not in ('GET', 'HEAD'):
+                    return _response(start, '421 Misdirected Request',
+                                     {'error': 'canonical_origin_required'})
+                target = ORIGIN + path
+                if env.get('QUERY_STRING'):
+                    target += '?' + env['QUERY_STRING']
+                start('308 Permanent Redirect', [('Location', target),
+                                                   ('Content-Length', '0'), ('Cache-Control', 'no-store')])
+                return [b'']
 
         if path == '/api/platform/free-resources':
             if method != 'GET':
                 return _response(start, '405 Method Not Allowed', {'error': 'read_only'}, [('Allow', 'GET')])
-            return _response(start, '200 OK', free_resource_catalog)
+            try:
+                # free_resource_catalog is the catalog() function, not the data.
+                return _response(start, '200 OK', free_resource_catalog())
+            except Exception:
+                return _response(start, '503 Service Unavailable', {'error': 'catalog_unavailable'})
 
         if path in ('/healthz', '/readyz'):
             if method != 'GET':

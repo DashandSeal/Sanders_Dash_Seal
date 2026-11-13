@@ -1,1 +1,10 @@
+# Sanders Dash & Seal — runtime dependencies (direct Oracle deploy, no Docker).
+# Pin conflict resolved 2026-11-13: requirements.txt pinned cryptography==50.0.2
+# while requirements-dev.txt required cryptography>=46,<47 — installing both
+# files together was unsatisfiable. Resolution: single range >=46,<51 (the
+# <47 cap is lifted; 50.0.2 is the verified latest as of 2026-11-13), exact
+# pins below, and requirements-dev.txt widened to match.
 cryptography==50.0.2
+stripe==15.6.0
+PyJWT==2.15.1
+gunicorn==27.0.1

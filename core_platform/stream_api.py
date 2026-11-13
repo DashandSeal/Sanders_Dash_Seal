@@ -12,7 +12,12 @@ import json
 import logging
 import time
 import stripe
-from stripe.error import SignatureVerificationError
+
+try:
+    # stripe >= 7 exposes errors at the top level; `stripe.error` was removed.
+    from stripe import SignatureVerificationError
+except ImportError:  # pragma: no cover - legacy stripe < 7 fallback
+    from stripe.error import SignatureVerificationError
 
 # Enterprise security boundaries: Webhook payloads never require more than 64KB
 MAX_WEBHOOK_BODY_BYTES = 65536
@@ -145,5 +150,93 @@ def import_make_app(ledger_engine, webhook_secret, *, enabled=True, expected_liv
         except Exception as processing_error:
             logging.error(f"❌ Internal accounting engine processing fault: {str(processing_error)}")
             return respond(start_response, '500 Internal Server Error', {'error': 'ledger_reconciliation_failed'})
+
+    return application
+
+
+def create_stream_app(processor=None, release_verifier=None, store=None,
+                      stream_verifiers=None):
+    """Signed transaction-stream endpoint for ``POST /api/stream/transactions``.
+
+    Previously imported by ``core_platform.deployment`` but never defined, so
+    the deployment application could not even be imported. The endpoint only
+    serves signed events from an approved actor: the caller supplies the real
+    transaction processor, a durable store, a release verifier, and a mapping
+    of actor -> ``ReceiptSignatureVerifier`` built from that actor's
+    independently verified Ed25519 public key (see
+    docs/STREAMING_INTEGRATION.md). With no bindings it answers 503
+    ``stream_unavailable``; it never invents a receipt or a processor.
+    """
+    from .pipeline_api import TransactionRejected
+    from .receipt_verification import ReceiptSignatureVerifier
+
+    def respond(start_response, status_string, response_dict):
+        body_bytes = json.dumps(response_dict, separators=(',', ':')).encode('utf-8')
+        start_response(status_string, [
+            ('Content-Type', 'application/json'),
+            ('Content-Length', str(len(body_bytes))),
+            ('Cache-Control', 'no-store'),
+            ('X-Content-Type-Options', 'nosniff')
+        ])
+        return [body_bytes]
+
+    def application(environ, start_response):
+        path = environ.get('PATH_INFO', '').strip()
+        method = environ.get('REQUEST_METHOD', '').strip().upper()
+
+        if path != '/api/stream/transactions':
+            return respond(start_response, '404 Not Found', {'error': 'endpoint_not_found'})
+        if method != 'POST':
+            return respond(start_response, '405 Method Not Allowed', {'error': 'post_required'})
+
+        try:
+            released = callable(release_verifier) and release_verifier() is True
+        except Exception:
+            released = False
+        if (not released or not callable(processor) or store is None
+                or not isinstance(stream_verifiers, dict) or not stream_verifiers):
+            return respond(start_response, '503 Service Unavailable',
+                           {'error': 'stream_unavailable'})
+
+        try:
+            length = int(environ.get('CONTENT_LENGTH', '0'))
+            if not 0 < length <= 1048576:
+                raise ValueError('length')
+            raw = environ['wsgi.input'].read(length)
+            if len(raw) != length:
+                raise ValueError('short body')
+
+            def invalid_constant(value):
+                raise ValueError('Nonfinite JSON')
+
+            data = json.loads(raw, parse_constant=invalid_constant)
+            if not isinstance(data, dict) or set(data) != {'transaction', 'actor', 'signature'}:
+                raise ValueError('envelope')
+            transaction, actor, signature = data['transaction'], data['actor'], data['signature']
+            if (not isinstance(transaction, dict)
+                    or not isinstance(transaction.get('request_id'), str)
+                    or not isinstance(actor, str) or not isinstance(signature, str)):
+                raise ValueError('fields')
+        except (ValueError, TypeError, KeyError, UnicodeError, json.JSONDecodeError):
+            return respond(start_response, '400 Bad Request', {'error': 'invalid_request'})
+
+        verifier = stream_verifiers.get(actor)
+        if not isinstance(verifier, ReceiptSignatureVerifier):
+            return respond(start_response, '401 Unauthorized', {'error': 'unknown_actor'})
+        canonical = json.dumps(transaction, sort_keys=True,
+                               separators=(',', ':'), allow_nan=False).encode('utf-8')
+        if verifier.verify(transaction['request_id'], canonical, signature) is not True:
+            return respond(start_response, '401 Unauthorized', {'error': 'invalid_signature'})
+
+        try:
+            receipt = store.process(transaction, actor, processor)
+        except (TransactionRejected, ValueError, TypeError):
+            return respond(start_response, '422 Unprocessable Entity',
+                           {'error': 'transaction_rejected'})
+        except Exception:
+            logging.error('Stream transaction processing fault', exc_info=True)
+            return respond(start_response, '503 Service Unavailable',
+                           {'error': 'transaction_unavailable'})
+        return respond(start_response, '200 OK', receipt)
 
     return application

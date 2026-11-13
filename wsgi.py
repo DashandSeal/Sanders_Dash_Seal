@@ -29,7 +29,16 @@ class MockLedgerEngine:
     def connect(self):
         import sqlite3
         # Connect natively using enterprise WAL parameter bounds
-        return sqlite3.connect(self.db_path, timeout=15)
+        conn = sqlite3.connect(self.db_path, timeout=15)
+        # The Stripe webhook handler records every processed event id; the
+        # table must exist before the first webhook arrives or it 500s.
+        conn.execute(
+            'CREATE TABLE IF NOT EXISTS stripe_processed_events ('
+            'id TEXT PRIMARY KEY, type TEXT NOT NULL, '
+            'processed_at INTEGER NOT NULL)'
+        )
+        conn.commit()
+        return conn
 
     def fulfill_checkout(self, session, db):
         # Route checkout sessions securely into persistent internal tables
@@ -75,3 +84,6 @@ def create_native_application():
 
 # Aligned variable name to match your Dockerfile WSGI boot commands
 app = create_native_application()
+# Alias: backend/Dockerfile runs `gunicorn ... wsgi:application`, and
+# passenger_wsgi.py / backend/wsgi.py delegate to this module.
+application = app

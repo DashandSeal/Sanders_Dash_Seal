@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "passenger_wsgi.py",
-    "payload_hash": "2d6ee204a2cd1a600e44052bedd6cbb9af67f53bbbde522ae15be913b28cae13",
+    "payload_hash": "b806eaa5311e0f514c9aa3dab3ee41b07f8dc437ee7a814424951fa8df1b3c92",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

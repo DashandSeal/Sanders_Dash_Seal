@@ -47,9 +47,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         
     root = Path(__file__).resolve().parent.parent / 'web'
 
-    def respond(start_status, data, content_type='application/json'):
+    def respond(start, status, data, content_type='application/json'):
         body = data if isinstance(data, bytes) else json.dumps(data).encode()
-        start_status(str(status) if 'status' in locals() else '200 OK', [
+        start(status, [
             ('Content-Type', content_type),
             ('Content-Length', str(len(body))),
             ('Cache-Control', 'no-store'),
@@ -83,7 +83,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '404 Not Found', {'error': 'not_found'})
 
         allowed = ('GET', 'POST') if path == '/api/appointments' else (
-            ('POST',) if operator_match or (case_match and case_match.group(2)) else ('GET',)
+            ('POST',) if operator_match or (case_match and case_match.group(1)) else ('GET',)
         )
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
