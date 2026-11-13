@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/master-expansions/Sanders_Dash_Seal_MASTER_Section_22_Global_AI_Translation_v5.md",
+    "payload_hash": "d43f037b2ab3cc4167d061f1df251ffe42c228ae1a1c1bd4c2e3603e1b78bead",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

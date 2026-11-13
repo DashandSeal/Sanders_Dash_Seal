@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "owner_submissions/BOZLY_SYNTHETIC_GUARD_SOURCE_FRAGMENT_2026-11-03.md",
+    "payload_hash": "ed3220468b40a71418be275562a2402c829da9274b6f1460b7e58e4c14a308b4",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

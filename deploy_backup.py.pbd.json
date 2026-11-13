@@ -1,20 +1,16 @@
 {
+  "body": {
     "schema": 1,
-    "header": {
-        "owner": "Sanders Legal Helpers LLC",
-        "developer": "Roosevelt Sanders",
-        "system": "Platinum Blue Diamond Architecture"
-      },
-    "body": {
-        "artifact": "deploy_backup.py",
-        "payload_hash": "auto-reconciled-production-verified",
-        "timestamp": "2026-10-27T18:40:00Z"
-    },
-    "signatures": [
-        {
-            "authority": "Owner-Core-Law-11",
-            "status": "APPROVED",
-            "verification": "SUCCESS"
-        }
-    ]
+    "platform": "Sanders Dash & Seal",
+    "artifact": "deploy_backup.py",
+    "payload_hash": "d27fed7d9da2d8f1bdf0c2574984fa8407a14356219940dc8792734cf434b343",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
 }

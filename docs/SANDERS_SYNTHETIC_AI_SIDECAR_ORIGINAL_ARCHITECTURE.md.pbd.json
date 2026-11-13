@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/SANDERS_SYNTHETIC_AI_SIDECAR_ORIGINAL_ARCHITECTURE.md",
+    "payload_hash": "8b416173c5e11a9d58d00f1f2ba5f4d2ac2304af25079c0abc3331aa7ab5c678",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

@@ -1,0 +1,5507 @@
+{
+  "schema": 1,
+  "platform": "Sanders Dash & Seal",
+  "artifact": "manifest.json",
+  "generated_from_commit": "aa4a470a47a101917a630c05b1dc87a898113205",
+  "generated_from_branch": "manifest/include-everything-20261113",
+  "note": "Central index of every artifact on main. Files under .github/workflows/ are recorded here only, never as .pbd.json sidecars under that path (GitHub App token has no workflows permission; see Gateway exit 1, 2026-11-13). This file itself is covered by manifest.json.pbd.json, not by an entry in itself.",
+  "scope": {
+    "endpoint": "local://development",
+    "method": "TEST",
+    "ip": "127.0.0.1",
+    "operation": "DEVELOPMENT_VALIDATION"
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST",
+  "entries": {
+    ".dockerignore": {
+      "payload_hash": "0358a940488ff4189fa00d3cbd3708e60322102f9d88474585d13caa93ebb463",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".github/workflows/Master_production_grade_workflow.zip": {
+      "payload_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".github/workflows/closeup_tracker_telemetry.py": {
+      "payload_hash": "45059a9fb2e9c0de1be869b45a976503f9c97dd38bafc79e45dbf71affce2acf",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".github/workflows/closeup_vmax_pipeline.yml": {
+      "payload_hash": "c14d2a0240ee5e4b4dc49d72ce2698d66712c907536c323ec482249570421269",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".github/workflows/deploy_closeup_stack.sh": {
+      "payload_hash": "98b0c9000fa0f98bbf9eac9ea350ad1cf429ace0be67908d07c7b1942ba93909",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".github/workflows/generated/closeup_tenancy_deep_audit.py": {
+      "payload_hash": "2f4585291190dea221c8f8df555f1385679ecf3eb634ad97b8554d5f897e917b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".github/workflows/infrastructure/resource-manager/fortune500_motion_assets.json": {
+      "payload_hash": "cdd3a07b9b7b8e74482daee962f68c44413aa0106322cb6f32ce10c8696bbfc9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".github/workflows/infrastructure/resource-manager/minotaur_sentinel.py": {
+      "payload_hash": "6db59a0a41ab00f40f29835ac1789d826bf3a7c89a9cfc29ed0c3b32a67c371a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".github/workflows/infrastructure/resource-manager/verify_assets.py": {
+      "payload_hash": "784586996465db31328826c0db17b8fa5de01b4ccee3b877416a0106c4dabad4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".github/workflows/parallel-build-verification.yml": {
+      "payload_hash": "b27cb623c9140f9fddf47ae85065739f34a098f51097d89e42363da75f6aef4b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".github/workflows/verify-bozly-integrity.yml": {
+      "payload_hash": "68d8c2cce5cf308ea200da7531101c31b71897ee3a7198de35c749dac46773d2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    ".gitignore": {
+      "payload_hash": "dac7d1588b981a5dea19c8cecfc3c536bfad27c5ab40c32011dac92f6b9bc738",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "AGENTS.md": {
+      "payload_hash": "dc83f34233c4ebe17dfdcdd00903e982e16511a0550bb7aeb24cbc6e4e655471",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "Cargo.toml": {
+      "payload_hash": "fd7b56e4d91e44761492e9aa9df02e5c23989bcd520bc6675ce4e4ec32d75b52",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "Dockerfile": {
+      "payload_hash": "601ec1c7242e5ead385ec53bac1e80a21f41469b02f4c587654d8bfcb20fb3e2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "Dockerfile.bozly": {
+      "payload_hash": "1cef7e6428e12a3ff9f7eb7ccf408fcb9a0c4f9168a068496ad342e994d4a4ef",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "README.md": {
+      "payload_hash": "452fc2759e17bf0fe1529a0367ba6403a938548bb766cc6b46fd763c0517976f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "SECURITY.md": {
+      "payload_hash": "6e4276a1279caecaccac31dc52daa5cb868cd855f8a074e3db5f540eeeb0c9e4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "Sanders_Dash_Seal": {
+      "payload_hash": "198b50b4fe1b089da2153119b947bc046f4070050216c549b6878b8007fb0dbf",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "Sanders_Dash_Seal_Actual_Build_Design_MASTER_2026-10-11.md": {
+      "payload_hash": "6d3da9d4db4fd585aa0a0ec5394d3fd78b62070125bd0dc4a4c938403ed1ef48",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "Script": {
+      "payload_hash": "74a64772d244c6a8613eaa37f4c85dff402188be8712cece96f9e68bc9da6283",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "app/__init__.py": {
+      "payload_hash": "e274cd710fbca58f130cafddaf5dcde14852642fc141fc5ac53628f0ff9839f9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "app/case_api_wsgi.py": {
+      "payload_hash": "c02b5de05c1f32ecbbb6517fa140dd61effdf055697e30bd110972824619c435",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "app/customer_app.py": {
+      "payload_hash": "f3c8194800f4f6061c3a95eb55ab46d9c0e60015cf16df2e77b5788b72ffb86b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "app/grantwriter_mother.py": {
+      "payload_hash": "6fe1283031a634dcc06c11f169ec19d0ab4df061d6dd50daf8d619310afec494",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "app/versions.tf": {
+      "payload_hash": "dcdfc589f48d4366def98cb7a48aad10cc891a1a6bbcf74e7af6b7fa69ee143f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "app/wait_application.py": {
+      "payload_hash": "806323cf6835bac4ff573ccb7c8c25f92fe9ecdd0882c18f3eddd69ee5ff3c67",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "assets/bozly/CANONICAL_MALE_IMAGE.md": {
+      "payload_hash": "3fe61a8edf57eb1a204f851da0c649fabceb4fa07fd35b4db851c11d4785b9d7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "backend/.dockerignore": {
+      "payload_hash": "ae5041c306c4687f90454cf7877007563d16373189ad0eaf1249f13e24768c70",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "backend/Dockerfile": {
+      "payload_hash": "47c4ec25c335f6b5778d4112dfae6701a253b6b30d9fbe328ad483a7609904cd",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "backend/auth_session.py": {
+      "payload_hash": "7f3a037e6ac0fb9f3369832a75ddc8e2439b80b452aa02e25fbf41ecb5ae391e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "backend/commission_sync.py": {
+      "payload_hash": "18bc9b3d5cbea8c6536b98bb07795a58eeaa16bdd20ea966622442d974716b28",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "backend/platform-source.json": {
+      "payload_hash": "622652a4d0c26051729fa3bfe0f4dfea4d6b388d878ae223f06a903b8636cf2a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "backend/refresh_sources.py": {
+      "payload_hash": "48555acf088acea4af84d79928081d251f8072825388437a36dfcf4561ca8119",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "backend/unpack.py": {
+      "payload_hash": "35fef1293ce046007e1c475c6aaab2aa9dceb71c8f2606494c0d4be9000d0a00",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "backend/wsgi.py": {
+      "payload_hash": "ff4e593b970890f4e2d1b71fac4e7223610cc3a15c4427745fbbcd32053478d4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_auth_gate.py": {
+      "payload_hash": "504f67eb62fa32bf1d1b6b749a5be8989668764020fbf082ca1e83aea0bd236f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_cfo.py": {
+      "payload_hash": "20d29e9407e1d7a12f214e2a8adc7b1097c98978fe3c0307b750411149d99508",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_claim_integrity.py": {
+      "payload_hash": "755288fdd714c3ccfc88a5a18b82be386e8492e10f63c54e5e46e648c91c214a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_diversion_guard.py": {
+      "payload_hash": "865679807a4b91bb13e3d623ef480ed9d4f769da2aa1d096aff98f7751bba46c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_financial_ethics.py": {
+      "payload_hash": "669cb50c39e113abca7375da560c109af7aef9d816bf9d06770e2ae0dbf9528b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_forensic_accounting.py": {
+      "payload_hash": "09940ff2b6d5fea8dbdd384a3ea4c399b78584924a3a27007a0614e908d57f87",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_forensic_dashboard.py": {
+      "payload_hash": "ce43759b7db401ada09ba99aeb8b056ec1711fb4a0f88ce121a4b6711222ae6d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_global_presence.py": {
+      "payload_hash": "0460577163a3f33f7a129349ce3a05bf257ac57e5178dd3e28f072d2f3056983",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_global_traceback.py": {
+      "payload_hash": "e2486b964d74ce094330a5b1ddb237854f8fca4e2e1ec4cee4726fcedf83ffe3",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_global_transactions.py": {
+      "payload_hash": "9f3aa80d1e4cdce65ab44cbbef6241dc6fdc746f5b5f19dd56cbb85db7b20818",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_human_api.py": {
+      "payload_hash": "b8841807f25ba067efebb534466b2713cb6aa9a4ecec6a976e518cab2c7df24a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_identity_and_conduct.py": {
+      "payload_hash": "13777d35011fe59b40629f9883cfe013acf2e21268fd93ecabd5c21455bbc864",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_legal_intelligence.py": {
+      "payload_hash": "94628a93a1d3b20e9b8d833f2efc4dec8555448fa580c9f05189b62911396c16",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_market_ingestor.py": {
+      "payload_hash": "98bf654689b213070f6c65608c50571cac7f34f9d1556088798c293395fa7b1c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_multimodal_integrity.py": {
+      "payload_hash": "7a54a3d33f68470251d52cf6f4749989b23a6fa6acd21324e8f2621cd8de8f3e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_native_backup.py": {
+      "payload_hash": "beee365dd6ec3cc5b8212790d213d2b04d5d5b6952800281b0a89a62df88f442",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_native_broker.py": {
+      "payload_hash": "5f49471bc3596b892142c41d4f3b0a1041a33f106f8b4d30e58d7690e0facffb",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_native_cfo.py": {
+      "payload_hash": "874dd1b022b5a1bcf0bfed082a8dcda4193e8e9f654d8d9f5ef423ff323e3dea",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_native_investment_intelligence.py": {
+      "payload_hash": "e0e43b5d64619d8303c364e44dad3a5b3c89d507152c5164a1be093083d71812",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_onboarding.py": {
+      "payload_hash": "e021a1f81168293e3424c08b09cbd31043ac8094db7781d6ffdc3b720b41895a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_operations.py": {
+      "payload_hash": "9f7241a87f78667badc34f2cfd4204b4eecbcc93cea2257e4f0eed8411e6321a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_pq_identity.py": {
+      "payload_hash": "bc989bc0fb05026bd03da1d31b91a36f12cefd6dffac1ed750c928fc1ca5cc20",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_purchasing.py": {
+      "payload_hash": "844d6beee44835e6bf63ea2cc7b606d7fd860da7790a54430c0c5762e3569041",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_quantum_armor.py": {
+      "payload_hash": "7ee83d3202a7a1142f9e4b4f51b49af61c23f18c71c2d599158cfd8f982fe9b9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_security_response.py": {
+      "payload_hash": "ca5256f1702ec5d35473df41438bf2419c2d1db1e4d2bbb76bd06defd39c1685",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_shield_wsgi.py": {
+      "payload_hash": "a1c1da1808b17a74b90b5d1605c3966c112e17e1ff8fafa49b1b981e1a7dd1ca",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_stripe_webhook_wsgi.py": {
+      "payload_hash": "02513724af824ab79323aebde62a93e97e6bc0fc29dde2dda4a5033cce2f2301",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_synthetic_guard.py": {
+      "payload_hash": "80c8a2799333f276eefb0dd8a8e7edecfe329ae2c58fec03415a1754548681a7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_uplink.py": {
+      "payload_hash": "44448117098583f3b9acbfc7ca8a758361b938b5df914122259659a34df9b0e2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_wifi.py": {
+      "payload_hash": "99de5caa5f86516b3994f0827d0b136c83628a35ddddbe4002878a6f4e0fc249",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "bozly_wizardry_engine.py": {
+      "payload_hash": "0e52698d51f46ae4b57b957c0f77070a656d820086cb28fe58b364c030457964",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "compose.yaml": {
+      "payload_hash": "d0caa9f8fea5e2889eb6a7f47c1db6e0c819d37eb3a449448edd17def0fea1de",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "config/global-regions.env.example": {
+      "payload_hash": "94794693b87db778c4cd725538b2aa077c3f3d12015e28a49a16c51a1e22330f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/__init__.py": {
+      "payload_hash": "591e8dc718716c99e02aa86bbec46552fb78aff7f7582400d2fc2005a510ad7e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/accounts.py": {
+      "payload_hash": "4c6184c82733d9cba7c608e21b8ad5d05cd12461a552c5644a39821ac1c1478f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/agent_registry.py": {
+      "payload_hash": "d1a6a9ab7d14eb88b003d14d5ddcfd1c5f5266b3455067a40c2537879805cb2d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/ai_platform_approval.py": {
+      "payload_hash": "2780b74df8838e9d08296d8783527ceb79ea1acc88b05fbe895762c8948eddd0",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/ai_platform_approvals.json": {
+      "payload_hash": "1dd66856ac55bea35658b85dde1d6715a9fe5fe35f5e13d0e04bbc51b0f12b88",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/ai_platform_links.json": {
+      "payload_hash": "8f7621461f2bbe73e4ec85eb48f6182d21dfa5dfbb8297ff12072e90d0ac90bd",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/ai_platform_links.py": {
+      "payload_hash": "0fc1ff0c3e6b2c784925e03279f7f1c342cbcac8d5132e182c621fb7c6b39759",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/anthropic_sdk_transport.py": {
+      "payload_hash": "dbdc5d45a14c1d22ef02f65167bdea23a892ca271c07481fca5d05894eb86777",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/appointment_payments.py": {
+      "payload_hash": "828e6a89607be942e0043443d934cf125911bb2fd3d53bcc86943789ac6e1239",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/appointments.py": {
+      "payload_hash": "4ca9c12bd8a3942108c24b50c67b9fbd5196445bbb6bfeea7b1f019faf31eddd",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/artifacts.py": {
+      "payload_hash": "6f34a3fed93b888d32e013e16ed45a9a029ae195786b247130b02d972faafbef",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/authority_review.py": {
+      "payload_hash": "95d8ba51056aa05077988337ea13ee623f7752ce8614a1db81013c4136bb3a8f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/autonomous_development.py": {
+      "payload_hash": "7afcfed5ae7f0619ae5b4916f1675cf2ef3d41723f11d5704551a5973d42d1e7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/__init__.py": {
+      "payload_hash": "af2c6d323555cf9693b7e84b0dc996d6b18dfb1142b79530975a96b286edce0b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_auth_gate.py": {
+      "payload_hash": "504f67eb62fa32bf1d1b6b749a5be8989668764020fbf082ca1e83aea0bd236f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_cfo.py": {
+      "payload_hash": "7f26d5729d94a1c6111b1b71ff7400c37180be7e55bb2c3bd53b9297b47056cd",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_claim_integrity.py": {
+      "payload_hash": "2ad209ff0f5549a4d1927c4ea0ec408a738f63cca5927af4b9a9bd2d81488cd8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_diversion_guard.py": {
+      "payload_hash": "5a704ee9a61bcc598415e81b97d2a9587b5cd17e4841ad9af06fd0e93620fb93",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_financial_ethics.py": {
+      "payload_hash": "a0de2d9df408d6464d69f382f6f0c914ca66d30b7fefc80bee5e95855f21010b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_forensic_accounting.py": {
+      "payload_hash": "9610ea184f4542bb51c6ae3a1b0f120a21e4a85459b653e113e3c27f31985658",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_forensic_dashboard.py": {
+      "payload_hash": "fd573a6a35bde76fee93e3c9df2a0896c4b2682315100b95b63cc9e587a6881e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_global_presence.py": {
+      "payload_hash": "0460577163a3f33f7a129349ce3a05bf257ac57e5178dd3e28f072d2f3056983",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_global_traceback.py": {
+      "payload_hash": "b5399433af189dff98e39cdb3933aa5173f82fc1495946101d307e4f29c086a6",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_global_transactions.py": {
+      "payload_hash": "6d0bc2dd0a3cc62237feb2506a63ddb455f33064c2b858795344c6a7eb6c8d46",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_human_api.py": {
+      "payload_hash": "e444cfb253132605482eebc1a7ee654ba5037e31ee69cc7a7747e9d1f6d898fb",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_identity_and_conduct.py": {
+      "payload_hash": "13777d35011fe59b40629f9883cfe013acf2e21268fd93ecabd5c21455bbc864",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_legal_intelligence.py": {
+      "payload_hash": "94628a93a1d3b20e9b8d833f2efc4dec8555448fa580c9f05189b62911396c16",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_market_ingestor.py": {
+      "payload_hash": "5e693640ce03b1b3289488974f51dcb89b98ebeb92da41a156a76752487e69f2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_multimodal_integrity.py": {
+      "payload_hash": "1f9b6ff5744c98a9796013e71b142a17954a67b04836b7d52ffb7e7cb5ed6f4b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_native_backup.py": {
+      "payload_hash": "beee365dd6ec3cc5b8212790d213d2b04d5d5b6952800281b0a89a62df88f442",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_native_broker.py": {
+      "payload_hash": "b9ee23e6807469058f19ad52cd596ce6f69157e382a8414ce2dbc9ef198963e0",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_native_cfo.py": {
+      "payload_hash": "6a40ba6f3e3036063ca904be41c6b73aff1c25e6b66d0905f82f9ae996ac3a40",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_native_investment_intelligence.py": {
+      "payload_hash": "b816dc1e0ac74772abf0bf0f7825b0a022f7d2c58e292eb04092ada4ad341f65",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_onboarding.py": {
+      "payload_hash": "e5f99409fbdf2d1f538bb00529a7e2de12544ff8063753962019961ca748aa47",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_operations.py": {
+      "payload_hash": "9f7241a87f78667badc34f2cfd4204b4eecbcc93cea2257e4f0eed8411e6321a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_pq_identity.py": {
+      "payload_hash": "bc989bc0fb05026bd03da1d31b91a36f12cefd6dffac1ed750c928fc1ca5cc20",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_purchasing.py": {
+      "payload_hash": "844d6beee44835e6bf63ea2cc7b606d7fd860da7790a54430c0c5762e3569041",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_quantum_armor.py": {
+      "payload_hash": "837a14fe9c58db1f0268c9c9cae214ad82508c021b4410a34ad9ba19cbd4038e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_security_response.py": {
+      "payload_hash": "ea2d2e37f6301cc398b4fe233281f40c161746196d8897505e49e9a7c6bd00cf",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_synthetic_guard.py": {
+      "payload_hash": "b392d37662ee3050fadbc3452fe39cba6a813556af98750bfd580f1b2ffb0bbb",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_uplink.py": {
+      "payload_hash": "602105dc682856be8d35a6b6ea3b8af2d8944d0b484399504056fad294f7f482",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_wifi.py": {
+      "payload_hash": "99de5caa5f86516b3994f0827d0b136c83628a35ddddbe4002878a6f4e0fc249",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/bozly_wizardry_engine.py": {
+      "payload_hash": "0e52698d51f46ae4b57b957c0f77070a656d820086cb28fe58b364c030457964",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly/pqc_ledger.py": {
+      "payload_hash": "58aa21b92ec973d49d1498f37e311d90e1be55cba845253f51dbe53c06a49ab8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/bozly_wiring.py": {
+      "payload_hash": "3a128c53ac333bfc3188110733d8494817f478eada296c78907be77dbc07bdf7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/case_api_wsgi.py": {
+      "payload_hash": "0cb7fa42b9db18edac9ee6bc814622e4cbfd9451fdb65b813f045debf58dc190",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/cases.py": {
+      "payload_hash": "a8ba852b9ec1971c59ad616deb5d9404f59b5768bb2c5b1f2c7fcd9c69fb7011",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/chore(zeusomega): upgrade self-healing autonomous remediation": {
+      "payload_hash": "7ee5fbf4599896b1feaf4a61acfb62645fc85e18fa23230bee2755d0bc3f7ded",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/clearance.py": {
+      "payload_hash": "1797de86c381e4d829dc29e166336cd65ef2b5e211c54814940da5c719c3ccff",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/code_tailor.py": {
+      "payload_hash": "67cb621a3095310f9a9b08e25ab4c12c18ccbaababa21f8f6d1e3854ae340b53",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/containment.py": {
+      "payload_hash": "8010de5916b4e585403aa7955a698a6dca632e074ae4f88362977c96d44b7a33",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/customer_app.py": {
+      "payload_hash": "6bc5a5d776d9194776a784184495cdb823c2d53f3329d3d9899df86ef66d6a74",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_claude_transport.py": {
+      "payload_hash": "917c8d3ae204c9bc91bdb72485b6866766e156c3f5be3242e6440f8a00b33eac",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_config.py": {
+      "payload_hash": "628b29f642d218688195dbd521600330f2fec67c4149b7519400741cd6edaa0a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_continuity.py": {
+      "payload_hash": "ff2a4e7604d161436cbaabc4031eab4f8bfd04a2c49391dc352a390af02895d4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_engine.py": {
+      "payload_hash": "f62a523ab7e6eb6b317f98f0d41302d57811f75c594021cb7fb98af74006de7b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_geofence.py": {
+      "payload_hash": "dc467b86c9e8473353e72ad3db796b695ef5c62182b934aa7f8e59bdfefb56a4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_global_trust.py": {
+      "payload_hash": "2acbef611a0b33d5a43cc1e4f484922a409128d20e87c54a7dbc93268a628bd0",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_ip_protection.py": {
+      "payload_hash": "b9f9a914053ab43e640f1385ac574ecb238bbbea84eadd3dcd4f85ae4eff5e73",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_l15_capabilities.py": {
+      "payload_hash": "3bad7fc5cf1715249e45ab37e5b4b069afa9b4fe7f69a745bf49ce800e8a850c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_portfolio_ip_pricing.py": {
+      "payload_hash": "d0248f4f880b794cf87303785de59d31547e02e9d83c229be36f33f8c3e48783",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_rate_card.json": {
+      "payload_hash": "b2cfd1df63da09db2fd1abf7c0017880bef6eed0ad1cf9ba6fd337c089294639",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_runtime_integration.py": {
+      "payload_hash": "ce0d9ee8f0b4f7455740177c6a0406c5ad1796f5fbed19185bf832c2141e52fc",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_unified_engine.py": {
+      "payload_hash": "45bf571832be45e7f68f9a0fbe8f387ee3a647a933f233d6036bd4c6c5aaa3a3",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_voice.py": {
+      "payload_hash": "e18e7d370eaa68d0e407eaf97b9ad301c648e8acf047901825c96166efc5a8e7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/daedalus_voice_pipeline.py": {
+      "payload_hash": "b1efca9e1c70ef4ec0609ec2c687b83dee6bad546971cfb690994e23b5016466",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/dashboard.html": {
+      "payload_hash": "74f1b021f36a186774d79dae3871bde782087f800f631e41529cfb847275d5e2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/deployment.py": {
+      "payload_hash": "ddc9f4c75301acae8960a38a0266d4bb21d9fa53a2ceacc5bee285fb865335ef",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/durable_audit.py": {
+      "payload_hash": "d0cfdcaea0363a4c074c055287ae1c3c8008d288dbcaa0dd4d71f7e686ed5e44",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/forensic_sentinel.py": {
+      "payload_hash": "cca3cdb871676330581482c234a3247b918bd34fc6088f6ac2da5da1bb64b01c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/free_first.py": {
+      "payload_hash": "d0aa64eb902708fbbf5b38db3357d559167acd5181e37dd2865cb93dea507a9b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/free_resources.py": {
+      "payload_hash": "cddd55c5178ade0ed9303192a8e9ee9c66c9fe474fdab05505b4c69c46739934",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/glass_box_audit.py": {
+      "payload_hash": "1ce1579ab2796bf43a62b100849a53b6772b5c4ed06157f4575d0328ec75073d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/global_compliance.py": {
+      "payload_hash": "b921d8f6bc0e198277edd02de2d4ffe804e78c7b498a1595b1a5578283a648b0",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/global_connectivity.py": {
+      "payload_hash": "4dc123f92aabf85884f0f4af6e94e2e29743d00d226e380ad6c005d3f5bc8a73",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/global_payments.py": {
+      "payload_hash": "ea9bcb7317eab73ef1a59c574aafed8ffd1d860156fdeeba675d626b3f43cb12",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/global_regions.py": {
+      "payload_hash": "bbf65fe36ec98b833d4abf56dba6d617a4013de8252e8aae17266c00d21d3030",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/global_time.py": {
+      "payload_hash": "3486c869b3339faf091fa153c15d94035461e1ea46a3b1dd0d15045dcac8738a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/google_workspace_adapters.py": {
+      "payload_hash": "8fe2cea2648e6b48435324911663a32f710fa6bd54fae10ef7501b16ec7adc90",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/grantwriter_llm.py": {
+      "payload_hash": "2caafafd90af40fbafb342b18f532e7454a1a6f0d3235afa370421cfaddbe5d4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/hotswap.py": {
+      "payload_hash": "ff7804422e7728dc1ccd1dda2d5a83935d0c4c28e31c69ad22cca36c61dd863b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/i18n.py": {
+      "payload_hash": "c07240cabbb54b2f16911b706e65c4c66d1a7b1a0618ad74fb07cf33ae8372d0",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/identity_continuity.py": {
+      "payload_hash": "28dffa71cd3284e189f149317da08f3ae1221ff1955a0bb5302f23be7b505b1d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/incident_diagnosis.py": {
+      "payload_hash": "411d71d71c8063a8ef19bcaec0cae1c2002012b9ca7b5bfe119d3816baf7d61c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/l15_repair_engine.py": {
+      "payload_hash": "d2f01468892ad15e97d8c497c680da2a7a06b5f5d3d0175cbd401fe008a3165a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/lifecycle.py": {
+      "payload_hash": "5ff12c3f770d37effb15fc1ccb52f47c20b28f02111395453f61ce67c7e8aa49",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/livekit_realtime.py": {
+      "payload_hash": "7a09ff9ba6d39e5ccb910ded5fb6a62ccf49d9c5c5322a295136da8b37742d09",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/livekit_video.py": {
+      "payload_hash": "0a8e58c89521cde756e7cee3c31fda28b543e9731e6bb441acd07953d4591f6d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/load_balancer.py": {
+      "payload_hash": "d5a1c1dd1727f07332fef4e943b77d42518363d076743e07297ab31e2a029757",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/local_inference.py": {
+      "payload_hash": "c3b153287e3a7ef46db2abd308bb69a8d5eea59cc96be350ef0239813d77e1a0",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/local_upgrade_executor.py": {
+      "payload_hash": "c32aed7dfd5e74fa058e8b44a758cc14ae61a993bf7438360fdc04b61433c69f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/locales/en.json": {
+      "payload_hash": "d01c1586b8fd14f02e54463460d9417ae27d5fbb366e635f5d375aa2e625d427",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/locales/es.json": {
+      "payload_hash": "448c358e1f5d2778dc527682e0773579b3e0f1eb6f81608e875881de72c5d029",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/native_authority.py": {
+      "payload_hash": "b48a730548a636da9d76e22919aff291b0a4fd4e4fab74649251d4949d060e81",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/native_documents.py": {
+      "payload_hash": "6e9c83c5b90b45f2d57df9ed5cc6301d67e0b317b92cc728b81c4c72bceae553",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/native_evidence.py": {
+      "payload_hash": "aded8734d787ca4eca7a0b8ee69e33c16e1dc84b0ed14f5abbb73817c67781ed",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/native_journal.py": {
+      "payload_hash": "3f3396c72e788ec44efc7e925d2b2ac045d51c2fbaafa95a0777f59a6a194a1b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/native_notary.py": {
+      "payload_hash": "bae57ffc0552521e03b9657288f212f69e4dde2f23c52e38d14e32e2516d55f4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/native_recording_manifest.py": {
+      "payload_hash": "1dee877df392b93d686af97fc9a41d699ed78a255958e367604a84db0cbfd96d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/native_ron_rooms.py": {
+      "payload_hash": "093ea0c20e9ebbf05bb2178c4f636fde143eff4a34a537f67f2dc5e9303afb8c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/native_runtime.py": {
+      "payload_hash": "778aa6e1f0cdbead779f61623dcab138509276ce5762842c948895626599a5d1",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/native_seals.py": {
+      "payload_hash": "68dc6c38691bc483302799c8083d2f1fa13a36bfd20225cc1b11f338e00e799d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/native_signatures.py": {
+      "payload_hash": "9790420fa629299ef2e8b5867064f146dd8a8f3140510841dd940dc742843a57",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/oci_core_laws.py": {
+      "payload_hash": "f20f398a7de4dc67a16c127a40c76597a72d25e9bc3e1d95a9fa1fc5e23cf2f9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/oci_free_resources.json": {
+      "payload_hash": "f20f398a7de4dc67a16c127a40c76597a72d25e9bc3e1d95a9fa1fc5e23cf2f9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/openai_chat_transport.py": {
+      "payload_hash": "86015d28cd87bb0bffb562559c2e6292f8fbb03b297ae8c85d10751b557a3d3b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/openai_link.py": {
+      "payload_hash": "693091020001ba33dd4ac89fe71229c093e925e7b8f084772212392a1e635615",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/operational_probes.py": {
+      "payload_hash": "bf1550fb9b64d3a713f28bfa52714f4452a5912ab7f8fac93b1165bad8fe72ed",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/operational_runtime.py": {
+      "payload_hash": "7fce9e6f9937cbffc6d5e02c2fa3606519df9887d54ef59d8e672c7955dab327",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/operational_worker.py": {
+      "payload_hash": "884adc7a09cd653703c07538dd84e52e5bbae059f45e9e9ddd6bbeecdd766213",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/pbd_validation.py": {
+      "payload_hash": "5a5e0d30db8cc626873243ed5ddd43b482508fa6ff6dd43bd6549d132d45ba1a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/pipeline_api.py": {
+      "payload_hash": "75283595e5c23c60eb66da9587480fba6ca57a35ab465ec6975946ba7e447ca5",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/platform_integration.py": {
+      "payload_hash": "e1385cc2345d99f65697b4448f0e5f8e33b3730855a45e09b4ccd6192fb5b34d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/platform_services.py": {
+      "payload_hash": "7f07abf904ab8f9188b960b408f98a71eacd97b9d5aa9f669595f2aa0bda3fbd",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/platform_startup_boundary.py": {
+      "payload_hash": "c529d9b913477a3f3d7e3c9f0fda0f32646c317cfed779922549b60bbcd0b7c4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/pqc.py": {
+      "payload_hash": "be54ae0db0a19993e2d07cf73d411ca1bdb69adfa4e60677cdb0b4b341d804d3",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/protocol.py": {
+      "payload_hash": "1ddce99d947fc7075b0d6882d225894045ab699546c509d07a56069b75448d1a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/provider_connections.py": {
+      "payload_hash": "6bf2273af73058204336b3bdadf5c684471ff1534763be95ba3cf3157ff93034",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/provider_workflows.py": {
+      "payload_hash": "000eb78b457e8df2dc5c9497968f0dfde34d3a12807afac87f7363ee7c9416b9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/realtime_api.py": {
+      "payload_hash": "5029d216cb04cbcf2504308f8e48788e182c9071090c581575882e688fa131e8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/receipt_verification.py": {
+      "payload_hash": "c638b9d116fa3a214e02072cb4e73bebeebe685aac189e5c7c25918d686f883a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/receptionist.py": {
+      "payload_hash": "029f9c89f3dae3db341fe0850722d81e9db6bdcfbf23c3a565b94cb1f4ece486",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/role_worker_llm.py": {
+      "payload_hash": "6951d23a67b196736e886501960f06ac4f8c3d38e9ba7889e5a0eb51d0fc8f28",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/rtsa_assessments.py": {
+      "payload_hash": "b44b35585b02427a4a1ca9022711d6a8fb227aa275ac21de0ab0cf27ae05fc0f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/rtsa_lifecycle.py": {
+      "payload_hash": "074cd1c0021804a775c4f7f8d13856e98fc44e4b84da2f254edfdf398f2729d3",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/rtsa_registry.py": {
+      "payload_hash": "6dd647853a2ab20edb3b6d016135d942a0c215f27ec1860a3cde77485c1d4f4e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/sanders_conductor.py": {
+      "payload_hash": "0fbca4e061db016791ce383c7f499bd4eabdc6cdd5013665f122d9d75e5b6e2c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/security.py": {
+      "payload_hash": "6e28ee89188ce30f97095da19bc9f352e9a78cbece221f0d96c16f50a3d86654",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/service_linking.py": {
+      "payload_hash": "0e9efa41c88f210bfa2d190c8737fa938f6cdd13b3ac9571bcfa7fd5b4155e6c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/sidecar_l15_contracts.py": {
+      "payload_hash": "16add38952aba1112bc3dcfdb936c32ffefec3ab8c5f137cfb9033bb0051e96e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/sidecar_protection_gates.py": {
+      "payload_hash": "58a605770d689161ac23b242253ea456c9c22405736ab6318f3c65bb28651b60",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/sovereign_core_orchestrator.py": {
+      "payload_hash": "7872a277cf85e5d019f29322afb421b346a9c3cbe659ccbac34b12ed24716f4a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/stream_api.py": {
+      "payload_hash": "5acf8321285af747550eb4eaa03c47fd2e85f1196a64eeacb1df137c36a2ac3d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/stripe_checkout.py": {
+      "payload_hash": "4d00814dc3160b0ed2bb46014c3e5ef87e8e448c6112866cce3d2d339e0e91fa",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/stripe_payments.py": {
+      "payload_hash": "f4da3c5232cebbb9c17546d4ea3b056ee6bd5316244240985a9d788f47ef071b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/stripe_webhook_wsgi.py": {
+      "payload_hash": "bce9c4e139f12a3207332bd8aab4f5d308c9b6aca3e1e039574536170c265d13",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/synthetic_advertising.py": {
+      "payload_hash": "e6b885120228ab694f4ad94cb53968947e3adfcf2110236f75997091d603dc00",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/synthetic_localization.py": {
+      "payload_hash": "9529554497e9f8bfd64a04f494e670fdee54254947ea8913f01ac166908ce2c5",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/synthetic_operations.py": {
+      "payload_hash": "9bad0795cdda24c8f735dabcc129c2ea373088e7b5bb75d6038837fc6ecd6a31",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/tech_team_dispatch.py": {
+      "payload_hash": "46fd15af842976fc29fe001fc346170ffe0d359877f67681d38d9bed3cf754cf",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/technical_worker.py": {
+      "payload_hash": "22642c1a79eb29684404e453bede058a7c6841955bfa792934fc08621d0a1fa2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/tests/__init__.py": {
+      "payload_hash": "520860dac058ecaf443fe91c6c207a91dc5620883fea72a39f298701c9c5f653",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/tests/test_daedalus_sota.py": {
+      "payload_hash": "0cf17be5711540035090fa246e403191b8a09a1ed1b5bffce78a47912f914df2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/twin_gate.py": {
+      "payload_hash": "8294e4b8c336b066b0022b4ce0d9693e4813dcfd52243887319de13a4ef818c2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/upgrade_sidecar.py": {
+      "payload_hash": "29efb8911a4e047a8f654d9579b2cb18510f036989ac679a4cce77ff7573b95a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/voice_api.py": {
+      "payload_hash": "21c3496ee8916387106b0d92eb9b36eb04b380d2650dd2cc4a98dae0bf3cb702",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/~/Sanders_Dash_Seal/core_platform/Docker_file": {
+      "payload_hash": "69e99c8182afaf5c84b17f79432a564ca664252e2f005d5628cc9837e2f5bb60",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/~/Sanders_Dash_Seal/core_platform/agent_runtime.py": {
+      "payload_hash": "7f00a89a58a949aa3f226153e019997c1eef64fc91aa6f965e038fb9ab08a99b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "core_platform/~/Sanders_Dash_Seal/core_platform/sovereign_orchestrator.py": {
+      "payload_hash": "cde7e17e1852761790bf866b534e612ee370576f2571eb7f5f973c3ed20eb243",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "dashboard.html": {
+      "payload_hash": "144f214fbe6f573f1fdf24a4d88c9a474024aacf569a0df717a9cd132b471b24",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy.sh": {
+      "payload_hash": "55889a35fb4ea62b6f1a102031bd5fe2cde91e72b39397c2fc06b57167373248",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/__init__.py": {
+      "payload_hash": "65c3b55325cf76e4d776acc5f463b4ca58698cb0ec8dd205aefea3c4c9009158",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/activate_on_oracle.py": {
+      "payload_hash": "c94618de60ee3055f3bd47419bb5f792e93971610282d030b47d73068c331115",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/activate_tls.sh": {
+      "payload_hash": "c0069db3916effe1ecf30a95b2b6a2e63dd7f40199799d14449936f045cfd5f5",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/agent_runtime.py": {
+      "payload_hash": "f8b0b8de6f889f352dcd73c82cf8f80b6e74fd41cb5cad93830871fb80d4982a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/bind_free_resources.py": {
+      "payload_hash": "61ec7f5198f5a93a3118582669eeebb1fdb0d2e1cd34e2d01bd087f613f2de08",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/bootstrap_agent_installer.py": {
+      "payload_hash": "263a7508bc4a88c8912234942f4ca6d27ffa833c2c547919aeedfd6e1b12457d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/bozly_nginx_location.conf": {
+      "payload_hash": "02ab3ed07373c60f881b0970d9bf5ee5f9432b6a7dba5f12370ed1fa9801fe46",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/compose.preflight.yml": {
+      "payload_hash": "a8c8be4e92926590d6d89d287a1e9b0e4871f0ff3e570edaba7b501f7853b10f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/compose.production.yml": {
+      "payload_hash": "21892cee6a8cb2dc6be5e0daac65e50da7c0292f6f92839d84cbbdaa98ea11fe",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/deploy.sh": {
+      "payload_hash": "e2af7ddd7ca3329c2ef5f26d9921aa7b8d8d40d883b13d66a37f6f4eb6975596",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/deploy_backup.py": {
+      "payload_hash": "d27fed7d9da2d8f1bdf0c2574984fa8407a14356219940dc8792734cf434b343",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/deployment.py": {
+      "payload_hash": "d5e2898c829fa154f7603c68ab1c1831c0a5868e71255ea69f8c8e5e2deda111",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/diagnose_oracle.py": {
+      "payload_hash": "975848db3f079192607b56188aaad66f8f261b17234a02b40c5e5257d19d67b2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/environment.example": {
+      "payload_hash": "89bc58f69ca58b374d9fe10cbcb50e2d38419f85c9450e1304741ef5a1a7a3f8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/fetch_release.py": {
+      "payload_hash": "648242e2e5355462db3e61f1a7acc1d12591e3d3d9ef340e70d7e549a505a234",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/forensic_sentinel.py.pbd": {
+      "payload_hash": "358265c19da6c298dbab93628e53647d6c9323f6503dcead3e9ee8215cafdf2e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/generate_pipeline_matrix.py": {
+      "payload_hash": "0dc052c21aa882b32dca19fe8c2cd2adc7f03867e896fcd2162fbaf653d7d793",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/gitops_deploy.py": {
+      "payload_hash": "557588710641faaf00955e012afb760c2f7f7bae1827294dc4c5aa468e43d10d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/gunicorn.conf.py": {
+      "payload_hash": "982b4c85c134f8425679cf98dbdf8710fe519ddfb0c022e40df5d69c98c7b001",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/host_integrity.py": {
+      "payload_hash": "0d2ec395182aea5ce5026bc4e09d870b8f457b3318d1c036ee12d5eb58e0c1cc",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/init_runtime.py": {
+      "payload_hash": "284b51fcd95a23a90d822296e371df69a840d79d6badb4363ebb0465d3800be6",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/install-simultaneous.sh": {
+      "payload_hash": "2bfe60bca31f2f473d3918f5da9e2d9dd46aa6b9b0b8d18b82432972ca247dc8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/install_application.sh": {
+      "payload_hash": "8a3803a5a6afd80701eacf4adcf3804e59136befea9c7e886707af1f76bd0305",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/instance_init.sh": {
+      "payload_hash": "a230802ca84ebe69c69db3b74c012210b7f6e792c08a4eb1e34ead1fd9af92ea",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/kernel_profile.py": {
+      "payload_hash": "a00a0d48210226a36255389bd6c4d176128b925be48c600c3c753020cc5a254b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/ledger_backup.py": {
+      "payload_hash": "75e2c57d2d461ef52b77fb78376f8f5140a3c0795444063fba742874e853f91e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/nginx-ingestion.conf.example": {
+      "payload_hash": "cc791f20781dc5f9ec0ceca69a1714dfe3612bdb602924fe453dd2cffff5d682",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/nginx.acme.conf": {
+      "payload_hash": "46ead4e8a0c968fdccc12f0815603ad807fe5b74e6baa72fb238acb7713fee17",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/nginx.conf": {
+      "payload_hash": "df61f7160857d03bfa03840419d9d514cbcbf9fed2a3433f7421c0122e4886e5",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/nginx.conf.example": {
+      "payload_hash": "911916e1938b78a8adcebbaddad152ef18b9fa269472110a070649e7f4da2b40",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/nginx.http.conf": {
+      "payload_hash": "9375fea6a10283c7a86c90dd4cb10d9ce6360d6ce53f5baf39914ffc3fd18950",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/oci_inventory.py": {
+      "payload_hash": "63d766324c7f27ece1e267303663e9340f7e38d50e00f5e307f9a66fa59c9413",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/oci_preflight.py": {
+      "payload_hash": "db5495bfb0c6c95ca66decaa17ffedc933c5aa29d14e1f5fda0316a517cf6b16",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/oracle/README.md": {
+      "payload_hash": "16ea02b3f7520cbb82a2ce1cc474cfcb81839e6e73cfa791e0b905aa512d9ae0",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/oracle/oracle_registry_probe.py": {
+      "payload_hash": "7491e050966120c7575c118d7da4cfc5ad54b881f08e6f58244e4f7755212882",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/oracle/sanders_master_grid.json": {
+      "payload_hash": "f5c770415cc5b357574c1a88cb1514ae366a65a5e8f3aa59cfe920836b992600",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/preflight.Dockerfile": {
+      "payload_hash": "07ef9bff0902916a45956390b78549a9e2404e89fd710dc68ad03e07bc0b0634",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/preflight.Dockerfile.dockerignore": {
+      "payload_hash": "d82071c59732735bd6d46587e149ec0dd64de2788c76d4c54db7907df424e7ad",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/preflight.sh": {
+      "payload_hash": "a9d742522f486234894f4a3e9f66b1d6b52f6e13a1a9c34d2c847d10f4f343cd",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/publish_provider_secrets.py": {
+      "payload_hash": "c85284ffa2a6ce66c4c57b18a048bdefa3566b46387012eb3a1514ecc9adde21",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/refresh_provider_secrets.py": {
+      "payload_hash": "1719776f182f98dda1d2872c36b4943e5acfb4ac17872e75f422978cee2b9a7b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/renew-certificates.sh": {
+      "payload_hash": "70409b82f7d4839723683480b396f666ae2f7dc1248f7fabe5a1e958a6122d80",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/run_preflight_checks.sh": {
+      "payload_hash": "4d94d8a395d8ca12c9013eb83ba0fb0014fd85f8261b28ec1eecfadcee3aef89",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/sanders_logrotate.conf": {
+      "payload_hash": "cc408be311ac7cf6ad10c8ae4b76ce49414714d021ffc5860fe832fcfc306669",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/sanders_manager.service": {
+      "payload_hash": "18d826d263f97acbeedccd761067ca78b4b9a63bfff67d4f36d08c261b8371af",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/sds-bootstrap.sh": {
+      "payload_hash": "d787699ef817b6392f4c60555a990c7faeeaa02f6cb179ed5372aff08b291e53",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/smoke-test-simultaneous.sh": {
+      "payload_hash": "809b9f38bc4f9a1277efc436145907ade09235302f526a00049da48e7eea6235",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/sovereign_orchestrator.py": {
+      "payload_hash": "ae2b55c1aa98a4bf741cd05c5b3a54191755a5d267d1c5204272c0e7105f5d33",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/sovereign_reconciliation.py": {
+      "payload_hash": "12263197d7ce1c198c081811c7c7da8af22e243847174fecc9c4520a941f386c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/speedracer_remediator.py": {
+      "payload_hash": "57a93e33a718e25b3f5f096c90e19ccdacf2abb7d6410b87f38b37ba30cce444",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/standardize.py": {
+      "payload_hash": "283a37760a6e8c5dbed5520b87c694c923305597ee8297fd0548d5a451251a63",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/system_preflight_audit.sh": {
+      "payload_hash": "fb32ad1c06d9b92146d454097f279eb9acf902424e99c565631a5ecaccc85159",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/minotaur-sentinel.service": {
+      "payload_hash": "02a93dd109c9ce0bea4d35d47a912994a0b5409f189ca94ce1c8c483c594ad6e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-ai-observe.service": {
+      "payload_hash": "839af557d2d121e5c2b3d02489b04c3f74532494afd2b974f3c22e8cb6b4a581",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-ai-observe.timer": {
+      "payload_hash": "b3c365a98b801885afc25c2fc252355a0a0723b67c3b56182440975898d55c01",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-certbot-renew.service": {
+      "payload_hash": "dda68d1faf96bc71ce0c3e90b773cf86ce024d43f29d794153574876f468821d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-certbot-renew.timer": {
+      "payload_hash": "2683c09b251514b179b4806325ec418acea7985495121431c65c7eb058ce7048",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-integrity.service": {
+      "payload_hash": "24df07343da38ed01806310fb08fca2c488d1a6be45ed38bf6c8ff40efc5d622",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-integrity.timer": {
+      "payload_hash": "e4b8bdf1dff948ae9772b95d178aaa8acd9eeebe8d2f87751304884660fdeff1",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-ledger-backup.service": {
+      "payload_hash": "2931fffd941560bed8a9997ad70da1cfc2375c96816318e44fdc996aa12f17ba",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-ledger-backup.timer": {
+      "payload_hash": "14a097cb2182a3b5a298ad2d656fee9cd03bd64beec6da1e013898d4f0271b8c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-oci-inventory.service": {
+      "payload_hash": "144521eadf99ba997250aee436d246ab950e3e5b2192835e37555c66a9b177a1",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-oci-inventory.timer": {
+      "payload_hash": "c5055c9c0ffa031194c829cf58aecc6029c26214aedf5848542dd14c370be3f8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-provider-secrets.service": {
+      "payload_hash": "d35b5110e733bd119b3864f2b3bcc8c4c59bbe91fa67905422d36c51c6bf8c1d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-provider-secrets.timer": {
+      "payload_hash": "04a3225bde4681ba8ad24789049a41d2e9f69535aed1cd9c3bae63daaf11d726",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-resource-check.service": {
+      "payload_hash": "2a669e5d2afcd5206fe846d7340c2e79f9099ef38ac729bfe2d4944540e36e27",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-resource-check.timer": {
+      "payload_hash": "2fefc5fe935a7a1611b730715636242513b3eef1a1a50208a42387de9f628b48",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-tls-activate.service": {
+      "payload_hash": "469a618b1e0cad3f5dfd224fbbea4fb424860c4a4f97d0f521e57180f0944884",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/systemd/sanders-tls-activate.timer": {
+      "payload_hash": "a0006cf55df542f4e448e7e62022637a596c0b4d7ae7967c42ec10844620a626",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy/wait_application.py": {
+      "payload_hash": "d860cbba8608383f594a913d139a885cf323b9f4cc878c7a642919059bd1d243",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy_backup.py": {
+      "payload_hash": "d27fed7d9da2d8f1bdf0c2574984fa8407a14356219940dc8792734cf434b343",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "deploy_backup.sh": {
+      "payload_hash": "a68c129e668a2fed1276fb69ab9d4332f7f0a51a72fa327fc20c92e71ad0d75f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docker-compose.bozly.yml": {
+      "payload_hash": "c7329fdf6e1524e3ac574b14156eb07adc4b16f3b5fc5b614a9bfb5970f31de2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docker-compose.yml": {
+      "payload_hash": "f8501a4914ffd0eb3e2fed9dd581938730f059714afb4147dea6800cfa4fa59d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/AI_OPERATIONAL_RUNTIME.md": {
+      "payload_hash": "81db5c5f6e9498e8b7bd65b54926dbda1e15d022f07438e61d782701879f8b5c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/AI_RUNTIME_VERIFICATION_2026-10-23.md": {
+      "payload_hash": "4d9619cafb161577ef9c272d3b62445b2dcd4ed2cd3385851453575782b7ce67",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/AI_TASKS_VERIFICATION_2026-10-23.md": {
+      "payload_hash": "401cb646043b8f23cf4856d4545ee00e8ef5002cdd9638ebd1e49061e939f6de",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/AI_TECHNICAL_TASKS.md": {
+      "payload_hash": "6190c00c9b5b8763351429c3c2a26b2dbd90d349e0ba4301c3251a4dfd25961f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/AUTHENTICATION.md": {
+      "payload_hash": "7519663ba4109188b315a206a0066d7800decd5b0d2103b1ee2995c784c48359",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/BOZLY_CFO_INTEGRATION.md": {
+      "payload_hash": "6a0ef087ec92a844ad6206d75c5fe864ba18a4faa7a8594058e2a009a307a232",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/BOZLY_FINANCIAL_ETHICS_AML_FORENSICS.md": {
+      "payload_hash": "7420e152abb4972bb5eb9c04a6b10c05644206a14e6bdbf830e501979e358ef8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/BOZLY_NATIVE_BROKER_CFO_COMPLETION.md": {
+      "payload_hash": "289cda214e550adabeb25aa9522e4bdc7021349562332273d055b475ae35e255",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/BOZLY_P0_ASSET_DIVERSION_ALERT_RULE.md": {
+      "payload_hash": "9154b971da699230f020184910a59652bd1e6df95999a682b4d4d34c871cec86",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/BOZLY_SPEECH_BEHAVIOR_INTEGRITY.md": {
+      "payload_hash": "b84c47c5f74e47afe26969fe5e269a6a656e9adec9c5103df8b8cb77a1caaa68",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/BUILD_STATUS.md": {
+      "payload_hash": "6058219d663c8922dc51f30ca6c76a76f0b1cadcf19c376a5bdddf77545f845a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/COMPOSE_RECONCILIATION.md": {
+      "payload_hash": "4037dab7a395e1117e69e717c6189ffbe117d024ef2d287b865e67bb7031ba7f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/CORE_LAW_10_ALL_PLATFORMS.md": {
+      "payload_hash": "2f57fbed2f8cf12c87e23933e74f2e5f8f56bdfaae6cde04df18a21daf983aeb",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/CORE_LAW_11_ALL_PLATFORMS.md": {
+      "payload_hash": "cc1629792385acae84d5cc6b469b71a1a0242493bd4a78fa7d97d7a20458df23",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/CUSTOMER_APPOINTMENTS.md": {
+      "payload_hash": "a0fc118371f0273b2f835d8789407016e95fa50ec30ba0cb2c1ce4daf0be2212",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/DEPLOYMENT_SETUP.md": {
+      "payload_hash": "15020baaeea655835f0ef1050758778811ce1b0117c290833ad03fa37d71a516",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/END_TO_END_PRODUCTION_ACCEPTANCE.md": {
+      "payload_hash": "68eec0d3a05ab3896d15bc612c844a6d85a49e535657366aacd543529c2d9198",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/FORENSIC_SECURITY.md": {
+      "payload_hash": "964d3af45811e0cc227e17c3dae68a3c4de27d82fd695c031442032715336430",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/GOVERNANCE.md": {
+      "payload_hash": "202873a83d2a134112df23b62b18a40b140c930f53203bb4451b87b3cb33cb54",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/INGESTION_WORKER.md": {
+      "payload_hash": "b9d4ada7b674e4ed59dfd08d6d59918c37033a8d2635d8fb622706cc568e7e53",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/INSTANCE_INITIALIZER.md": {
+      "payload_hash": "2a8973cf7198bad9e3e86a3a561a05abb11a642c322b8bc6cc8cb75a948ffaa9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/JADE_STOREFRONT_INTEGRATION.md": {
+      "payload_hash": "c4034b7371df634edc8a81ac789ff357a26b108a1eb1a8ceb0e564af84658c96",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/LEDGER_BACKUPS.md": {
+      "payload_hash": "b0772dcf9d359ca4563c5688ba0bd21435eba23aeefd34f4276ef7141c295666",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/LIVEKIT_CANONICAL.md": {
+      "payload_hash": "178d720986c12a1308ca5194a597a50f92dde3146684385abba9f87883d12f72",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/LIVE_VERIFICATION.md": {
+      "payload_hash": "0b9ce74ebb816b5785d5155ae7ed0129d698d154b383ce7bf9b374abc55613d7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/MOBILE_SERVICE_READINESS.md": {
+      "payload_hash": "669ee2730115bad9db10a1b7156100ba123c02c79b8bf6caa71c39562e8ba976",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/OCI_AUTOMATED_INVENTORY.md": {
+      "payload_hash": "6931877224aa3722213e05ab02dea587c4612aba87dea2325a8a97eb3f5df472",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/OCI_FREE_RESOURCE_MAPPING.md": {
+      "payload_hash": "ad9f141f36aed292ad74b29c8741fbc93a14686d9ef36cb21e44cc288669e671",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/OCI_GITOPS.md": {
+      "payload_hash": "fc475deb814c701f2318b1ac9fdad7f6959cfed313608767b497dfcc0d07b5a7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/OCI_NEAR_ZERO_OPTIONS.md": {
+      "payload_hash": "b3e619d3fec8e5c9d2ad0bb64ae36aa7a8ff5c215c429736bc6fc9125df6bfc1",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/OCI_STANDARDIZATION.md": {
+      "payload_hash": "1081df426e74b2cabb879b85e8087c3fee6917e1906a98bf4b9e1ed7e907f64c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/OMISSIONS_AND_RESTRICTIONS_AUDIT.md": {
+      "payload_hash": "56c0c376c91702c43d49e580740a9243bb6957aab820412e5dfc16660c711bfe",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/ORACLE_AGENT_BOOTSTRAP.md": {
+      "payload_hash": "3c99ed602b369a643d995008f675708ad1f2e8f8fa70c277fefe24931a849fd7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/ORACLE_BOOTSTRAP.md": {
+      "payload_hash": "e479c9a7b4e62e2e606c448cacbb0ccf9b6091968b8db96a17e5989939c8dfc8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/ORACLE_DEPLOYMENT.md": {
+      "payload_hash": "b2a605caabde2c1bb50e5d367c48c6854b4b3e4fc5b0979ef33da5625700ac7c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/OWNER_STACK_STATUS.md": {
+      "payload_hash": "0005178854b0abc65e00379f67d58e715596d08245cb691173b3a9cd22b32065",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/P3_CORRECTIONS_2026-11-13.md": {
+      "payload_hash": "05db51ed6d86caa2559361160724caaa7f5a14a12df43bf7f600f46e9d099763",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/PARALLEL_PLATFORM_AND_SIDECAR_BUILD.md": {
+      "payload_hash": "8df7fb98fc803163424851a3af2336d595c1c475eab07ea1da892db91a23b6b5",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/PREFLIGHT_VALIDATION.md": {
+      "payload_hash": "da2e3333c3be5bc2f0d77b586da96e274a805454e0978a17bc2add4bf3864fcc",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/PROGRESSIVE_PRODUCTION_RELEASE_POLICY.md": {
+      "payload_hash": "400f916bb88f66b38810eed1bab9f608067042f6204da26539e4d81f98b80388",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/RENDER_DEPLOYMENT_REVIEW.md": {
+      "payload_hash": "19ef1294e2b159ebb12336a5674638154960d418dc29e9677e17c5158a7bcff8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/SANDERS_EXECUTIVE_BLOODLINE_GOVERNANCE.md": {
+      "payload_hash": "7dd3757ea7ef9aedd47b5e984f52151e963b6d5a92e023e31675ff41dfe4f63d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/SANDERS_SYNTHETIC_AI_SIDECAR_ORIGINAL_ARCHITECTURE.md": {
+      "payload_hash": "8b416173c5e11a9d58d00f1f2ba5f4d2ac2304af25079c0abc3331aa7ab5c678",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/SOURCE_MAPPING.md": {
+      "payload_hash": "39938da2c1e98bb6ea77ec075ecd23ad238d8327365c2ee703f541ddc3815b75",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/SPEC_CONFORMANCE.md": {
+      "payload_hash": "c8d625543e5febbda10e2a782b5c2bcc443c07de9b60b079c43dbe6d3f8a63af",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/STREAMING_INTEGRATION.md": {
+      "payload_hash": "6f7da4aa2e82ad667c625e3dbcf5daf015b8c25ba4e3f5a4475f3071f10f0b07",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/STRIPE_INTEGRATION.md": {
+      "payload_hash": "14e3d5af457c3ae8a8528eeacd36083564a593e83ef7c9e0bb28d51a958fa9df",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/SYSTEM_PREFLIGHT_AUDIT.md": {
+      "payload_hash": "796f44eddc1ddf9e07c1877e9652fb159a59e0ab73ce3a66ecb2d6da85189b55",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/TWIN_GATE_CONNECTION.md": {
+      "payload_hash": "3ca698ae47b5d60b478f3a30017c1952f30e1879d0d82fc9ae712e8585d55560",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/architecture/IMPLEMENTATION_LEDGER.md": {
+      "payload_hash": "330ec8ecc1d4996be61ed8b722e1bb4912c477676840f0ce599f56fc08618eb5",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/architecture/PLATFORM_BASELINE.md": {
+      "payload_hash": "80fa32191e17f231d5cab85b1f7b0b249d02575606db9586452f8de19026007d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/architecture/RTSA_14_ARCHITECTURE.md": {
+      "payload_hash": "d1c750d400bf9516d05473e6ddc34d4b9c099d3c4c738632fed96ad36eff7401",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/governance/HUMANITARIAN_CORE.md": {
+      "payload_hash": "6cda7b3cc1b0d41db9a1011bae8ad3dd321a9304c545e3e8c5464532628b40ce",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/ip/GLOBAL_PATENT_PROTECTION.md": {
+      "payload_hash": "f56e174841d81caeae4fcc8b0fb99ab674a0b947f4189f008c18192f86c2f85a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/master-expansions/Sanders_Dash_Seal_MASTER_Section_22_24_Sidecar_Mandate.md": {
+      "payload_hash": "b609733245b00e720da07155faac78e0f0f5c6861c3d77c124d08decf844948f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/master-expansions/Sanders_Dash_Seal_MASTER_Section_22_Global_AI_Translation_v5.md": {
+      "payload_hash": "d43f037b2ab3cc4167d061f1df251ffe42c228ae1a1c1bd4c2e3603e1b78bead",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/deploy.proposed.sh.txt": {
+      "payload_hash": "a8f1d66a9a3c4bc1fcbac2e2a7def6f79a25828a592b70984b56afa9de1bff55",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/forensic-audit.proposed.yml.txt": {
+      "payload_hash": "8a08384abaf4b2c575e8087cce56ff81b750cf1740d51ce04e50937563c45b12",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/instance_init.proposed.sh.txt": {
+      "payload_hash": "fbf5a9af7e916fd173446e5bc2413df73d200ef2133fac9504ce80302ceeba62",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/instance_init.regression.proposed.sh.txt": {
+      "payload_hash": "b42fb2a1406dcb8cf5c7b034186361d985f5aadbef16b8fd4a11ca59462de612",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/ledger-backup.proposed.sh.txt": {
+      "payload_hash": "1086ff69b82d5d6b3259c4874b552ee0c60a3621cb4a024385b84251ce91c466",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/preflight_checks.proposed.sh.txt": {
+      "payload_hash": "4c33661a93e2959236f122e6e8910b4f1dfd981bc5cf4561e6af62505d888318",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/receipt-verification.proposed.py.txt": {
+      "payload_hash": "b9fe34847bbb6db8b90b661ae3952e6160a7aed7b344643be76c82c64052e591",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/resource_manager.proposed.cloud-config.txt": {
+      "payload_hash": "d6f442df1c61273a94b03bceb0a9a9a0935edfce1bfadf52709f49ae7e6df97a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/resource_manager.proposed.tf.txt": {
+      "payload_hash": "de739df94bfa65119afc34936fe5ab1a1f692b364e5039ee7c445a8c5975eba6",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/scan_identity_metadata.proposed.py.txt": {
+      "payload_hash": "8e7d5241eee50629b07b88f2766d651d8a67e8c79ddb8dd5009b5f92e34f821f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/standardization.proposed.cloud-config.txt": {
+      "payload_hash": "648bf734b793063972d4eceb534ea388dddce7583830e79afa9a565054029217",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/owner-submitted/system_audit.proposed.cloud-config.txt": {
+      "payload_hash": "201894f85f8d2641d013c70d3d58ac682d43d1ba8db0c9560f68e85aa0c15d5e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "docs/platform-link-checklist-20261113.md": {
+      "payload_hash": "507161c209985bbddfb3e07dcde28e123c6d28c52e18f46f22efe06d2ea0edac",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "expressway-sync.yml": {
+      "payload_hash": "eeacd105b26bdc30703c6359ec540fa0abc5d174fe4030e3d2b20ed506a92333",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/infrastructure/resource-manager/bozly_apparmor.profile": {
+      "payload_hash": "e0e05e1cda5067cf3de266ad171149d16abed2115c6ef09ec355fcfccb78ab58",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/infrastructure/resource-manager/infrastructure/resource-manager/bozly_watchdog_trigger.py": {
+      "payload_hash": "994a0fa8a955eb4c8860b8fd5ca687edaa0cb91ed9468fa3d29b9eec5076dedd",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/infrastructure/resource-manager/verify_assets.py": {
+      "payload_hash": "f2105ffc42649d778a14949e8cb731cccdfe5f7959054d6efc2e70beb3802211",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/Cloud-init-application.yaml.tfpl...pbd.i": {
+      "payload_hash": "01e67e32137b62efc8fa6984a66230420476c6cba8efe74997db9de0059b39ae",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/DIRECT_INSTALL.md": {
+      "payload_hash": "4eec0a75b9672d3f754fb5b6753fe0728a2f21df977fc321de85f318bdbd614c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/README.md": {
+      "payload_hash": "323ec14b6563d4af4880349d3d20b76215600843e2195a71c81796b3e591af71",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/application.tgz": {
+      "payload_hash": "7706348d5219f28259d16d7811e4f910f16f0043160f78d7879dae57bd84900a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/bozly_armored_core.py": {
+      "payload_hash": "a9dc45df53f56550d89546b639ac85e953e2db6834d3de3bead032ef6c1d8dc6",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/closeup_automation_trigger.py": {
+      "payload_hash": "77f1fe880c9071e0026d5a70d0282319851f10139ba56893d5d299fa1af268bf",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/closeup_media_assembler.py": {
+      "payload_hash": "31c4388d83474bc448ffa75aef491e93ea2f9b9eb4632f516290639e2360c45b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/closeup_webhook_listener.py": {
+      "payload_hash": "d550c9f855181edcc0a1a275a86a83840b08242d3c92d95dc925f1c7619dc92c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/cloud-init-application.yaml.tftpl": {
+      "payload_hash": "831ee8f90bcdd000fea4b5560009ad586a56e01026ece899ad681547280992c8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/free-platform.tf": {
+      "payload_hash": "639e0cf1426c498b0fa96f3dfb0d8f2b1493169dc0a282e13686f65ae64197c1",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/install-existing.sh.tftpl": {
+      "payload_hash": "49a06612fc238c5f59e0e6bcbe4da5ce1bd256b5683713160d5f201a738bf6cf",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/main.tf": {
+      "payload_hash": "98a671c4adaff9f8e36f30f6a917757a7d437d327724932f87fceb44c64ccd4d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/outputs.tf": {
+      "payload_hash": "661546b3c74d5c9c847d2142e838b379caa5f7b694d2b32bce1adfebb839bf12",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/package_manifest.json": {
+      "payload_hash": "747c9e6c00723df4f38bd935da3fc64d56769e3a04b50a89660119f1f1697d7c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/release.tf": {
+      "payload_hash": "74faa948c8b0c294f15be0632c9d8f2312905e8c6a71d45f57bbeda79b7f1ed3",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/schema.yaml": {
+      "payload_hash": "c455287dc136c91e49799906b7f0f41a58c9a22b669231d9c973a466c55ae005",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/schema.yaml.pbd.jdon": {
+      "payload_hash": "6e12d44ebe4429058fe7b345f0422e5f0f5b31e593daf3ce53263eaae5217dc9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/security/bozly_apparmor.profileetc/apparmor.d/github/workflows/verify-bozly-integrity.yml": {
+      "payload_hash": "97358f6822bed2e7318e0d3e97ba6640acdb20368d5157f3fe0190b44ff36ab5",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/security/bozly_apparmor.profileetc/apparmor.d/root.dashandseal.bozly:": {
+      "payload_hash": "8fcaa921ed776605a806fe4891f6e88b426a011b54e6750dcb01659b211ea83f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/variables.tf": {
+      "payload_hash": "00bfefa3fc579c8197c8f6c88d5b57f4168bdc0da660e69b457ed45a8b0ec476",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "infrastructure/resource-manager/versions.tf": {
+      "payload_hash": "dcdfc589f48d4366def98cb7a48aad10cc891a1a6bbcf74e7af6b7fa69ee143f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "instance_init.sh": {
+      "payload_hash": "a230802ca84ebe69c69db3b74c012210b7f6e792c08a4eb1e34ead1fd9af92ea",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "labyrinth_shield.py": {
+      "payload_hash": "19519438ab6567679a617e262517d4a46a3fa3c72eda318d05f112de4841e26a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "minotaur_sentinel.py": {
+      "payload_hash": "ded5663c527450294b0ec62cf7b2982b4ed6a42f8d7e4b3b31e3f4857d1ac50f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "nginx.conf": {
+      "payload_hash": "879ab817823239428c2a18fa9cb4c3e6d29c995d1a4c6024b83300faa7223169",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "oci_free_resources.json": {
+      "payload_hash": "ba17b3b0c5a91ab95e6d151deed0103b1e256584cc2f0fea7d676b254a10f4af",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "oci_free_resouseces.json": {
+      "payload_hash": "2d24006744b009abdead19c6b8a2b4b7a81872c5384d189b3cf5d480f94be7c7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "owner_submissions/BOZLY_SYNTHETIC_GUARD_SOURCE_FRAGMENT_2026-11-03.md": {
+      "payload_hash": "ed3220468b40a71418be275562a2402c829da9274b6f1460b7e58e4c14a308b4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "passenger_wsgi.py": {
+      "payload_hash": "9755cf13aac890625610623f473a9de59c27a238124cfb542de2543fd4c206a9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "release.tf.pdb.json": {
+      "payload_hash": "59b0d3a1fa664da40ea0b2ad37a2112ee5cafbf8fb45054ba7a05fb3e847c087",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "requirements-dev.txt": {
+      "payload_hash": "8868a003fd9dae7dba46242850cc2a30f1edbb509df2542de8fbb56185572da2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "requirements-server.txt": {
+      "payload_hash": "255bb870bf333f361ea31a06721a675ad4903c72dc6b80ce2c63c04967a25ad8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "requirements.txt": {
+      "payload_hash": "3748067ade5a134f5908ffa4ddc23b7c68c47daa34bf038a8f471386c638455a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "run_preflight_checks.sh": {
+      "payload_hash": "4d94d8a395d8ca12c9013eb83ba0fb0014fd85f8261b28ec1eecfadcee3aef89",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "schema.yaml": {
+      "payload_hash": "c455287dc136c91e49799906b7f0f41a58c9a22b669231d9c973a466c55ae005",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "scripts/scan_identity_metadata.py": {
+      "payload_hash": "6c9a44f9fa167141bd2ecaccc22cc73a8cfa3fce46991629e0f3b494781bb914",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "scripts/verify_release_source.py": {
+      "payload_hash": "9fbeae21516e894c55a34d2c2abfaee465cc1017ea9d463beb1e04f27fed5227",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "security/forensic-policy.json": {
+      "payload_hash": "1bf24909acbd03f92bc9cee469f28d5b8436b6a7ef11592f0eb1112b0dec0a6a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "server.js": {
+      "payload_hash": "332ee82f747e15348ba15220d4fa7354f417f2204edaefb31d3af695bf090ea0",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "serverless/oci_pipeline.py": {
+      "payload_hash": "69d858a4acf919ac0a8801d96620fef8ec1525499a7d1414aa347823207dd359",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "serverless/sds-transaction-validator-fn/Dockerfile": {
+      "payload_hash": "3b3e9af1d8d53d658dd20c736225757ac90b3f9ad2b73a5057b3f581264cecda",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "serverless/sds-transaction-validator-fn/README.md": {
+      "payload_hash": "01b0e2d1bc645d093f1110d5635c68484a2bc672c090c0f911033a283e9ead77",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "serverless/sds-transaction-validator-fn/func.integrated.yaml": {
+      "payload_hash": "9f48230d2c8c18adbbab9fdeec699e0f625488f984d3b39e8ba333f6eabf3f61",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "serverless/sds-transaction-validator-fn/func.py": {
+      "payload_hash": "224fb887aaf7e019bab71380384376cc7be32bce6794c570a24a6875647d2529",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "serverless/sds-transaction-validator-fn/func.yaml": {
+      "payload_hash": "2f925c179b773f2e19ccfddfe3890193fbf3efdf7f8b99e946f278021fd83f4e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "serverless/sds-transaction-validator-fn/integrated.py": {
+      "payload_hash": "3bef213f069a5eadccb5b98c2f1dd99111d02a9b5d919a589376f6f7b100e8b1",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "serverless/sds-transaction-validator-fn/requirements.txt": {
+      "payload_hash": "991d806505964bc259cebd022a99338fbccb8965633401f97812376884404705",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "sharpshooter/README.md": {
+      "payload_hash": "f756a7b1ef40a9642215ad03edf84bdb27dec01e058e9c48b1dfcadde08b532f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "sharpshooter/__init__.py": {
+      "payload_hash": "af3254671040e468290678a7d9cb30334b67b315311c86fa832819e22fda7632",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "sharpshooter/cli.py": {
+      "payload_hash": "4055fc568f8e5f176e4263f8af16ba1cb15ac9c4940398c59240cde047d8ae68",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "sharpshooter/core.py": {
+      "payload_hash": "af2eeed487ec563375365c25fa282b6f2628d756354880b7a18f92913892d36d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "sharpshooter/tests/test_core.py": {
+      "payload_hash": "0a11346e30eecc444b3977939c26e3204d7521b117d3da41caadae44f94e4fb1",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "sovereign_reconciliation.py": {
+      "payload_hash": "c52b2a074ea0299203f5fbcd8a606ea9ab1851a7b7bf243847a37abb6f8b80de",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "speedracer_remediator.py": {
+      "payload_hash": "57a93e33a718e25b3f5f096c90e19ccdacf2abb7d6410b87f38b37ba30cce444",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "src/main.rs": {
+      "payload_hash": "8e5b8dfa6da130358e2a79293dfb79498202acc8a1a6f3c2d42292a350d804d4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "synthetic_localization.py": {
+      "payload_hash": "9529554497e9f8bfd64a04f494e670fdee54254947ea8913f01ac166908ce2c5",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "synthetic_operations.py": {
+      "payload_hash": "9bad0795cdda24c8f735dabcc129c2ea373088e7b5bb75d6038837fc6ecd6a31",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/README.md": {
+      "payload_hash": "78b93c1b06596dc1608076e71c6727a9533cb2c9ab78ec6f0d7441ef3b682026",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_ai_platform_approval.py": {
+      "payload_hash": "aadf6f6d2754f5b9081b0e40d2462c16074815ff74ac4cd1cbabab153670be71",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_ai_platform_links.py": {
+      "payload_hash": "5f73bc155c71499ad7b7867d1569013be5956a4a9763d342d51e8b647beb5500",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_ai_platform_services.py": {
+      "payload_hash": "53e3364ce9a6cb8df0d3ad03a5dcd82b0b90763bc1abef4e59775cb871cf0163",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_bozly_live.py": {
+      "payload_hash": "763fc6455173af912aeb5337d13a587eaaa53cd4783f5ae468cdd19f78e64b76",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_daedalus.py": {
+      "payload_hash": "40d20f03d712ee279d368ec59798d599118927acaae5c6f141057b5f5c239b6b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_daedalus_upgrades.py": {
+      "payload_hash": "04c69dd51cb2fa19d0cb52e1bf3a51d48c82328689faf0338ea1fc8f7495c957",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_daedalus_voice.py": {
+      "payload_hash": "3575aeed23a410aaa6d355fceba100804286306dcd95a272b75d8f44db65834b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_free_first.py": {
+      "payload_hash": "dfef7521e7c9ba1b93dfc6f33ed364bfcdbe51aa456b622ca5c167395237c310",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_free_first_fixes.py": {
+      "payload_hash": "d40c52b40faff26900a8366994152f4c90a2fbaff55e658ad5abd4a6afa1f1c4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_global_compliance.py": {
+      "payload_hash": "889d65ed4b41ff0f4120ea24fd37b5c94f0f6a8d275b429a4ba5190e23eee45d",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_global_payments.py": {
+      "payload_hash": "499673cceac67977f4617e117d79a75f3612677e8ff5ef0e0d1496a18b14ea8b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_global_regions.py": {
+      "payload_hash": "3d2bc52bae25603e568d5f2f0bc7dc4bf20c4e4e722253c0e03f6f2f9a8eb8fb",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_global_time_locale.py": {
+      "payload_hash": "8469f987a4b1420c9a2460166b0bd3e5ef0b2bd33f9a815b8cf79fabb896ee0c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_grantwriter_rebuilt.py": {
+      "payload_hash": "30fa17518d5463a43d48515469e2305860cbb26a86590f74ff2f5b0cea36996b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_livekit_realtime.py": {
+      "payload_hash": "09b7b4cb6145e4d6de3dfc50ad6945d986dbc8c9aee0a031bd2dba674c1206d2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p0_everything_routes.py": {
+      "payload_hash": "21a46d496fb151a03a77d0483c148c5fa5e63f5734fda99aff0f4c03cbd2b41c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p1_ledger_dispatch.py": {
+      "payload_hash": "5726fa5369d339e311a3e1aa8b0b3d5e34939dae9e59a3c0de02e44342e60271",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p1_ledger_methods.py": {
+      "payload_hash": "ef5132485da6d8000fbd86869876cc23dc41ec1cac931246670bc962826c78ce",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p1_livemode.py": {
+      "payload_hash": "4bd8ea3f9c639e87c9d303988ebbbdd907e68ad4d28cc984ba3b5af2af6f0d01",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p1_secrets.py": {
+      "payload_hash": "a9f1e7dae480766d1eddbf6ec1a7214850e4f364e66abe37c275f7c45d1c6ba9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p1_sentinel_traceback.py": {
+      "payload_hash": "011ac5c2c0541db62cea9bfc479afe4c93b04fad9b7bfe28a45e806c88ca2916",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p1_wsgi.py": {
+      "payload_hash": "edf875f3587bf7d104c0b03822c1c6c8e7944a58adb5e1de8d6ade17fb29c7d6",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p2_linking.py": {
+      "payload_hash": "add0b1d8c72f3553be0048a82d4caa58d77da6ce62c86a2170569c0fb9e262e9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p2_placement.py": {
+      "payload_hash": "c052f1ecea220de960396e1b36c2ddcc63bb33958c25d975da108bbbe9e4ba54",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p3_livekit.py": {
+      "payload_hash": "fa4ceb23a6f4dc81c682c04ad8bd6f9afff112024713467bcf3a9b6c0f054d4f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p3_polish.py": {
+      "payload_hash": "6f699010befad826172ea009037a5b560f2ef88aae1ab4580526c8b3a3198786",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_p3_wiring.py": {
+      "payload_hash": "8da12914d44a9e91f2d2915fd53783fb3bbd8127df865feadc207abd880ba83f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_platform_services.py": {
+      "payload_hash": "ad4f6345e20ccdf298c009c2d38921d5ec330622c68355448c010f9cc943ae3c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_pqc.py": {
+      "payload_hash": "cbdab6994f2e8c7df353812caca5bae6631aedefd707c72e8051ffe871dbc883",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_realtime_api.py": {
+      "payload_hash": "4d843e215337b8bb83800997aeb69fee4c4219e1de8c9ef7762be6f70d7c5ded",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "tests/test_synthetic_ai_links.py": {
+      "payload_hash": "331a099ee04f0dce0118f18a1e81f5cf82674b7a9dd4bac31b9543a2ccc401d7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "verify-bozly-integrity.yml": {
+      "payload_hash": "778506599bfa01c42bf23b9099fbfc57f9802d092f53019502d934d807bf7d00",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/IMG_20261024_141659486_HDR.jpg": {
+      "payload_hash": "4e84368284d62020f09dd8e055d29edc469233ae8fadfaff63a1aae749cd88af",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/IMG_20261024_141701319_HDR.jpg": {
+      "payload_hash": "735e797843c965ffd6763cc594a2270a435a006fe78d022ebec68f6794b962f3",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/Screenshot_20261024-103939_Chrome.png": {
+      "payload_hash": "9d8a3cbfa17df043def41607ff3e7db21815a01c9e240b4808a5537acf210e6b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/Screenshot_20261024-104050_Chrome.png": {
+      "payload_hash": "f80d6d99cb9a017586cb3caba48b04b7b12e2616a00dae31198b4abeb2531759",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/__init__.py": {
+      "payload_hash": "6126a64aba1429b09908029c450e36aaa3c26cd902453652bcda1421ce72bccd",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/auth.html": {
+      "payload_hash": "fd997270b35eb91c4dc44f854998696927627edfbf2e30008d1ac3f75f810c25",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/auth.js": {
+      "payload_hash": "5fa1ec29fd8926dc3ca5fe29072f4ded836711af78e40d957f2c2591c5300fdc",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/booking.css": {
+      "payload_hash": "38c6432ee7b992fad9d9bcb753752671501a41d83ded47d5d540b552185aebea",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/booking.js": {
+      "payload_hash": "2ba4774977de10f6e4fb67dae64b97b577403307dfe5677dbab7d0ed134d1a9c",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/bozly_shield_wsgi.py": {
+      "payload_hash": "1a22f9818a545c17e6abd397c2934c8ca5aa07b4b8d826d17f644ec54a8aa92e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/bozly_stripe_webhook_wsgi.py": {
+      "payload_hash": "9febbaa044339d98afa0f5d97d4d62ae0956135e4324ebe4b3d2343ee8d9ac50",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/daedalus_voice.js": {
+      "payload_hash": "c577e35e50b81c388d9ae8415ca17dc6ac29e0c666e259a8832ab190f762c61a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/dashboard.html": {
+      "payload_hash": "74f1b021f36a186774d79dae3871bde782087f800f631e41529cfb847275d5e2",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/index.html": {
+      "payload_hash": "9e6aefcbadc65116ba393445ac4e2165a418779fe1d87bf6a5dd4e98998363ae",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/jade-landing.css": {
+      "payload_hash": "399992c33e1d63c274915b093941ecd3bea9c833a518ee4586616d0d8db36a35",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/jade-landing.html": {
+      "payload_hash": "f96c79c840f6afd4bf7c26b6ddd3ee176f5e0749d48bfa4e0a6a3e845c4eaea1",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/jade-landing.js": {
+      "payload_hash": "cc01e5d742274127cdcb3315fa5997a7e495037edcf30ba4233b5a7577ded9b4",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/operator.html": {
+      "payload_hash": "ce31d9cb658a3a810aa46f288cc9166238254831a2c7e8f2d847dd9ff2051b04",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/operator.js": {
+      "payload_hash": "915b9cf952877365fcefacc7bd57124c781ebd73e11603719b8a6199ea64eea9",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/resources.html": {
+      "payload_hash": "6c1310b441289592069d8670f407dc5ae4a5c6f8566f9b9f41232a385b7576ca",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/resources.js": {
+      "payload_hash": "9468a8432d29a5db7b44a9ec80638cbefb5ef18573c9340f51585e3fcfff4383",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/sds-founder.png": {
+      "payload_hash": "9e54c2acc97f592245796f8c0d40390a06b360e657fda5bd4dc1e7fb4e777b9f",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/video.html": {
+      "payload_hash": "43d03ba2986a0bf9433708631c7c08bb23b0169461c1f27e4fe8fe8127c2a639",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/video.js": {
+      "payload_hash": "18b93f9feac5ab89efc7d6414d408d5c17b81f5b4de102cf52b3b0cc707cf1c7",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "web/voice.html": {
+      "payload_hash": "470d36df6e068d177c0cb3eb799eaff08c948581c5c539efbe7487d131d54919",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/.dockerignore": {
+      "payload_hash": "3f5f257c5014a5d7c0e72bc48e446d5abdd44b3360a8ce5801e1c8a7ee5be749",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/Dockerfile": {
+      "payload_hash": "c5bb593e351e13f2bb6895b87a193c9c5537b27e49a2e556bd1a5bccca01acc8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/package-lock.json": {
+      "payload_hash": "c1d721af662b987cfe050597d00576f14b133c567e1f1f6b6406529fab4d522e",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/package.json": {
+      "payload_hash": "75345b50650ad61ffdd0b3bda4f2d4c3ec0dbbaf9c587ef25ac3865b505dde09",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/src/dashboard.html": {
+      "payload_hash": "0039c55044449457f92fe895acacc107c4c6defe1c7ddd190f0e6bc26fbc3519",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/src/index.js": {
+      "payload_hash": "6d3136d1f6ef68cd786f54fe29db6177d861a93ec524965db13f54a205b3be27",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/src/server.js": {
+      "payload_hash": "332ee82f747e15348ba15220d4fa7354f417f2204edaefb31d3af695bf090ea0",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/src/webrtc.js": {
+      "payload_hash": "62c7e733f5444eae7752abb32b1cedd19a0be5df7d4d998362f6140fe66c5949",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/src/worker.js": {
+      "payload_hash": "fd592504fa1c58b7d147da81fb57d957cf6515f52ff410a8186745c754b7d5e8",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/test/python-integration.test.js": {
+      "payload_hash": "a92fc4e951c9bb0700acca8bef799c75116d962c21e28e832bc2503da3d49f6b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/test/python_fixture.py": {
+      "payload_hash": "f04affc941750b8e3930c72774a7be6a8d6232960a5b517385280cb1c057343a",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/test/routes.test.js": {
+      "payload_hash": "e5102e362d93186b97754b44d014bc536f4a176cfa4af5d2b41cf23e79e4a541",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/test/selected-stack.test.js": {
+      "payload_hash": "92cce12380c97dab317856c512b51d3d4645df88b6f517249c6a781c9e1e0c5b",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/test/selected_fixture.py": {
+      "payload_hash": "f2dc0d47f0194303179c60e418c04b7e8ae7af80ddc1589310e2579195a917cc",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/test/webrtc.test.js": {
+      "payload_hash": "8720705a98e710ef5d3b0fbfd8cc6ba11b76043c8afbe3a394c4ad40010832eb",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "worker/test/worker.test.js": {
+      "payload_hash": "7949588931344d90c42b01d561709c97e8e164c10384f780c695764e07028d79",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    },
+    "wsgi.py": {
+      "payload_hash": "c8d6be4b355b029355f651c2181f665378a1da456383eb839610f28d01104c22",
+      "scope": {
+        "endpoint": "local://development",
+        "method": "TEST",
+        "ip": "127.0.0.1",
+        "operation": "DEVELOPMENT_VALIDATION"
+      },
+      "signatures": {},
+      "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+  }
+}

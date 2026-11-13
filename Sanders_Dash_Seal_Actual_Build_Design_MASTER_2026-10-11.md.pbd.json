@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "Sanders_Dash_Seal_Actual_Build_Design_MASTER_2026-10-11.md",
+    "payload_hash": "6d3da9d4db4fd585aa0a0ec5394d3fd78b62070125bd0dc4a4c938403ed1ef48",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
