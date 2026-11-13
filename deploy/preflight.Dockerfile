@@ -1,4 +1,4 @@
-FROM node:20.12.2-bookworm-slim AS node-runtime
+FROM node:20.20.2-bookworm-slim AS node-runtime
 
 FROM python:3.12-slim-bookworm AS validation
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PYTHONPATH=/validation
