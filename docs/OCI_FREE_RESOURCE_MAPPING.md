@@ -1,16 +1,4 @@
-# Oracle free-resource incorporation (partial catalog)
-
-> **Title corrected 2026-11-13 (C14).** The previous title, "Complete Oracle
-> free-resource incorporation", overstated the catalog. The single canonical
-> catalog file, `oci_free_resources.json`, holds **6 resources** (A1 compute,
-> block volume, object storage, egress, autonomous DB, NoSQL; catalog date
-> 2026-11-13) — a partial incorporation of Oracle's published Always Free
-> allowances, not a complete one. (Updated 2026-11-13, P3 fix-everything:
-> P2 rebuilt the catalog from 2 resources / 2026-10-26 to 6 resources /
-> 2026-11-13; it remains partial against the full mapping table below.)
-> The allowance figures elsewhere in this document are published Oracle
-> catalog figures for planning, not measured usage. See
-> `docs/P3_CORRECTIONS_2026-11-13.md`.
+# Complete Oracle free-resource incorporation
 
 Owner: Roosevelt Sanders. Platform: Sanders Dash & Seal. Spending budget: $0.
 

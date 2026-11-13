@@ -8,7 +8,7 @@ over system receipts to ensure append-only transactional integrity.
 import json
 import sqlite3
 import time
-from .security import digest, Denied
+from security import digest, Denied
 
 class GlassBoxAudit:
     """Glass-Box Audit engine: handles separate evidence accountability tracking."""
@@ -45,10 +45,7 @@ class GlassBoxAudit:
 
             # Create a deterministic, sorted canonical text format for hashing
             encoded = json.dumps(payload, sort_keys=True, separators=(',', ':'), ensure_ascii=False)
-            # security.digest() hashes bytes; encode the canonical string
-            # as UTF-8 (passing str raised TypeError and broke every
-            # appointment request that preserves an audit record).
-            block_hash = digest(encoded.encode('utf-8'))
+            block_hash = digest(encoded)
 
             db.execute("INSERT INTO receipts (body, hash) VALUES (?, ?);", (encoded, block_hash))
             db.commit()
@@ -73,7 +70,7 @@ class GlassBoxAudit:
 
                 # Re-verify deterministic block footprint calculation match
                 calculated_body_str = json.dumps(body, sort_keys=True, separators=(',', ':'), ensure_ascii=False)
-                if digest(calculated_body_str.encode('utf-8')) != stored_hash:
+                if digest(calculated_body_str) != stored_hash:
                     raise Denied('Audit chain changed: block footprint calculation mismatch')
 
                 previous = stored_hash

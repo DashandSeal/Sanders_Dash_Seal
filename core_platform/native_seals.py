@@ -7,7 +7,7 @@ The key-to-commission binding must be established by independent verification.
 
 import base64
 from pathlib import Path
-from .native_documents import NativeDocuments, DocumentDenied
+from native_documents import NativeDocuments, DocumentDenied
 import re
 import sqlite3
 import time

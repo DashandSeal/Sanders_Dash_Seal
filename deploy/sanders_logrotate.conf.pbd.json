@@ -1,15 +1,14 @@
 {
   "body": {
-    "schema": 1,
+    "schema": "1.1",
     "platform": "Sanders Dash & Seal",
     "artifact": "deploy/sanders_logrotate.conf",
-    "payload_hash": "cc408be311ac7cf6ad10c8ae4b76ce49414714d021ffc5860fe832fcfc306669",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
-      "ip": "127.0.0.1",
       "operation": "DEVELOPMENT_VALIDATION"
-    }
+    },
+    "payload_hash": "ea49b934ca495991b7852b855e3b0c44298fc1c149afbf4c8996fb92427ae41e"
   },
   "signatures": {},
   "status": "UNSIGNED_SOURCE_MANIFEST"

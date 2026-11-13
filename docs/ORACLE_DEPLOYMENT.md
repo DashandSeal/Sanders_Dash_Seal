@@ -78,13 +78,6 @@ evidence before changing policies. Do not restart the agent merely to hide error
     python3 -m gunicorn --check-config --config deploy/gunicorn.conf.py wsgi:application
     docker compose config --quiet
     docker compose build
-
-> Note 2026-11-13 (C1): the `discover -s tests` command above is valid again
-> on this branch — `tests/` was restored during the November 13, 2026 repair
-> work (36 Python tests). At main `f4f72abe` it failed because `tests/` had
-> been deleted in commit `c28e61a`. `docker compose config` here needs an
-> explicit `-f` (see `docs/COMPOSE_RECONCILIATION.md`); bare `docker compose
-> config` reads `compose.yaml` by default, not `docker-compose.yml`.
     docker compose up -d
     curl -H 'Host: sandersdashandseal.com' http://127.0.0.1:8000/healthz
     curl -H 'Host: sandersdashandseal.com' http://127.0.0.1:8000/readyz

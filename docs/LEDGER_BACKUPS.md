@@ -1,13 +1,8 @@
 # Private ledger backups on the existing Oracle host
 
 The owner's selected architecture remains Nginx → Node ingestion / authoritative
-Python WSGI → SQLite. Local ledger backup is `deploy/deploy_backup.py`
-(SQLite online backup to `/app/data/backups`); Object Storage recovery copies
-are `deploy/ledger_backup.py`, which has the real `--check` CLI. (Corrected
-2026-11-13, C6: the earlier text named a `deploy_backup.sh` that exists
-nowhere in the repository, and attributed the Object Storage copies to it.
-There is no `deploy_backup.sh`; do not run the commands as previously written.)
-Source acceptance is
+Python WSGI → SQLite. `deploy_backup.sh` adds Object Storage recovery copies without
+restarting any service or moving the transactional database. Source acceptance is
 recorded in SPEC_CONFORMANCE.md. This code has not run on the Oracle instance.
 
 ## Host and account prerequisites
@@ -41,11 +36,8 @@ routine. Network access to OCI authentication and Object Storage must work.
 
 ## Consistency and cost limits
 
-The actual database lives in **sds-ledger-volume:/app/data/sds_production.db** in
-`wsgi-backend` (named volume `sds_production_ledger_data`; corrected
-2026-11-13, P3 fix-everything — the volume was converged from
-`sqlite_storage` by P2, see `docs/COMPOSE_RECONCILIATION.md` §5).
-`/opt/sanders-dash-seal/backend/data` is not its host mount. The
+The actual database lives in **sqlite_storage:/app/data/sds_production.db** in
+`wsgi-backend`. `/opt/sanders-dash-seal/backend/data` is not its host mount. The
 routine uses Python's SQLite online backup API inside that container, so committed
 WAL transactions are included. It refuses a missing source rather than creating
 an empty database. Snapshot duration is bounded; each snapshot is capped at 1 GB
@@ -96,12 +88,11 @@ headroom and database size. The namespace is not necessarily the tenancy name.
 
 ```bash
 cd /opt/sanders-dash-seal
-sudo python3 deploy/ledger_backup.py --check
-sudo python3 deploy/ledger_backup.py
+sudo bash deploy_backup.sh --check
+sudo bash deploy_backup.sh
 ```
 
 `--check` makes read-only OCI calls; it does not upload or prove a backup exists.
-Local-only SQLite backup (no OCI): `sudo python3 deploy/deploy_backup.py`.
 The second invocation must report `BACKUP_RESTORE_VERIFIED` and exit zero before
 enabling the timer. Its output identifies the object, digest and byte size, never
 transaction contents. Source/IAM/OCI availability is unverified in this session.

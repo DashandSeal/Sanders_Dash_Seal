@@ -136,7 +136,7 @@ function providerPanel(record) {
 
     const updateHistory = async () => {
         try {
-            const res = await fetch(`/api/operator/appointments/${encodeURIComponent(record.case_id)}/provider`, { credentials: 'same-origin' });
+            const res = await api_fetch = await fetch(`/api/operator/appointments/${encodeURIComponent(record.case_id)}/provider`, { credentials: 'same-origin' });
             if (!res.ok) throw new Error('Logs unavailable');
             const logData = await res.json();
             

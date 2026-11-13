@@ -43,7 +43,7 @@ verify_bootstrap_source() {
 }
 
 validate_candidate() {
-    bash "$SDS_SOURCE_DIR/deploy/run_preflight_checks.sh" --commit "$SDS_BOOTSTRAP_COMMIT"
+    bash "$SDS_SOURCE_DIR/run_preflight_checks.sh" --commit "$SDS_BOOTSTRAP_COMMIT"
 }
 
 verify_instance_context() {

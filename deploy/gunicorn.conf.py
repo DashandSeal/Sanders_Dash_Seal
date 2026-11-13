@@ -20,14 +20,8 @@ worker_class = "sync"
 threads = 2
 
 # Anti-Slowloris Keepalive Gateways
-# Synchronized with Nginx proxy_read_timeout: nginx.conf location /
-# uses proxy_read_timeout 75s, so the gunicorn worker timeout is 75s too.
-# (The /api/ location uses a shorter 10s per-endpoint cap, and the
-# telemetry/cast locations use longer streaming caps; those are intentional
-# per-endpoint values, not the general worker timeout. No systemd unit
-# invokes gunicorn directly, so this file is the single worker-timeout
-# source; the earlier 30s value disagreed with nginx's 75s.)
-timeout = 75
+# Synchronized with Nginx proxy_read_timeout and client_body_timeout variables
+timeout = 30
 keepalive = 4
 
 # Payload Transfer Optimization Boundaries

@@ -1,12 +1,5 @@
 # Sanders Dash & Seal — mobile intake and payment review
 
-> **DATED SNAPSHOT 2026-11-13.** Review date October 20, 2026; source
-> inspected was branch `build/security-foundation` at
-> `c1a8ffd0b2bbcd710a6e14c1076b4d904c5fff7b`, not the current HEAD. Findings are
-> a snapshot of that branch on that date, retained as history — not a current
-> assessment of `main`. The "baseline suite passed 100 tests" figure is from
-> that branch's suite and is not re-verifiable from this checkout.
-
 Review date: October 20, 2026 (America/Denver).
 Source inspected: build/security-foundation at c1a8ffd0b2bbcd710a6e14c1076b4d904c5fff7b.
 

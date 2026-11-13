@@ -22,15 +22,7 @@ These are governing design requirements. Cryptographic checks alone do not prove
 
 MINOTAUR patrols the Sanders Labyrinth Shield 🛡️. They remain distinct.
 More urgency may increase priority, but it can never increase authority beyond the cryptographically signed scope.
-No valid `.pbd.json` Twin-Gated manifest = no production execution **of a
-privileged application operation**. (Scope corrected 2026-11-13, C9: the
-unqualified sentence contradicted the October 22 owner instruction recorded
-in `AGENTS.md` rule 7 — "An unsigned pair is not authorization for privileged
-application operations. Owner instruction (October 22): it is not a blanket
-blocker to installing or starting the platform." An unsigned manifest is not
-authority for privileged operations, and it is not a blanket blocker to
-installing or starting the platform. See
-`docs/P3_CORRECTIONS_2026-11-13.md`.)
+No valid `.pbd.json` Twin-Gated manifest = no production execution.
 
 Source is prepared for private review. No public release or deployment is authorized by this build. Ownership assignments and patent filings are separate from implementation; no patent grant is asserted.
 

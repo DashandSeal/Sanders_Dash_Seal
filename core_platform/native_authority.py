@@ -5,6 +5,7 @@ This registry preserves externally verified decisions but does not itself
 perform identity proofing, check commission status, or confer legal authority.
 """
 
+import path
 import re
 import sqlite3
 import time

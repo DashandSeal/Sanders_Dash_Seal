@@ -12,10 +12,10 @@ from contextlib import closing
 from urllib.request import Request, ProxyHandler, build_opener, HTTPRedirectHandler
 from urllib.error import HTTPError
 
-from .operational_runtime import readonly_database
-from .upgrade_sidecar import CORE_LAWS
+from operational_runtime import import_observation, readonly_database
+from upgrade_sidecar import CORE_LAWS
 
-class NoRedirect(HTTPRedirectHandler):
+class Noredirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
 
@@ -99,7 +99,7 @@ def configured_probes(path, audit, *, root=None, backup_status="/run/sds/backup-
             return observation("FAULT", "AUDIT_CHAIN_UNAVAILABLE")
 
     def config_probe():
-        catalog = json.loads((root/'oci_free_resources.json').read_text())
+        catalog = json.loads((root/'core_platform/oci_free_resources.json').read_text())
         correct = item(CORE_LAWS) == catalog['governing_core_law']['number'] == 10
         return observation("HEALTHY" if correct else "FAULT", "TEN_LAWS_MATCH" if correct else "LAW_CONFIGURATION_MISMATCH")
 

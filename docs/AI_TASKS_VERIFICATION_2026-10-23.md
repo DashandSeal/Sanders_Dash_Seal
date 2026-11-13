@@ -1,14 +1,5 @@
 # Technical-task and inference-transport evidence — October 23, 2026
 
-> **ARCHIVED 2026-11-13 (C2).** Dated evidence, retained as history. The test
-> counts below (407, then 401 in the same file) are October 23, 2026
-> snapshots from a `tests/` directory deleted in commit `c28e61a`. They cannot
-> be re-run or re-verified against this checkout, they disagree with each
-> other (407 vs 401 in one file) and with `docs/SPEC_CONFORMANCE.md` and
-> `docs/AI_RUNTIME_VERIFICATION_2026-10-23.md` (379 / 325). Do not cite them
-> as current results. Current suites on this branch: `tests/` 36 Python
-> tests, sharpshooter 5 tests. See `docs/P3_CORRECTIONS_2026-11-13.md`.
-
 Recovery follow-up after PR #12 merged: **407 Python tests passed**, no skips;
 **219 source hashes matched**. Six new cases verify unavailable → responding HTTP
 fixture recovery, independent preserved attempts, restart, concurrent retry

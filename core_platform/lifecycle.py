@@ -5,9 +5,9 @@ Description: Coordinates high-level contract validation loops across QualityAgen
              ITAIManager, and Minotaur cryptographic keys without exposing shell access.
 """
 
-from .security import Denied, digest, verify
-from .protocol import utc
-from .artifacts import DevelopmentArtifactRunner
+from security import Denied, digest, verify
+from protocol import utc
+from artifacts import DevelopmentArtifactRunner
 
 class QualityAgent:
     def __init__(self, trusted_public_key):

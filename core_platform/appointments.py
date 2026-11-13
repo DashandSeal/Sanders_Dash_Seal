@@ -93,11 +93,7 @@ class AppointmentStore:
                     raise AppointmentDenied('Requested time must be within valid scheduling window')
                 
                 case_id = f"appointment-{uuid.uuid4().hex}"
-                # Share this block's connection: create() opens its own
-                # connection when db is omitted, and that second writer
-                # blocks on this BEGIN IMMEDIATE lock until the 10s busy
-                # timeout, so every appointment request 503d after 10s.
-                self.cases.create(case_id, jurisdiction, service, requester, db=db)
+                self.cases.create(case_id, jurisdiction, service, requester)
                 db.execute(
                     """INSERT INTO appointments (case_id, requester, request_id, fingerprint, requested_start, meeting_area, consent)
                        VALUES (?, ?, ?, ?, ?, ?, ?);""",

@@ -16,16 +16,16 @@ RUN pip install --no-cache-dir -r requirements-server.txt \
     && useradd --uid 10001 --gid 10001 --no-create-home sanders \
     && mkdir /app/data && chown 10001:10001 /app/data
 
-# Root entry point: backend/wsgi.py imports its factory from the root
-# wsgi.py, so the root file must be present at /app/wsgi.py and this file
-# must stay at /app/backend/wsgi.py (copying it over /app/wsgi.py would
-# make `from wsgi import ...` a circular self-import).
-COPY wsgi.py ./
-COPY backend/wsgi.py backend/wsgi.py.pbd.json ./backend/
+COPY backend/wsgi.py backend/wsgi.py.pbd.json ./
 # Native runtime imports backend.auth_session for room-scoped WebRTC verification.
 RUN mkdir -p /app/backend
 COPY backend/auth_session.py /app/backend/auth_session.py
 RUN touch /app/backend/__init__.py
+
+# Level 10 Sovereign Core Platform Additions
+COPY core_platform.py ./core_platform.py
+COPY security/sovereign_runtime.py ./security/sovereign_runtime.py
+RUN chmod +x /app/core_platform.py && chmod +x /app/security/sovereign_runtime.py
 
 USER 10001:10001
 
@@ -33,4 +33,4 @@ EXPOSE 8000
 
 STOPSIGNAL SIGTERM
 
-CMD ["gunicorn", "--config", "deploy/gunicorn.conf.py", "backend.wsgi:application"]
+CMD ["gunicorn", "--config", "deploy/gunicorn.conf.py", "wsgi:application"]
