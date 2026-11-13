@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/daedalus_portfolio_ip_pricing.py",
-    "payload_hash": "d88e9ee7a6551c59c1cf45ce9b48892cb80fb5a71ce115f0347809563378022d",
+    "payload_hash": "be93dfc49058ac70cac8546b0dfaf46212762bcd14c4a0792f53b2158480b0ff",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

@@ -10,6 +10,14 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Mapping
 
+__all__ = [
+    "CAPABILITIES",
+    "CapabilityState",
+    "DaedalusCapabilityProfile",
+    "declared_profile",
+    "observed_profile",
+]
+
 
 class CapabilityState(str, Enum):
     UNAVAILABLE = "unavailable"
@@ -93,4 +101,31 @@ def declared_profile() -> DaedalusCapabilityProfile:
         language_target=TARGET_LANGUAGE_COUNT,
         platform_target=TARGET_PLATFORM_COUNT,
         capability_states={name: CapabilityState.UNAVAILABLE for name in CAPABILITIES},
+    )
+
+
+def observed_profile(
+    *, live_reasoning_configured: bool = False, **states: CapabilityState
+) -> DaedalusCapabilityProfile:
+    """Profile with independently observed states for named capabilities.
+
+    Only ``live_claude_reasoning`` may be reported ``CONFIGURED`` from
+    configuration alone (key + model present). ``ACTIVE`` is never set
+    here: it requires a successful live call, which this function does
+    not make. Unknown capability names are rejected. Every capability
+    not named stays ``UNAVAILABLE``.
+    """
+    for name in states:
+        if name not in CAPABILITIES:
+            raise ValueError(f"Unknown Daedalus capability: {name}")
+    if live_reasoning_configured and "live_claude_reasoning" not in states:
+        states = {**states, "live_claude_reasoning": CapabilityState.CONFIGURED}
+    observed = {name: CapabilityState.UNAVAILABLE for name in CAPABILITIES}
+    observed.update(states)
+    return DaedalusCapabilityProfile(
+        identity=DAEDALUS_IDENTITY,
+        level_target=TARGET_LEVEL,
+        language_target=TARGET_LANGUAGE_COUNT,
+        platform_target=TARGET_PLATFORM_COUNT,
+        capability_states=observed,
     )

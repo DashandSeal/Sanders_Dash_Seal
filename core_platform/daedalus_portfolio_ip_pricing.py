@@ -108,3 +108,59 @@ def proposed_rate_card() -> Mapping[str, object]:
         "legal_patent_fees": "excluded_quoted_separately",
         "ownership": "no transfer of underlying IP by subscription",
     }
+
+
+@dataclass(frozen=True)
+class RateCard:
+    """Owner-supplied rate card with validated decimal amounts.
+
+    The module-level ``PRICE_*`` constants stay the defaults; this
+    type exists so an owner-provided override is validated (known
+    keys, non-negative decimals) instead of silently accepted from an
+    untrusted mapping. Amounts remain proposals, not verified rates.
+    """
+
+    monthly: Mapping[str, Decimal]
+    annual: Mapping[str, Decimal]
+    ip_services: Mapping[str, Decimal]
+
+    @classmethod
+    def from_mapping(cls, mapping: Mapping[str, Mapping[str, object]]) -> "RateCard":
+        def _amounts(section: str, allowed: set[str]) -> dict[str, Decimal]:
+            raw = mapping.get(section)
+            if not isinstance(raw, Mapping):
+                raise ValueError(f"Rate card section '{section}' is required")
+            unknown = set(raw) - allowed
+            if unknown:
+                raise ValueError(f"Unknown rate card keys in '{section}': {sorted(unknown)}")
+            amounts: dict[str, Decimal] = {}
+            for key, value in raw.items():
+                try:
+                    amount = Decimal(str(value))
+                except Exception:
+                    raise ValueError(f"Rate card '{section}.{key}' is not a decimal amount") from None
+                if amount < 0:
+                    raise ValueError(f"Rate card '{section}.{key}' must not be negative")
+                amounts[key] = amount
+            return amounts
+
+        return cls(
+            monthly=_amounts("monthly", set(PRICE_USD_MONTHLY)),
+            annual=_amounts("annual", set(PRICE_USD_ANNUAL)),
+            ip_services=_amounts("ip_services", set(IP_SERVICE_USD)),
+        )
+
+    @classmethod
+    def default(cls) -> "RateCard":
+        return cls(
+            monthly=dict(PRICE_USD_MONTHLY),
+            annual=dict(PRICE_USD_ANNUAL),
+            ip_services=dict(IP_SERVICE_USD),
+        )
+
+    def as_dict(self) -> dict[str, dict[str, str]]:
+        return {
+            "monthly": {k: str(v) for k, v in self.monthly.items()},
+            "annual": {k: str(v) for k, v in self.annual.items()},
+            "ip_services": {k: str(v) for k, v in self.ip_services.items()},
+        }

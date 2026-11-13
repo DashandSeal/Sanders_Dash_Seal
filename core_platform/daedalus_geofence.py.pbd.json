@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/daedalus_geofence.py",
-    "payload_hash": "13b37601baee106ac19882a9efbb7dcb594095b49a3ae989343c5d9d1c764d3b",
+    "payload_hash": "dc467b86c9e8473353e72ad3db796b695ef5c62182b934aa7f8e59bdfefb56a4",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

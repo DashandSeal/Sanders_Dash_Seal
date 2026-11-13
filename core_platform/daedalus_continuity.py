@@ -8,6 +8,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from enum import Enum
 
+__all__ = [
+    "CANONICAL_BRIDGES",
+    "CONTINUITY_PRINCIPLE",
+    "Bridge",
+    "Generation",
+    "bridge_by_source",
+    "continuity_manifest",
+]
+
 
 CONTINUITY_PRINCIPLE = (
     "Preserve, interpret, integrate, and advance computing technologies "
@@ -47,6 +56,14 @@ CANONICAL_BRIDGES = (
            Generation.CURRENT, Generation.FUTURE,
            "Polyglot Engine LLVM", "Future Language Adapter"),
 )
+
+
+def bridge_by_source(source: str) -> Bridge | None:
+    """Return the canonical continuity bridge for a source technology, if any."""
+    for bridge in CANONICAL_BRIDGES:
+        if bridge.source == source:
+            return bridge
+    return None
 
 
 def continuity_manifest() -> dict:

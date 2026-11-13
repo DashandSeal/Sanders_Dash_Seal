@@ -6,10 +6,19 @@ The trusted ingress supplies verified identity and location attestations.
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from typing import Callable, FrozenSet, Mapping
 
 from .daedalus_geofence import GeoFenceDenied, LocationAttestation
+
+__all__ = [
+    "GlobalTrustContext",
+    "GlobalTrustEnforcer",
+    "GlobalTrustPolicy",
+]
+
+logger = logging.getLogger("daedalus.trust")
 
 
 @dataclass(frozen=True)
@@ -84,5 +93,10 @@ class GlobalTrustEnforcer:
             "cloud_region": context.processing_cloud_region,
             "policy_version": self.policy.policy_version,
         })
+        logger.debug(
+            "daedalus global trust action=%s decision=%s cloud_region=%s policy=%s",
+            action, "allow" if allowed else "deny",
+            context.processing_cloud_region, self.policy.policy_version,
+        )
         if not allowed:
             raise GeoFenceDenied("Daedalus global trust policy denied operation")

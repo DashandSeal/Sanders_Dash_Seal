@@ -7,9 +7,14 @@ require deployment/network/storage controls outside this module.
 """
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Callable, FrozenSet, Mapping
+
+__all__ = ["GeoFence", "GeoFenceDenied", "GeographicPolicy", "LocationAttestation"]
+
+logger = logging.getLogger("daedalus.geofence")
 
 
 class GeoFenceDenied(PermissionError):
@@ -76,5 +81,9 @@ class GeoFence:
         }
         # Fail closed if a required audit record cannot be written.
         self.audit(event)
+        logger.debug(
+            "daedalus geofence action=%s result=%s cloud_region=%s policy=%s",
+            action, event["result"], location.cloud_region, self.policy.policy_version,
+        )
         if not allowed:
             raise GeoFenceDenied("Daedalus geographic policy denied operation")

@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "core_platform/daedalus_claude_transport.py",
-    "payload_hash": "23e02acac71412d996c68872da5680be3c491e79756ad2ad587b1d3482675232",
+    "payload_hash": "89b6ac1005dce5afbbc193deb0ae389ed5cc849bfd99e8f44bbcadae21ab31fc",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

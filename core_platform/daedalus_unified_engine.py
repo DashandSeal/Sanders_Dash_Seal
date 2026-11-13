@@ -7,10 +7,15 @@ boundaries, not independent product identities. No production claim implied.
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Callable, Mapping
+import logging
 
 from .daedalus_continuity import continuity_manifest
 from .daedalus_global_trust import GlobalTrustEnforcer, GlobalTrustContext
 from .daedalus_portfolio_ip_pricing import PortfolioProtection, proposed_rate_card
+
+__all__ = ["UnifiedDaedalusEngine", "UnifiedEngineContext"]
+
+logger = logging.getLogger("daedalus.engine")
 
 
 @dataclass(frozen=True)
@@ -66,6 +71,10 @@ class UnifiedDaedalusEngine:
             "engine": self.IDENTITY, "event": "NATIVE_OPERATION_STARTED",
             "operation_id": context.operation_id, "platform_id": context.platform_id,
         })
+        logger.debug(
+            "daedalus unified operation started operation_id=%s platform_id=%s",
+            context.operation_id, context.platform_id,
+        )
         source = self.capability(context, objective)
         if not isinstance(source, bytes) or not source:
             raise ValueError("Native capability returned no source")
@@ -81,6 +90,10 @@ class UnifiedDaedalusEngine:
             "engine": self.IDENTITY, "event": "NATIVE_OPERATION_COMPLETED",
             "operation_id": context.operation_id, "source_sha256": asset.source_sha256,
         })
+        logger.debug(
+            "daedalus unified operation completed operation_id=%s source_sha256=%s",
+            context.operation_id, asset.source_sha256,
+        )
         return {
             "engine": self.IDENTITY, "operation_id": context.operation_id,
             "invention_id": context.invention_id,
