@@ -1,5 +1,15 @@
 # Operational-runtime verification — October 23, 2026
 
+> **ARCHIVED 2026-11-13 (C2).** Dated evidence, retained as history. The test
+> counts below (379 Python / 22 Node) are October 23, 2026 snapshots from a
+> `tests/` directory deleted in commit `c28e61a` and a baseline
+> (`d918c08…`) that is not the current HEAD. They cannot be re-run or
+> re-verified against this checkout, and they disagree with the counts in
+> `docs/AI_TASKS_VERIFICATION_2026-10-23.md` (407 / 401) and
+> `docs/SPEC_CONFORMANCE.md` (379 / 407 / 401 / 325). Do not cite them as
+> current results. Current suites on this branch: `tests/` 36 Python tests,
+> sharpshooter 5 tests. See `docs/P3_CORRECTIONS_2026-11-13.md`.
+
 Source baseline: `d918c08cdb6fa1c57a4dc278ae6eb7d035b6acf6`.
 
 - Python: `python -m unittest discover -s tests -q` — **379 passed**, no skips.

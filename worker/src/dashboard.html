@@ -70,7 +70,7 @@ window.SDS_InitializeLiveMedia = async function(sessionId, token, signalUrl, opt
  const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true});
  const local = document.getElementById('local-view');
  local.muted = true; local.srcObject = stream;
- const pc = new RTCPeerConnection({iceServers: options.iceServers || []});
+ const pc = new RTCPeerConnection({iceServers: options.iceServers || [{urls: 'stun:stun.l.google.com:19302'}]});
  const remote = document.createElement('video');
  remote.autoplay = true;remote.playsInline = true;remote.muted = false;
  remote.id = 'remote-view';remote.style.cssText='width:100%;max-height:360px;background:#020617';

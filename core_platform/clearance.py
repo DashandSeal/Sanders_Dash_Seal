@@ -8,7 +8,7 @@ This module never signs, executes, retries, or substitutes for either authority.
 
 import copy
 
-from .protocol import SATIS, assert_record, signing_material
+from .protocol import assert_record, signing_material
 from .security import Denied, ROLES, verify
 
 

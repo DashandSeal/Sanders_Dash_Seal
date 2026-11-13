@@ -54,7 +54,7 @@ class LocalInferenceClient:
             "Hypotheses are unproven. Do not claim a repair, authority, signatures, "
             "verified cause or successful execution. No tools or commands. "
             "Use only the supplied measured evidence. Governing Laws:\n"
-            "\n".join(f"{i}: {law for i, law in enumerate(CORE_LAWS)}")
+            "\n".join(f"{i}: {law}" for i, law in enumerate(CORE_LAWS))
         )
         request = {
             "model": self.model,
@@ -101,8 +101,8 @@ class LocalInferenceClient:
                         or not 1 <= len(hypothesis['statement']) <= 1000
                         or hypothesis['evidence_sha256'] != grounded['evidence']['sha256']):
                         raise ValueError('Model cited unsupported evidence')
-                if not isinstance(counter, list) or len(counter) > 8
-                    or any(not isinstance(text, str) or not 1 <= len(text) <= 1000 for text in counter):
+                if (not isinstance(counter, list) or len(counter) > 8
+                    or any(not isinstance(text, str) or not 1 <= len(text) <= 1000 for text in counter)):
                     raise ValueError('Invalid counterevidence')
                 return result
         except Exception:

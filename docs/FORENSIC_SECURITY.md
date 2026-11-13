@@ -1,5 +1,12 @@
 # Platinum forensic integrity and receipt verification
 
+> **STATUS 2026-11-13 — PROPOSED, NOT ACTIVE (C5).** The owner-requested
+> pipeline `.github/workflows/forensic-audit.yml` **does not exist** in this
+> repository. The proposal is preserved at
+> `docs/owner-submitted/forensic-audit.proposed.yml.txt`; the doc below
+> describes that proposed pipeline (draft PR #3), not a running workflow. See
+> `docs/P3_CORRECTIONS_2026-11-13.md`.
+
 The owner-requested pipeline is .github/workflows/forensic-audit.yml. It keeps
 main/release push, main PR and six-hour scheduled audit events, with an added
 manual trigger. It does not merge, deploy, repair files or rotate credentials.
@@ -11,8 +18,11 @@ The existing Node/Python service design and selected dependency pin are unchange
 The scanner inventories Git-tracked files, including dot-directories such as
 .github, computes SHA-256, compares expected PBD artifact/hash pairs, checks
 permissions and rejects missing files, symlinks, unexpected exact duplicates and
-uncommitted/untracked drift. The owner-approved identical compose.yaml and
-docker-compose.yml pair is explicit in security/forensic-policy.json. Untracked
+uncommitted/untracked drift. The `compose.yaml` / `docker-compose.yml` pair is
+explicit in security/forensic-policy.json. (Corrected 2026-11-13: the two files
+are **not** identical — see `docs/COMPOSE_RECONCILIATION.md` — so the earlier
+word "identical" was removed. Do not treat a hash match between them as
+expected.) Untracked
 files are drift rather than an approved inventory. Ignored dependencies/build
 outputs are outside the tracked inventory; npm audit remains a separate check.
 

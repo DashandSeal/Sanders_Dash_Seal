@@ -32,7 +32,14 @@ python -m unittest discover -s tests -v
 
 The development runner executes the exact independently signed source snapshot and binds its hash into the lease. It rejects unrelated callbacks and source substitution. It is not an OS sandbox or a production runtime.
 
-The test count in this older README is historical. Consult current executable test results for the latest status.
+The test command above is current: `tests/` exists on this branch (restored
+during the November 13, 2026 repair work) and holds the P1/P2/P3 suites — 576
+Python tests (verified 2026-11-13 on the P3 head of
+`fix/everything-20261113`; 3 skipped in the venv, which lacks Pillow for
+the 2 EXIF tests) plus the sharpshooter suite (5 tests). Historical test counts in
+older docs (379 / 407 / 401 / 325) are October 2026 snapshots from a `tests/`
+directory deleted in commit `c28e61a`; they cannot be re-run or re-verified
+against this checkout. See `docs/P3_CORRECTIONS_2026-11-13.md` (C1, C2).
 
 The customer appointment interface, operator quote review and Checkout handoff
 are implemented in development. See [customer workflow](docs/CUSTOMER_APPOINTMENTS.md)

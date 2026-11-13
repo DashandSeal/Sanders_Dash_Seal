@@ -79,12 +79,20 @@ rejects a different origin or dirty checkout, and stops on failures. It uses
 the active interface's firewalld zone without flushing rules or removing SSH.
 The original independent release authorizer and protected runtime factory are
 required before host setup; unsigned development pairs do not grant authority.
+(Note 2026-11-13, C8: "required before host setup" is pre-correction language.
+Per the October 22 owner correction in the banner above, neither the
+authorizer nor the factory is a deployment prerequisite. The second clause
+stands on its own: unsigned pairs do not grant authority for privileged
+operations.)
 
 Private-repository access must be provisioned independently or a clean checkout
 preseeded at `/opt/sds-approved-source`. Do not place deploy tokens in user data
 or bake reusable credentials into an image. User data is not a secret store.
 Independently supply `/etc/sanders-dash-seal/authorize-release` and root-private
-`runtime.env`, as described in the existing deployment documentation.
+`runtime.env`, as described in the existing deployment documentation. (Note
+2026-11-13, C8: per the October 22 banner correction, supplying
+authorize-release is optional trusted-binding procedure, not a deployment
+prerequisite.)
 
 Default **stage** mode builds the worker/backend and installs the source
 integrity timer, but starts no application containers. It refuses existing SDS

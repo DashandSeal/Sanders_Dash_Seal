@@ -3,9 +3,9 @@
 Read for this build from the owner's saved files on October 15, 2026:
 
 1. `Sanders_Dash_Seal_Actual_Build_Design_MASTER_2026-10-11.md` — authoritative build baseline, sections 1–21.
-2. `Sanders_Dash_Seal_Actual_Build_Design_RAW_PROTOCOLS_2026-10-11.md` — original protocol/code archive, sections A–L.
-3. `Sanders_Dash_Seal_PBD_Routing_Logic_Both_Versions.md` — original routing and bounded production interpretation.
-4. `Sanders_Dash_Seal_Platinum_Blue_Diamond_Token_Protocol.md` — original and bounded token definitions.
+2. `Sanders_Dash_Seal_Actual_Build_Design_RAW_PROTOCOLS_2026-10-11.md` — original protocol/code archive, sections A–L. **[File not present in this repository — verified 2026-11-13 (C11). The citation is retained as the October 15, 2026 record of what was read; its content cannot be verified from this checkout.]**
+3. `Sanders_Dash_Seal_PBD_Routing_Logic_Both_Versions.md` — original routing and bounded production interpretation. **[File not present in this repository — verified 2026-11-13 (C11). Citation retained as the October 15, 2026 record.]**
+4. `Sanders_Dash_Seal_Platinum_Blue_Diamond_Token_Protocol.md` — original and bounded token definitions. **[File not present in this repository — verified 2026-11-13 (C11). Citation retained as the October 15, 2026 record.]**
 
 The saved source documents are preserved unchanged. This repository implements selected requirements and does not replace those records.
 

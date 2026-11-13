@@ -2,7 +2,7 @@
   "body": {
     "schema": 1,
     "platform": "Sanders Dash & Seal",
-    "artifact": "install-existing.sh.tftpl",
+    "artifact": "infrastructure/resource-manager/install-existing.sh.tftpl",
     "payload_hash": "49a06612fc238c5f59e0e6bcbe4da5ce1bd256b5683713160d5f201a738bf6cf",
     "scope": {
       "endpoint": "local://development",

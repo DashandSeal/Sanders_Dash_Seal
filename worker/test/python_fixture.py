@@ -9,7 +9,7 @@ from wsgiref.simple_server import make_server, WSGIRequestHandler
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 from core_platform.appointments import AppointmentStore
 from core_platform.cases import CaseRegistry
-from core_platform.deployment import create_application, RuntimeBindings, ORIGIN
+from deploy.deployment import create_application, RuntimeBindings, ORIGIN
 from core_platform.glass_box_audit import GlassBoxAudit
 from core_platform.upgrade_sidecar import CORE_LAWS
 
