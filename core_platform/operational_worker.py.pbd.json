@@ -9,7 +9,7 @@
       "ip": "127.0.0.1",
       "operation": "DEVELOPMENT_VALIDATION"
     },
-    "payload_hash": "bc7dad1190f1057a00e4633610e5e8acb256b2b33115c4ae5889736805167292"
+    "payload_hash": "884adc7a09cd653703c07538dd84e52e5bbae059f45e9e9ddd6bbeecdd766213"
   },
   "signatures": {},
   "status": "UNSIGNED_SOURCE_MANIFEST"
