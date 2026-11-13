@@ -1,0 +1,21 @@
+[Unit]
+Description=Sanders Dash & Seal — pipeline worker (Node)
+After=network.target sds-webhook.service
+Wants=network.target
+
+[Service]
+Type=simple
+User=sds
+Group=sds
+WorkingDirectory=/opt/sanders-dash-seal/worker
+Environment=PORT=3000
+Environment=PYTHON_BACKEND_URL=http://127.0.0.1:8000
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node src/index.js
+Restart=on-failure
+RestartSec=5
+# Serves /v1/telemetry/dashboard, /health and /ws/ (WebRTC signaling).
+# Requires node >= 20 (worker/package.json engines) and `npm ci` at install.
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,19 @@
+[Unit]
+Description=Sanders Dash & Seal — Stripe webhook WSGI (gunicorn)
+After=network.target
+Wants=network.target
+
+[Service]
+Type=notify
+User=sds
+Group=sds
+WorkingDirectory=/opt/sanders-dash-seal
+EnvironmentFile=-/etc/sanders-dash-seal/env
+ExecStart=/opt/sanders-dash-seal/.venv/bin/gunicorn --config /opt/sanders-dash-seal/deploy/gunicorn.conf.py wsgi:app
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+# gunicorn.conf.py binds 127.0.0.1:8000, workers capped at 3, user/group 10001.
+
+[Install]
+WantedBy=multi-user.target

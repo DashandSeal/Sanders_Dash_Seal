@@ -1,0 +1,21 @@
+[Unit]
+Description=Sanders Dash & Seal — deployment API WSGI (gunicorn)
+After=network.target
+Wants=network.target
+
+[Service]
+Type=notify
+User=sds
+Group=sds
+WorkingDirectory=/opt/sanders-dash-seal
+EnvironmentFile=-/etc/sanders-dash-seal/env
+ExecStart=/opt/sanders-dash-seal/.venv/bin/gunicorn --bind 127.0.0.1:8001 --workers 2 --threads 2 --timeout 30 --user 10001 --group 10001 --access-logfile - --error-logfile - --log-level warning core_platform.deployment:create_application()
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+# Diagnostic mode until a real RuntimeBindings factory exists: /healthz 200,
+# /api/auth/verify and /api/transactions/process 503 authority_unavailable,
+# /api/stream/transactions 503 stream_unavailable. No fake success.
+
+[Install]
+WantedBy=multi-user.target
