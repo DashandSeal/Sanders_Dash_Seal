@@ -1,0 +1,23 @@
+# Sanders Dash & Seal — runtime environment (EXAMPLE ONLY, no real values).
+# Copy to /etc/sanders-dash-seal/environment on the Oracle host, owned by
+# root, mode 0600, and replace the placeholder below with the real secret:
+#   sudo install -d -m 0750 -o root -g sanders /etc/sanders-dash-seal
+#   sudo install -m 0600 -o root -g sanders <this file> /etc/sanders-dash-seal/environment
+# Then: sudo systemctl restart sanders-dash-seal
+#
+# REQUIRED for the Stripe webhook endpoint (/v1/payments/stripe/webhook) to
+# verify signatures. If unset, the app still starts and serves, but the
+# webhook endpoint answers 503 Service Unavailable (disabled).
+STRIPE_WEBHOOK_SECRET=whsec_REPLACE_WITH_REAL_SECRET
+#
+# Must match the livemode flag of the events Stripe sends. "false" (default)
+# accepts test-mode events; set to "true" only together with a LIVE webhook
+# secret, otherwise every verified event is rejected with
+# environment_livemode_mismatch.
+STRIPE_LIVEMODE=false
+#
+# DO NOT SET (not read by this entry point — setting them changes nothing):
+#   STRIPE_API_KEY        — wsgi.py never creates a Stripe API client.
+#   ANTHROPIC_API_KEY     — Daedalus engine is not wired into wsgi.py.
+#   DAEDALUS_CLAUDE_MODEL — same; Daedalus has no HTTP route in this build.
+#   DAEDALUS_TIMEOUT_SECONDS — same.

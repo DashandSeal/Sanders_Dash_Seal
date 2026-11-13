@@ -61,11 +61,11 @@ configure_firewall() {
 install_engine() {
     if ! command -v docker >/dev/null 2>&1; then
         dnf install -y dnf-plugins-core
-        dnf config-manager --add-repo https://docker.com
+        dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo  # 2026-11-13: https://docker.com is not a yum repo URL
         dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
     elif ! docker compose version >/dev/null 2>&1; then
         dnf install -y dnf-plugins-core
-        dnf config-manager --add-repo https://docker.com
+        dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo  # 2026-11-13: https://docker.com is not a yum repo URL
         dnf install -y docker-compose-plugin
     fi
     systemctl enable --now docker

@@ -127,7 +127,7 @@ class NativeRuntime:
                 clients[provider] = import_write_provider_client(provider, settings[f'{provider}_api_key'])
 
         self.providers = import_provider_workflows(path, self.cases, self.accounts, operator=self.audit, clients=clients,
-                                                   signwell_test_mode_settings.get('signwell_test_mode', False))
+                                                   signwell_test_mode=settings.get('signwell_test_mode', False))
 
         self.self_payments_configured = bool(key and secret)
 

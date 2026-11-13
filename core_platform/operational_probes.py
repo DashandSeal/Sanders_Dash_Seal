@@ -12,7 +12,7 @@ from contextlib import closing
 from urllib.request import Request, ProxyHandler, build_opener, HTTPRedirectHandler
 from urllib.error import HTTPError
 
-from operational_runtime import import_observation, readonly_database
+from operational_runtime import readonly_database
 from upgrade_sidecar import CORE_LAWS
 
 class Noredirect(HTTPRedirectHandler):

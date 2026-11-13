@@ -29,7 +29,15 @@ class MockLedgerEngine:
     def connect(self):
         import sqlite3
         # Connect natively using enterprise WAL parameter bounds
-        return sqlite3.connect(self.db_path, timeout=15)
+        conn = sqlite3.connect(self.db_path, timeout=15)
+        # stream_api records every verified webhook event in this table;
+        # without it every verified POST fails with "no such table".
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS stripe_processed_events ("
+            "id TEXT PRIMARY KEY, type TEXT NOT NULL, processed_at INTEGER NOT NULL)"
+        )
+        conn.commit()
+        return conn
 
     def fulfill_checkout(self, session, db):
         # Route checkout sessions securely into persistent internal tables
@@ -59,19 +67,24 @@ def create_native_application():
 
     # Pull cryptographic keys securely from the running instance environment flags
     # Set this in your server using: export STRIPE_WEBHOOK_SECRET="whsec_..."
-    webhook_secret = os.environ.get(
-        "STRIPE_WEBHOOK_SECRET", 
-        "whsec_test_secret_signature_diamond_standard_2026"
+    # No fallback secret: without a real secret the webhook endpoint answers
+    # 503 (disabled) instead of verifying signatures against a public default.
+    webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+    expected_livemode = os.environ.get("STRIPE_LIVEMODE", "false").strip().lower() in (
+        "1", "true", "yes",
     )
 
     # Build and return the hardened WSGI application pipeline instance
     return import_make_app(
         ledger_engine=ledger,
         webhook_secret=webhook_secret,
-        enabled=True,
-        expected_livemode=True
+        enabled=bool(webhook_secret),
+        expected_livemode=expected_livemode,
     )
 
 
 # Aligned variable name to match your Dockerfile WSGI boot commands
 app = create_native_application()
+
+# gunicorn / Passenger entry name (`wsgi:application`).
+application = app

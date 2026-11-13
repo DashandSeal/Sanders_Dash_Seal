@@ -1,10 +1,15 @@
-version: '3.8'
-
+# 2026-11-13 (upgrade/sota-web-nginx-20261113): nginx 1.25-alpine (EOL) ->
+# nginx:1.30.6-alpine; obsolete `version:` key removed (Compose spec warns
+# it is obsolete); service names aligned with compose.yaml and deploy.sh
+# (reverse-proxy, wsgi-backend, pipeline-worker); wsgi-backend now builds
+# the real backend/Dockerfile (root Dockerfile was a Python script, so this
+# build could never run); pipeline-worker service added (nginx.conf routes
+# /ws/ and telemetry to it); forensic daemon python 3.12 -> 3.14.
 services:
   # Hardened Reverse Proxy Firewall Layer
-  nginx-edge:
-    image: nginx:1.25-alpine
-    container_name: sds_nginx_edge
+  reverse-proxy:
+    image: nginx:1.30.6-alpine
+    container_name: sds_reverse_proxy
     restart: always
     ports:
       - "80:80"
@@ -15,14 +20,15 @@ services:
     networks:
       - sds-secure-bridge
     depends_on:
-      - wsgi-core
+      - wsgi-backend
+      - pipeline-worker
 
   # High-Throughput Hardened WSGI Platform Core
-  wsgi-core:
+  wsgi-backend:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: sds_wsgi_core
+      dockerfile: backend/Dockerfile
+    container_name: sds_wsgi_backend
     restart: always
     environment:
       - PYTHONUNBUFFERED=1
@@ -35,9 +41,26 @@ services:
     networks:
       - sds-secure-bridge
 
+  # Node pipeline worker: serves /ws/, /v1/telemetry/* (see nginx.conf).
+  pipeline-worker:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: sds_pipeline_worker
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - PYTHON_BACKEND_URL=http://wsgi-backend:8000
+      - MEMORY_LIMIT_MB=512
+    networks:
+      - sds-secure-bridge
+    depends_on:
+      - wsgi-backend
+
   # Level 10 Real-Time Continuous Forensic Sync & Self-Healing Daemon
   l10-forensic-daemon:
-    image: python:3.12-slim-bookworm
+    image: python:3.14-slim-bookworm
     container_name: sds_forensic_daemon
     working_dir: /app
     volumes:

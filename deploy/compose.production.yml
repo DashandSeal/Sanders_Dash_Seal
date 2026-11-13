@@ -24,14 +24,14 @@ services:
       timeout: 5s
       retries: 3
   certbot:
-    image: certbot/certbot:v5.8.0
+    image: certbot/certbot:v5.10.0  # 2026-11-13: v5.8.0 -> v5.10.0 (latest; verify with docker pull on host)
     profiles: [maintenance]
     volumes:
       - certs_volume:/etc/letsencrypt
       - certbot_validation_volume:/var/www/certbot
     networks: [sds_production_network]
   acme-bootstrap:
-    image: nginx:1.25-alpine
+    image: nginx:1.30.6-alpine
     profiles: [maintenance]
     ports: ["80:80"]
     volumes:

@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/DAEDALUS_RECOVERED_INVENTORY_2026-11-03.md",
+    "payload_hash": "9d4b3db99b5d938cfcf6c922f92b6f0970205df57e2a635cc05cf9f6ef609af5",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

@@ -36,7 +36,7 @@ def inventory_mapping(report):
             {
                 "resource_id": item['resource_id'],
                 "resource_type": item['resource_type'],
-                "count": counts[name.casefold()] for name in item.get('inventory_types', [])
+                "count": sum(counts[name.casefold()] for name in item.get('inventory_types', []))
             } if any(
                 observation_status := 'RELATED_METADATA_OBSERVED' if any(
                     counts[name.casefold()] for name in item.get('inventory_types', [])
