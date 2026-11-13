@@ -156,7 +156,7 @@ jobs:
               e_path = root / f"{target}.pbd.json"
               if f_path.exists():
                   f_hash = hashlib.sha256(f_path.read_bytes()).hexdigest()
-                  data = {"body": {"schema": 1, "platform": "Sanders Dash & Seal", "artifact": target, "sha256": f_hash}}
+                  data = {"body": {"schema": 1, "platform": "Sanders Dash & Seal", "artifact": target, "payload_hash": f_hash, "scope": "source-manifest", "signatures": {}, "status": "UNSIGNED_SOURCE_MANIFEST"}}
                   with open(e_path, "w") as f:
                       json.dump(data, f, indent=4)
                   print(f"Cryptographically Reconciled Hash: {target}")
@@ -190,18 +190,25 @@ jobs:
           fi
 
       - name: Securely Push Verified Manifest Assets
+        if: github.event_name == 'push'
         run: |
           git config --global user.name "Sanders Platform Watcher"
           git config --global user.email "rooseveltsanders381@gmail.com"
           
-          # Stage all deep and loose metadata manifest files
-          git add "**/*.pbd.json"
+          # Stage ALL sync/unpack output before any pull --rebase (staging only .pbd.json left other changes behind, causing exit 128)
+          git add -A
           
-          # Check for changes, pull latest to protect against racing workflows, then push safely
+          # Commit all staged changes first, guard the tree, then pull --rebase and push
           if ! git diff-index --quiet HEAD; then
             git commit -m "Auto-extracted, sorted, and cryptographically signed assets [Verified Suite]"
-            git pull --rebase origin main
-            git push origin main
           else
             echo "No changes to commit. Working tree is clean."
           fi
+          # Clean-tree guard: git pull --rebase fails exit 128 on unstaged changes, so fail loudly here.
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "::error::Working tree is not clean before git pull --rebase. Unstaged/uncommitted changes remain:"
+            git status --porcelain
+            exit 1
+          fi
+          git pull --rebase origin "${{ github.ref_name }}"
+          git push origin HEAD:${{ github.ref_name }}
