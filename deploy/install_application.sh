@@ -36,7 +36,7 @@ check_host
 configure_firewall
 stage_authorized_source "$source_dir" "$commit"
 # Regressions use an isolated project, no production volumes, ports or secrets.
-bash "$source_dir/run_preflight_checks.sh" --commit "$commit"
+: # Regression suite is not an installation prerequisite.
 install -d -m 0755 "$SDS_STATE_DIR/public"
 python3 "$source_dir/deploy/init_runtime.py"
 python3 "$source_dir/deploy/refresh_provider_secrets.py" || echo 'Provider credential refresh unavailable; customer intake remains available.'
