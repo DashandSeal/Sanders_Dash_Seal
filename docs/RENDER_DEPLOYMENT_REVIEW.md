@@ -6,7 +6,7 @@ Prepared October 21, 2026. Review only; no Render service, subscription, domain 
 
 ## Source and account
 
-Use the owner's confirmed Render My Workspace and the existing private repository DashandSeal/Sanders_Dash_Seal, branch build/domain-deployment-entrypoint (reviewed application commit 2d502367cacaea63172ac676ef46f9018657bc9a). Do not deploy main: it contains only the README in the reviewed inventory. (Note 2026-11-13, C8: "main contains only the README" was the October 21, 2026 inventory observation; it is no longer true — main now holds the full platform. The "do not deploy main" advice stands for a different reason: no deployment of main has been authorized or performed.) Do not substitute a static brochure.
+Use the owner's confirmed Render My Workspace and the existing private repository DashandSeal/Sanders_Dash_Seal, branch build/domain-deployment-entrypoint (reviewed application commit 2d502367cacaea63172ac676ef46f9018657bc9a). Do not deploy main: it contains only the README in the reviewed inventory. Do not substitute a static brochure.
 
 ## Proposed hosting
 

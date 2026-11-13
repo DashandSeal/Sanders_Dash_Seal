@@ -14,13 +14,11 @@ from typing import Dict, List
 
 # Track core platform file paths
 PROTECTED_TARGETS = [
-    # NOTE: bozly_global_cfo.py was listed here but has never existed in
-    # this repo (no file, no git history). It was removed 2026-11-13 so
-    # the patrol stops reporting a permanent false MISSING anomaly.
-    "core_platform/bozly/bozly_wizardry_engine.py",
-    "core_platform/bozly/bozly_auth_gate.py",
-    "core_platform/bozly/bozly_quantum_armor.py",
-    "worker/src/server.js",
+    "bozly_global_cfo.py",
+    "bozly_wizardry_engine.py",
+    "bozly_auth_gate.py",
+    "bozly_quantum_armor.py",
+    "server.js",
     "labyrinth_shield.py"
 ]
 

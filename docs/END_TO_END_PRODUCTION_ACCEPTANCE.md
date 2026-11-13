@@ -34,7 +34,7 @@ actually executed. Preserve the owner's privileged-operation controls.
 
 ## Current Stripe evidence
 
-Stripe account `acct_1UQTehAgIE87JukG` was queried in live mode on October 15, 2026: `charges_enabled=true`, `payouts_enabled=true`, `card_payments=active`, and no currently due account requirements. That historical check is superseded: live webhook we_1UTPrCAgIE87JukG9yBNbUB4 is now registered at https://sandersdashandseal.com/stripe/webhook; Oracle runtime secret installation and a complete live payment round trip remain unfinished. (Clarified 2026-11-13, C15: an *account* being enabled for charges/payouts is not the same as the *integration* being live. The integration remains development-only — see `docs/STRIPE_INTEGRATION.md`, "DEVELOPMENT ONLY — NOT LIVE INTEGRATED OR PRODUCTION AUTHORIZED". No live payment round trip has been demonstrated.) Development source: `core_platform/stripe_payments.py`, `core_platform/stripe_webhook_wsgi.py`; neither is a deployed, PBD-authorized production endpoint.
+Stripe account `acct_1UQTehAgIE87JukG` was queried in live mode on October 15, 2026: `charges_enabled=true`, `payouts_enabled=true`, `card_payments=active`, and no currently due account requirements. That historical check is superseded: live webhook we_1UTPrCAgIE87JukG9yBNbUB4 is now registered at https://sandersdashandseal.com/stripe/webhook; Oracle runtime secret installation and a complete live payment round trip remain unfinished. Development source: `core_platform/stripe_payments.py`, `core_platform/stripe_webhook_wsgi.py`; neither is a deployed, PBD-authorized production endpoint.
 
 ## Continuous integration vs production evidence
 

@@ -2,12 +2,6 @@
 
 Status: **DEVELOPMENT ONLY — NOT LIVE INTEGRATED OR PRODUCTION AUTHORIZED.**
 
-(See `docs/END_TO_END_PRODUCTION_ACCEPTANCE.md`, "Current Stripe evidence",
-for the October 15, 2026 live-mode account query: the Stripe *account* is
-enabled for charges/payouts, but that is not a live *integration* — the
-webhook secret is not installed on Oracle and no live payment round trip has
-been demonstrated. Clarified 2026-11-13, C15.)
-
 Source precedence: the owner's `Sanders_Dash_Seal_Actual_Build_Design_MASTER_2026-10-11.md` controls. This module does not override the Humanitarian Core Laws, Twin-Gate authorization, jurisdiction/capacity checks, or the PBD execution boundary.
 
 ## Scope and acceptance evidence

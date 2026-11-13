@@ -11,7 +11,7 @@ import json
 import math
 from pathlib import Path
 
-CATALOG = Path(__file__).resolve().parents[1] / 'oci_free_resources.json'
+CATALOG = Path(__file__).with_name('oci_free_resources.json')
 
 def catalog():
     value = json.loads(CATALOG.read_text())
@@ -25,27 +25,6 @@ def inventory_mapping(report):
         if isinstance(item, dict) and isinstance(item.get('resource_type'), str):
             counts[item['resource_type'].casefold()] += 1
 
-    resources = []
-    for item in catalog()['resources']:
-        inventory_types = item.get('inventory_types') or []
-        if not isinstance(inventory_types, list):
-            inventory_types = [inventory_types]
-        observed = any(
-            counts[name.casefold()] for name in inventory_types
-            if isinstance(name, str)
-        )
-        resources.append({
-            "resource_id": item.get('resource_id', item.get('id', '')),
-            "resource_type": item.get('resource_type', ''),
-            "count": sum(
-                counts[name.casefold()] for name in inventory_types
-                if isinstance(name, str)
-            ),
-            "observation_status": (
-                'RELATED_METADATA_OBSERVED' if observed else 'NOT_OBSERVED'
-            ),
-        })
-
     return {
         "catalog_date": catalog()['catalog_date'],
         "scope": "PERMISSION_FILTERED_METADATA",
@@ -53,7 +32,18 @@ def inventory_mapping(report):
         "metered_usage_verified": False,
         "free_balance_verified": False,
         "cloud_changes_performed": False,
-        "resources": resources,
+        "resources": [
+            {
+                "resource_id": item['resource_id'],
+                "resource_type": item['resource_type'],
+                "count": counts[name.casefold()] for name in item.get('inventory_types', [])
+            } if any(
+                observation_status := 'RELATED_METADATA_OBSERVED' if any(
+                    counts[name.casefold()] for name in item.get('inventory_types', [])
+                ) else 'NOT_OBSERVED'
+            ) else None
+            for item in catalog()['resources']
+        ]
     }
 
 def allowance_comparison(resource_id, requested, usage=None, *, account_state='free_only'):

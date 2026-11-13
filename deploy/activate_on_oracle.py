@@ -10,14 +10,10 @@ import tempfile
 import time
 
 REGION='us-phoenix-1'
-def cli(args, *, raw=False, upload=False, runner=subprocess.run):
+def cli(args, *, raw=False, runner=subprocess.run):
     # Terraform zip uploads are materially larger than OCI state reads.
     # Keep the existing read limits; allow more time to send and acknowledge
     # the Resource Manager update rather than misclassifying it as a bad build.
-    # `upload` was previously referenced here but never defined, so every
-    # cli() call raised NameError; it is now an explicit keyword argument
-    # (default False = the 180s read timeout, True = the 360s upload timeout).
-    # No current caller passes upload=True.
     connection_timeout, read_timeout = 30, 360
     result = runner(['oci', *args, '--region', REGION, '--output', 'json',
         '--connection-timeout', str(connection_timeout), '--read-timeout',

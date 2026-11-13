@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/rtsa_registry.py",
-    "payload_hash": "6dd647853a2ab20edb3b6d016135d942a0c215f27ec1860a3cde77485c1d4f4e",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
-    }
+  "platform": "Sanders Dash & Seal",
+  "artifact": "core_platform/rtsa_registry.py",
+  "status": "DEVELOPMENT_ONLY_NOT_EXECUTION_AUTHORIZED",
+  "payload_sha256": "PENDING_REPRODUCIBLE_BUILD_HASH",
+  "governance_signatures": {
+    "it_manager": null,
+    "minotaur": null
   },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
+  "execution_allowed": false
 }

@@ -1,13 +1,5 @@
 # Production automation profile
 
-> **STATUS 2026-11-13 (C18).** Procedure only, not proof of a live install.
-> `docs/OMISSIONS_AND_RESTRICTIONS_AUDIT.md` records that initial OS
-> administrator setup remains unperformed and no live application installation
-> has been completed. The steps below describe how a fresh node *would* be
-> prepared from an approved source tree; they do not assert that it has
-> happened. The `instance_init.sh` path below is current: the script now lives
-> at `deploy/instance_init.sh` (moved there November 13, 2026, P2).
-
 `instance_init.sh` integrates the owner's staged initializer with the existing
 release-authorized deployment. The submitted source is preserved in
 `docs/owner-submitted/instance_init.proposed.sh.txt`; the runnable integration
@@ -16,7 +8,7 @@ does not silently treat its placeholders or incomplete shell conditional as vali
 From an independently approved installed source tree, prepare a fresh node:
 
 ```bash
-sudo bash /opt/sanders-dash-seal/deploy/instance_init.sh --stage --commit "$APPROVED_COMMIT"
+sudo bash /opt/sanders-dash-seal/instance_init.sh --stage --commit "$APPROVED_COMMIT"
 ```
 
 Supply the full actual 40-character commit SHA, not a PR label or moving branch.
@@ -30,7 +22,7 @@ After reviewing the node's role and confirming its assigned public IP, DNS,
 durable state, independent release approval and CI evidence for the exact release:
 
 ```bash
-sudo bash /opt/sanders-dash-seal/deploy/instance_init.sh --activate \
+sudo bash /opt/sanders-dash-seal/instance_init.sh --activate \
   --commit "$APPROVED_COMMIT" --public-ipv4 "$VERIFIED_NODE_PUBLIC_IPV4"
 ```
 

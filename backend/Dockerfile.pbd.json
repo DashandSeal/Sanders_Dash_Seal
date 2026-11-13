@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "backend/Dockerfile",
-    "payload_hash": "47c4ec25c335f6b5778d4112dfae6701a253b6b30d9fbe328ad483a7609904cd",
+    "payload_hash": "e0407731c85f17c8bdedf66c4d8d4193ffa60630e5cdcb6c918eba38838b8052",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

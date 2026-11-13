@@ -27,9 +27,6 @@ class CaseRegistry:
         if core_laws is not None:
             require_core_laws(core_laws)
         self.db_path = str(db_path)
-        # AppointmentStore reads ``cases.path``; it shares this SQLite file
-        # so its appointments table can reference cases(case_id).
-        self.path = self.db_path
 
         with self._connect() as db:
             db.execute("""CREATE TABLE IF NOT EXISTS cases (

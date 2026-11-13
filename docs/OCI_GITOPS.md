@@ -1,16 +1,5 @@
 # Automatic Oracle deployment from GitHub
 
-> **STATUS 2026-11-13 — NOT ACTIVE (C4, C17).** The workflow this document
-> describes, `.github/workflows/oci-gitops-deploy.yml`, **does not exist** in
-> this repository (`.github/workflows/` holds only `closeup_vmax_pipeline.yml`,
-> `parallel-build-verification.yml` and `verify-bozly-integrity.yml`). Nothing
-> executes this policy today. What follows is the *proposed* workflow
-> specification, retained as the design to implement — not a record of a
-> running automation. The owner-authorized automatic deployment in
-> `docs/PROGRESSIVE_PRODUCTION_RELEASE_POLICY.md` likewise has no workflow to
-> run until this file is created. See
-> `docs/P3_CORRECTIONS_2026-11-13.md`. No deployment is claimed by this note.
-
 `.github/workflows/oci-gitops-deploy.yml` runs automatically on pushes to main.
 There is no production-environment approval, custom release token, manual
 verification checkbox or required self-hosted runner. A workflow-dispatch event

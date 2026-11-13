@@ -8,7 +8,7 @@ Enforces absolute path resolution and structural sandboxing.
 from dataclasses import dataclass
 import json
 import pathlib
-from .security import Denied
+from security import Denied
 
 @dataclass(frozen=True)
 class SignedPythonArtifact:

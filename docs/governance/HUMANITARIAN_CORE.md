@@ -2,13 +2,6 @@
 
 Status: Initial governance specification, pending reconciliation with authoritative raw protocols.
 
-> **Note 2026-11-13 (C11).** The reconciliation this status line waits for
-> cannot currently be checked: the authoritative raw-protocols file
-> (`Sanders_Dash_Seal_Actual_Build_Design_RAW_PROTOCOLS_2026-10-11.md`) is
-> not present in this repository. This document stays as the initial spec; the
-> "pending" qualifier stands until that source is restored or the owner
-> directs otherwise. See `docs/P3_CORRECTIONS_2026-11-13.md`.
-
 ## Governing laws
 1. Do no harm to humans or humanity.
 2. Never weaponize the platform.

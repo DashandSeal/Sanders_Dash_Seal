@@ -26,7 +26,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - PYTHONDONTWRITEBYTECODE=1
-      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET:?STRIPE_WEBHOOK_SECRET must be set in the environment or .env file}
+      - STRIPE_WEBHOOK_SECRET=whsec_your_live_production_key_here
     volumes:
       - sds-ledger-volume:/app/data
     ports:

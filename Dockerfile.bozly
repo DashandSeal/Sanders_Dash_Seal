@@ -5,16 +5,8 @@ RUN pip install --no-cache-dir gunicorn==26.2.0 PyJWT==2.15.1 cryptography==47.0
     && useradd --system --create-home --home /home/bozly bozly \
     && mkdir -p /app/secure_ledgers \
     && chown -R bozly:bozly /app/secure_ledgers
-# Bozly modules live in core_platform/bozly/ (WSGI entrypoints in web/) since
-# the P2 placement move; the image preserves the package layout so relative
-# imports keep working. The COPY now covers the whole bozly package: the
-# previous explicit subset omitted bozly_wizardry_engine.py (and 9 other
-# modules) while bozly_human_api.py imports it, so the old image could not
-# even import bozly_shield_wsgi (verified against the P1 base layout).
-COPY --chown=bozly:bozly core_platform/__init__.py /app/core_platform/
-COPY --chown=bozly:bozly core_platform/bozly/__init__.py core_platform/bozly/bozly_auth_gate.py core_platform/bozly/bozly_cfo.py core_platform/bozly/bozly_claim_integrity.py core_platform/bozly/bozly_diversion_guard.py core_platform/bozly/bozly_financial_ethics.py core_platform/bozly/bozly_forensic_accounting.py core_platform/bozly/bozly_forensic_dashboard.py core_platform/bozly/bozly_global_presence.py core_platform/bozly/bozly_global_traceback.py core_platform/bozly/bozly_global_transactions.py core_platform/bozly/bozly_human_api.py core_platform/bozly/bozly_identity_and_conduct.py core_platform/bozly/bozly_legal_intelligence.py core_platform/bozly/bozly_market_ingestor.py core_platform/bozly/bozly_multimodal_integrity.py core_platform/bozly/bozly_native_backup.py core_platform/bozly/bozly_native_broker.py core_platform/bozly/bozly_native_cfo.py core_platform/bozly/bozly_native_investment_intelligence.py core_platform/bozly/bozly_onboarding.py core_platform/bozly/bozly_operations.py core_platform/bozly/bozly_pq_identity.py core_platform/bozly/bozly_purchasing.py core_platform/bozly/bozly_quantum_armor.py core_platform/bozly/bozly_security_response.py core_platform/bozly/bozly_synthetic_guard.py core_platform/bozly/bozly_uplink.py core_platform/bozly/bozly_wifi.py core_platform/bozly/bozly_wizardry_engine.py /app/core_platform/bozly/
-COPY --chown=bozly:bozly labyrinth_shield.py minotaur_sentinel.py /app/
-COPY --chown=bozly:bozly web/__init__.py web/bozly_shield_wsgi.py web/bozly_stripe_webhook_wsgi.py /app/web/
+COPY --chown=bozly:bozly bozly_cfo.py bozly_stripe_webhook_wsgi.py bozly_operations.py bozly_human_api.py bozly_uplink.py bozly_pq_identity.py bozly_purchasing.py bozly_global_transactions.py bozly_identity_and_conduct.py bozly_global_presence.py bozly_diversion_guard.py bozly_legal_intelligence.py bozly_financial_ethics.py bozly_forensic_accounting.py bozly_claim_integrity.py bozly_multimodal_integrity.py bozly_native_cfo.py bozly_native_broker.py bozly_native_investment_intelligence.py /app/
+COPY --chown=bozly:bozly labyrinth_shield.py minotaur_sentinel.py bozly_security_response.py bozly_shield_wsgi.py /app/
 USER bozly
 EXPOSE 8000
-CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--worker-class", "sync", "--access-logfile", "-", "web.bozly_stripe_webhook_wsgi:application"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "--workers", "2", "--worker-class", "sync", "--access-logfile", "-", "bozly_stripe_webhook_wsgi:application"]

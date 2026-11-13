@@ -2,8 +2,8 @@
   "body": {
     "schema": 1,
     "platform": "Sanders Dash & Seal",
-    "artifact": "infrastructure/resource-manager/cloud-init-application.yaml.tftpl",
-    "payload_hash": "831ee8f90bcdd000fea4b5560009ad586a56e01026ece899ad681547280992c8",
+    "artifact": "cloud-init-application.yaml.tftpl",
+    "payload_hash": "4f389b94672f71c0035a1d32f9ad789536795188066f6935706c872a4a422f1f",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

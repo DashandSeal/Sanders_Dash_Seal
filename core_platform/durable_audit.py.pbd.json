@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/durable_audit.py",
-    "payload_hash": "d0cfdcaea0363a4c074c055287ae1c3c8008d288dbcaa0dd4d71f7e686ed5e44",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
-    }
+  "platform": "Sanders Dash & Seal",
+  "artifact": "core_platform/durable_audit.py",
+  "status": "DEVELOPMENT_ONLY_NOT_EXECUTION_AUTHORIZED",
+  "payload_sha256": "PENDING_REPRODUCIBLE_BUILD_HASH",
+  "governance_signatures": {
+    "it_manager": null,
+    "minotaur": null
   },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
+  "execution_allowed": false
 }
