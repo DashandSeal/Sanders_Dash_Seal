@@ -1,16 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/~/Sanders_Dash_Seal/core_platform/agent_runtime.py",
-    "payload_hash": "7f00a89a58a949aa3f226153e019997c1eef64fc91aa6f965e038fb9ab08a99b",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/~/Sanders_Dash_Seal/core_platform/agent_runtime.py",
+        "payload_hash": "7f00a89a58a949aa3f226153e019997c1eef64fc91aa6f965e038fb9ab08a99b",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
     }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
 }
