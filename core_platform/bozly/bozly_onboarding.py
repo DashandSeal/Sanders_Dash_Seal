@@ -51,6 +51,18 @@ class BozlyOnboardingEngine:
             "status":"ACTIVE","secret_api_key_once":raw_key,
             "raw_key_stored":False,"client_account_created":True,
             "subscription_charge_started":False}
+    def authenticate(self,raw_key,entity_id):
+        if entity_id not in ENTITIES or not isinstance(raw_key,str) or not raw_key.startswith("bz_"):
+            raise PermissionError("Invalid client credentials")
+        digest=hashlib.sha256(raw_key.encode()).hexdigest()
+        with _db() as db:
+            row=db.execute("""SELECT client_id,license_name,status,expires_at
+               FROM bozly_client_licenses
+               WHERE api_key_hash=? AND entity_id=?""",(digest,entity_id)).fetchone()
+        if row is None or row[2]!="ACTIVE" or (row[3] is not None and row[3]<=int(time.time())):
+            raise PermissionError("Inactive or unrecognized client credential")
+        return {"authenticated":True,"client_id":row[0],"license_name":row[1],
+                "entity_id":entity_id}
     def revoke(self,*,entity_id,client_id,actor):
         if entity_id not in ENTITIES or not isinstance(actor,str) or not actor:
             raise PermissionError("Invalid owner identity or legal entity")
