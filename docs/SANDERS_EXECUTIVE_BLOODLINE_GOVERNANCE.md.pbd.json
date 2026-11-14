@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/SANDERS_EXECUTIVE_BLOODLINE_GOVERNANCE.md",
+    "payload_hash": "7dd3757ea7ef9aedd47b5e984f52151e963b6d5a92e023e31675ff41dfe4f63d",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

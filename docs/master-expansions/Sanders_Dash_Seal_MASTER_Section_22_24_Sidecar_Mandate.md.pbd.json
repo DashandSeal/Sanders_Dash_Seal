@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/master-expansions/Sanders_Dash_Seal_MASTER_Section_22_24_Sidecar_Mandate.md",
+    "payload_hash": "b609733245b00e720da07155faac78e0f0f5c6861c3d77c124d08decf844948f",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

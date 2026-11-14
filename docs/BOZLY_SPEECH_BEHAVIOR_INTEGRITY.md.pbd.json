@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/BOZLY_SPEECH_BEHAVIOR_INTEGRITY.md",
+    "payload_hash": "b84c47c5f74e47afe26969fe5e269a6a656e9adec9c5103df8b8cb77a1caaa68",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

@@ -3,13 +3,13 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "deploy/systemd/sanders-ai-observe.service",
+    "payload_hash": "839af557d2d121e5c2b3d02489b04c3f74532494afd2b974f3c22e8cb6b4a581",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
       "ip": "127.0.0.1",
       "operation": "DEVELOPMENT_VALIDATION"
-    },
-    "payload_hash": "839af557d2d121e5c2b3d02489b04c3f74532494afd2b974f3c22e8cb6b4a581"
+    }
   },
   "signatures": {},
   "status": "UNSIGNED_SOURCE_MANIFEST"

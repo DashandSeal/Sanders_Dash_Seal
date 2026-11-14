@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "infrastructure/resource-manager/security/bozly_apparmor.profileetc/apparmor.d/github/workflows/verify-bozly-integrity.yml",
+    "payload_hash": "97358f6822bed2e7318e0d3e97ba6640acdb20368d5157f3fe0190b44ff36ab5",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
