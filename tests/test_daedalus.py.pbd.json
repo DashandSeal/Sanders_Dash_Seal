@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_daedalus.py",
-        "payload_hash": "40d20f03d712ee279d368ec59798d599118927acaae5c6f141057b5f5c239b6b",
+        "payload_hash": "de20c6b25ccecc00b18ec65d80e1524ea7f6d3191e4f93a015170667f15f4866",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

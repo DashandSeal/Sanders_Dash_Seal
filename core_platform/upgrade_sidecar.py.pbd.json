@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/upgrade_sidecar.py",
-        "payload_hash": "29efb8911a4e047a8f654d9579b2cb18510f036989ac679a4cce77ff7573b95a",
+        "payload_hash": "3823659c7864e110d8ecb0cfc35b073b1bfc587a2227e3059b582d1d2692a6ce",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

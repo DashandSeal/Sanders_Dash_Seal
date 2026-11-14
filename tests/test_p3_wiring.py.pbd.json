@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_p3_wiring.py",
-        "payload_hash": "8da12914d44a9e91f2d2915fd53783fb3bbd8127df865feadc207abd880ba83f",
+        "payload_hash": "6ae6c2e75926fbc236ca21c870c7f3b2654bac62d757287563b45d14edf1108c",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
