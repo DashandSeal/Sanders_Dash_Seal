@@ -92,6 +92,8 @@ class TestLivemodeDefaults(unittest.TestCase):
         not live keys (free-first / test-first default)."""
         from deploy.refresh_provider_secrets import validate
 
+        # Consolidated from tests/test_free_first_fixes.py D23.
+        self.assertEqual(validate({}), {})
         data = validate({"stripe_api_key": "sk_test_0123456789abcdef"})
         self.assertEqual(data.get("stripe_livemode", False), False)
         with self.assertRaises(ValueError):

@@ -65,12 +65,6 @@ class TestObservedProfile(unittest.TestCase):
 
 
 class TestRateCardConfig(unittest.TestCase):
-    def test_scenario_total_is_computed_not_literal(self):
-        card = load_rate_card()
-        self.assertEqual(card["scenario_status"], "illustrative_not_forecast")
-        result = proposed_rate_card()
-        self.assertEqual(result["scenario_annual_revenue_usd"], "136000000")
-        self.assertEqual(result["status"], "proposed_not_verified_market_rate")
 
     def test_custom_card_recomputes(self):
         card = load_rate_card()

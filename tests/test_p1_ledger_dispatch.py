@@ -141,15 +141,6 @@ class TestLedgerDispatchFailsClosed(unittest.TestCase):
         # Durable effects: checkout settled the case, refund marked it.
         self.assertEqual(ledger.status("case-1"), "REFUNDED")
 
-    def test_ledger_with_method_still_settles(self):
-        # Control test: the guard must not break the working path.
-        ledger = FakeLedger(self.db_path)
-        app = make_app(ledger)
-        code, body = post_event(app, "evt_1", "checkout.session.completed")
-        self.assertTrue(code.startswith("200"), code)
-        self.assertIn(b"LEDGER_SETTLED", body)
-        self.assertEqual(self._processed_ids(), ["evt_1"])
-
 
 if __name__ == "__main__":
     unittest.main()

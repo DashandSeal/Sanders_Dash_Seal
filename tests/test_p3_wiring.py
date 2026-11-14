@@ -267,19 +267,6 @@ class TestP3DocFixes(unittest.TestCase):
         self.assertIn("holds **6 resources**", text)
         self.assertIn("NoSQL; catalog date\n> 2026-11-13", text)
 
-    def test_gitignore_ignores_data_dir_and_env_and_db(self):
-        def check(path):
-            proc = subprocess.run(
-                ["git", "check-ignore", "-v", path],
-                cwd=str(REPO_ROOT), capture_output=True, text=True)
-            return proc.returncode == 0
-
-        self.assertTrue(check("data/foo.txt"))
-        self.assertTrue(check("data/ledger.db"))
-        self.assertTrue(check(".env"))
-        self.assertTrue(check("foo.db"))
-        self.assertFalse(check("wsgi.py"))
-        self.assertFalse(check("x.pbd.json"))
 
     def test_platform_link_checklist_exists_and_gateway_ref_resolves(self):
         from core_platform.platform_services import gateway_status

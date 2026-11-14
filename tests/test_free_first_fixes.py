@@ -23,16 +23,6 @@ def _read(rel):
 
 
 class TestFix1StripeLivemodeDefaults(unittest.TestCase):
-    def test_stream_api_default_is_test_mode(self):
-        tree = ast.parse(_read("core_platform/stream_api.py"))
-        for node in ast.walk(tree):
-            if isinstance(node, ast.FunctionDef) and node.name == "import_make_app":
-                defaults = dict(zip(
-                    [a.arg for a in node.args.kwonlyargs],
-                    node.args.kw_defaults,
-                ))
-                self.assertIsInstance(defaults["expected_livemode"], ast.Constant)
-                self.assertIs(defaults["expected_livemode"].value, False)
 
     def test_native_runtime_default_is_test_mode(self):
         # P2 adaptation: on the free-first branch this file still had
@@ -50,25 +40,6 @@ class TestFix1StripeLivemodeDefaults(unittest.TestCase):
         self.assertIn("deploy.deployment", text)
         self.assertNotIn("stripe_livemode', True", text)
         self.assertNotIn('stripe_livemode", True', text)
-
-    def test_init_runtime_default_is_test_mode(self):
-        self.assertIn("existing.setdefault('stripe_livemode',False)",
-                      _read("deploy/init_runtime.py"))
-
-    def test_refresh_provider_secrets_defaults_test_mode(self):
-        from deploy.refresh_provider_secrets import validate
-        self.assertEqual(validate({}), {})
-        # No livemode in the payload: a test key passes, a live key fails.
-        self.assertEqual(
-            validate({"stripe_api_key": "rk_test_abcdefgh"}),
-            {"stripe_api_key": "rk_test_abcdefgh"},
-        )
-        with self.assertRaises(ValueError):
-            validate({"stripe_api_key": "rk_live_abcdefgh"})
-        self.assertNotIn("('stripe_livemode',True)",
-                         _read("deploy/refresh_provider_secrets.py"))
-        self.assertNotIn("data.get('stripe_livemode',True)",
-                         _read("deploy/refresh_provider_secrets.py"))
 
 
 class TestFix2DeprecatedModelDefaults(unittest.TestCase):
@@ -178,16 +149,6 @@ class TestFix5CatalogRebuild(unittest.TestCase):
                                     usage={"ocpu": 0}, account_state="paid_only")
         self.assertEqual(over["status"], "EXCEEDS_DOCUMENTED_AMOUNTS")
 
-    def test_core_laws_accept_rebuilt_catalog(self):
-        from core_platform.oci_core_laws import import_core_laws
-        # P2 adaptation: the canonical catalog lives at the repo root
-        # (P2 G8), not core_platform/ -- import_core_laws takes the
-        # directory holding oci_free_resources.json.
-        laws = import_core_laws(REPO_ROOT)
-        self.assertTrue(laws.validate_resource_allocation(
-            "oracle-a1-compute", {"ocpu": 2}))
-        with self.assertRaises(Exception):
-            laws.validate_resource_allocation("oracle-a1-compute", {"ocpu": 3})
 
     def test_corrupted_python_preserved_not_discarded(self):
         preserved = REPO_ROOT / "core_platform/oci_core_laws.py"

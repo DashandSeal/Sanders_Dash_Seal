@@ -54,6 +54,7 @@ from core_platform.daedalus_ip_protection import (
     verify_evidence,
 )
 from core_platform.daedalus_l15_capabilities import (
+    CAPABILITIES,
     CapabilityState,
     declared_profile,
     observed_profile,
@@ -218,6 +219,12 @@ class TestConfig(unittest.TestCase):
 
 class TestStdlibTransport(unittest.TestCase):
     def test_missing_key_or_model_raises(self):
+        # Consolidated from tests/test_daedalus.py D3-D5: env-clearing so a
+        # real ANTHROPIC_API_KEY / DAEDALUS_CLAUDE_MODEL cannot mask the raise.
+        with mock.patch.dict(os.environ, {}, clear=True):
+            self._missing_key_or_model_raises_inner()
+
+    def _missing_key_or_model_raises_inner(self):
         with self.assertRaises(ValueError):
             DaedalusClaudeTransport(model=FAKE_MODEL)
         with self.assertRaises(ValueError):
@@ -229,6 +236,8 @@ class TestStdlibTransport(unittest.TestCase):
         transport = DaedalusClaudeTransport(model=FAKE_MODEL, api_key=FAKE_KEY)
         with self.assertRaises(ValueError):
             transport.generate(system=" ", user_message="hi")
+        with self.assertRaises(ValueError):
+            transport.generate(system="sys", user_message="")
         with self.assertRaises(ValueError):
             transport.generate(system="sys", user_message="hi", max_tokens=0)
 
@@ -255,18 +264,6 @@ class TestStdlibTransport(unittest.TestCase):
         self.assertEqual(len(audits), 1)
         self.assertNotIn("hi", json.dumps(audits[0]))
 
-    def test_http_error_hides_body(self):
-        def fake_urlopen(request, timeout=None, context=None):
-            raise urllib.error.HTTPError(
-                request.full_url, 401, "Unauthorized", {}, None
-            )
-
-        transport = DaedalusClaudeTransport(model=FAKE_MODEL, api_key=FAKE_KEY)
-        with mock.patch("urllib.request.urlopen", fake_urlopen):
-            with self.assertRaises(DaedalusProviderError) as caught:
-                transport.generate(system="sys", user_message="hi")
-        self.assertIn("HTTP 401", str(caught.exception))
-        self.assertNotIn("Unauthorized body", str(caught.exception))
 
     def test_oversize_response_rejected(self):
         def fake_urlopen(request, timeout=None, context=None):
@@ -626,6 +623,9 @@ class TestCapabilitiesAndPricing(unittest.TestCase):
             state is CapabilityState.UNAVAILABLE
             for state in profile.capability_states.values()
         ))
+        # Consolidated from tests/test_daedalus.py D12.
+        self.assertEqual(set(profile.capability_states), set(CAPABILITIES))
+        self.assertEqual(len(CAPABILITIES), 13)
 
     def test_observed_profile_configured_not_active(self):
         profile = observed_profile(live_reasoning_configured=True)

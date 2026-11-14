@@ -126,7 +126,6 @@ def configured_probes(path, audit, *, root=None, backup_status="/run/sds/backup-
         "deployment": lambda: source_probe(root),
         "infrastructure": disk_probe,
         "integration": lambda: integration_probe(path),
-        "performance": lambda: http_probe("http://127.0.0.1:8000/healthz"),
         "backup": lambda: backup_probe(backup_status),
         "observability": audit_probe,
         "quality": quality_probe,

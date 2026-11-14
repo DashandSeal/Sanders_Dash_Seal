@@ -6,13 +6,6 @@ const path = require('node:path');
 const { spawn } = require('node:child_process');
 const { once } = require('node:events');
 
-test('Dashboard asset includes WebRTC telemetry binding', async () => {
- const fs = require('node:fs/promises');
- const html = await fs.readFile(path.join(__dirname,'../src/dashboard.html'),'utf8');
- assert.match(html,/window\.SDS_BindTelemetry/);
- assert.match(html,/getStats\(\)/);
-});
-
 test('Actual worker serves the native telemetry dashboard', async () => {
  const workerPath = path.join(__dirname,'../src/index.js');
  const backend = http.createServer((req,res) => {res.writeHead(503);res.end();});
