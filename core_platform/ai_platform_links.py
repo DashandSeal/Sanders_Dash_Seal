@@ -467,7 +467,7 @@ def _check_twingate(entry: dict, env: Mapping[str, str],
             denied = True
         checks["fail_closed_deny"] = denied
         checks["audit_chain_verifies"] = gate.audit.verify()
-        if not denied or not gate.audit.verify():
+        if not denied or not checks["audit_chain_verifies"]:
             return PlatformStatus(
                 pid, "BROKEN",
                 missing=["fail-closed probe did not deny, or audit chain "

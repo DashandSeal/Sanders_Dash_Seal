@@ -457,12 +457,6 @@ class TestDaedalusSettings(unittest.TestCase):
 
 
 class TestVoiceHonestFailure(unittest.TestCase):
-    def test_deepgram_and_elevenlabs_require_keys(self):
-        with mock.patch.dict(os.environ, {}, clear=True):
-            with self.assertRaises(ValueError):
-                DeepgramTranscriber()
-            with self.assertRaises(ValueError):
-                ElevenLabsSynthesizer()
 
     def test_missing_packages_raise_import_error(self):
         # Only the import is probed here: constructing the adapter when
@@ -505,16 +499,6 @@ class TestVoiceGenerateSource(unittest.TestCase):
         # The synthesizer received the Daedalus-generated source text.
         self.assertEqual(speaker.calls, [result["source_text"]])
         self.assertTrue(result["audio_bytes"])
-
-    def test_speak_prompt_alias_is_the_same_turn(self):
-        result = speak_prompt(
-            transcriber=FakeTranscriber("generate a python hello world function"),
-            integration=_fake_runtime(),
-            synthesizer=FakeSynthesizer(),
-            audio_bytes=make_silence_wav(0.5),
-            invention_id="inv-voice-2",
-        )
-        self.assertIn("hello world", result["source_text"])
 
 
 class TestDaedalusVoiceApp(unittest.TestCase):

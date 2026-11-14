@@ -55,9 +55,6 @@ import re
 import time
 from typing import Any
 
-from .daedalus_voice import (
-    validate_signaling_message as _validate_signaling_message,
-)
 from .daedalus_voice import validate_video_session
 from .livekit_realtime import _b64url, _b64url_decode
 
@@ -232,15 +229,6 @@ def validate_room_token(
     }
 
 
-def validate_signaling_message(message: dict[str, Any], *, session_id: str) -> dict[str, Any]:
-    """Validate one WebRTC signalling message (offer/answer/ICE).
-
-    Same contract as ``daedalus_voice.validate_signaling_message``:
-    signalling validation only, no media, no peer connection.
-    """
-    return _validate_signaling_message(message, session_id=session_id)
-
-
 def video_status() -> dict[str, Any]:
     """Honest video status: config present or missing; no live check."""
     configured = all(
@@ -262,7 +250,6 @@ __all__ = [
     "livekit_config_from_env",
     "issue_room_token",
     "validate_room_token",
-    "validate_signaling_message",
     "validate_video_session",
     "video_status",
 ]

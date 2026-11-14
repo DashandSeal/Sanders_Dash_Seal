@@ -103,7 +103,6 @@ class RealtimeUnavailable(RealtimeError):
 
 ROOM_RE = re.compile(r"^[A-Za-z0-9_.\-]{1,128}$")
 IDENTITY_RE = re.compile(r"^[A-Za-z0-9_.\-]{1,128}$")
-TOKEN_HEX_RE = re.compile(r"^[0-9a-fA-F]{64}$")
 
 
 def validate_room_name(room: object) -> str:
@@ -118,11 +117,6 @@ def validate_identity(identity: object) -> str:
     if not isinstance(identity, str) or IDENTITY_RE.fullmatch(identity) is None:
         raise ValueError("identity must be 1-128 chars of [A-Za-z0-9_.-]")
     return identity
-
-
-def is_valid_webrtc_token(token: object) -> bool:
-    """True when ``token`` is a 64-hex session token (``secrets.token_hex(32)``)."""
-    return isinstance(token, str) and TOKEN_HEX_RE.fullmatch(token) is not None
 
 
 # ---------------------------------------------------------------------------

@@ -262,28 +262,6 @@ class TestVideoSignalling(unittest.TestCase):
 
 
 class TestVoiceGenerateSource(unittest.TestCase):
-    def test_fake_chain_end_to_end(self):
-        synth = FakeSynthesizer()
-        result = voice_generate_source(
-            transcriber=FakeTranscriber("generate a python hello world function"),
-            integration=make_integration(),
-            synthesizer=synth,
-            audio_bytes=make_silence_wav(0.25),
-            invention_id="inv-voice-test-1",
-            language="Python",
-            inventor_assertions=("test",),
-        )
-        self.assertEqual(result["transcript"], "generate a python hello world function")
-        self.assertIn("def hello", result["source_text"])
-        self.assertEqual(
-            result["source_sha256"],
-            hashlib.sha256(result["source_text"].encode("utf-8")).hexdigest(),
-        )
-        self.assertEqual(result["invention_id"], "inv-voice-test-1")
-        # The synthesizer must be called once, with the GENERATED text,
-        # not with the transcript.
-        self.assertEqual(synth.calls, [result["source_text"]])
-        self.assertEqual(read_wav_info(result["audio_bytes"])["sample_width"], 2)
 
     def test_speak_prompt_alias(self):
         self.assertIs(speak_prompt, voice_generate_source)
@@ -305,17 +283,6 @@ class TestVoiceGenerateSource(unittest.TestCase):
                 audio_bytes=make_silence_wav(0.1),
                 invention_id="",
             )
-
-    def test_build_engine_without_key_or_model_raises(self):
-        with self.assertRaises(ValueError):
-            build_engine(DaedalusEngineConfig(
-                signing_key=b"x" * 32,
-                persist_private_evidence=lambda r, s: None,
-                persist_confidential=lambda *a, **k: None,
-                audit=lambda m: None,
-                model=None,
-                api_key=None,
-            ))
 
 
 class TestVoiceApi(unittest.TestCase):

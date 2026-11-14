@@ -122,12 +122,7 @@ function verifySessionWithPythonBackend(token) {
                             resolve({ isValid: true, session });
                             return;
                         }
-                        if (session && id.test(session.user_id || '') &&
-                            id.test(session.assigned_session_id || '') &&
-                            Array.isArray(session.notary_session_ids) &&
-                            session.notary_session_ids.includes(session.assigned_session_id)) {
-                            resolve({ isValid: true, session });
-                        } else resolve({ isValid: false });
+                        resolve({ isValid: false });
                     } catch (_) { resolve({ isValid: false }); }
                 } else {
                     resolve({ isValid: false });

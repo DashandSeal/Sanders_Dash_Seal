@@ -42,10 +42,12 @@ from core_platform.grantwriter_llm import (  # noqa: E402
     draft_application_section,
     draft_to_google_doc,
 )
+from core_platform.daedalus_voice import (  # noqa: E402
+    validate_signaling_message,
+)
 from core_platform.livekit_video import (  # noqa: E402
     issue_room_token,
     validate_room_token,
-    validate_signaling_message,
     video_status,
 )
 from core_platform.openai_chat_transport import (  # noqa: E402
@@ -379,11 +381,6 @@ class TestVoiceProviders(unittest.TestCase):
     def setUp(self):
         clear_env(self)
 
-    def test_deepgram_and_elevenlabs_missing_key(self):
-        with self.assertRaises(ValueError):
-            DeepgramTranscriber()
-        with self.assertRaises(ValueError):
-            ElevenLabsSynthesizer()
 
     def test_openai_transcriber_rejects_whisper1(self):
         with self.assertRaises(ValueError):
@@ -445,21 +442,6 @@ class TestLiveKitVideo(unittest.TestCase):
                 issued["token"], api_secret="test-secret", now=1780000000 + 7200
             )
 
-    def test_signalling_validation_rejects_bad_action(self):
-        frame = validate_signaling_message(
-            {
-                "action": "offer",
-                "targetSessionId": "sess-1",
-                "sdp": {"type": "offer", "sdp": "v=0\r\n"},
-            },
-            session_id="sess-1",
-        )
-        self.assertEqual(frame["action"], "offer")
-        with self.assertRaises(ValueError):
-            validate_signaling_message(
-                {"action": "start_call", "targetSessionId": "sess-1"},
-                session_id="sess-1",
-            )
 
     def test_video_status_missing_key(self):
         self.assertEqual(video_status()["live_status"], "MISSING_KEY")

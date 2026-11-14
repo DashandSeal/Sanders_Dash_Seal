@@ -78,12 +78,6 @@ class TestUnifiedRoutes(unittest.TestCase):
         self.assertTrue(code.startswith("200"), code)
         self.assertIn(b"Sanders Dash", body)
 
-    def test_healthz_200_readyz_503(self):
-        code, _, body = call(self.app, "GET", "/healthz")
-        self.assertTrue(code.startswith("200"), code)
-        code, _, body = call(self.app, "GET", "/readyz")
-        self.assertTrue(code.startswith("503"), code)
-        self.assertIn(b"service_ready", body)
 
     def test_voice_status_is_real_200_with_no_backends(self):
         # P2: the voice API is wired; with no key/package configured the

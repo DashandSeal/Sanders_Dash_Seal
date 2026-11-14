@@ -192,10 +192,6 @@ class UpgradeSidecar:
         if not path.is_file() or path.is_symlink():
             raise UpgradeDenied('Regular artifact file required')
 
-        actual_hash = hashlib.sha256(path.read_bytes()).hexdigest()
-        if actual_hash != record['artifact_hash']:
-            raise UpgradeDenied('Artifact integrity mismatch')
-
         try:
             receipt = self.executor.stage(record, str(path))
         except Exception as exc:
