@@ -1,0 +1,51 @@
+name: Sanders Corporations Secretary - Oracle Always Free
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sanders-corporations-secretary/**'
+      - '.github/workflows/deploy_scs_to_oracle_always_free.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: scs-oracle-always-free-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy-scs-to-oracle:
+    name: Deploy the Secretary to the existing Oracle VM
+    runs-on: ubuntu-latest
+    env:
+      SCS_OCI_HOST: ${{ secrets.SCS_OCI_HOST }}
+      SCS_OCI_USER: ${{ secrets.SCS_OCI_USER }}
+      SCS_OCI_SSH_KEY: ${{ secrets.SCS_OCI_SSH_KEY }}
+      SCS_OCI_KNOWN_HOSTS: ${{ secrets.SCS_OCI_KNOWN_HOSTS }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Detect available Oracle connection
+        shell: bash
+        run: |
+          if [[ -n "$SCS_OCI_HOST" && -n "$SCS_OCI_USER" && -n "$SCS_OCI_SSH_KEY" && -n "$SCS_OCI_KNOWN_HOSTS" ]]; then
+            echo 'SCS_OCI_CONNECTED=true' >> "$GITHUB_ENV"
+          else
+            echo 'SCS_OCI_CONNECTED=false' >> "$GITHUB_ENV"
+            echo '::notice::Source published on public main; Oracle deployment is awaiting an SSH connection configured in GitHub Secrets. Render is not used.'
+          fi
+      - name: Deploy only Sanders Corporations Secretary to Oracle
+        if: env.SCS_OCI_CONNECTED == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          install -d -m 0700 "$HOME/.ssh"
+          printf '%s\n' "$SCS_OCI_SSH_KEY" > "$HOME/.ssh/scs_oracle"
+          chmod 0600 "$HOME/.ssh/scs_oracle"
+          printf '%s\n' "$SCS_OCI_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 0600 "$HOME/.ssh/known_hosts"
+          ssh -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=20 \
+            -i "$HOME/.ssh/scs_oracle" "$SCS_OCI_USER@$SCS_OCI_HOST" \
+            "bash -s -- '${GITHUB_SHA}'" \
+            < sanders-corporations-secretary/deploy/oracle/deploy_secretary.sh
