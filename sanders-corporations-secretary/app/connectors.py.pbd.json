@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "sanders-corporations-secretary/app/connectors.py",
+        "payload_hash": "467888256c84716e44cd45979232fc20852211f936828f2129f8da7f8ef7e7e2",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
