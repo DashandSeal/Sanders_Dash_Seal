@@ -17,14 +17,6 @@ BRAND = {
         "Sanders Legal Helpers LLC DBA Sanders Dash & Seal (SOS 20258029131)",
         "S & G Security Inc.",
     ),
-    "seals": (
-        "sanders_corporate_hq_seal.png",
-        "sanders_legal_helpers_sos_seal.png",
-        "sanders_legal_helpers_corp_seal.png",
-        "sanders_home_healthcare_sos_seal.png",
-        "sanders_senior_living_sos_seal.png",
-        "sanders_senior_living_corp_seal.png",
-    ),
 }
 
 TIERS = {
@@ -56,7 +48,8 @@ def fec_heal(s0: bytes, parity: bytes, n: int) -> bytes:
 class TwoStepEngine:
     def __init__(self, base_dir: Path) -> None:
         self.base = base_dir
-        self.assets = Path(__file__).resolve().parent / "assets"
+        self.root = Path(__file__).resolve().parent
+        self.assets = self.root / "assets"
         self.golden = self.base / "golden"
         self.base.mkdir(parents=True, exist_ok=True)
         self.assets.mkdir(parents=True, exist_ok=True)
@@ -80,20 +73,26 @@ class TwoStepEngine:
             c.execute("CREATE TABLE IF NOT EXISTS bundles (id TEXT PRIMARY KEY, tier TEXT, sha TEXT, mac TEXT, receipt TEXT, healed INT, fee REAL, ts INT)")
             c.execute("CREATE TABLE IF NOT EXISTS audit (seq INTEGER PRIMARY KEY AUTOINCREMENT, ts INT, event TEXT, hash TEXT)")
 
+    def discover_seals(self) -> dict[str, Path]:
+        found: dict[str, Path] = {}
+        for folder in (self.root, self.assets, self.golden):
+            if folder.is_dir():
+                for fp in sorted(folder.glob("*.png")):
+                    found.setdefault(fp.name, fp)
+        return found
+
     def heal_assets(self) -> dict[str, str]:
         out: dict[str, str] = {}
-        for fn in BRAND["seals"]:
-            live, gold = self.assets / fn, self.golden / fn
-            if live.is_file() and not gold.is_file():
-                shutil.copy2(live, gold)
-            elif gold.is_file() and not live.is_file():
-                shutil.copy2(gold, live)
-            if live.is_file() and gold.is_file():
-                if sha256_hex(live.read_bytes()) != sha256_hex(gold.read_bytes()):
-                    shutil.copy2(gold, live)
-                out[fn] = sha256_hex(live.read_bytes())
-            else:
-                out[fn] = "PENDING_UPLOAD"
+        for fn, src in self.discover_seals().items():
+            gold = self.golden / fn
+            if src.is_file() and not gold.is_file():
+                shutil.copy2(src, gold)
+            elif gold.is_file() and not src.is_file():
+                shutil.copy2(gold, src)
+            if src.is_file() and gold.is_file():
+                if sha256_hex(src.read_bytes()) != sha256_hex(gold.read_bytes()):
+                    shutil.copy2(gold, src)
+                out[fn] = sha256_hex(src.read_bytes())
         return out
 
     def seal_and_dispatch(self, topic: str, payload: dict, tier: str = "INTERNAL_ECOSYSTEM") -> dict:
@@ -138,11 +137,12 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, json.dumps({"status": "HEALTHY", "owner": "Sanders Legal Helpers LLC", "sos_id": "20258029131"}).encode())
         elif self.path.startswith("/assets/"):
             fn = Path(self.path).name
-            fp = self.eng.assets / fn
-            if fn in BRAND["seals"] and fp.is_file():
+            seals = self.eng.discover_seals()
+            fp = seals.get(fn)
+            if fp and fp.is_file():
                 self._send(200, fp.read_bytes(), "image/png")
             else:
-                self._send(404, b'{"error":"Seal not uploaded"}')
+                self._send(404, b'{"error":"Seal not found"}')
         else:
             self._send(404, b'{"error":"Not found"}')
 
