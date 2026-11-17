@@ -1,0 +1,5 @@
+SANDERS CORPORATIONS SECRETARY — PROTOTYPE CODE PACKAGE
+Prepared for the Sanders Family of Companies.
+Owner: Roosevelt Sanders, founder and sole owner of the named businesses, as represented by the user.
+The public GitHub release makes this source visible, but does not automatically grant a copyright license. Licensing remains the owner’s decision.
+This package DOES NOT contain or purport to reproduce undisclosed trade-secret implementations of the Sanders Synthetic AI & Sovereign Mesh Architecture.
