@@ -38,6 +38,30 @@ class AuthorityReviewTests(unittest.TestCase):
         with self.assertRaises(AuthorityDenied):
             self.bridge(provider=False).review('case-1','reviewer-1','notary-1',{'ref':'x'})
 
+    def test_mobile_review_keeps_independent_checks_without_ron_provider(self):
+        self.cases.create('mobile-1', 'WI', 'MOBILE_NOTARY', 'customer-1')
+        seen = []
+        bridge = AuthorityReview(self.db, self.cases, lambda *args: True,
+            lambda *args: True,
+            lambda case, provider, evidence: seen.append(provider) is None,
+            self.audit, CORE_LAWS)
+        result = bridge.review('mobile-1', 'reviewer-1', 'notary-1', {'ref': 'test-only'})
+        self.assertEqual(seen, [None])
+        self.assertFalse(result['notarial_act_executed'])
+        self.assertEqual(self.cases.get('mobile-1')['status'], 'AWAITING_HUMAN_AUTHORITY_REVIEW')
+
+    def test_mobile_denied_authority_and_adapter_failure(self):
+        self.cases.create('mobile-1', 'CO', 'MOBILE_NOTARY', 'customer-1')
+        with self.assertRaises(AuthorityDenied):
+            self.bridge(authority=False).review('mobile-1', 'reviewer-1', 'notary-1', {'ref': 'x'})
+        def unavailable(*args):
+            raise RuntimeError('verification unavailable')
+        bridge = AuthorityReview(self.db, self.cases, unavailable, lambda *a: True,
+                                 lambda *a: True, self.audit, CORE_LAWS)
+        with self.assertRaises(AuthorityDenied):
+            bridge.review('mobile-1', 'reviewer-1', 'notary-1', {'ref': 'x'})
+        self.assertEqual(self.audit.events, [])
+
     def test_duplicate_review_denied(self):
         bridge=self.bridge()
         bridge.review('case-1','reviewer-1','notary-1',{'ref':'x'})

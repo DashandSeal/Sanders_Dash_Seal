@@ -18,19 +18,26 @@ class CaseRegistry:
                  service TEXT NOT NULL, requester TEXT NOT NULL,
                  status TEXT NOT NULL, created_at INTEGER NOT NULL)''')
 
-    def create(self, case_id, jurisdiction, service, requester):
+    def create(self, case_id, jurisdiction, service, requester, *, connection=None):
         if (not all(isinstance(x, str) and re.fullmatch(r'[A-Za-z0-9_.-]{1,128}', x)
                     for x in (case_id, jurisdiction, requester))
-                or service not in ('E_NOTARY', 'RON', 'AUTHORIZED_DOCUMENT_SERVICE')):
+                or service not in ('MOBILE_NOTARY', 'E_NOTARY', 'RON', 'AUTHORIZED_DOCUMENT_SERVICE')):
             raise CaseDenied('Invalid case identity, jurisdiction or service')
+        if connection is not None:
+            return self._insert(connection, case_id, jurisdiction, service, requester)
         with sqlite3.connect(self.db_path) as db:
-            try:
-                db.execute('INSERT INTO cases VALUES (?,?,?,?,?,?)',
-                           (case_id, jurisdiction, service, requester,
-                            'AWAITING_HUMAN_AUTHORITY_REVIEW', int(time.time())))
-            except sqlite3.IntegrityError as exc:
-                raise CaseDenied('Duplicate case') from exc
-        return self.get(case_id)
+            return self._insert(db, case_id, jurisdiction, service, requester)
+
+    @staticmethod
+    def _insert(db, case_id, jurisdiction, service, requester):
+        try:
+            db.execute('INSERT INTO cases VALUES (?,?,?,?,?,?)',
+                       (case_id, jurisdiction, service, requester,
+                        'AWAITING_HUMAN_AUTHORITY_REVIEW', int(time.time())))
+        except sqlite3.IntegrityError as exc:
+            raise CaseDenied('Duplicate case') from exc
+        return dict(case_id=case_id, jurisdiction=jurisdiction, service=service,
+                    requester=requester, status='AWAITING_HUMAN_AUTHORITY_REVIEW')
 
     def get(self, case_id):
         with sqlite3.connect(self.db_path) as db:

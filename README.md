@@ -32,7 +32,12 @@ python -m unittest discover -s tests -v
 
 The development runner executes the exact independently signed source snapshot and binds its hash into the lease. It rejects unrelated callbacks and source substitution. It is not an OS sandbox or a production runtime.
 
-**30 distinct local tests pass.**
+**128 local tests pass.**
+
+The customer appointment interface, operator quote review and Checkout handoff
+are implemented in development. See [customer workflow](docs/CUSTOMER_APPOINTMENTS.md)
+for runtime assembly and remaining production connections. No live appointment,
+customer authentication or payment deployment is claimed.
 
 See [authentication](docs/AUTHENTICATION.md), [build status](docs/BUILD_STATUS.md),
 [source mapping](docs/SOURCE_MAPPING.md), and [governance](docs/GOVERNANCE.md).

@@ -54,5 +54,10 @@ class WebhookIngressTests(unittest.TestCase):
         self.assertEqual(self.call()[0], '400 Bad Request')
         self.assertEqual(self.ledger.status('case-1'), 'PENDING')
 
+    def test_signed_malformed_event_is_client_error(self):
+        self.assertEqual(self.call(body=json.dumps(dict(self.event, data=None)).encode())[0],
+                         '400 Bad Request')
+        self.assertEqual(self.ledger.status('case-1'), 'PENDING')
+
 if __name__ == '__main__':
     unittest.main()
