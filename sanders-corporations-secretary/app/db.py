@@ -35,6 +35,29 @@ def init_db():
         CREATE TABLE IF NOT EXISTS tasks (id INTEGER PRIMARY KEY AUTOINCREMENT, company_id TEXT NOT NULL REFERENCES companies(id), title TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'open', due_date TEXT, created_at TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS events (id INTEGER PRIMARY KEY AUTOINCREMENT, company_id TEXT NOT NULL REFERENCES companies(id), kind TEXT NOT NULL, summary TEXT NOT NULL, payload TEXT NOT NULL, created_at TEXT NOT NULL);
         CREATE TABLE IF NOT EXISTS audit (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL, actor TEXT NOT NULL, operation TEXT NOT NULL, object_ref TEXT NOT NULL, payload TEXT NOT NULL, previous_hash TEXT NOT NULL, entry_hash TEXT NOT NULL);
+        CREATE TABLE IF NOT EXISTS knowledge (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          company_id TEXT NOT NULL REFERENCES companies(id),
+          title TEXT NOT NULL, body TEXT NOT NULL, source_type TEXT NOT NULL,
+          source_ref TEXT NOT NULL, classification TEXT NOT NULL DEFAULT 'internal',
+          content_sha256 TEXT NOT NULL, created_at TEXT NOT NULL,
+          UNIQUE(company_id,source_ref,content_sha256)
+        );
+        CREATE INDEX IF NOT EXISTS idx_knowledge_company ON knowledge(company_id);
+        CREATE TABLE IF NOT EXISTS action_proposals (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          company_id TEXT NOT NULL REFERENCES companies(id),
+          action_type TEXT NOT NULL, title TEXT NOT NULL,
+          rationale TEXT NOT NULL, source_kind TEXT NOT NULL,
+          source_id INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'proposed',
+          created_at TEXT NOT NULL, reviewed_at TEXT, review_note TEXT,
+          UNIQUE(source_kind,source_id,action_type)
+        );
+        CREATE INDEX IF NOT EXISTS idx_action_status ON action_proposals(status,company_id);
+        CREATE TABLE IF NOT EXISTS connector_sync (
+          connector TEXT PRIMARY KEY, latest_ref TEXT, last_synced_at TEXT,
+          last_status TEXT NOT NULL, source_url TEXT NOT NULL
+        );
         """)
         for c in COMPANIES:
             db.execute("INSERT OR IGNORE INTO companies(id,name,entity_type,founded_year,co_sos_id,note) VALUES (?,?,?,?,?,?)",(c["id"],c["name"],c["type"],c.get("founded_year"),c.get("co_sos_id"),c["note"]))

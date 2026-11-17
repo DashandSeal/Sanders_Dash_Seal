@@ -1,12 +1,11 @@
-# Security and privacy
+# Security — Sanders Corporations Secretary v0.2
 
-SCS v0.1 is **local development software**, not a certified or production-hardening release.
+**This public repository holds software source only.** Keep credentials, private business files, private emails, client details, and databases outside GitHub.
 
-- Bind only to loopback (`127.0.0.1`). Never forward port 8765 to the public Internet.
-- Set `SCS_API_TOKEN` to a random private value; do not place it in source control, screenshots or public messages.
-- Keep the SQLite file, internal records, client information, keys, and secrets **outside** GitHub.
-- The source repository is public by owner direction. Keep confidential corporate archives in access-controlled storage separate from this repository. Review every commit for confidential content.
-- Live event streaming only covers events received by the local SCS server. It does not imply external account or government portal access.
-- The audit hash chain is a tamper-evident integrity check; there is no external timestamp anchor, notarization or independently verified digital signature in v0.1.
-- Business actions such as filings, contracts, and financial transactions are not performed by this prototype.
-- Before any public exposure: implement TLS, multi-factor identity, company-scoped roles, CSRF/XSS protections, service-to-service auth, encryption, monitoring, backups, recovery and a full threat model.
+- Require unique owner runtime token, network isolation and HTTPS for any remote deployment.
+- Source text must be explicitly attributed to an entity and original source. No cross-entity access for company-scoped queries.
+- Optional hosted reasoning sends selected evidence excerpts to the configured provider only after both server-side opt-in and per-question UI consent; no model credentials are included in source.
+- Read-only public GitHub connector fetches a fixed endpoint; it does not use private GitHub permissions or publish company records.
+- Event classification produces action proposals only; it cannot submit a regulatory filing, commit repository changes, send money or sign legal documents.
+- SQLite's audit hash-chain helps detect row modification, not whole-file replacement. External immutable witness/backups are required for stronger assurance.
+- Do not expose this version directly to the Internet: local single-token authorization is not production IAM. Before hosting, add per-user roles, CSRF protections as applicable, secret rotation, rate limiting, secure backups, and a hardened reverse proxy.

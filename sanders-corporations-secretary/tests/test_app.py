@@ -29,7 +29,7 @@ def test_event_and_audit_verification(client):
     assert r.json()['advice']['signals'][0]['severity']=='high'
     assert len(client.get('/api/events',headers=TOKEN).json())==1
     check=client.get('/api/audit/verify',headers=TOKEN).json()
-    assert check['valid'] and check['entries']==1
+    assert check['valid'] and check['entries']==2
 
 def test_task_lifecycle(client):
     r=client.post('/api/tasks',headers=TOKEN,json={'company_id':'senior_living','title':'Review annual registration'})

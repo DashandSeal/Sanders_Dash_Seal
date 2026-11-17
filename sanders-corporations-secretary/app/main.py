@@ -1,6 +1,6 @@
 """Secure-by-default localhost proof of concept; integrations require separate configuration."""
 from __future__ import annotations
-from contextlib import asynccontextmanager
+from contextlib import asynccontextmanager, suppress
 import asyncio, json, os, secrets
 from datetime import date
 from pathlib import Path
@@ -9,7 +9,7 @@ from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 from typing import Literal
-from . import db
+from . import db, knowledge, intelligence, connectors, model_adapter
 from .brain import action_policy, classify_event, recommend_tasks
 from .registry import COMPANY_BY_ID, COMPANIES, SEALS, SEAL_LIBRARY_PATH
 
@@ -18,9 +18,23 @@ async def lifespan(_app):
     if not os.getenv("SCS_API_TOKEN"):
         raise RuntimeError("SCS_API_TOKEN is required. Set a strong random token before starting.")
     db.init_db()
-    yield
+    polling=int(os.getenv('SCS_GITHUB_POLL_SECONDS','0'))
+    worker=None
+    if polling:
+        if polling<180:raise RuntimeError('SCS_GITHUB_POLL_SECONDS must be at least 180, or 0 to disable')
+        async def poll_public_github():
+            while True:
+                try:await asyncio.to_thread(connectors.sync_public_github)
+                except Exception:pass  # Connector failure never blocks local corporate operations.
+                await asyncio.sleep(polling)
+        worker=asyncio.create_task(poll_public_github())
+    try:yield
+    finally:
+        if worker:
+            worker.cancel()
+            with suppress(asyncio.CancelledError):await worker
 
-app=FastAPI(title="Sanders Corporations Secretary",version="0.1.0",docs_url=None,redoc_url=None,openapi_url=None,lifespan=lifespan)
+app=FastAPI(title="Sanders Corporations Secretary",version="0.2.0",docs_url=None,redoc_url=None,openapi_url=None,lifespan=lifespan)
 STATIC=Path(__file__).resolve().parent/"static"
 app.mount("/static",StaticFiles(directory=str(STATIC)),name="static")
 
@@ -55,7 +69,7 @@ def home():
 
 @app.get("/api/health")
 def health():
-    return {"service":"Sanders Corporations Secretary","status":"running","mode":"local_prototype"}
+    return {"service":"Sanders Corporations Secretary","status":"running","mode":"local_rtsa_core_v2"}
 
 @app.get("/api/companies",dependencies=[Depends(authorized)])
 def companies():
@@ -105,7 +119,7 @@ def add_event(item:EventNew):
         cursor=cx.execute("INSERT INTO events(company_id,kind,summary,payload,created_at) VALUES (?,?,?,?,?)",(item.company_id,item.kind,item.summary,json.dumps(item.payload,sort_keys=True),db.utc_now()))
         eid=cursor.lastrowid
         db.audit_insert(cx,"owner","event.record",f"event:{eid}",item.model_dump())
-    return {"id":eid,"advice":classify_event(item.kind,item.company_id,item.summary)}
+    return {"id":eid,"advice":classify_event(item.kind,item.company_id,item.summary),"proposals":intelligence.evaluate_event(eid)}
 
 @app.get("/api/dashboard",dependencies=[Depends(authorized)])
 def dashboard():
@@ -121,37 +135,84 @@ def audit_verify():
 
 class Inquiry(BaseModel):
     question: str=Field(min_length=3,max_length=500)
-    company_id: str | None = None
+    company_id: str | None=None
+    use_hosted_model: bool=False
 
-@app.post("/api/secretary/ask",dependencies=[Depends(authorized)])
+@app.post('/api/secretary/ask',dependencies=[Depends(authorized)])
 def secretary_ask(q:Inquiry):
-    if q.company_id: ensure_company(q.company_id)
-    lower=q.question.lower()
+    if q.company_id:ensure_company(q.company_id)
+    response=intelligence.brief(q.question,q.company_id)
+    if q.use_hosted_model:
+        if not response['evidence']:
+            response['model_status']='skipped: no supporting evidence to send'
+        else:
+            try:
+                response['answer']=model_adapter.infer(q.question,response['evidence'])
+                response['external_ai_used']=True
+                response['mode']='hosted_model_evidence_grounded_v2'
+                response['model_status']='success'
+            except Exception as ex:
+                response['model_status']='not available: '+str(ex)
+    return response
+
+class KnowledgeNew(BaseModel):
+    company_id: str
+    title: str=Field(min_length=3,max_length=180)
+    body: str=Field(min_length=5,max_length=30000)
+    source_type: Literal['owner_record','official_record','public_document','external_notice','other']
+    source_ref: str=Field(min_length=3,max_length=500)
+    classification: Literal['internal','public']='internal'
+
+@app.post('/api/knowledge',dependencies=[Depends(authorized)],status_code=201)
+def knowledge_add(item:KnowledgeNew):
+    ensure_company(item.company_id)
+    return knowledge.add_knowledge(**item.model_dump())
+
+@app.get('/api/knowledge/search',dependencies=[Depends(authorized)])
+def knowledge_search(q:str=Query(min_length=3,max_length=300),company_id:str|None=None):
+    if company_id:ensure_company(company_id)
+    return knowledge.search(q,company_id)
+
+@app.get('/api/intelligence/status',dependencies=[Depends(authorized)])
+def intelligence_status():
     with db.connect() as cx:
-        tasks=[dict(x) for x in cx.execute("SELECT * FROM tasks "+("WHERE company_id=? " if q.company_id else "")+"ORDER BY id DESC LIMIT 50",(q.company_id,) if q.company_id else ())]
-        events=[dict(x) for x in cx.execute("SELECT * FROM events "+("WHERE company_id=? " if q.company_id else "")+"ORDER BY id DESC LIMIT 10",(q.company_id,) if q.company_id else ())]
-    if any(x in lower for x in ("registration", "entity", "secretary of state", "sos", "founded", "year")):
-        chosen=[COMPANY_BY_ID[q.company_id]] if q.company_id else COMPANIES
-        answer="; ".join(f"{c['name']}: founded {c['founded_year'] or 'not stated'}; Colorado SOS ID {c['co_sos_id'] or 'not stored'}" for c in chosen)
-        sources=["owner_provided_registry:registry.py"]
-    elif any(x in lower for x in ("seal", "letterhead", "crest")):
-        answer="The electronic seal source index is "+SEAL_LIBRARY_PATH+". Headquarters and the three LLCs have separate seal designs; S & G Security's design has not been added to this prototype."
-        sources=["owner_provided_registry:registry.py", "library_path_reference"]
-    elif any(x in lower for x in ("task", "deadline", "due", "priority")):
-        open_items=[t for t in tasks if t['status']!='complete']
-        answer=f"There are {len(open_items)} current open/in-progress tasks in this scope. "+("Most recent: "+"; ".join(t['title'] for t in open_items[:5]) if open_items else "No tasks have been recorded here yet.")
-        sources=["local_db:tasks"]
-    elif any(x in lower for x in ("event", "news", "activity", "notice", "grant")):
-        answer=f"There are {len(events)} recent stored events in this scope. "+("Most recent: "+"; ".join(e['summary'] for e in events[:5]) if events else "No external events or grants have been connected to this system yet.")
-        sources=["local_db:events"]
-    elif any(x in lower for x in ("audit", "integrity", "security")):
-        audit=db.verify_audit()
-        answer=f"Local hash-chain verification: {audit['valid']}; entries: {audit['entries']}. This does not establish external notarial or cryptographic signature authority."
-        sources=["local_db:audit"]
-    else:
-        answer="I can answer questions grounded in the local corporate registry, seals, tasks, events, and audit log. To answer other questions, add approved sources and an AI retrieval/model adapter."
-        sources=["system_capabilities:v0.1"]
-    return {"answer":answer,"sources":sources,"mode":"transparent_local_inquiry","external_ai_used":False}
+        docs=cx.execute('SELECT COUNT(*) FROM knowledge').fetchone()[0]
+        pending=cx.execute("SELECT COUNT(*) FROM action_proposals WHERE status='proposed'").fetchone()[0]
+        events=cx.execute('SELECT COUNT(*) FROM events').fetchone()[0]
+    return {'engine':'evidence-grounded event intelligence v2','local_knowledge_records':docs,
+      'pending_action_proposals':pending,'recorded_events':events,
+      'realtime_event_stream':'local database SSE','connectors':connectors.status(),
+      'hosted_model':model_adapter.model_config(),'live_external_portals_connected':False,'github_poll_seconds':int(os.getenv('SCS_GITHUB_POLL_SECONDS','0'))}
+
+@app.get('/api/actions',dependencies=[Depends(authorized)])
+def actions(company_id:str|None=None):
+    if company_id:ensure_company(company_id)
+    with db.connect() as cx:
+        rows=cx.execute('SELECT * FROM action_proposals'+(' WHERE company_id=?' if company_id else '')+' ORDER BY id DESC LIMIT 200', (company_id,) if company_id else ()).fetchall()
+    return [dict(x) for x in rows]
+
+class ActionReview(BaseModel):
+    status: Literal['acknowledged','dismissed']
+    note: str=Field(default='',max_length=500)
+
+@app.patch('/api/actions/{action_id}',dependencies=[Depends(authorized)])
+def review_action(action_id:int,decision:ActionReview):
+    with db.connect() as cx:
+        row=cx.execute('SELECT * FROM action_proposals WHERE id=?',(action_id,)).fetchone()
+        if not row:raise HTTPException(404,'Proposal not found')
+        if row['status']!='proposed':raise HTTPException(409,'Proposal has already been reviewed')
+        cx.execute('UPDATE action_proposals SET status=?,reviewed_at=?,review_note=? WHERE id=?', (decision.status,db.utc_now(),decision.note,action_id))
+        db.audit_insert(cx,'owner','proposal.review',f'action:{action_id}',{'status':decision.status,'note':decision.note})
+    return {'id':action_id,'status':decision.status,'external_action_executed':False}
+
+@app.post('/api/connectors/github/sync',dependencies=[Depends(authorized)])
+def github_sync():
+    try:return connectors.sync_public_github()
+    except Exception as ex:raise HTTPException(502,'GitHub public connector failed: '+str(ex))
+
+@app.get('/api/connectors/status',dependencies=[Depends(authorized)])
+def connector_status():
+    return connectors.status()
 
 @app.get("/api/policy/{action}",dependencies=[Depends(authorized)])
 def policy(action:str):

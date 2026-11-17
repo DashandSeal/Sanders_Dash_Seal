@@ -1,31 +1,29 @@
-# Sanders Corporations Secretary — architecture contracts
+# Sanders Corporations Secretary — RTSA Architecture v0.2
 
-## Scope
-A local event-driven corporate operations service, intended to serve the Sanders corporate family while keeping each legal entity separate.
+**System boundary:** this is a local, evidence-driven RTSA core; live external data is marked by source and retrieval time. Features not connected are labeled inactive instead of invented.
 
-- Headquarters is a coordinating brand/oversight record, not automatically a separate legal company.
-- Sanders Home Healthcare & Caregivers LLC, Sanders Senior Living LLC, Sanders Legal Helpers LLC d/b/a Sanders Dash & Seal each have an independent entity ID and document boundary.
-- S & G Security Inc. is the fourth operating company; its 1996 historical start must not be attributed to the three LLCs.
+## Data plane
 
-## Connection to established sovereign architecture
-The broader Sanders Synthetic AI architecture is an external, separately governed system. This prototype is an **integration interface**, NOT an implementation or disclosure of unpublished proprietary internals. Extensions may be connected through reviewed adapters.
+- `registry.py` stores five coordinating and legal identities, separate seal pointers, known SOS IDs.
+- `db.py` manages SQLite registries for company tasks, events, source texts, proposals, read-only connector sync, and hash-chain audit. Documents and activity are local-only.
+- `knowledge.py` indexes original source text and scores query terms within the requested company scope before producing citations. A multi-company owner query is explicit (company_id null).
+- `intelligence.py` composes evidence-based answers and source references and automatically transforms certain event types into auditable action proposals. No proposal executes external changes.
+- `model_adapter.py` optionally synthesizes source-grounded answers using an owner-configured HTTPS chat-completions provider. A server opt-in, provider configuration, and user checkbox are all required. Default is local retrieval, not an LLM.
+- `connectors.py` reads one fixed public GitHub commit endpoint, validates commit identity, persists sync state and inserts source-attributed events only when changed.
+- `main.py` exposes an authenticated API and an SSE stream over **locally captured** events.
+- `app/static/index.html` is an executive command center displaying actual local state and external provider status.
 
-## Modules implemented in v0.1
-1. **Registry**: owner-supplied company identifiers and seal library index.
-2. **Audit**: per-write SHA-256 linked audit log with verify endpoint. Hash chain is tamper-evident, not an externally anchored or immutable ledger.
-3. **Event stream**: authenticated Server-Sent Events for *locally recorded events*.
-4. **Operations**: entity-scoped task registry, event intake, due notices, budget/filing signal routing stubs.
-5. **Deterministic advisor**: transparent business-rule suggestions; no external large language model connected yet.
-6. **Approval policy interface**: exposes which actions require the owner's direction; it does not act as a legal signer or alter external systems.
+## Security and governance
 
-## Planned live adapters (not yet connected)
-- GitHub repository archival: commit hashes, company-scoped document bundles, review status.
-- Grants.gov/JustGrants: application status and deadline monitoring where officially accessible.
-- State Secretary of State portals: entity information and filing alerts; only through lawful available APIs or documented processes.
-- Gmail/notifications: notices with source references and owner-facing alert queue.
-- Document engine: official letterhead and seal placement with versioned document history.
-- AI analysis: optional model provider adapter with document grounding, strict company scope and human-visible citations.
-- Owner sign-off, state sync and operational cryptographic signatures via an actual key-management service.
+- Public GitHub source contains no live API keys or private documents.
+- Every API route carrying business data requires `X-SCS-Token` matching the owner-provided runtime secret; a single token is localhost-only authentication.
+- Every indexed document is explicitly scoped to one company, and each query can filter to only that entity.
+- Action proposals are nonexecuting: review state is not legal filing, payment, signature, repository publication or company policy update.
+- SHA-256 audit chain is tamper-evident *inside the database*, but does not protect against entire-file replacement or cryptographically establish an authorized signer's identity.
+- Model endpoints are HTTPS only and are not enabled unless expressly configured. Source text is untrusted input; the system prompt instructs the provider to treat retrieved content as data and refuse embedded commands. Production tools must add hard enforcement for tool calls.
 
-## Security model
-By default bind to 127.0.0.1, require a bearer-equivalent secret in X-SCS-Token for all corporate data endpoints, keep `.env` and DB out of Git. Do not deploy this prototype to a publicly accessible host without TLS, individual users/roles, proper secret rotation, rate limiting, encrypted backups, compliance review, and connector permission scoping.
+## Current and future stages
+
+Implemented: local corporate memory, event intelligence, evidence retrieval, optional inference adapter, sourced public GitHub metadata, audit review queue, responsive dashboard and tests.
+
+Not yet live by default: external LLM credentials, opt-in periodic GitHub polling, official filing portals, Gmail/CRM integration, multi-tenant authentication and immutable offsite audit backup. Build those as distinct adapters with owner-granted permissions; do not claim an external system is connected until verified.

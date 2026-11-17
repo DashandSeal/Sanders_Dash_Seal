@@ -1,18 +1,10 @@
-# Live rollout plan
+# Controlled rollout — public code, private runtime
 
-## Stage 1: Local foundation (included)
-Registry, tasks, event feed, tamper-evident audit, corporate dashboard, and official branding assets. Tested locally without external dependencies beyond FastAPI/Uvicorn.
-
-## Stage 2: Public GitHub source, private records
-Publish vetted source code to `DashandSeal/Sanders_Dash_Seal/sanders-corporations-secretary/`. The code is public by owner direction. Never publish client records, internal correspondence, private archives, database files, or production signing keys; store private records separately with access controls.
-
-## Stage 3: Live integrations
-Configure approved event ingestion from state records, grants tools, the business email account, internal records, and appropriate calendar services. Sync integrations each require authentication, rate controls, source citation, and event provenance. For native state websites lacking APIs, lawful manual or supported browser workflows are an alternative.
-
-## Stage 4: Synthetic AI mesh interfaces
-Connect existing proprietary Sanders AI modules through independently tested interfaces, without publishing their internal implementation. Add source-grounded retrieval and optional model adapters; keep canonical governance records separate.
-
-## Stage 5: Production controls
-SSO/passkeys, MFA, tenant/company RBAC, TLS, backups, object store and malware scanning, audit anchoring, encryption at rest, encrypted secret vault, CI security testing, time synchronization and incident recovery drills.
-
-Always distinguish a drafted record from a legally filed/submitted, agency-confirmed record. The company owner remains the authorized corporate decision maker.
+1. Merge reviewed v0.2 source into the public `sanders-corporations-secretary/` subdirectory. Keep existing company app code outside this directory untouched.
+2. Install Python 3.11+, requirements and run `pytest -q` before serving.
+3. Generate `SCS_API_TOKEN` securely on the deployment machine; never commit an actual token, model key or SQLite database.
+4. Deploy with HTTPS, restricted access, and durable private storage for `state/secretary.sqlite3`. The default app is intended to listen only on localhost.
+5. Index owner-authorized original corporate documents using the local Knowledge Vault. Preserve version and citation; do not place confidential documents into public GitHub.
+6. Sync the public GitHub connector and verify source URL, timestamps and event idempotence.
+7. Configure an optional trusted inference service only with explicit owner consent and after reviewing provider data retention policies; do not enable remote sending by default.
+8. Verify live external connectivity separately. The v0.2 system does not yet monitor filing portals or operate continuously in an external cloud deployment.
