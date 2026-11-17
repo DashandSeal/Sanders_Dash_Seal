@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "sanders-twostep/sanders_twostep_v2.py",
+        "payload_hash": "45dc790b3d74139f3ed590ad9dd16466c8158b3cd0a7bb3a0516002814481978",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
