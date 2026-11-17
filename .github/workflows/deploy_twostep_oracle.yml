@@ -1,0 +1,56 @@
+name: The Sanders TwoStep v2 - Oracle Always Free
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sanders-twostep/**'
+      - '.github/workflows/deploy_twostep_oracle.yml'
+  workflow_dispatch:
+
+jobs:
+  verify-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      SCS_OCI_HOST: ${{ secrets.SCS_OCI_HOST }}
+      SCS_OCI_USER: ${{ secrets.SCS_OCI_USER }}
+      SCS_OCI_SSH_KEY: ${{ secrets.SCS_OCI_SSH_KEY }}
+      SCS_OCI_KNOWN_HOSTS: ${{ secrets.SCS_OCI_KNOWN_HOSTS }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run Platinum Blue Diamond Syntax & FEC Self-Heal Gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m py_compile sanders-twostep/sanders_twostep_v2.py
+          python3 -c "
+          import tempfile, importlib.util
+          from pathlib import Path
+          spec = importlib.util.spec_from_file_location('ts2', 'sanders-twostep/sanders_twostep_v2.py')
+          mod = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(mod)
+          with tempfile.TemporaryDirectory() as tmp:
+              eng = mod.TwoStepEngine(Path(tmp))
+              res = eng.seal_and_dispatch('ci.gate', {'sos_id': '20258029131'}, 'ATTESTATION_CERTIFICATE')
+              assert res['state'] == 'STEP2_ATTESTED' and res['fec_self_healed'] is True
+              print('CI Gate Passed:', res['receipt'])
+          "
+
+      - name: Deploy The Sanders TwoStep v2 to Oracle Always Free
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$SCS_OCI_HOST" || -z "$SCS_OCI_USER" || -z "$SCS_OCI_SSH_KEY" || -z "$SCS_OCI_KNOWN_HOSTS" ]]; then
+            echo "::notice::Awaiting SCS_OCI_USER and SCS_OCI_KNOWN_HOSTS secrets before SSH deployment."
+            exit 0
+          fi
+          install -d -m 0700 "$HOME/.ssh"
+          printf '%s\n' "$SCS_OCI_SSH_KEY" > "$HOME/.ssh/scs_oracle"
+          printf '%s\n' "$SCS_OCI_KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 0600 "$HOME/.ssh/scs_oracle" "$HOME/.ssh/known_hosts"
+          ssh -o StrictHostKeyChecking=yes -o BatchMode=yes -o ConnectTimeout=20 \
+            -i "$HOME/.ssh/scs_oracle" "${SCS_OCI_USER}@${SCS_OCI_HOST}" \
+            "bash -s -- '${GITHUB_SHA}'" \
+            < sanders-twostep/deploy/oracle/deploy_twostep.sh
+
