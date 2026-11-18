@@ -52,8 +52,7 @@ jobs:
             REPO_DIR="/opt/Sanders_Dash_Seal"
 
                         # 0. Bootstrap git, Python 3.12, and native C build tools on Oracle Linux 9
-            sudo dnf install -y git cmake gcc-c++ ninja-build openssl-devel python3.12 python3.12-devel
-
+                        sudo dnf install -y git cmake gcc-c++ make openssl-devel python3.12 python3.12-devel
             # 1. Clone or sync entire DashandSeal/Sanders_Dash_Seal repository
             if [ ! -d "$REPO_DIR/.git" ]; then
               sudo mkdir -p "$REPO_DIR"
