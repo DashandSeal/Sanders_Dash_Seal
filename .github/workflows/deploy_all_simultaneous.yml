@@ -24,16 +24,16 @@ jobs:
             pip install -r money_factory_legal_aid_v1_668/requirements.txt
           fi
 
-      - name: Verify Money Factory Legal Aid v1.668 Hard-Lock & ML-DSA-65
+            - name: Verify Money Factory Legal Aid v1.668 Hard-Lock & ML-DSA-65
         run: |
           if [ -f "money_factory_legal_aid_v1_668/shield/sovereign_shield_v3.py" ]; then
-            PYTHONPATH=money_factory_legal_aid_v1_668 python3 -c '
-            from shield.sovereign_shield_v3 import SovereignShieldV3
-            s = SovereignShieldV3("CI-MASTER-01", "US-CO-COS")
-            coc = s.generate_lattice_coc({"case": "master_deploy"}, "a"*64, "541110")
-            assert coc["court_admissibility_status"] == "VERIFIED_IMMUTABLE_2026"
-            print("VERIFIED:", coc["pqc_algorithm"], coc["court_admissibility_status"])
-            '
+            PYTHONPATH=money_factory_legal_aid_v1_668 python3 - <<'EOF'
+from shield.sovereign_shield_v3 import SovereignShieldV3
+s = SovereignShieldV3("CI-MASTER-01", "US-CO-COS")
+coc = s.generate_lattice_coc({"case": "master_deploy"}, "a" * 64, "561110")
+assert coc["court_admissibility_status"] == "VERIFIED_IMMUTABLE_2026"
+print("VERIFIED:", coc["pqc_algorithm"], coc["court_admissibility_status"])
+EOF
           fi
 
   deploy-all-to-oci:
