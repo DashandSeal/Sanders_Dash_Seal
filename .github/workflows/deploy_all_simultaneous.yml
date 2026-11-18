@@ -45,8 +45,8 @@ jobs:
             set -euo pipefail
             REPO_DIR="/opt/Sanders_Dash_Seal"
 
-            # 0. Bootstrap git, Python 3.12, and native C build tools on Oracle Linux 9
-            sudo dnf install -y git cmake gcc-c++ make openssl-devel python3.12 python3.12-devel
+            # 0. Bootstrap git, Nginx, Python 3.12, and native C build tools on Oracle Linux 9
+            sudo dnf install -y git nginx cmake gcc-c++ make openssl-devel python3.12 python3.12-devel
 
             # 1. Clone or sync entire DashandSeal/Sanders_Dash_Seal repository
             if [ ! -d "$REPO_DIR/.git" ]; then
@@ -68,17 +68,31 @@ jobs:
             [ -f requirements-server.txt ] && pip install -r requirements-server.txt || true
             [ -f money_factory_legal_aid_v1_668/requirements.txt ] && pip install -r money_factory_legal_aid_v1_668/requirements.txt || true
 
-            # 3. Install & reload Money Factory Legal Aid v1.668 systemd & Nginx configs if present
+            # 3. Install Money Factory Legal Aid v1.668 systemd & Nginx reverse proxy
             if [ -f money_factory_legal_aid_v1_668/infra/oracle_linux_9/money-factory-legal.service ]; then
               sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money-factory-legal.service /etc/systemd/system/
             fi
+            sudo mkdir -p /etc/nginx/conf.d /etc/nginx/snippets
             if [ -f money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf ]; then
-              sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf /etc/nginx/conf.d/
+              sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf /etc/nginx/snippets/money_factory_legal.conf
+              sudo tee /etc/nginx/conf.d/money_factory_legal_server.conf >/dev/null <<'NGINX'
+            server {
+                listen 80;
+                server_name sandersdashandseal.com www.sandersdashandseal.com 129.146.111.166 _;
+                include /etc/nginx/snippets/money_factory_legal.conf;
+            }
+            NGINX
             fi
 
-            # 4. Run repository deploy scripts & restart all services simultaneously
+            # 4. Run repository deploy scripts, open HTTP/HTTPS firewalld ports, and restart services
             [ -f deploy.sh ] && chmod +x deploy.sh && ./deploy.sh || true
+            if systemctl is-active --quiet firewalld; then
+              sudo firewall-cmd --permanent --add-service=http || true
+              sudo firewall-cmd --permanent --add-service=https || true
+              sudo firewall-cmd --reload || true
+            fi
             sudo systemctl daemon-reload
+            sudo nginx -t
 
             for svc in money-factory-legal.service sanders-dash-seal.service gunicorn.service nginx.service; do
               if systemctl list-unit-files | grep -q "^${svc}"; then
@@ -92,4 +106,8 @@ jobs:
               docker compose up -d --build || true
             fi
 
+            # 6. Automated End-to-End Health & ML-DSA-65 Smoke Test on OCI
+            sleep 2
+            curl -fsS http://127.0.0.1/legal-aid/health
+            echo ""
             echo "SIMULTANEOUS DEPLOY COMPLETE: All Sanders_Dash_Seal services active."
