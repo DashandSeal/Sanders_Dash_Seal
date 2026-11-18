@@ -1,4 +1,4 @@
-name: simultaneous master deploy - sanders_dash_seal
+name: simultaneous master deploy - Sanders_Dash_Seal
 
 on:
   push:
@@ -73,19 +73,19 @@ jobs:
               sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money-factory-legal.service /etc/systemd/system/
             fi
             sudo mkdir -p /etc/nginx/conf.d /etc/nginx/snippets
+            sudo sed -i 's/default_server//g' /etc/nginx/nginx.conf || true
             if [ -f money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf ]; then
               sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf /etc/nginx/snippets/money_factory_legal.conf
               sudo tee /etc/nginx/conf.d/money_factory_legal_server.conf >/dev/null <<'NGINX'
             server {
-                listen 80;
+                listen 80 default_server;
                 server_name sandersdashandseal.com www.sandersdashandseal.com 129.146.111.166 _;
                 include /etc/nginx/snippets/money_factory_legal.conf;
             }
             NGINX
             fi
 
-            # 4. Run repository deploy scripts, open HTTP/HTTPS firewalld ports, and restart services
-            [ -f deploy.sh ] && chmod +x deploy.sh && ./deploy.sh || true
+            # 4. Open HTTP/HTTPS firewalld ports & explicitly enable/restart core services
             if systemctl is-active --quiet firewalld; then
               sudo firewall-cmd --permanent --add-service=http || true
               sudo firewall-cmd --permanent --add-service=https || true
@@ -94,10 +94,15 @@ jobs:
             sudo systemctl daemon-reload
             sudo nginx -t
 
-            for svc in money-factory-legal.service sanders-dash-seal.service gunicorn.service nginx.service; do
-              if systemctl list-unit-files | grep -q "^${svc}"; then
-                sudo systemctl enable "$svc" || true
-                sudo systemctl restart "$svc"
+            sudo systemctl enable --now money-factory-legal.service
+            sudo systemctl restart money-factory-legal.service
+            sudo systemctl enable --now nginx.service
+            sudo systemctl restart nginx.service
+
+            for svc in sanders-dash-seal.service gunicorn.service; do
+              if systemctl list-unit-files "$svc" | grep -q "$svc"; then
+                sudo systemctl enable --now "$svc" || true
+                sudo systemctl restart "$svc" || true
               fi
             done
 
