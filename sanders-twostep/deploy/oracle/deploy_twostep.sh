@@ -2,6 +2,8 @@
 set -euo pipefail
 
 COMMIT_SHA="${1:-main}"
+GH_HOST="github.com"
+GH_REPO="DashandSeal/Sanders_Dash_Seal.git"
 REPO_DIR="$HOME/.local/src/Sanders_Dash_Seal"
 APP_DIR="$HOME/.local/share/sanders-twostep-v2"
 SVC_DIR="$HOME/.config/systemd/user"
@@ -9,7 +11,7 @@ SVC_DIR="$HOME/.config/systemd/user"
 mkdir -p "$APP_DIR/assets" "$HOME/.local/src" "$SVC_DIR"
 
 if [[ ! -d "$REPO_DIR/.git" ]]; then
-  git clone --depth 1 https://github.com "$REPO_DIR"
+  git clone --depth 1 "https://${GH_HOST}/${GH_REPO}" "$REPO_DIR"
 else
   git -C "$REPO_DIR" fetch origin main --depth 1
   git -C "$REPO_DIR" reset --hard origin/main
