@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "sanders-twostep/the_judge.py",
+        "payload_hash": "0f9227beb3c18a3179dc1889889d72aca501721806c6e4de94e6c1dfa37a0620",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
