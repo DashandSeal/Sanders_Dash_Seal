@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "money_factory_legal_aid_v1_668/app.py",
+        "payload_hash": "232e06dd79abe2d65e454b9916b71d1f2e3a241bd64427d3cf0aa8dbcae04b5c",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
