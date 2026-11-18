@@ -1,38 +1,29 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-COMMIT_SHA="${1:-}"
-if [[ ! "$COMMIT_SHA" =~ ^[0-9a-f]{40}$ ]]; then
-  echo "ERROR: Valid 40-character GitHub commit SHA required." >&2
-  exit 1
-fi
-
-APP_DIR="$HOME/.local/share/sanders-twostep-v2"
+COMMIT_SHA="${1:-main}"
 REPO_DIR="$HOME/.local/src/Sanders_Dash_Seal"
-SERVICE_DIR="$HOME/.config/systemd/user"
-SERVICE_FILE="$SERVICE_DIR/sanders-twostep.service"
+APP_DIR="$HOME/.local/share/sanders-twostep-v2"
+SVC_DIR="$HOME/.config/systemd/user"
 
-mkdir -p "$APP_DIR/assets" "$REPO_DIR" "$SERVICE_DIR"
+mkdir -p "$APP_DIR/assets" "$HOME/.local/src" "$SVC_DIR"
 
 if [[ ! -d "$REPO_DIR/.git" ]]; then
   git clone --depth 1 https://github.com "$REPO_DIR"
+else
+  git -C "$REPO_DIR" fetch origin main --depth 1
+  git -C "$REPO_DIR" reset --hard origin/main
 fi
-
-cd "$REPO_DIR"
-git fetch origin main --depth 1
-git checkout -f "$COMMIT_SHA"
 
 install -m 0750 "$REPO_DIR/sanders-twostep/sanders_twostep_v2.py" "$APP_DIR/sanders_twostep_v2.py"
-if [[ -d "$REPO_DIR/sanders-twostep/assets" ]]; then
-  cp -f "$REPO_DIR/sanders-twostep/assets/"*.png "$APP_DIR/assets/" 2>/dev/null || true
-fi
-sha256sum "$APP_DIR/sanders_twostep_v2.py" > "$APP_DIR/sanders_twostep_v2.py.sha256"
+install -m 0750 "$REPO_DIR/sanders-twostep/the_judge.py" "$APP_DIR/the_judge.py"
+cp -f "$REPO_DIR/sanders-twostep/"*.png "$APP_DIR/assets/" 2>/dev/null || true
+cp -f "$REPO_DIR/sanders-twostep/assets/"*.png "$APP_DIR/assets/" 2>/dev/null || true
 
-cat > "$SERVICE_FILE" <<EOF
+cat > "$SVC_DIR/sanders-twostep.service" <<EOF
 [Unit]
-Description=The Sanders TwoStep v2 - Sovereign Uplink & Self-Healing Control Plane
+Description=The Sanders TwoStep v2 (127.0.0.1:9400)
 After=network-online.target
-Wants=network-online.target
 
 [Service]
 Type=simple
@@ -46,11 +37,30 @@ Environment=PYTHONUNBUFFERED=1
 WantedBy=default.target
 EOF
 
-systemctl --user daemon-reload
-systemctl --user enable --now sanders-twostep.service
-systemctl --user restart sanders-twostep.service
+cat > "$SVC_DIR/sanders-judge.service" <<EOF
+[Unit]
+Description=The Judge - RTSA Constitutional Adjudicator (127.0.0.1:9405)
+After=network-online.target
 
+[Service]
+Type=simple
+WorkingDirectory=$APP_DIR
+ExecStart=/usr/bin/python3 $APP_DIR/the_judge.py
+Restart=always
+RestartSec=2
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=default.target
+EOF
+
+systemctl --user daemon-reload
+systemctl --user enable --now sanders-twostep.service sanders-judge.service
+systemctl --user restart sanders-twostep.service sanders-judge.service
 sleep 2
-curl -fsS http://127.0.0.1:9400/healthz
+
+LOOPBACK="127.0.0.1"
+curl -fsS "http://${LOOPBACK}:9400/healthz"
 echo ""
-echo "The Sanders TwoStep v2 deployed and verified at commit $COMMIT_SHA"
+curl -fsS "http://${LOOPBACK}:9405/healthz"
+echo ""
