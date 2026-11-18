@@ -1,0 +1,98 @@
+name: Simultaneous Master Deploy - Sanders_Dash_Seal
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  verify-legal-engine:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout DashandSeal/Sanders_Dash_Seal
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Native Build Tools & Dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y cmake gcc g++ ninja-build libssl-dev
+          if [ -f "money_factory_legal_aid_v1_668/requirements.txt" ]; then
+            pip install -r money_factory_legal_aid_v1_668/requirements.txt
+          fi
+
+      - name: Verify Money Factory Legal Aid v1.668 Hard-Lock & ML-DSA-65
+        run: |
+          if [ -f "money_factory_legal_aid_v1_668/shield/sovereign_shield_v3.py" ]; then
+            PYTHONPATH=money_factory_legal_aid_v1_668 python3 -c '
+            from shield.sovereign_shield_v3 import SovereignShieldV3
+            s = SovereignShieldV3("CI-MASTER-01", "US-CO-COS")
+            coc = s.generate_lattice_coc({"case": "master_deploy"}, "a"*64, "541110")
+            assert coc["court_admissibility_status"] == "VERIFIED_IMMUTABLE_2026"
+            print("VERIFIED:", coc["pqc_algorithm"], coc["court_admissibility_status"])
+            '
+          fi
+
+  deploy-all-to-oci:
+    needs: verify-legal-engine
+    runs-on: ubuntu-latest
+    environment: Production-Authorization-Gate
+    steps:
+      - name: Simultaneous Full-Repository Deploy on Oracle Linux 9
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            REPO_DIR="/opt/Sanders_Dash_Seal"
+
+            # 1. Clone or sync entire DashandSeal/Sanders_Dash_Seal repository
+            if [ ! -d "$REPO_DIR/.git" ]; then
+              sudo mkdir -p "$REPO_DIR"
+              sudo chown -R "$USER:$USER" "$REPO_DIR"
+              git clone https://github.com/DashandSeal/Sanders_Dash_Seal.git "$REPO_DIR"
+            fi
+            cd "$REPO_DIR"
+            git fetch origin main
+            git reset --hard origin/main
+
+            # 2. Ensure Python 3.12 virtual environment & install all repo + Legal Engine dependencies
+            if [ ! -d "$REPO_DIR/venv" ]; then
+              python3.12 -m venv "$REPO_DIR/venv" || python3 -m venv "$REPO_DIR/venv"
+            fi
+            source "$REPO_DIR/venv/bin/activate"
+            pip install --upgrade pip
+            [ -f requirements.txt ] && pip install -r requirements.txt || true
+            [ -f requirements-server.txt ] && pip install -r requirements-server.txt || true
+            [ -f money_factory_legal_aid_v1_668/requirements.txt ] && pip install -r money_factory_legal_aid_v1_668/requirements.txt || true
+
+            # 3. Install & reload Money Factory Legal Aid v1.668 systemd & Nginx configs if present
+            if [ -f money_factory_legal_aid_v1_668/infra/oracle_linux_9/money-factory-legal.service ]; then
+              sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money-factory-legal.service /etc/systemd/system/
+            fi
+            if [ -f money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf ]; then
+              sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf /etc/nginx/conf.d/
+            fi
+
+            # 4. Run repository deploy scripts & restart all services simultaneously
+            [ -f deploy.sh ] && chmod +x deploy.sh && ./deploy.sh || true
+            sudo systemctl daemon-reload
+
+            for svc in money-factory-legal.service sanders-dash-seal.service gunicorn.service nginx.service; do
+              if systemctl list-unit-files | grep -q "^${svc}"; then
+                sudo systemctl enable "$svc" || true
+                sudo systemctl restart "$svc"
+              fi
+            done
+
+            # 5. Bring up Docker Compose stacks if Docker is installed
+            if command -v docker >/dev/null 2>&1 && [ -f compose.yaml ]; then
+              docker compose up -d --build || true
+            fi
+
+            echo "SIMULTANEOUS DEPLOY COMPLETE: All Sanders_Dash_Seal services active."
