@@ -1,4 +1,4 @@
-name: Simultaneous Master Deploy - Sanders_Dash_Seal
+name: simultaneous master deploy - Sanders_Dash_Seal
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
             pip install -r money_factory_legal_aid_v1_668/requirements.txt
           fi
 
-            - name: Verify Money Factory Legal Aid v1.668 Hard-Lock & ML-DSA-65
+      - name: Verify Money Factory Legal Aid v1.668 Hard-Lock & ML-DSA-65
         run: |
           if [ -f "money_factory_legal_aid_v1_668/shield/sovereign_shield_v3.py" ]; then
             PYTHONPATH=money_factory_legal_aid_v1_668 python3 - <<'EOF'
@@ -51,8 +51,9 @@ EOF
             set -euo pipefail
             REPO_DIR="/opt/Sanders_Dash_Seal"
 
-                        # 0. Bootstrap git, Python 3.12, and native C build tools on Oracle Linux 9
-                        sudo dnf install -y git cmake gcc-c++ make openssl-devel python3.12 python3.12-devel
+            # 0. Bootstrap git, Python 3.12, and native C build tools on Oracle Linux 9
+            sudo dnf install -y git cmake gcc-c++ make openssl-devel python3.12 python3.12-devel
+
             # 1. Clone or sync entire DashandSeal/Sanders_Dash_Seal repository
             if [ ! -d "$REPO_DIR/.git" ]; then
               sudo mkdir -p "$REPO_DIR"
