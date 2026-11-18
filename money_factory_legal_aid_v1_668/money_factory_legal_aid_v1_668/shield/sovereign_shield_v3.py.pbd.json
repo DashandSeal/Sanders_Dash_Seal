@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "money_factory_legal_aid_v1_668/money_factory_legal_aid_v1_668/shield/sovereign_shield_v3.py",
+        "payload_hash": "62238dbb4ca6d0dfe156cb538aa6907baa6719117b0d98dc13df704c66f4debd",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
