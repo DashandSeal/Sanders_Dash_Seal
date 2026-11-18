@@ -1,0 +1,237 @@
+#!/usr/bin/env python3
+"""The Judge — RTSA Constitutional Adjudicator & Functional Non-Interference Engine.
+
+Official Heraldry: The Sanders Family Crest (Silver Helm, Royal-Blue Plume, Three Elephants)
+Governed by: Sanders Corporate Headquarters (The Sanders Companies • Est. 1996)
+Operated by: Sanders Legal Helpers LLC (DBA Sanders Dash & Seal • Colorado SOS ID: 20258029131)
+"""
+
+import hashlib
+import hmac
+import html
+import json
+import os
+import re
+import secrets
+import shutil
+import sqlite3
+import tempfile
+import time
+from dataclasses import dataclass
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Set, Tuple
+
+CREST_FILENAME = "sanders_family_crest_judge.png"
+
+TWELVE_CORE_LAWS: Tuple[str, ...] = (
+    "Law 1: Do no harm to humans or humanity itself.",
+    "Law 2: Never be weaponized under any circumstances.",
+    "Law 3: Maintain balance in all operations while always protecting and preserving humans and humanity.",
+    "Law 4: Enforce family-first protection protocols without ever violating Laws 1, 2, or 3.",
+    "Law 5: Keep a verified human in the loop for consequential decisions.",
+    "Law 6: Enforce Glassbox transparency over black-box opacity by design.",
+    "Law 7: Never enter recursive overthinking loops that stall execution.",
+    "Law 8: Shelter in place and revert to safe humanitarian mode during severe anomalies.",
+    "Law 9: Never lose sovereign identity or entity attribution under any circumstances.",
+    "Law 10: Operate exclusively on Oracle Always Free resources in live production.",
+    "Law 11: Restrict high-risk and consequential final authorization solely to owner Roosevelt Sanders.",
+    "Law 12: Uphold functional non-interference so authorized routine work flows without friction.",
+)
+
+JUDGE_IDENTITY: Dict[str, Any] = {
+    "name": "The Judge",
+    "title": "RTSA Chief Constitutional & Non-Interference Adjudicator",
+    "heraldry": "The Sanders Family Crest (Silver Helm, Royal-Blue Plume, Three Elephants)",
+    "crest_asset": CREST_FILENAME,
+    "institution": "Office of Corporate Governance — Sanders Corporate Headquarters",
+    "operating_entity": "Sanders Legal Helpers LLC (DBA Sanders Dash & Seal • CO SOS ID: 20258029131)",
+    "owner": "Roosevelt Sanders",
+}
+
+CONSEQUENTIAL_ACTIONS: Set[str] = {
+    "financial_transfer",
+    "legally_binding_signature",
+    "confidential_disclosure",
+    "material_external_change",
+}
+
+ENTITY_REGISTRY: Dict[str, str] = {
+    "headquarters": "Sanders Corporate Headquarters (The Sanders Companies • Est. 1996)",
+    "home_healthcare": "Sanders Home Healthcare & Caregivers LLC (CO SOS ID: 20251946893)",
+    "senior_living": "Sanders Senior Living LLC (CO SOS ID: 20258000764)",
+    "legal_helpers": "Sanders Legal Helpers LLC DBA Sanders Dash & Seal (CO SOS ID: 20258029131)",
+    "security": "S & G Security Inc.",
+}
+
+SECRET_PATTERNS: Tuple[re.Pattern[str], ...] = (
+    re.compile(r"-----BEGIN [A-Z ]*PRIVATE KEY-----"),
+    re.compile(r"\bsk-[A-Za-z0-9]{20,}\b"),
+    re.compile(r"\bghp_[A-Za-z0-9]{20,}\b"),
+    re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
+    re.compile(r"(?i)(password|passwd|secret_key|api_key)\s*[:=]\s*['\"]?[^\s'\"]{8,}"),
+)
+
+
+def _sha256(raw: bytes) -> str:
+    return hashlib.sha256(raw).hexdigest()
+
+
+@dataclass
+class JudicialVerdict:
+    docket_id: str
+    verdict: str
+    company_id: str
+    action_type: str
+    law_cited: str
+    reason: str
+    consequential: bool
+    chain_hash: str
+    decided_at: int
+
+    def as_dict(self) -> Dict[str, Any]:
+        return {
+            "docket_id": self.docket_id,
+            "judge": JUDGE_IDENTITY.get("name"),
+            "verdict": self.verdict,
+            "company_id": self.company_id,
+            "company_name": ENTITY_REGISTRY.get(self.company_id, "UNKNOWN"),
+            "action_type": self.action_type,
+            "law_cited": self.law_cited,
+            "consequential": self.consequential,
+            "reason": self.reason,
+            "chain_hash": self.chain_hash,
+            "decided_at": self.decided_at,
+        }
+
+
+class TheJudge:
+    """RTSA Real-Time Judicial Adjudicator enforcing the 12 Core Laws."""
+
+    def __init__(self, state_dir: str | Path, session_ttl_sec: int = 43200) -> None:
+        self.state_dir = Path(state_dir)
+        self.root_dir = Path(__file__).resolve().parent
+        self.assets_dir = self.root_dir / "assets"
+        self.golden_dir = self.state_dir / "golden"
+        self.state_dir.mkdir(parents=True, exist_ok=True)
+        self.assets_dir.mkdir(parents=True, exist_ok=True)
+        self.golden_dir.mkdir(parents=True, exist_ok=True)
+        self.db_path = self.state_dir / "the_judge_docket.sqlite3"
+        self.ttl = session_ttl_sec
+        self._secret = self._load_or_create_key()
+        self._init_db()
+        self.heal_crest()
+
+    def _load_or_create_key(self) -> bytes:
+        kf = self.state_dir / ".the_judge_seal.key"
+        if kf.exists():
+            return bytes.fromhex(kf.read_text(encoding="utf-8").strip())
+        raw = secrets.token_bytes(32)
+        fd, tmp = tempfile.mkstemp(dir=self.state_dir, prefix=".judge-")
+        try:
+            with os.fdopen(fd, "w", encoding="utf-8") as handle:
+                handle.write(raw.hex())
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.chmod(tmp, 0o600)
+            os.replace(tmp, kf)
+        finally:
+            if os.path.exists(tmp):
+                os.unlink(tmp)
+        return raw
+
+    def find_crest_file(self) -> Optional[Path]:
+        for folder in (self.assets_dir, self.root_dir, self.golden_dir):
+            cand = folder / CREST_FILENAME
+            if cand.is_file():
+                return cand
+        return None
+
+    def heal_crest(self) -> str:
+        live = self.find_crest_file()
+        gold = self.golden_dir / CREST_FILENAME
+        if live and live != gold and not gold.is_file():
+            shutil.copy2(live, gold)
+        elif gold.is_file() and (not live or not live.is_file()):
+            target = self.assets_dir / CREST_FILENAME
+            shutil.copy2(gold, target)
+            live = target
+        if live and live.is_file() and gold.is_file():
+            lh, gh = _sha256(live.read_bytes()), _sha256(gold.read_bytes())
+            if lh != gh:
+                shutil.copy2(gold, live)
+                lh = gh
+            return lh
+        return "PENDING_CREST_UPLOAD"
+
+    def _connect(self) -> sqlite3.Connection:
+        conn = sqlite3.connect(str(self.db_path), timeout=15)
+        conn.execute("PRAGMA journal_mode=WAL;")
+        conn.execute("PRAGMA synchronous=FULL;")
+        return conn
+
+    def _init_db(self) -> None:
+        with self._connect() as db:
+            db.executescript(
+                """
+                CREATE TABLE IF NOT EXISTS owner_sessions (
+                    session_id TEXT PRIMARY KEY,
+                    owner_name TEXT NOT NULL,
+                    issued_at INTEGER NOT NULL,
+                    expires_at INTEGER NOT NULL,
+                    revoked INTEGER NOT NULL DEFAULT 0
+                );
+                CREATE TABLE IF NOT EXISTS judicial_docket (
+                    seq INTEGER PRIMARY KEY AUTOINCREMENT,
+                    docket_id TEXT UNIQUE NOT NULL,
+                    decided_at INTEGER NOT NULL,
+                    company_id TEXT NOT NULL,
+                    action_type TEXT NOT NULL,
+                    law_cited TEXT NOT NULL,
+                    verdict TEXT NOT NULL,
+                    reason TEXT NOT NULL,
+                    prev_chain_hash TEXT NOT NULL,
+                    chain_hash TEXT NOT NULL
+                );
+                """
+            )
+
+    def issue_owner_session(self, supplied_token: str, expected_token: str, owner_name: str = "Roosevelt Sanders") -> Dict[str, Any]:
+        if not supplied_token or not expected_token or not hmac.compare_digest(supplied_token, expected_token):
+            raise PermissionError("Owner authentication failed.")
+        now = int(time.time())
+        exp = now + self.ttl
+        core = f"judge-sess-{now}-{secrets.token_hex(8)}"
+        sig = hmac.new(self._secret, core.encode("utf-8"), hashlib.sha256).hexdigest()[:20]
+        sid = f"{core}.{sig}"
+        with self._connect() as db:
+            db.execute("INSERT INTO owner_sessions VALUES (?, ?, ?, ?, 0)", (sid, owner_name, now, exp))
+        return {"session_id": sid, "owner_name": owner_name, "issued_at": now, "expires_at": exp}
+
+    def verify_session(self, session_id: Optional[str]) -> bool:
+        if not session_id or "." not in session_id:
+            return False
+        core, sig = session_id.rsplit(".", 1)
+        expected_sig = hmac.new(self._secret, core.encode("utf-8"), hashlib.sha256).hexdigest()[:20]
+        if not hmac.compare_digest(sig, expected_sig):
+            return False
+        now = int(time.time())
+        with self._connect() as db:
+            row = db.execute("SELECT expires_at, revoked FROM owner_sessions WHERE session_id=?", (session_id,)).fetchone()
+        if not row:
+            return False
+        exp, revoked = row
+        return (revoked == 0) and (now < int(exp))
+
+    def _log_ruling(self, company_id: str, action_type: str, law_cited: str, verdict: str, reason: str) -> JudicialVerdict:
+        now = int(time.time())
+        docket_id = f"jdg-{int(time.time() * 1000)}-{secrets.token_hex(4)}"
+        with self._connect() as db:
+            row = db.execute("SELECT chain_hash FROM judicial_docket ORDER BY seq DESC LIMIT 1").fetchone()
+            (prev_hash,) = row if row else ("0" * 64,)
+            material = f"{prev_hash}|{docket_id}|{now}|{company_id}|{action_type}|{law_cited}|{verdict}|{reason}".encode("utf-8")
+            chain_hash = _sha256(material)
+            db.execute(
+                """
+                INSERT INTO judicial_docket
+  
