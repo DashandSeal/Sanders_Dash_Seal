@@ -1,4 +1,4 @@
-name: simultaneous master deploy - Sanders_Dash_Seal
+name: simultaneous master deploy - sanders_dash_seal
 
 on:
   push:
