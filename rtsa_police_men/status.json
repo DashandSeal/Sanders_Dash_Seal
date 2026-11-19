@@ -1,0 +1,61 @@
+{
+  "rtsa_instance": "the_police_men_rtsa",
+  "rtsa_scope": "SECURITY_UPGRADES_AND_CSPU_GOVERNANCE_ONLY",
+  "identity_isolation": "STRICT_PER_RTSA_INDEPENDENT_IDENTITY",
+  "insignia_binding": {
+    "exclusive_to": "The Police Men RTSA",
+    "crest": "S & G Security Inc. — Sanders Three-Elephant Shield",
+    "palette": ["#1E40AF", "#C0C0C0", "#05070C"]
+  },
+  "stewardship": "Sanders Family Living Trust | S & G Security Inc.",
+  "status": "ACTIVE_LOCKED",
+  "topology": {
+    "platforms_online": 47,
+    "watchdogs": ["Lil Mama", "Baby Girl", "Alpha", "Bata"],
+    "handshake_protocol": "Sanders Handshake",
+    "guardian_nodes": ["Uncle Nickey / Mao"],
+    "ai_oversight": {
+      "M1": "AI Doctor (AI-Only Legal & Humanity-First Protocol)",
+      "M2": "AI Psychiatrist (AI-Only Alignment & Integrity Protocol)"
+    }
+  },
+  "cryptography": {
+    "signatures": ["ML-DSA-65 (FIPS 204)", "SPHINCS+ (FIPS 205)"],
+    "kem": "Kyber-1024 (ML-KEM-1024 / FIPS 203)",
+    "forensics": "Sovereign Shield Phantom Forensic CoC",
+    "court_admissibility_status": "VERIFIED_IMMUTABLE_2026"
+  },
+  "security_audit_log": [
+    {
+      "event_id": "GH-PAT-20261119-01",
+      "timestamp_utc": "2026-11-19T11:11:00Z",
+      "account": "DashandSeal",
+      "event_type": "PAT_PROVISIONED",
+      "token_label": "oci-cloudshell-repair",
+      "token_type": "classic",
+      "scopes": [
+        "admin:enterprise",
+        "admin:gpg_key",
+        "admin:org",
+        "admin:org_hook",
+        "admin:public_key",
+        "admin:repo_hook",
+        "admin:ssh_signing_key",
+        "audit_log",
+        "codespace",
+        "copilot",
+        "gist",
+        "notifications",
+        "project",
+        "repo",
+        "user",
+        "workflow",
+        "write:discussion",
+        "write:network_configurations",
+        "write:packages"
+      ],
+      "secret_exposure": "REDACTED_ZERO_EXPOSURE",
+      "watchdog_custodian": "Baby Girl (WD-02 Forensic CoC)"
+    }
+  ]
+}
