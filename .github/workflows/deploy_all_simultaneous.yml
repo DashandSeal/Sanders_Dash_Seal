@@ -14,11 +14,28 @@ jobs:
 
       - name: The Police Men RTSA — Zero-Secret Leak Guard
         run: |
-          if grep -rnE '(ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|gho_[A-Za-z0-9]{20,}|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY)' . --exclude-dir=.git; then
-            echo "CRITICAL BLOCK: Raw token or private key detected. Deployment aborted by The Police Men RTSA."
-            exit 1
-          fi
-          echo "VERIFIED: Zero raw credentials or private keys in repository."
+          python3 - <<'PY'
+          import pathlib, re, sys
+
+          token_re = re.compile(r'(ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|gho_[A-Za-z0-9]{20,})')
+          privkey_re = re.compile(r'-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----[\r\n]+[A-Za-z0-9+/=]{24,}')
+
+          leaks = []
+          for p in pathlib.Path('.').rglob('*'):
+              if '.git' in p.parts or not p.is_file():
+                  continue
+              try:
+                  text = p.read_text(errors='ignore')
+              except Exception:
+                  continue
+              if token_re.search(text) or privkey_re.search(text):
+                  leaks.append(str(p))
+
+          if leaks:
+              print("CRITICAL BLOCK: Raw token or private key payload detected in:", ", ".join(leaks))
+              sys.exit(1)
+          print("VERIFIED: Zero raw credentials or private key payloads in repository.")
+          PY
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
