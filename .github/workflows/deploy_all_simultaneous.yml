@@ -12,6 +12,14 @@ jobs:
       - name: Checkout DashandSeal/Sanders_Dash_Seal
         uses: actions/checkout@v4
 
+      - name: The Police Men RTSA — Zero-Secret Leak Guard
+        run: |
+          if grep -rnE '(ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|gho_[A-Za-z0-9]{20,}|BEGIN (RSA |EC |OPENSSH )?PRIVATE KEY)' . --exclude-dir=.git; then
+            echo "CRITICAL BLOCK: Raw token or private key detected. Deployment aborted by The Police Men RTSA."
+            exit 1
+          fi
+          echo "VERIFIED: Zero raw credentials or private keys in repository."
+
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -85,19 +93,45 @@ jobs:
             OVERRIDE
             fi
 
+            # 4b. Sync The Police Men RTSA (Security Upgrades & CSPU Governance) assets
+            sudo mkdir -p /var/www/rtsa /usr/share/nginx/html
+            if [ -d "$REPO_DIR/rtsa_police_men" ]; then
+              sudo cp "$REPO_DIR/rtsa_police_men/index.html" /usr/share/nginx/html/index.html
+              sudo cp "$REPO_DIR/rtsa_police_men/status.json" /var/www/rtsa/status.json
+            fi
+
             sudo mkdir -p /etc/nginx/conf.d /etc/nginx/snippets
             sudo sed -i 's/default_server//g' /etc/nginx/nginx.conf || true
             sudo sed -i 's/server_name[[:space:]]\+_;$/server_name localhost;/g' /etc/nginx/nginx.conf || true
 
             if [ -f money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf ]; then
               sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf /etc/nginx/snippets/money_factory_legal.conf
-              sudo tee /etc/nginx/conf.d/money_factory_legal_server.conf >/dev/null <<'NGINX'
+              if [ ! -f /etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem ]; then
+                sudo tee /etc/nginx/conf.d/money_factory_legal_server.conf >/dev/null <<'NGINX'
             server {
                 listen 80 default_server;
                 server_name sandersdashandseal.com www.sandersdashandseal.com 129.146.111.166 _;
+                root /usr/share/nginx/html;
+                index index.html;
+
+                server_tokens off;
+                add_header X-Frame-Options "SAMEORIGIN" always;
+                add_header X-Content-Type-Options "nosniff" always;
+                add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+
+                location = / {
+                    try_files /index.html =404;
+                }
+
+                location = /rtsa/status {
+                    default_type application/json;
+                    alias /var/www/rtsa/status.json;
+                }
+
                 include /etc/nginx/snippets/money_factory_legal.conf;
             }
             NGINX
+              fi
             fi
 
             # 5. Open HTTP/HTTPS firewalld ports & explicitly enable/restart core services
@@ -126,10 +160,10 @@ jobs:
               docker compose up -d --build || true
             fi
 
-            # 7. Automated End-to-End Health & ML-DSA-65 Smoke Test on OCI (with diagnostic fallback)
+            # 7. Automated End-to-End Health, RTSA & ML-DSA-65 Smoke Test on OCI
             HEALTH_OK=0
             for i in 1 2 3 4 5; do
-              if curl -fsS http://127.0.0.1/legal-aid/health; then
+              if curl -fsS http://127.0.0.1/legal-aid/health && curl -fsS http://127.0.0.1/rtsa/status >/dev/null; then
                 HEALTH_OK=1
                 break
               fi
@@ -144,4 +178,4 @@ jobs:
             fi
 
             echo ""
-            echo "SIMULTANEOUS DEPLOY COMPLETE: All Sanders_Dash_Seal services active."
+            echo "SIMULTANEOUS DEPLOY COMPLETE: The Police Men RTSA & Sanders_Dash_Seal active."
