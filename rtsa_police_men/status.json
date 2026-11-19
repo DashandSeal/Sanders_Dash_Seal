@@ -25,6 +25,18 @@
     "forensics": "Sovereign Shield Phantom Forensic CoC",
     "court_admissibility_status": "VERIFIED_IMMUTABLE_2026"
   },
+  "token_governance": {
+    "github_s2s_spec": "Stateless JWT & Stateful Opaque App Installation Tokens (May 2026)",
+    "override_header": "X-GitHub-Stateless-S2S-Token",
+    "header_modes": {
+      "enabled": "Stateless JWT (~520 chars, ghs_ prefix, 2 dots)",
+      "disabled": "Stateful opaque token (ghs_ prefix, 0 dots)",
+      "absent": "Standard GitHub rollout behavior"
+    },
+    "leak_guard_pattern": "ghs_[A-Za-z0-9\\.\\-_]{36,}",
+    "min_storage_buffer_chars": 520,
+    "watchdog_enforcer": "Alpha (WD-03) & Lil Mama (WD-01)"
+  },
   "security_audit_log": [
     {
       "event_id": "GH-PAT-20261119-01",
