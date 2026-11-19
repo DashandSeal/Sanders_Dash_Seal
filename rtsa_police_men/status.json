@@ -9,6 +9,12 @@
   },
   "stewardship": "Sanders Family Living Trust | S & G Security Inc.",
   "status": "ACTIVE_LOCKED",
+  "containment_envelope": {
+    "shield_layer": "Sovereign Shield V2/V3 Synthetic AI Defense",
+    "routing_labyrinth": "Synthetic AI Minotaur Surface Compression",
+    "exposed_ingress_paths": ["/", "/rtsa/status", "/legal-aid/health", "/legal-aid/v1/seal"],
+    "identity_preservation": "ISOLATED_POLICE_MEN_RTSA_ONLY"
+  },
   "topology": {
     "platforms_online": 47,
     "watchdogs": ["Lil Mama", "Baby Girl", "Alpha", "Bata"],
@@ -35,6 +41,7 @@
     },
     "leak_guard_pattern": "ghs_[A-Za-z0-9\\.\\-_]{36,}",
     "min_storage_buffer_chars": 520,
+    "actions_debug_policy": "ON_DEMAND_RE_RUN_ONLY (ACTIONS_STEP_DEBUG / ACTIONS_RUNNER_DEBUG disabled by default)",
     "watchdog_enforcer": "Alpha (WD-03) & Lil Mama (WD-01)"
   },
   "security_audit_log": [
