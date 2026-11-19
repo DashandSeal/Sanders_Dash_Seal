@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "rtsa_police_men/index.html",
+        "payload_hash": "8a1d9360eea4afcbe7d89cb37e58da5dc2dcb50fa53b124b4878749913e6eb53",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
