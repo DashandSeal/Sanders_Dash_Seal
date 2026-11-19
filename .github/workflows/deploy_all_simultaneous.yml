@@ -68,12 +68,27 @@ jobs:
             [ -f requirements-server.txt ] && pip install -r requirements-server.txt || true
             [ -f money_factory_legal_aid_v1_668/requirements.txt ] && pip install -r money_factory_legal_aid_v1_668/requirements.txt || true
 
-            # 3. Install Money Factory Legal Aid v1.668 systemd & Nginx reverse proxy
+            # 3. Register liboqs shared libraries globally & allow Nginx localhost proxying under SELinux
+            printf "/usr/local/lib64\n/usr/local/lib\n" | sudo tee /etc/ld.so.conf.d/liboqs.conf >/dev/null
+            sudo ldconfig
+            if command -v setsebool >/dev/null 2>&1; then
+              sudo setsebool -P httpd_can_network_connect 1 || true
+            fi
+
+            # 4. Install Money Factory Legal Aid v1.668 systemd & Nginx reverse proxy
             if [ -f money_factory_legal_aid_v1_668/infra/oracle_linux_9/money-factory-legal.service ]; then
               sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money-factory-legal.service /etc/systemd/system/
+              sudo mkdir -p /etc/systemd/system/money-factory-legal.service.d
+              sudo tee /etc/systemd/system/money-factory-legal.service.d/override.conf >/dev/null <<'OVERRIDE'
+            [Service]
+            Environment="LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib"
+            OVERRIDE
             fi
+
             sudo mkdir -p /etc/nginx/conf.d /etc/nginx/snippets
             sudo sed -i 's/default_server//g' /etc/nginx/nginx.conf || true
+            sudo sed -i 's/server_name[[:space:]]\+_;$/server_name localhost;/g' /etc/nginx/nginx.conf || true
+
             if [ -f money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf ]; then
               sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf /etc/nginx/snippets/money_factory_legal.conf
               sudo tee /etc/nginx/conf.d/money_factory_legal_server.conf >/dev/null <<'NGINX'
@@ -85,7 +100,7 @@ jobs:
             NGINX
             fi
 
-            # 4. Open HTTP/HTTPS firewalld ports & explicitly enable/restart core services
+            # 5. Open HTTP/HTTPS firewalld ports & explicitly enable/restart core services
             if systemctl is-active --quiet firewalld; then
               sudo firewall-cmd --permanent --add-service=http || true
               sudo firewall-cmd --permanent --add-service=https || true
@@ -106,13 +121,27 @@ jobs:
               fi
             done
 
-            # 5. Bring up Docker Compose stacks if Docker is installed
+            # 6. Bring up Docker Compose stacks if Docker is installed
             if command -v docker >/dev/null 2>&1 && [ -f compose.yaml ]; then
               docker compose up -d --build || true
             fi
 
-            # 6. Automated End-to-End Health & ML-DSA-65 Smoke Test on OCI
-            sleep 2
-            curl -fsS http://127.0.0.1/legal-aid/health
+            # 7. Automated End-to-End Health & ML-DSA-65 Smoke Test on OCI (with diagnostic fallback)
+            HEALTH_OK=0
+            for i in 1 2 3 4 5; do
+              if curl -fsS http://127.0.0.1/legal-aid/health; then
+                HEALTH_OK=1
+                break
+              fi
+              sleep 2
+            done
+
+            if [ "$HEALTH_OK" -ne 1 ]; then
+              echo "=== DIAGNOSTICS: money-factory-legal.service ==="
+              sudo systemctl status money-factory-legal.service --no-pager -l || true
+              sudo journalctl -u money-factory-legal.service -n 30 --no-pager || true
+              exit 1
+            fi
+
             echo ""
             echo "SIMULTANEOUS DEPLOY COMPLETE: All Sanders_Dash_Seal services active."
