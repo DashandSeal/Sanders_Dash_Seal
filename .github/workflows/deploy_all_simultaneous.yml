@@ -188,7 +188,8 @@ jobs:
             # 7. Automated End-to-End Health, RTSA & ML-DSA-65 Smoke Test on OCI
             HEALTH_OK=0
             for i in 1 2 3 4 5; do
-              if curl -fsS http://127.0.0.1/legal-aid/health && curl -fsS http://127.0.0.1/rtsa/status >/dev/null; then
+              if curl -fsS -H "Host: sandersdashandseal.com" http://127.0.0.1/legal-aid/health && \
+                 curl -fsSkL --resolve sandersdashandseal.com:443:127.0.0.1 --resolve sandersdashandseal.com:80:127.0.0.1 https://sandersdashandseal.com/rtsa/status >/dev/null; then
                 HEALTH_OK=1
                 break
               fi
