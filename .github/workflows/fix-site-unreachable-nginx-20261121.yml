@@ -1,0 +1,203 @@
+name: Repair site unreachable - nginx proxy (one-time)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  repair-site-unreachable:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Diagnose and repair nginx proxy on Oracle
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo '=== REPAIR 2026-11-21: sandersdashandseal.com unreachable, app on 8000 alive ==='
+            date -u; date
+            echo '--- 1. DIAGNOSTICS: nginx status ---'
+            sudo systemctl status nginx --no-pager -l || true
+            sudo systemctl is-active nginx || true
+            echo '--- nginx -t ---'
+            sudo nginx -t; echo "NGINX_T_EXIT=$?"
+            echo '--- nginx -T (full effective config) ---'
+            sudo nginx -T 2>&1 | head -n 500 || true
+            echo '--- conf.d and snippets listing ---'
+            sudo ls -l /etc/nginx/conf.d/ || true
+            sudo ls -l /etc/nginx/snippets/ || true
+            echo '--- every conf.d file ---'
+            for f in /etc/nginx/conf.d/*; do echo "===== $f ====="; sudo cat "$f" || true; echo ''; done
+            echo '--- every snippet file ---'
+            for f in /etc/nginx/snippets/*; do echo "===== $f ====="; sudo cat "$f" || true; echo ''; done
+            echo '--- server_name / listen summary ---'
+            sudo grep -Rn -E 'server_name|listen |ssl_certificate' /etc/nginx/ || true
+            echo '--- listening ports ---'
+            sudo ss -tlnp || true
+            echo '--- app direct (port 8000) ---'
+            curl -s -o /tmp/app-root.html -w 'APP_ROOT_CODE=%{http_code}
+' http://127.0.0.1:8000/ || true
+            head -c 500 /tmp/app-root.html; echo ''
+            curl -s -o /tmp/app-healthz.json -w 'APP_HEALTHZ_CODE=%{http_code}
+' http://127.0.0.1:8000/healthz || true
+            cat /tmp/app-healthz.json; echo ''
+            echo '--- public route from instance, before fix ---'
+            curl -s -o /dev/null -w 'HTTP_80_HEALTHZ_CODE=%{http_code}
+' http://127.0.0.1/healthz || true
+            curl -sk -o /dev/null -w 'HTTPS_LOCAL_HEALTHZ_CODE=%{http_code}
+' https://127.0.0.1/healthz || true
+            echo '--- TLS handshake detail (ignore cert) ---'
+            curl -skv https://127.0.0.1/healthz 2>&1 | head -n 40 || true
+            echo '--- firewall ---'
+            sudo firewall-cmd --list-all || true
+            echo '--- nginx journal ---'
+            sudo journalctl -u nginx --no-pager -n 150 || true
+            echo '--- cert files ---'
+            sudo ls -l /etc/letsencrypt/live/sandersdashandseal.com/ || true
+            sudo openssl x509 -in /etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem -noout -dates -subject 2>/dev/null || true
+            echo '--- processes ---'
+            ps aux | grep -E 'nginx|8000' | grep -v grep || true
+            echo '=== 2. BACKUP current nginx config ==='
+            sudo mkdir -p /tmp/nginx-repair-20261121
+            sudo cp -a /etc/nginx/conf.d /tmp/nginx-repair-20261121/conf.d.bak || true
+            sudo cp -a /etc/nginx/snippets /tmp/nginx-repair-20261121/snippets.bak || true
+            sudo ls -lR /tmp/nginx-repair-20261121 || true
+            echo '=== 3. FIREWALL: ensure 80, 443 and 8000 open (never remove 8000) ==='
+            sudo firewall-cmd --permanent --add-port=80/tcp --add-port=443/tcp --add-port=8000/tcp || true
+            sudo firewall-cmd --reload || true
+            sudo firewall-cmd --list-all || true
+            if command -v setsebool >/dev/null 2>&1; then sudo setsebool -P httpd_can_network_connect 1 || true; fi
+            echo '=== 4. SNIPPET: restore from repo copy if missing ==='
+            if [ ! -f /etc/nginx/snippets/money_factory_legal.conf ]; then
+              echo 'SNIPPET MISSING'
+              if [ -f /opt/Sanders_Dash_Seal/money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf ]; then
+                sudo mkdir -p /etc/nginx/snippets
+                sudo cp /opt/Sanders_Dash_Seal/money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf /etc/nginx/snippets/money_factory_legal.conf
+                echo 'SNIPPET RESTORED FROM REPO COPY'
+              fi
+            fi
+            echo '=== 5. CONFLICT: remove separate app server blocks ==='
+            echo 'money_factory_legal_server.conf is the certbot-managed block for sandersdashandseal.com. A second block with the same server_name (00-sanders_dash_seal.conf / sanders_dash_seal.conf) steals the name, and if it ever gains a 443 listener it duplicates the TLS default server, so nginx cannot serve HTTPS. Removing only those two files; money_factory_legal_server.conf is NOT deleted.'
+            sudo rm -f /etc/nginx/conf.d/00-sanders_dash_seal.conf /etc/nginx/conf.d/sanders_dash_seal.conf
+            sudo ls -l /etc/nginx/conf.d/
+            echo '=== 6. SNIPPET: dedupe locations, restore app proxy, keep legal locations ==='
+            sudo python3 - <<'PY'
+            path = '/etc/nginx/snippets/money_factory_legal.conf'
+            text = open(path).read()
+            lines = text.splitlines()
+            out = []
+            seen = {}
+            i = 0
+            while i < len(lines):
+              line = lines[i]
+              stripped = line.strip()
+              if not stripped.startswith('location ') or not stripped.endswith('{'):
+                out.append(line)
+                i += 1
+                continue
+              key = ' '.join(stripped[len('location '):-1].split())
+              depth = line.count('{') - line.count('}')
+              block = [line]
+              i += 1
+              while i < len(lines) and depth > 0:
+                block.append(lines[i])
+                depth += lines[i].count('{') - lines[i].count('}')
+                i += 1
+              if key in seen:
+                print('DROPPED duplicate location: ' + key)
+                continue
+              seen[key] = block
+              out.append(chr(10).join(block))
+            def proxy_block(loc):
+              nl = chr(10)
+              return 'location ' + loc + ' {' + nl + '    proxy_pass http://127.0.0.1:8000;' + nl + '    proxy_set_header Host $host;' + nl + '    proxy_set_header X-Real-IP $remote_addr;' + nl + '    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;' + nl + '    proxy_set_header X-Forwarded-Proto $scheme;' + nl + '}'
+            if '/healthz' not in seen:
+              out.append(proxy_block('/healthz'))
+              print('ADDED location /healthz -> 127.0.0.1:8000')
+            elif '127.0.0.1:8000' not in chr(10).join(seen['/healthz']):
+              out = [b for b in out if not b.startswith('location /healthz')]
+              out.append(proxy_block('/healthz'))
+              print('REPLACED location /healthz with app proxy')
+            if '/' not in seen:
+              out.append(proxy_block('/'))
+              print('ADDED location / -> 127.0.0.1:8000')
+            elif '127.0.0.1:8000' not in chr(10).join(seen['/']):
+              out = [b for b in out if b != chr(10).join(seen['/'])]
+              out.append(proxy_block('/'))
+              print('REPLACED location / with app proxy')
+            if '/legal-aid/' not in seen:
+              nl = chr(10)
+              out.append('location /legal-aid/ {' + nl + '    proxy_pass http://127.0.0.1:8668/;' + nl + '    proxy_set_header Host $host;' + nl + '    proxy_set_header X-Real-IP $remote_addr;' + nl + '    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;' + nl + '    proxy_set_header X-Forwarded-Proto $scheme;' + nl + '}')
+              print('ADDED location /legal-aid/ -> 127.0.0.1:8668 (was missing)')
+            if '= /rtsa/status' not in seen:
+              nl = chr(10)
+              out.append('location = /rtsa/status {' + nl + '    default_type application/json;' + nl + '    alias /var/www/rtsa/status.json;' + nl + '}')
+              print('ADDED location = /rtsa/status (was missing)')
+            new = chr(10).join(out) + chr(10)
+            if new != text:
+              open(path, 'w').write(new)
+              print('SNIPPET UPDATED')
+            else:
+              print('SNIPPET UNCHANGED')
+            print('SNIPPET LOCATION KEYS: ' + ', '.join(sorted(seen.keys())))
+            PY
+            echo '--- snippet after fix ---'
+            sudo cat /etc/nginx/snippets/money_factory_legal.conf
+            echo '=== 7. NGINX TEST, TLS, RELOAD ==='
+            sudo nginx -t
+            if [ $? -ne 0 ]; then
+              echo 'NGINX_T_FAILED_AFTER_FIX: restoring snippet backup'
+              sudo cp -a /tmp/nginx-repair-20261121/snippets.bak/money_factory_legal.conf /etc/nginx/snippets/money_factory_legal.conf || true
+              sudo nginx -t || true
+              exit 1
+            fi
+            if ! sudo grep -q 'listen 443' /etc/nginx/conf.d/money_factory_legal_server.conf; then
+              echo 'NO listen 443 in money_factory_legal_server.conf: running certbot --nginx to restore TLS'
+              sudo /usr/local/bin/certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect --reinstall || sudo certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect --reinstall || echo 'CERTBOT_FAILED'
+              sudo nginx -t || exit 1
+            fi
+            echo '--- money_factory server file after fix ---'
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf || true
+            sudo systemctl reload nginx || sudo systemctl restart nginx
+            sleep 3
+            sudo systemctl is-active nginx || sudo systemctl restart nginx || true
+            sleep 2
+            sudo systemctl status nginx --no-pager -l || true
+            sudo ss -tlnp || true
+            sudo nginx -t
+            echo '=== 8. VERIFICATION from the instance ==='
+            curl -s -o /tmp/final-healthz.json -w 'FINAL_HEALTHZ_CODE=%{http_code}
+' https://sandersdashandseal.com/healthz || true
+            cat /tmp/final-healthz.json; echo ''
+            curl -s -o /tmp/final-home.html -w 'FINAL_HOME_CODE=%{http_code}
+' https://sandersdashandseal.com/ || true
+            head -c 500 /tmp/final-home.html; echo ''
+            curl -s -o /dev/null -w 'FINAL_LEGAL_CODE=%{http_code}
+' https://sandersdashandseal.com/legal-aid/ || true
+            curl -s -o /dev/null -w 'FINAL_RTSA_CODE=%{http_code}
+' https://sandersdashandseal.com/rtsa/status || true
+            curl -s -o /dev/null -w 'FINAL_LOCAL_8000_CODE=%{http_code}
+' http://127.0.0.1:8000/healthz || true
+            HEALTHZ_CODE=$(curl -s -o /dev/null -w '%{http_code}' https://sandersdashandseal.com/healthz || true)
+            HOME_CODE=$(curl -s -o /dev/null -w '%{http_code}' https://sandersdashandseal.com/ || true)
+            echo "RECHECK_HEALTHZ_CODE=$HEALTHZ_CODE"
+            echo "RECHECK_HOME_CODE=$HOME_CODE"
+            if [ "$HEALTHZ_CODE" != "200" ] || [ "$HOME_CODE" != "200" ]; then
+              echo 'FIRST VERIFICATION FAILED: one more nginx restart and recheck'
+              sudo systemctl restart nginx || true
+              sleep 3
+              HEALTHZ_CODE=$(curl -s -o /dev/null -w '%{http_code}' https://sandersdashandseal.com/healthz || true)
+              HOME_CODE=$(curl -s -o /dev/null -w '%{http_code}' https://sandersdashandseal.com/ || true)
+              echo "RETRY_HEALTHZ_CODE=$HEALTHZ_CODE"
+              echo "RETRY_HOME_CODE=$HOME_CODE"
+            fi
+            if [ "$HEALTHZ_CODE" = "200" ] && [ "$HOME_CODE" = "200" ]; then
+              echo 'REPAIR VERIFIED: https://sandersdashandseal.com/healthz = 200 and https://sandersdashandseal.com/ = 200'
+              exit 0
+            else
+              echo 'REPAIR NOT VERIFIED: healthz or home is not 200; see diagnostics above'
+              sudo journalctl -u nginx --no-pager -n 80 || true
+              exit 1
+            fi
