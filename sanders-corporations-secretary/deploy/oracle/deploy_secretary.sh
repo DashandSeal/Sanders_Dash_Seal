@@ -71,8 +71,23 @@ PrivateTmp=true
 [Install]
 WantedBy=multi-user.target
 UNIT
+# Keep the opc user manager alive after the SSH session that deployed this
+# ends. The Secretary itself is a system service, but its owner user manager
+# must persist for any user-level helpers. Ignore failure if unavailable.
+loginctl enable-linger opc 2>/dev/null || true
+
 sudo -n systemctl daemon-reload
 sudo -n systemctl enable --now "$UNIT_NAME"
 sudo -n systemctl restart "$UNIT_NAME"
 printf 'Oracle deployment command completed for commit %s; service %s, loopback port 8791.\n' "$COMMIT_SHA" "$UNIT_NAME"
 printf 'This step does not establish public DNS, TLS or production hardening; see docs/ORACLE_ALWAYS_FREE_DEPLOYMENT.md.\n'
+
+# Loopback check: something must answer on 8791. No route is assumed, so any
+# HTTP response counts; only a refused connection fails the deploy.
+code="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:8791/" || echo 000)"
+if [[ "$code" == "000" ]]; then
+    echo "Secretary loopback check failed on port 8791; recent logs:" >&2
+    sudo -n journalctl -u "$UNIT_NAME" -n 50 --no-pager >&2 || true
+    exit 1
+fi
+printf 'Secretary loopback responded HTTP %s on port 8791.\n' "$code"
