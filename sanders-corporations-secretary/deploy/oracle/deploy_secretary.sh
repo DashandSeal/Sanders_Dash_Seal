@@ -35,11 +35,20 @@ done
 if [[ ! -x "$VENV/bin/python" ]]; then "$PYTHON" -m venv "$VENV"; fi
 "$VENV/bin/python" -m pip install --disable-pip-version-check --quiet -r "$PROJECT/requirements.txt"
 
+# Syntax-check the app with the venv interpreter before the service starts,
+# so a broken file fails the deploy with its real error instead of a service
+# that never answers.
+echo "Syntax-checking Secretary app..."
+"$VENV/bin/python" -m compileall -q "$PROJECT/app" || {
+    echo "Syntax check failed for the Secretary app; see above." >&2
+    exit 1
+}
+
 # Create the actual owner token on the Oracle VM if one is not already configured.
 # Never print it or commit it to GitHub.
 if [[ ! -f "$CONF_DIR/runtime.env" ]]; then
     umask 077
-    token="$("$VENV/bin/python" -c 'import secrets; print(secrets.token_urlsafe(48))')"
+    token="$($VENV/bin/python -c 'import secrets; print(secrets.token_urlsafe(48))')"
     printf 'SCS_API_TOKEN=%s\n' "$token" > "$CONF_DIR/runtime.env"
     unset token
 fi
@@ -78,6 +87,17 @@ loginctl enable-linger opc 2>/dev/null || true
 
 sudo -n systemctl daemon-reload
 sudo -n systemctl enable --now "$UNIT_NAME"
+
+# Capture the real startup output: run the entrypoint briefly on a test
+# loopback port (8792, never the service port) with the unit's own
+# environment, so an import/startup crash shows its actual error instead
+# of silence. The timeout kill is expected.
+echo "Probing Secretary entrypoint briefly to capture startup output..."
+( set -a; . "$CONF_DIR/runtime.env"; set +a
+  cd "$PROJECT"
+  SCS_DB_PATH="$DB_DIR/secretary.sqlite3" timeout 8 "$VENV/bin/uvicorn" app.main:app --host 127.0.0.1 --port 8792 > /tmp/scs-startup.log 2>&1
+) || true
+
 sudo -n systemctl restart "$UNIT_NAME"
 printf 'Oracle deployment command completed for commit %s; service %s, loopback port 8791.\n' "$COMMIT_SHA" "$UNIT_NAME"
 printf 'This step does not establish public DNS, TLS or production hardening; see docs/ORACLE_ALWAYS_FREE_DEPLOYMENT.md.\n'
@@ -97,7 +117,12 @@ for attempt in 1 2 3 4 5; do
     sleep 2
 done
 if [[ "$code" == "000" ]]; then
-    echo "Secretary loopback check failed on port 8791; recent logs:" >&2
+    echo "Secretary loopback check failed on port 8791; service status and startup output:" >&2
+    sudo -n systemctl status "$UNIT_NAME" --no-pager >&2 || true
+    if [[ -f /tmp/scs-startup.log ]]; then
+        echo "--- startup output (/tmp/scs-startup.log) ---" >&2
+        tail -n 80 /tmp/scs-startup.log >&2 || true
+    fi
     sudo -n journalctl -u "$UNIT_NAME" -n 50 --no-pager >&2 || true
     exit 1
 fi

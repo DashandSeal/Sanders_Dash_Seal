@@ -22,6 +22,20 @@ install -m 0750 "$REPO_DIR/sanders-twostep/the_judge.py" "$APP_DIR/the_judge.py"
 cp -f "$REPO_DIR/sanders-twostep/"*.png "$APP_DIR/assets/" 2>/dev/null || true
 cp -f "$REPO_DIR/sanders-twostep/assets/"*.png "$APP_DIR/assets/" 2>/dev/null || true
 
+# The Judge crashed at startup in run #20 even though its file parses, and
+# the user journal on this host is empty, so a crash leaves no trace. Check
+# both entrypoints parse with the same interpreter the units will use, and
+# capture each one's real startup output to a log file before the services
+# start, so a failure can show its actual error instead of silence.
+echo "Syntax-checking installed entrypoints..."
+/usr/bin/python3 -m py_compile "$APP_DIR/sanders_twostep_v2.py" "$APP_DIR/the_judge.py" || {
+    echo "Syntax check failed for a TwoStep/Judge entrypoint; see above." >&2
+    exit 1
+}
+echo "Probing entrypoints briefly to capture startup output (the timeout kill is expected)..."
+( cd "$APP_DIR" && timeout 5 /usr/bin/python3 "$APP_DIR/sanders_twostep_v2.py" > /tmp/twostep-startup.log 2>&1 ) || true
+( cd "$APP_DIR" && timeout 5 /usr/bin/python3 "$APP_DIR/the_judge.py" > /tmp/judge-startup.log 2>&1 ) || true
+
 cat > "$SVC_DIR/sanders-twostep.service" <<EOF
 [Unit]
 Description=The Sanders TwoStep v2 (127.0.0.1:9400)
@@ -64,18 +78,31 @@ loginctl enable-linger opc 2>/dev/null || loginctl enable-linger 2>/dev/null || 
 systemctl --user daemon-reload
 systemctl --user enable --now sanders-twostep.service sanders-judge.service
 systemctl --user restart sanders-twostep.service sanders-judge.service
-sleep 2
 
+# Health checks that tell the truth: retry each loopback check, accept only
+# a real HTTP response, and on failure print the service status plus the
+# captured startup output. The user journal on this host is empty, so it is
+# only a last resort, never the sole diagnostic.
 LOOPBACK="127.0.0.1"
 check_health() {
-    local port="$1" unit="$2"
-    if curl -fsS "http://${LOOPBACK}:${port}/healthz"; then
-        echo ""
-    else
-        echo "Health check failed for ${unit} on port ${port}; recent logs:" >&2
-        journalctl --user -u "$unit" -n 50 --no-pager >&2 || true
-        return 1
+    local port="$1" unit="$2" log="$3"
+    local attempt
+    for attempt in 1 2 3 4 5 6 7 8 9 10; do
+        if curl -fsS "http://${LOOPBACK}:${port}/healthz" 2>/dev/null; then
+            echo ""
+            return 0
+        fi
+        sleep 2
+    done
+    echo "Health check failed for ${unit} on port ${port} after 10 attempts; service status and startup output:" >&2
+    systemctl --user status "$unit" --no-pager >&2 || true
+    if [[ -f "$log" ]]; then
+        echo "--- startup output ($log) ---" >&2
+        tail -n 80 "$log" >&2 || true
     fi
+    echo "--- user journal (may be empty on this host) ---" >&2
+    journalctl --user -u "$unit" -n 50 --no-pager >&2 || true
+    return 1
 }
-check_health 9400 sanders-twostep.service
-check_health 9405 sanders-judge.service
+check_health 9400 sanders-twostep.service /tmp/twostep-startup.log
+check_health 9405 sanders-judge.service /tmp/judge-startup.log
