@@ -29,7 +29,12 @@ jobs:
             echo '=== Install certbot ==='
             sudo dnf install -y oracle-epel-release.el8 || sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm || sudo dnf install -y epel-release || true
             sudo dnf install -y certbot python3-certbot-nginx || sudo dnf install -y certbot-nginx || (sudo dnf install -y python3-pip; sudo python3 -m pip install --upgrade certbot certbot-nginx)
-            sudo certbot --version || /usr/local/bin/certbot --version
+            if [ -x /usr/local/bin/certbot ]; then sudo ln -sf /usr/local/bin/certbot /usr/bin/certbot; fi
+            sudo certbot --version
+            echo '=== Existing nginx config ==='
+            sudo ls -l /etc/nginx/conf.d/
+            sudo grep -Rn "server_name" /etc/nginx/ || true
+            sudo nginx -T 2>&1 | head -n 300 || true
             cat <<'NGINXEOF' | sudo tee /etc/nginx/conf.d/sanders_dash_seal.conf
             server {
                 listen 80;
@@ -49,7 +54,7 @@ jobs:
             echo '=== Health check port 80 ==='
             curl -s http://sandersdashandseal.com/healthz
             echo ''
-            sudo certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect
+            sudo /usr/local/bin/certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect || sudo certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect
             echo '=== Final HTTPS health check ==='
             curl -s https://sandersdashandseal.com/healthz
             echo ''
