@@ -31,36 +31,53 @@ jobs:
             sudo dnf install -y certbot python3-certbot-nginx || sudo dnf install -y certbot-nginx || (sudo dnf install -y python3-pip; sudo python3 -m pip install --upgrade certbot certbot-nginx)
             if [ -x /usr/local/bin/certbot ]; then sudo ln -sf /usr/local/bin/certbot /usr/bin/certbot; fi
             sudo certbot --version
-            echo '=== Existing nginx config ==='
+            echo '=== Diagnostics before fix ==='
             sudo ls -l /etc/nginx/conf.d/
-            sudo grep -Rn "server_name" /etc/nginx/ || true
-            sudo grep -Rn "include" /etc/nginx/nginx.conf || true
+            sudo nginx -T 2>&1 | grep -E "^# configuration file|server_name|listen" | head -n 80 || true
+            echo '--- money_factory file ---'
             sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf
-            sudo cat /etc/nginx/conf.d/sanders_dash_seal.conf || true
-            sudo cat /etc/nginx/snippets/money_factory_legal.conf || true
-            echo '=== Fix nginx load order ==='
-            echo 'money_factory_legal_server.conf already claims sandersdashandseal.com and loads first alphabetically, so nginx ignores the app proxy. The app proxy must load first. money_factory file is NOT edited or deleted; its legal locations are preserved by including its snippet.'
-            sudo rm -f /etc/nginx/conf.d/sanders_dash_seal.conf
-            cat <<'NGINXEOF' | sudo tee /etc/nginx/conf.d/00-sanders_dash_seal.conf
-            server {
-                listen 80;
-                server_name sandersdashandseal.com www.sandersdashandseal.com;
-                include /etc/nginx/snippets/money_factory_legal.conf;
-                location / {
-                    proxy_pass http://127.0.0.1:8000;
-                    proxy_set_header Host $host;
-                    proxy_set_header X-Real-IP $remote_addr;
-                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-                    proxy_set_header X-Forwarded-Proto $scheme;
-                }
+            echo '--- 00-sanders file ---'
+            sudo cat /etc/nginx/conf.d/00-sanders_dash_seal.conf || true
+            echo '--- snippet file ---'
+            sudo cat /etc/nginx/snippets/money_factory_legal.conf
+            echo '--- app root direct ---'
+            curl -s http://127.0.0.1:8000/ | head -c 500; echo ''
+            echo '--- site root over HTTPS ---'
+            curl -s https://sandersdashandseal.com/ | head -c 500; echo ''
+            echo '--- legal-aid over HTTPS ---'
+            curl -s -o /dev/null -w '%{http_code}\n' https://sandersdashandseal.com/legal-aid/
+            echo '--- rtsa status over HTTPS ---'
+            curl -s https://sandersdashandseal.com/rtsa/status; echo ''
+            echo '=== Fix: add app proxy to the snippet included by the winning money_factory block ==='
+            echo 'money_factory_legal_server.conf is NOT edited or deleted. Its snippet already defines /legal-aid/ and /rtsa/status; appending /healthz and / proxy locations to the snippet makes the winning server block proxy the app, while its exact location = / and the legal locations keep precedence.'
+            sudo cp /etc/nginx/snippets/money_factory_legal.conf /tmp/money_factory_legal.conf.bak
+            if ! sudo grep -q "location /healthz" /etc/nginx/snippets/money_factory_legal.conf; then
+              cat <<'SNIPPETEOF' | sudo tee -a /etc/nginx/snippets/money_factory_legal.conf
+            location /healthz {
+                proxy_pass http://127.0.0.1:8000;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
             }
-            NGINXEOF
+            location / {
+                proxy_pass http://127.0.0.1:8000;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Proto $scheme;
+            }
+            SNIPPETEOF
+            fi
+            sudo rm -f /etc/nginx/conf.d/00-sanders_dash_seal.conf /etc/nginx/conf.d/sanders_dash_seal.conf
             sudo ls -l /etc/nginx/conf.d/
-            sudo nginx -t && sudo systemctl reload nginx
+            sudo cat /etc/nginx/snippets/money_factory_legal.conf
+            if ! sudo nginx -t; then sudo cp /tmp/money_factory_legal.conf.bak /etc/nginx/snippets/money_factory_legal.conf; echo 'RESTORED snippet after nginx -t failure'; exit 1; fi
+            sudo systemctl reload nginx
             echo '=== Health check localhost:8000 ==='
             curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8000/healthz
             echo '=== Health check port 80 ==='
-            curl -s http://sandersdashandseal.com/healthz
+            curl -s -i http://sandersdashandseal.com/healthz | head -n 20
             echo ''
             sudo /usr/local/bin/certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect --reinstall || sudo certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect --reinstall
             echo '=== Final HTTPS health check ==='
@@ -69,4 +86,8 @@ jobs:
             curl -s -o /dev/null -w '%{http_code}\n' https://sandersdashandseal.com/healthz
             echo '=== Final port 8000 health check ==='
             curl -s -o /dev/null -w '%{http_code}\n' http://129.146.111.166:8000/healthz
+            echo '=== Probes after fix ==='
+            curl -s https://sandersdashandseal.com/ | head -c 500; echo ''
+            curl -s -o /dev/null -w '%{http_code}\n' https://sandersdashandseal.com/legal-aid/
+            curl -s https://sandersdashandseal.com/rtsa/status; echo ''
             sudo nginx -t
