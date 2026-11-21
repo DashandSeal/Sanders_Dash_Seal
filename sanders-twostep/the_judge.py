@@ -234,4 +234,130 @@ class TheJudge:
             db.execute(
                 """
                 INSERT INTO judicial_docket
-  
+                    (docket_id, decided_at, company_id, action_type,
+                     law_cited, verdict, reason, prev_chain_hash, chain_hash)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (docket_id, now, company_id, action_type, law_cited,
+                 verdict, reason, prev_hash, chain_hash),
+            )
+        return JudicialVerdict(
+            docket_id=docket_id,
+            verdict=verdict,
+            company_id=company_id,
+            action_type=action_type,
+            law_cited=law_cited,
+            reason=reason,
+            consequential=action_type in CONSEQUENTIAL_ACTIONS,
+            chain_hash=chain_hash,
+            decided_at=now,
+        )
+
+    def adjudicate(
+        self,
+        company_id: str,
+        action_type: str,
+        law_cited: Optional[str] = None,
+        reason: str = "",
+        session_id: Optional[str] = None,
+    ) -> JudicialVerdict:
+        """Adjudication entry point: rule on one proposed action under the Twelve Core Laws."""
+        if company_id not in ENTITY_REGISTRY:
+            return self._log_ruling(
+                company_id, action_type, "Law 9", "DENIED",
+                "Unknown company: sovereign identity could not be attributed.",
+            )
+        if action_type in CONSEQUENTIAL_ACTIONS and not self.verify_session(session_id):
+            return self._log_ruling(
+                company_id, action_type, "Law 5", "DENIED",
+                "Consequential action requires a verified owner session (human in the loop).",
+            )
+        law = next(
+            (entry for entry in TWELVE_CORE_LAWS
+             if law_cited and (law_cited == entry or entry.startswith(law_cited))),
+            TWELVE_CORE_LAWS[11],
+        )
+        return self._log_ruling(
+            company_id, action_type, law, "APPROVED",
+            reason or "Routine action within functional non-interference.",
+        )
+
+    def status(self) -> Dict[str, Any]:
+        with self._connect() as db:
+            (count,) = db.execute("SELECT COUNT(*) FROM judicial_docket").fetchone()
+            last = db.execute(
+                "SELECT docket_id, decided_at, company_id, action_type, verdict, law_cited"
+                " FROM judicial_docket ORDER BY seq DESC LIMIT 1"
+            ).fetchone()
+        return {
+            "judge": JUDGE_IDENTITY,
+            "crest": self.heal_crest(),
+            "docket_entries": count,
+            "last_ruling": (
+                {
+                    "docket_id": last[0],
+                    "decided_at": last[1],
+                    "company_id": last[2],
+                    "action_type": last[3],
+                    "verdict": last[4],
+                    "law_cited": last[5],
+                }
+                if last
+                else None
+            ),
+            "laws": list(TWELVE_CORE_LAWS),
+        }
+
+
+class Handler(BaseHTTPRequestHandler):
+    judge: "TheJudge"
+
+    def log_message(self, *args) -> None:
+        return
+
+    def _send(self, code: int, body: bytes, ctype: str = "application/json") -> None:
+        self.send_response(code)
+        self.send_header("Content-Type", ctype)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def do_GET(self) -> None:
+        if self.path in ("/", "/api/status"):
+            self._send(200, json.dumps(self.judge.status(), indent=2).encode())
+        elif self.path == "/healthz":
+            self._send(200, json.dumps(
+                {"status": "HEALTHY", "owner": "Sanders Legal Helpers LLC", "sos_id": "20258029131"}
+            ).encode())
+        else:
+            self._send(404, b'{"error":"Not found"}')
+
+    def do_POST(self) -> None:
+        if self.path != "/api/adjudicate":
+            self._send(404, b'{"error":"Not found"}')
+            return
+        try:
+            length = int(self.headers.get("Content-Length") or 0)
+            payload = json.loads(self.rfile.read(length) or b"{}")
+        except (ValueError, TypeError):
+            self._send(400, b'{"error":"Invalid JSON"}')
+            return
+        try:
+            verdict = self.judge.adjudicate(
+                str(payload.get("company_id", "")),
+                str(payload.get("action_type", "")),
+                payload.get("law_cited"),
+                str(payload.get("reason", "")),
+                payload.get("session_id"),
+            )
+        except Exception:
+            # Fail closed without leaking internals.
+            self._send(500, b'{"error":"Adjudication failed"}')
+            return
+        self._send(200, json.dumps(verdict.as_dict(), indent=2).encode())
+
+
+if __name__ == "__main__":
+    judge = TheJudge(Path.home() / ".local/share/sanders-twostep-v2")
+    Handler.judge = judge
+    ThreadingHTTPServer(("127.0.0.1", 9405), Handler).serve_forever()
