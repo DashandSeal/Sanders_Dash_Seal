@@ -84,7 +84,18 @@ printf 'This step does not establish public DNS, TLS or production hardening; se
 
 # Loopback check: something must answer on 8791. No route is assumed, so any
 # HTTP response counts; only a refused connection fails the deploy.
-code="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:8791/" || echo 000)"
+# curl prints 000 itself on a refused connection, so no fallback is needed:
+# an `|| echo 000` fallback would append a second 000, making "000000" and
+# silently defeating the check below. Retry briefly: a single immediate curl
+# can miss startup.
+code="000"
+for attempt in 1 2 3 4 5; do
+    code="$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:8791/" || true)"
+    if [[ "$code" != "000" ]]; then
+        break
+    fi
+    sleep 2
+done
 if [[ "$code" == "000" ]]; then
     echo "Secretary loopback check failed on port 8791; recent logs:" >&2
     sudo -n journalctl -u "$UNIT_NAME" -n 50 --no-pager >&2 || true
