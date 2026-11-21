@@ -24,6 +24,8 @@ jobs:
             sudo firewall-cmd --reload
             echo '=== Firewall after ==='
             sudo firewall-cmd --list-all
+            echo '=== Enable EPEL (certbot is in EPEL on Oracle Linux) ==='
+            sudo dnf install -y oracle-epel-release.el8 || sudo dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm || sudo dnf install -y epel-release
             sudo dnf install -y certbot python3-certbot-nginx || sudo dnf install -y certbot-nginx
             cat <<'NGINXEOF' | sudo tee /etc/nginx/conf.d/sanders_dash_seal.conf
             server {
