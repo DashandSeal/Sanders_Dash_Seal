@@ -56,13 +56,26 @@ Environment=PYTHONUNBUFFERED=1
 WantedBy=default.target
 EOF
 
+# Keep the opc user services alive after the SSH session that deployed them
+# ends; without this, systemd stops user units at logout. Ignore failure if
+# the privilege is unavailable in this session.
+loginctl enable-linger opc 2>/dev/null || loginctl enable-linger 2>/dev/null || true
+
 systemctl --user daemon-reload
 systemctl --user enable --now sanders-twostep.service sanders-judge.service
 systemctl --user restart sanders-twostep.service sanders-judge.service
 sleep 2
 
 LOOPBACK="127.0.0.1"
-curl -fsS "http://${LOOPBACK}:9400/healthz"
-echo ""
-curl -fsS "http://${LOOPBACK}:9405/healthz"
-echo ""
+check_health() {
+    local port="$1" unit="$2"
+    if curl -fsS "http://${LOOPBACK}:${port}/healthz"; then
+        echo ""
+    else
+        echo "Health check failed for ${unit} on port ${port}; recent logs:" >&2
+        journalctl --user -u "$unit" -n 50 --no-pager >&2 || true
+        return 1
+    fi
+}
+check_health 9400 sanders-twostep.service
+check_health 9405 sanders-judge.service
