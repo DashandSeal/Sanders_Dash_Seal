@@ -34,11 +34,18 @@ jobs:
             echo '=== Existing nginx config ==='
             sudo ls -l /etc/nginx/conf.d/
             sudo grep -Rn "server_name" /etc/nginx/ || true
-            sudo nginx -T 2>&1 | head -n 300 || true
-            cat <<'NGINXEOF' | sudo tee /etc/nginx/conf.d/sanders_dash_seal.conf
+            sudo grep -Rn "include" /etc/nginx/nginx.conf || true
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf
+            sudo cat /etc/nginx/conf.d/sanders_dash_seal.conf || true
+            sudo cat /etc/nginx/snippets/money_factory_legal.conf || true
+            echo '=== Fix nginx load order ==='
+            echo 'money_factory_legal_server.conf already claims sandersdashandseal.com and loads first alphabetically, so nginx ignores the app proxy. The app proxy must load first. money_factory file is NOT edited or deleted; its legal locations are preserved by including its snippet.'
+            sudo rm -f /etc/nginx/conf.d/sanders_dash_seal.conf
+            cat <<'NGINXEOF' | sudo tee /etc/nginx/conf.d/00-sanders_dash_seal.conf
             server {
                 listen 80;
                 server_name sandersdashandseal.com www.sandersdashandseal.com;
+                include /etc/nginx/snippets/money_factory_legal.conf;
                 location / {
                     proxy_pass http://127.0.0.1:8000;
                     proxy_set_header Host $host;
@@ -48,15 +55,18 @@ jobs:
                 }
             }
             NGINXEOF
+            sudo ls -l /etc/nginx/conf.d/
             sudo nginx -t && sudo systemctl reload nginx
             echo '=== Health check localhost:8000 ==='
             curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8000/healthz
             echo '=== Health check port 80 ==='
             curl -s http://sandersdashandseal.com/healthz
             echo ''
-            sudo /usr/local/bin/certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect || sudo certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect
+            sudo /usr/local/bin/certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect --reinstall || sudo certbot --nginx -d sandersdashandseal.com -d www.sandersdashandseal.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect --reinstall
             echo '=== Final HTTPS health check ==='
             curl -s https://sandersdashandseal.com/healthz
             echo ''
+            curl -s -o /dev/null -w '%{http_code}\n' https://sandersdashandseal.com/healthz
             echo '=== Final port 8000 health check ==='
             curl -s -o /dev/null -w '%{http_code}\n' http://129.146.111.166:8000/healthz
+            sudo nginx -t
