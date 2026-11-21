@@ -37,17 +37,13 @@ jobs:
             echo '--- listening ports ---'
             sudo ss -tlnp || true
             echo '--- app direct (port 8000) ---'
-            curl -s -o /tmp/app-root.html -w 'APP_ROOT_CODE=%{http_code}
-' http://127.0.0.1:8000/ || true
+            curl -s -o /tmp/app-root.html -w 'APP_ROOT_CODE=%{http_code}\n' http://127.0.0.1:8000/ || true
             head -c 500 /tmp/app-root.html; echo ''
-            curl -s -o /tmp/app-healthz.json -w 'APP_HEALTHZ_CODE=%{http_code}
-' http://127.0.0.1:8000/healthz || true
+            curl -s -o /tmp/app-healthz.json -w 'APP_HEALTHZ_CODE=%{http_code}\n' http://127.0.0.1:8000/healthz || true
             cat /tmp/app-healthz.json; echo ''
             echo '--- public route from instance, before fix ---'
-            curl -s -o /dev/null -w 'HTTP_80_HEALTHZ_CODE=%{http_code}
-' http://127.0.0.1/healthz || true
-            curl -sk -o /dev/null -w 'HTTPS_LOCAL_HEALTHZ_CODE=%{http_code}
-' https://127.0.0.1/healthz || true
+            curl -s -o /dev/null -w 'HTTP_80_HEALTHZ_CODE=%{http_code}\n' http://127.0.0.1/healthz || true
+            curl -sk -o /dev/null -w 'HTTPS_LOCAL_HEALTHZ_CODE=%{http_code}\n' https://127.0.0.1/healthz || true
             echo '--- TLS handshake detail (ignore cert) ---'
             curl -skv https://127.0.0.1/healthz 2>&1 | head -n 40 || true
             echo '--- firewall ---'
@@ -168,18 +164,13 @@ jobs:
             sudo ss -tlnp || true
             sudo nginx -t
             echo '=== 8. VERIFICATION from the instance ==='
-            curl -s -o /tmp/final-healthz.json -w 'FINAL_HEALTHZ_CODE=%{http_code}
-' https://sandersdashandseal.com/healthz || true
+            curl -s -o /tmp/final-healthz.json -w 'FINAL_HEALTHZ_CODE=%{http_code}\n' https://sandersdashandseal.com/healthz || true
             cat /tmp/final-healthz.json; echo ''
-            curl -s -o /tmp/final-home.html -w 'FINAL_HOME_CODE=%{http_code}
-' https://sandersdashandseal.com/ || true
+            curl -s -o /tmp/final-home.html -w 'FINAL_HOME_CODE=%{http_code}\n' https://sandersdashandseal.com/ || true
             head -c 500 /tmp/final-home.html; echo ''
-            curl -s -o /dev/null -w 'FINAL_LEGAL_CODE=%{http_code}
-' https://sandersdashandseal.com/legal-aid/ || true
-            curl -s -o /dev/null -w 'FINAL_RTSA_CODE=%{http_code}
-' https://sandersdashandseal.com/rtsa/status || true
-            curl -s -o /dev/null -w 'FINAL_LOCAL_8000_CODE=%{http_code}
-' http://127.0.0.1:8000/healthz || true
+            curl -s -o /dev/null -w 'FINAL_LEGAL_CODE=%{http_code}\n' https://sandersdashandseal.com/legal-aid/ || true
+            curl -s -o /dev/null -w 'FINAL_RTSA_CODE=%{http_code}\n' https://sandersdashandseal.com/rtsa/status || true
+            curl -s -o /dev/null -w 'FINAL_LOCAL_8000_CODE=%{http_code}\n' http://127.0.0.1:8000/healthz || true
             HEALTHZ_CODE=$(curl -s -o /dev/null -w '%{http_code}' https://sandersdashandseal.com/healthz || true)
             HOME_CODE=$(curl -s -o /dev/null -w '%{http_code}' https://sandersdashandseal.com/ || true)
             echo "RECHECK_HEALTHZ_CODE=$HEALTHZ_CODE"
