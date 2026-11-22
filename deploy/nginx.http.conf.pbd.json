@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "deploy/nginx.http.conf",
-    "payload_hash": "9375fea6a10283c7a86c90dd4cb10d9ce6360d6ce53f5baf39914ffc3fd18950",
+    "payload_hash": "74e184963e40ecdf140fa414f9ac6a6a2b5703908ab40aa776766b2b7a518d0e",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",

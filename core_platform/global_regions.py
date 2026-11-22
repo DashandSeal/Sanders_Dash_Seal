@@ -15,6 +15,11 @@ re-proven here):
 - Domains ``sandersdashandseal.com`` and ``sanderslegalhelpersllc.com``
   both resolve (A) to the primary instance; ``www.sanderslegalhelpersllc.com``
   was NXDOMAIN on 2026-11-13 and still needs an A record.
+- The three newer domains ``sanderssixshield.com``,
+  ``sanderssecurestack.com`` and
+  ``sandersemergencyglobalcommunication.com`` resolve (A) to the primary
+  instance (verified 2026-11-21); each ``www`` host is a CNAME to its own
+  apex and resolves to the primary instance.
 
 Design rules:
 
@@ -108,7 +113,12 @@ DNS_TTL_SECONDS = 300
 
 #: Domains served by the platform. The www host of the second domain is
 #: flagged in :func:`dns_plan` as missing (NXDOMAIN, verified 2026-11-13).
-DOMAINS = ("sandersdashandseal.com", "sanderslegalhelpersllc.com")
+#: The www host of each of the three newer domains is a CNAME to its own
+#: apex (verified 2026-11-21); the plan still renders it as a record
+#: resolving to the primary instance.
+DOMAINS = ("sandersdashandseal.com", "sanderslegalhelpersllc.com",
+           "sanderssixshield.com", "sanderssecurestack.com",
+           "sandersemergencyglobalcommunication.com")
 
 
 @dataclass(frozen=True)
@@ -434,19 +444,30 @@ def free_first_plan() -> dict[str, list[dict[str, str]]]:
 # Global DNS plan
 # ---------------------------------------------------------------------------
 
-#: Per-record verified status from the 2026-11-13 DNS check.
+#: Per-record verified status from the 2026-11-13 DNS check, plus the
+#: three newer domains verified 2026-11-21 (apex A records point at the
+#: primary instance; each www host is a CNAME to its own apex).
 _DNS_VERIFIED_STATUS = {
     ("sandersdashandseal.com", ""): "verified-2026-11-13",
     ("sandersdashandseal.com", "www"): "verified-2026-11-13",
     ("sanderslegalhelpersllc.com", ""): "verified-2026-11-13",
     ("sanderslegalhelpersllc.com", "www"): "missing-nxdomain-2026-11-13",
+    ("sanderssixshield.com", ""): "verified-2026-11-21",
+    ("sanderssixshield.com", "www"): "verified-2026-11-21",
+    ("sanderssecurestack.com", ""): "verified-2026-11-21",
+    ("sanderssecurestack.com", "www"): "verified-2026-11-21",
+    ("sandersemergencyglobalcommunication.com", ""): "verified-2026-11-21",
+    ("sandersemergencyglobalcommunication.com", "www"): "verified-2026-11-21",
 }
 
 
 def dns_plan(primary_ipv4: str | None = None) -> list[dict[str, str | int]]:
-    """Global DNS plan for both domains (a plan, not a live zone).
+    """Global DNS plan for all five domains (a plan, not a live zone).
 
-    Four A records, TTL 300, all pointing at the primary instance.
+    Ten records, TTL 300, all resolving to the primary instance. The
+    ``www`` host of each of the three newer domains is a CNAME to its own
+    apex rather than an A record; the plan renders it as a record
+    resolving to the primary instance.
     ``primary_ipv4`` should come from ``SDS_PUBLIC_IPV4``; when it is
     ``None`` the target renders as ``PRIMARY_INSTANCE_IP_UNSET`` so a
     missing address is visible instead of silently wrong. The

@@ -190,11 +190,13 @@ def oracle_status() -> dict[str, Any]:
 def dns_records_to_apply() -> list[dict[str, str]]:
     """Exact DNS records for the owner to apply in GoDaddy.
 
-    The two apex A records already resolve (verified 2026-11-13 via DoH);
-    they are listed so the desired end state is explicit.  The
+    The apex A records already resolve (the first two verified
+    2026-11-13 via DoH, the three newer ones verified 2026-11-21 via
+    DoH); they are listed so the desired end state is explicit.  The
+    ``www`` host of each newer domain is a CNAME to its own apex.  The
     ``www.sanderslegalhelpersllc.com`` record is missing (NXDOMAIN) and
-    is the only change needed.  No DNS mutation is performed by this
-    code or any code in this branch.
+    is the only change still needed.  No DNS mutation is performed by
+    this code or any code in this branch.
     """
     return [
         {
@@ -214,6 +216,30 @@ def dns_records_to_apply() -> list[dict[str, str]]:
             "state": "already_set_verified_2026_11_13",
         },
         {
+            "host": "@",
+            "domain": "sanderssixshield.com",
+            "type": "A",
+            "value": DNS_APEX_IP,
+            "ttl": "600",
+            "state": "already_set_verified_2026_11_21",
+        },
+        {
+            "host": "@",
+            "domain": "sanderssecurestack.com",
+            "type": "A",
+            "value": DNS_APEX_IP,
+            "ttl": "600",
+            "state": "already_set_verified_2026_11_21",
+        },
+        {
+            "host": "@",
+            "domain": "sandersemergencyglobalcommunication.com",
+            "type": "A",
+            "value": DNS_APEX_IP,
+            "ttl": "600",
+            "state": "already_set_verified_2026_11_21",
+        },
+        {
             "host": "www",
             "domain": "sanderslegalhelpersllc.com",
             "type": "A",
@@ -228,6 +254,30 @@ def dns_records_to_apply() -> list[dict[str, str]]:
             "value": DNS_APEX_IP,
             "ttl": "600",
             "state": "already_set_verified_2026_11_13",
+        },
+        {
+            "host": "www",
+            "domain": "sanderssixshield.com",
+            "type": "CNAME",
+            "value": "sanderssixshield.com",
+            "ttl": "600",
+            "state": "already_set_verified_2026_11_21",
+        },
+        {
+            "host": "www",
+            "domain": "sanderssecurestack.com",
+            "type": "CNAME",
+            "value": "sanderssecurestack.com",
+            "ttl": "600",
+            "state": "already_set_verified_2026_11_21",
+        },
+        {
+            "host": "www",
+            "domain": "sandersemergencyglobalcommunication.com",
+            "type": "CNAME",
+            "value": "sandersemergencyglobalcommunication.com",
+            "ttl": "600",
+            "state": "already_set_verified_2026_11_21",
         },
     ]
 
