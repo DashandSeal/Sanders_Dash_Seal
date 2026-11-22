@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/zone_watch/downloader.py",
+        "payload_hash": "3b18a6ce80049c86f08a8e2a132ffc24f3c65a76c4eedf22cc2ee387d82eaa3c",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

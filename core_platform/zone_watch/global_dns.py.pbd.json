@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/zone_watch/global_dns.py",
+        "payload_hash": "884c34b88aca99de277f3ac1260e79c604e1238640e1fd04503669fcbf689ff4",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
