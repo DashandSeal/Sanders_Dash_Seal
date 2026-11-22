@@ -19,6 +19,17 @@ ASSETS = {
     '/auth/register': ('auth.html', 'text/html; charset=utf-8'),
     '/auth/setup': ('auth.html', 'text/html; charset=utf-8'),
     '/auth/logout': ('auth.html', 'text/html; charset=utf-8'),
+    # The .html spellings the pages themselves link to (auth.js redirects
+    # to /auth/login.html and /operator.html; the portal links
+    # /auth/login.html). Previously these 308-redirected on the canonical
+    # host and 503d on alias hosts because they were not in this map.
+    '/auth/login.html': ('auth.html', 'text/html; charset=utf-8'),
+    '/auth/register.html': ('auth.html', 'text/html; charset=utf-8'),
+    '/auth/setup.html': ('auth.html', 'text/html; charset=utf-8'),
+    '/auth/logout.html': ('auth.html', 'text/html; charset=utf-8'),
+    '/operator.html': ('operator.html', 'text/html; charset=utf-8'),
+    '/index.html': ('index.html', 'text/html; charset=utf-8'),
+    '/resources.html': ('resources.html', 'text/html; charset=utf-8'),
     '/assets/auth.js': ('auth.js', 'application/javascript; charset=utf-8'),
     '/resources.js': ('resources.js', 'application/javascript; charset=utf-8'),
     '/landing': ('jade-landing.html', 'text/html; charset=utf-8'),
@@ -36,9 +47,17 @@ ASSETS = {
 }
 
 CASE_ROUTE = re.compile(r'^/api/appointments/([A-Za-z0-9_-]{1,128})/checkout$')
+CASE_DETAIL_ROUTE = re.compile(r'^/api/appointments/([A-Za-z0-9_-]{1,128})$')
 OPERATOR_ROUTE = re.compile(r'^/api/operator/appointments/([A-Za-z0-9_-]{1,128})/quote$')
+PROVIDER_ROUTE = re.compile(r'^/api/operator/appointments/([A-Za-z0-9_-]{1,128})/provider$')
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None):
+    # allowed_origins: every origin a browser may POST from. The app serves
+    # two domains from one process (canonical + aliases); the POST Origin
+    # check previously compared against the canonical origin only, so every
+    # POST from an alias host — sign-in, appointment request, quote, checkout
+    # — answered 403 origin_denied. Defaults to the site origin alone.
+    allowed_origins = frozenset(allowed_origins) if allowed_origins is not None else frozenset((site_origin,))
     origin = urlparse(site_origin)
     if (origin.scheme != 'https' or not origin.netloc or origin.path
         or origin.query or origin.fragment or origin.username
@@ -76,10 +95,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return auth_app(env, start)
 
         case_match = CASE_ROUTE.fullmatch(path)
+        detail_match = CASE_DETAIL_ROUTE.fullmatch(path)
         operator_match = OPERATOR_ROUTE.fullmatch(path)
-        is_operator_route = path == '/api/operator/appointments' or operator_match is not None
+        provider_match = PROVIDER_ROUTE.fullmatch(path)
+        is_operator_route = (path == '/api/operator/appointments'
+                             or operator_match is not None
+                             or provider_match is not None)
 
-        if path not in ('/api/session', '/api/appointments') and not case_match and not is_operator_route:
+        if path not in ('/api/session', '/api/appointments') and not case_match and not detail_match and not is_operator_route:
             return respond(start, '404 Not Found', {'error': 'not_found'})
 
         allowed = ('GET', 'POST') if path == '/api/appointments' else (
@@ -106,7 +129,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
 
         data = None
         if method == 'POST':
-            if env.get('HTTP_ORIGIN') != site_origin:
+            if env.get('HTTP_ORIGIN') not in allowed_origins:
                 return respond(start, '403 Forbidden', {'error': 'origin_denied'})
             if env.get('CONTENT_TYPE', '').split(';')[0].strip().lower() != 'application/json':
                 return respond(start, '415 Unsupported Media Type', {'error': 'json_required'})
@@ -126,6 +149,11 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         try:
             if path == '/api/operator/appointments':
                 return respond(start, '200 OK', {'appointments': appointments.list_for_operator()})
+            if provider_match:
+                # No provider workspace backend exists yet; the operator UI
+                # already renders an empty list as "No remote connection
+                # requests initialized yet." Previously this route 404d.
+                return respond(start, '200 OK', {'requests': []})
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -142,13 +170,13 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                 record = appointments.request(identity, **data)
                 return respond(start, '201 Created', {'appointment': record})
 
-            case_id = case_match.group(1)
+            case_id = case_match.group(1) if case_match is not None else detail_match.group(1)
             record = appointments.get(case_id, identity)
             
             if method == 'GET':
                 return respond(start, '200 OK', {
                     'appointment': record,
-                    'quote': payments.quote_for_case_id(identity),
+                    'quote': payments.quote(case_id, identity),
                     'payment': payments.ledger.status(case_id)
                 })
 

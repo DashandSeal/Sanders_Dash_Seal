@@ -1,0 +1,44 @@
+[Unit]
+Description=Sanders Dash & Seal - application server (gunicorn on 127.0.0.1:8000)
+Documentation=https://github.com/DashandSeal/Sanders_Dash_Seal
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# The app runs as the dedicated runtime user created by
+# deploy/install-simultaneous.sh (sanders, uid/gid 10001): the same uid
+# wsgi.py hands the data directory to (SDS_RUNTIME_UID, default 10001),
+# so the gunicorn workers can write data/ledger.db.
+User=sanders
+Group=sanders
+# The checkout deploy_all_simultaneous.yml maintains
+# (/opt/Sanders_Dash_Seal, git reset --hard origin/main) and the venv it
+# builds there. This unit was missing from the repository entirely, so no
+# deploy could install it and the restart loop in deploy_all could only
+# restart the service if a unit file already existed on the instance —
+# deploys landed code without restarting the app, which is how the
+# running copy went stale (the overnight 421 host_denied regression on
+# the three new domains). Pinning the unit to this checkout is the fix.
+WorkingDirectory=/opt/Sanders_Dash_Seal
+# Live secrets (STRIPE_WEBHOOK_SECRET, STRIPE_SECRET_KEY, ...) come from
+# the OCI Vault flow via /etc/sanders-dash-seal/runtime.env; the installer
+# template /etc/sanders-dash-seal/environment is read first so values the
+# owner filled in there still apply when runtime.env does not set them.
+# The leading "-" means the unit still starts if a file is absent; the app
+# itself fails loudly when STRIPE_WEBHOOK_SECRET is unset (wsgi.py).
+EnvironmentFile=-/etc/sanders-dash-seal/environment
+EnvironmentFile=-/etc/sanders-dash-seal/runtime.env
+# Production bindings: the factory deploy/production_bindings.py builds
+# from the repo's own modules (see deploy/production_bindings.py).
+# Not a secret; a plain Environment= line is correct here.
+Environment=SANDERS_RUNTIME_FACTORY=deploy.production_bindings:create_production_bindings
+ExecStart=/opt/Sanders_Dash_Seal/venv/bin/gunicorn --config deploy/gunicorn.conf.py wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+Restart=on-failure
+RestartSec=5
+StartLimitIntervalSec=60
+StartLimitBurst=3
+
+[Install]
+WantedBy=multi-user.target

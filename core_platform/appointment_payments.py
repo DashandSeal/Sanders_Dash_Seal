@@ -43,9 +43,9 @@ class AppointmentPayments:
     def approve_quote(self, case_id, actor, items, expires_at):
         """Called only by a trusted operator adapter; immutable once approved."""
         if (not isinstance(items, dict) or set(items) !=
-                {'Notarial acts', 'Travel', 'Document support'}
+                {'Notarial Acts', 'Travel', 'Document Support'}
                 or any(type(v) is not int or v < 0 for v in items.values())
-                or not 0 < sum(items.values()) <= 99_999_999
+                or not 100 <= sum(items.values()) <= 99_999_999
                 or type(expires_at) is not int
                 or not self.clock() < expires_at <= self.clock() + 7 * 86400):
             raise PaymentDenied('Invalid quote')
@@ -91,7 +91,7 @@ class AppointmentPayments:
             row = db.execute('SELECT * FROM appointment_quotes WHERE case_id=?', (case_id,)).fetchone()
             if not row or row['quote_id'] != quote_id:
                 raise PaymentDenied('Unknown approved quote')
-            if self.ledger.status(case_id) == 'PAID':
+            if self.ledger.status(case_id, connection=db) == 'PAID':
                 raise PaymentDenied('Already paid')
             if row['expires_at'] <= self.clock():
                 raise PaymentDenied('Quote expired')

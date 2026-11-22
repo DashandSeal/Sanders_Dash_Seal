@@ -22,6 +22,11 @@ class PaymentLedger:
     
     def __init__(self, self_path):
         self.self_path = str(self_path)
+        # AppointmentPayments reads ``ledger.path`` and requires it to
+        # resolve to the same file as the appointment store; the ledger
+        # previously exposed only ``self_path``, so constructing
+        # AppointmentPayments raised AttributeError.
+        self.path = self.self_path
         with self._connect() as db:
             db.execute("""CREATE TABLE IF NOT EXISTS stripe_events (
                 event_id TEXT PRIMARY KEY,
@@ -71,6 +76,16 @@ class PaymentLedger:
             except sqlite3.IntegrityError as exc:
                 raise PaymentDenied('Case or session already registered') from exc
 
+        # A caller inside its own BEGIN IMMEDIATE block passes its
+        # connection: use it without committing (the caller owns the
+        # transaction). Previously this opened a second connection and
+        # wrote through it, which blocked on the caller's write lock
+        # until the busy timeout — every first checkout failed.
+        # Mirrors fulfill_checkout's db parameter in this same module.
+        passed = kwargs.get('connection')
+        if passed is not None:
+            insert(passed)
+            return
         with self._connect() as conn:
             insert(conn)
             conn.commit()
@@ -541,7 +556,10 @@ class PaymentLedger:
             if own:
                 conn.close()
 
-    def status(self, case_id):
+    def status(self, case_id, connection=None):
+        if connection is not None:
+            row = connection.execute('SELECT state FROM stripe_cases WHERE case_id = ?;', (case_id,)).fetchone()
+            return row[0] if row else 'UNKNOWN'
         with self._connect() as db:
             row = db.execute('SELECT state FROM stripe_cases WHERE case_id = ?;', (case_id,)).fetchone()
             return row[0] if row else 'UNKNOWN'

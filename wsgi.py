@@ -16,7 +16,7 @@ repo_root = Path(__file__).resolve().parent
 if str(repo_root) not in sys.path:
     sys.path.insert(0, str(repo_root))
 
-from deploy.deployment import create_application
+from deploy.deployment import create_application, load_application
 from core_platform.stream_api import WebhookConfigurationError, import_make_app
 from core_platform.stripe_connection import StripeConnection
 from core_platform.stripe_payments import PaymentLedger
@@ -148,7 +148,29 @@ def create_native_application():
         live_verified=live_verified,
         bozly_recorder=bozly_recorder,
     )
-    platform_app = create_application()
+    # Production bindings: load the trusted factory named by
+    # SANDERS_RUNTIME_FACTORY (module:factory), e.g.
+    # deploy.production_bindings:create_production_bindings, through the
+    # existing deployment.load_application mechanism. The variable is set
+    # by the systemd unit (deploy/sanders-dash-seal.service), never by a
+    # request. When it is unset the boundary keeps its diagnostic-only
+    # startup (the current default); when the factory fails, the app still
+    # starts diagnostic-only and says so on stderr instead of refusing to
+    # boot — deployment must never be blocked by the factory (owner
+    # instruction, October 22, 2026). All three entry points (wsgi.py,
+    # passenger_wsgi.py, backend/wsgi.py) call create_native_application,
+    # so the factory wiring reaches each of them.
+    factory_reference = os.environ.get("SANDERS_RUNTIME_FACTORY") or None
+    if factory_reference is not None:
+        try:
+            platform_app = load_application(factory_reference)
+        except Exception as exc:
+            print(f"WARNING: production bindings factory {factory_reference!r} "
+                  f"failed ({type(exc).__name__}: {exc}); "
+                  "starting diagnostic-only.", file=sys.stderr)
+            platform_app = create_application()
+    else:
+        platform_app = create_application()
 
     def application(environ, start_response):
         path = environ.get('PATH_INFO', '')

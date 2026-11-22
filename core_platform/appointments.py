@@ -47,12 +47,21 @@ class AppointmentStore:
         db.execute("PRAGMA foreign_keys=ON;")
         return db
 
+    def connect(self):
+        """Public connection for callers that share a transaction with this store.
+
+        ``AppointmentPayments`` calls ``appointments.connect()`` inside its
+        own BEGIN IMMEDIATE blocks; without this the call raised
+        AttributeError and every quote approval and checkout failed.
+        """
+        return self._connect()
+
     def request(self, requester, request_id, jurisdiction, service, requested_start, meeting_area, consent):
         if not all(isinstance(v, str) and IDENT.fullmatch(v) for v in (requester, request_id)):
             raise AppointmentDenied('Invalid appointment request identifiers')
-        if jurisdiction not in ('CO', 'WY'):
+        if jurisdiction not in ('CO', 'WI', 'AZ'):
             raise AppointmentDenied('Invalid jurisdiction')
-        if service not in ('MOBILE_NOTARY', 'AUTHORIZED_DOCUMENT'):
+        if service not in ('MOBILE_NOTARY', 'RON', 'AUTHORIZED_DOCUMENT_SERVICE'):
             raise AppointmentDenied('Invalid service category')
         if consent is not True:
             raise AppointmentDenied('Consent required')

@@ -18,7 +18,7 @@ class CaseDenied(Exception):
 # Secure strict alphanumeric identity token validation regex
 IDENT_RE = re.compile(r'^[A-Za-z0-9_-]{1,128}$')
 
-VALID_SERVICES = frozenset(('MOBILE_NOTARY', 'E_NOTARY', 'RON', 'AUTHORIZATION'))
+VALID_SERVICES = frozenset(('MOBILE_NOTARY', 'RON', 'AUTHORIZED_DOCUMENT_SERVICE'))
 
 class CaseRegistry:
     """Persistent, fail-closed case registry providing sanitized transactions."""

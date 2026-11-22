@@ -12,7 +12,7 @@
 <body>
     <!-- Unified Corporate Top Navigation Ingress Branding Bar -->
     <header class="sds-enterprise-header">
-        <a class="sds-brand-title" href="/index.html" aria-label="Sanders Dash and Seal Home">
+        <a class="sds-brand-title" href="/" aria-label="Sanders Dash and Seal Home">
             Sanders Dash <span>&amp;</span> Seal
         </a>
         <div class="sds-tagline-anchor" aria-hidden="true">
@@ -43,20 +43,24 @@
                     <div style="margin-bottom: 1.25rem;">
                         <label for="service" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">How can we help?</label>
                         <select id="service" name="service" required style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;">
-                            <option value="MOBILE_NOTARY">Mobile Notary</option>
-                            <option value="RON">Remote Online Notarization (RON)</option>
-                            <option value="AUTHORIZED_DOCUMENT_SERVICE">Document Support</option>
+                            <option value="MOBILE_NOTARY">Mobile Notary — from $150</option>
+                            <option value="RON">Remote Online Notarization (RON) — from $150</option>
+                            <option value="AUTHORIZED_DOCUMENT_SERVICE">Document Support — from $250</option>
                         </select>
                     </div>
 
                     <div style="margin-bottom: 1.25rem;">
                         <label for="jurisdiction" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">State of Service</label>
-                        <input type="text" id="jurisdiction" name="jurisdiction" required placeholder="e.g. Wisconsin" style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;">
+                        <select id="jurisdiction" name="jurisdiction" required style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;">
+                            <option value="CO">Colorado</option>
+                            <option value="WI">Wisconsin</option>
+                            <option value="AZ">Arizona</option>
+                        </select>
                     </div>
 
                     <div style="margin-bottom: 1.25rem;">
                         <label for="meeting-area" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">City or Neighborhood</label>
-                        <input type="text" id="meeting-area" name="meeting-area" required placeholder="e.g. Milwaukee" style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;" maxlength="255">
+                        <input type="text" id="meeting-area" name="meeting-area" required placeholder="e.g. Milwaukee" style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;" maxlength="160">
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">

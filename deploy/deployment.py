@@ -13,7 +13,7 @@ import os
 import re
 from pathlib import Path
 
-from app.customer_app import create_customer_app
+from app.customer_app import ASSETS as CUSTOMER_ASSETS, create_customer_app
 from core_platform.free_resources import catalog as free_resource_catalog
 from core_platform.pipeline_api import create_pipeline_app, TransactionStore
 from core_platform.stream_api import create_stream_app
@@ -21,6 +21,11 @@ from core_platform.stream_api import create_stream_app
 CANONICAL_HOST = 'sandersdashandseal.com'
 ALIAS_HOSTS = {'www.sandersdashandseal.com', 'sanderslegalhelpersllc.com', 'www.sanderslegalhelpersllc.com', 'sanderssixshield.com', 'www.sanderssixshield.com', 'sanderssecurestack.com', 'www.sanderssecurestack.com', 'sandersemergencyglobalcommunication.com', 'www.sandersemergencyglobalcommunication.com'}
 ORIGIN = 'https://' + CANONICAL_HOST
+# Every origin a browser may POST from: the canonical host plus every alias
+# host. The customer app and the session auth both check POST Origins
+# against this set; checking only the canonical origin 403d every POST
+# from an alias host (sign-in, appointment request, quote, checkout).
+SITE_ORIGINS = frozenset({ORIGIN} | {'https://' + host for host in ALIAS_HOSTS})
 FACTORY = re.compile(r'([A-Za-z_]\w*)(?:\.([A-Za-z_]\w*))*(?::([A-Za-z_]\w*))?', re.ASCII)
 WEB_ROOT = Path(__file__).resolve().parent.parent / 'web'
 
@@ -372,13 +377,15 @@ def create_application(bindings=None):
             raise DeploymentConfigurationError('Trusted transaction processor required')
         customer = create_customer_app(
             bindings.appointments, bindings.authenticate,
-            bindings.payments, bindings.auth_app, ORIGIN, release_verifier=verifier
+            bindings.payments, bindings.auth_app, ORIGIN, release_verifier=verifier,
+            allowed_origins=SITE_ORIGINS
         )
     else:
         verifier = _denied
         customer = create_customer_app(
             None, lambda env: None,
-            _unavailable, _unavailable, ORIGIN, release_verifier=verifier
+            _unavailable, _unavailable, ORIGIN, release_verifier=verifier,
+            allowed_origins=SITE_ORIGINS
         )
 
     pipeline = create_pipeline_app(
@@ -701,6 +708,14 @@ def create_application(bindings=None):
         method, path = env.get('REQUEST_METHOD', ''), env.get('PATH_INFO', '')
         if host == CANONICAL_HOST:
             if _is_customer_api(path):
+                return customer(env, start)
+            # Customer static pages and the auth routes are served by the
+            # customer app on the canonical host too. Previously only the
+            # API paths were delegated, so /auth/login, /auth/login.html
+            # and /operator.html 308-redirected to '/' (and a POST there
+            # 405d), while the alias host served them. '/' itself is
+            # excluded: _api_route already served the portal at '/' above.
+            if path.startswith('/auth/') or (path in CUSTOMER_ASSETS and path != '/'):
                 return customer(env, start)
             if method not in ('GET', 'HEAD'):
                 return _response(start, '421 Misdirected Request',

@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else if (mode === 'setup' || mode === 'register' || result.role === 'OPERATOR') {
                         window.location.assign('/operator.html');
                     } else {
-                        window.location.assign('/index.html');
+                        window.location.assign('/');
                     }
                 }, 500);
 
