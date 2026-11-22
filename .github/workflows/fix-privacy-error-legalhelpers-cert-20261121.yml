@@ -1,0 +1,110 @@
+name: Fix privacy error - add sanderslegalhelpersllc.com to certificate (one-time)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix-legalhelpers-cert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add sanderslegalhelpersllc.com to Let's Encrypt certificate on Oracle
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo '=== FIX 2026-11-21: sanderslegalhelpersllc.com privacy error - cert covers only sandersdashandseal.com ==='
+            date -u; date
+            echo '--- 1. BEFORE: certbot certificates ---'
+            if [ -x /usr/local/bin/certbot ]; then CERTBOT=/usr/local/bin/certbot; else CERTBOT=certbot; fi
+            echo "CERTBOT_BIN=$CERTBOT"
+            sudo "$CERTBOT" certificates || true
+            echo '--- 1b. BEFORE: server_name / listen / ssl_certificate ---'
+            sudo grep -Rn -E 'server_name|listen |ssl_certificate' /etc/nginx/ || true
+            echo '--- 1c. BEFORE: server block ---'
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf || true
+            echo '--- 1d. DNS from instance (apex must resolve; www is known NXDOMAIN, apex only) ---'
+            getent hosts sanderslegalhelpersllc.com || true
+            getent hosts sandersdashandseal.com || true
+            echo '--- 1e. BEFORE: public checks ---'
+            curl -s -o /dev/null -w 'LEGALHELPERS_HEALTHZ_BEFORE_CODE=%{http_code}\n' https://sanderslegalhelpersllc.com/healthz || true
+            curl -s -o /dev/null -w 'DASH_HEALTHZ_BEFORE_CODE=%{http_code}\n' https://sandersdashandseal.com/healthz || true
+            echo '=== 2. BACKUP nginx config ==='
+            sudo mkdir -p /tmp/cert-fix-legalhelpers-20261121
+            sudo cp -a /etc/nginx/conf.d /tmp/cert-fix-legalhelpers-20261121/conf.d.bak || true
+            sudo ls -l /tmp/cert-fix-legalhelpers-20261121 || true
+            echo '=== 3. EXPAND certificate to include sanderslegalhelpersllc.com (apex only, NO www.sanderslegalhelpersllc.com) ==='
+            sudo "$CERTBOT" --nginx --expand -d sandersdashandseal.com -d www.sandersdashandseal.com -d sanderslegalhelpersllc.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect
+            EXPAND_EXIT=$?
+            echo "CERTBOT_EXPAND_EXIT=$EXPAND_EXIT"
+            if [ "$EXPAND_EXIT" -ne 0 ]; then
+              echo 'EXPAND FAILED: trying a separate certificate for sanderslegalhelpersllc.com only'
+              sudo "$CERTBOT" --nginx -d sanderslegalhelpersllc.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect
+              SEPARATE_EXIT=$?
+              echo "CERTBOT_SEPARATE_EXIT=$SEPARATE_EXIT"
+              if [ "$SEPARATE_EXIT" -ne 0 ]; then
+                echo 'CERTBOT_FAILED_BOTH: expand and separate certificate both failed - see errors above'
+                sudo "$CERTBOT" certificates || true
+                exit 1
+              fi
+            fi
+            echo '--- 3b. AFTER certbot: certificates ---'
+            sudo "$CERTBOT" certificates || true
+            echo '=== 4. ENSURE server_name includes sanderslegalhelpersllc.com in money_factory_legal_server.conf ==='
+            sudo python3 - <<'PY'
+            path = '/etc/nginx/conf.d/money_factory_legal_server.conf'
+            text = open(path).read()
+            lines = text.splitlines()
+            changed = False
+            out = []
+            for line in lines:
+                if 'server_name' in line and 'sandersdashandseal.com' in line and 'sanderslegalhelpersllc.com' not in line:
+                    line = line.replace(';', ' sanderslegalhelpersllc.com;', 1)
+                    changed = True
+                    print('ADDED sanderslegalhelpersllc.com to: ' + line.strip())
+                out.append(line)
+            if changed:
+                open(path, 'w').write(chr(10).join(out) + chr(10))
+                print('SERVER_NAME UPDATED')
+            else:
+                print('SERVER_NAME ALREADY INCLUDES sanderslegalhelpersllc.com (or no matching line)')
+            PY
+            echo '--- server block after server_name fix ---'
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf || true
+            sudo grep -Rn -E 'server_name|listen |ssl_certificate' /etc/nginx/ || true
+            echo '=== 5. NGINX TEST AND RELOAD ==='
+            sudo nginx -t
+            NGINX_T_EXIT=$?
+            echo "NGINX_T_EXIT=$NGINX_T_EXIT"
+            if [ "$NGINX_T_EXIT" -ne 0 ]; then
+              echo 'NGINX_T_FAILED: restoring conf.d backup'
+              sudo cp -a /tmp/cert-fix-legalhelpers-20261121/conf.d.bak/. /etc/nginx/conf.d/ || true
+              sudo nginx -t || true
+              exit 1
+            fi
+            sudo systemctl reload nginx || sudo systemctl restart nginx
+            echo "NGINX_RELOAD_EXIT=$?"
+            sudo systemctl is-active nginx || true
+            echo '=== 6. VERIFICATION FROM INSTANCE ==='
+            sudo "$CERTBOT" certificates || true
+            echo '--- SAN of live cert(s) ---'
+            for f in /etc/letsencrypt/live/*/fullchain.pem; do echo "===== $f ====="; sudo openssl x509 -in "$f" -noout -dates -subject -ext subjectAltName 2>/dev/null || sudo openssl x509 -in "$f" -noout -dates -subject || true; done
+            echo '--- TLS handshake for sanderslegalhelpersllc.com ---'
+            echo | openssl s_client -connect sanderslegalhelpersllc.com:443 -servername sanderslegalhelpersllc.com 2>/dev/null | openssl x509 -noout -dates -subject -ext subjectAltName || true
+            LEGALHELPERS_HEALTHZ=$(curl -s -o /dev/null -w '%{http_code}' https://sanderslegalhelpersllc.com/healthz || echo 000)
+            echo "LEGALHELPERS_HEALTHZ_CODE=$LEGALHELPERS_HEALTHZ"
+            LEGALHELPERS_HOME=$(curl -sk -o /dev/null -w '%{http_code}' https://sanderslegalhelpersllc.com/ || echo 000)
+            echo "LEGALHELPERS_HOME_CODE=$LEGALHELPERS_HOME"
+            LEGALHELPERS_HOME_STRICT=$(curl -s -o /dev/null -w '%{http_code}' https://sanderslegalhelpersllc.com/ || echo 000)
+            echo "LEGALHELPERS_HOME_STRICT_CODE=$LEGALHELPERS_HOME_STRICT"
+            DASH_HEALTHZ=$(curl -s -o /dev/null -w '%{http_code}' https://sandersdashandseal.com/healthz || echo 000)
+            echo "DASH_HEALTHZ_CODE=$DASH_HEALTHZ"
+            if [ "$LEGALHELPERS_HEALTHZ" != "200" ] || [ "$LEGALHELPERS_HOME" != "200" ] || [ "$DASH_HEALTHZ" != "200" ]; then
+              echo 'VERIFICATION_FAILED: one or more checks did not return 200 - see codes above'
+              sudo journalctl -u nginx --no-pager -n 100 || true
+              exit 1
+            fi
+            echo '=== SUCCESS: sanderslegalhelpersllc.com/healthz, sanderslegalhelpersllc.com/ and sandersdashandseal.com/healthz all return 200 ==='
