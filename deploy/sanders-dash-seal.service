@@ -33,6 +33,21 @@ EnvironmentFile=-/etc/sanders-dash-seal/runtime.env
 # from the repo's own modules (see deploy/production_bindings.py).
 # Not a secret; a plain Environment= line is correct here.
 Environment=SANDERS_RUNTIME_FACTORY=deploy.production_bindings:create_production_bindings
+# Stop the stale, non-systemd gunicorn before binding: the app used to run
+# as a bare nohup process from /tmp/sds-app (started 2026-11-21, --bind
+# 0.0.0.0:8000) and no deploy step ever stopped it. It still holds port
+# 8000, so this unit's gunicorn cannot bind 127.0.0.1:8000 and exits 1 in
+# a restart loop (deploy_all run #101, 2026-11-22) while the stale copy
+# keeps answering health checks — which is also why /api/session answered
+# 503 (stale, pre-bindings code) instead of the 401 the deploy check
+# requires. The '+' prefix runs this as root (the stale process runs as
+# ocarun, which User=sanders cannot signal); the '[n]' bracket keeps
+# pkill from matching its own shell command line. TERM, a short wait,
+# then KILL so a wedged worker cannot keep the port. The unit's own
+# previous gunicorn is already stopped by systemd before ExecStartPre on
+# restart, so this only ever targets the stale copy. deploy_all installs
+# this unit on every deploy, so the fix rides the next approved deploy.
+ExecStartPre=+/bin/sh -c '/usr/bin/pkill -f "gunicorn.*wsgi:applicatio[n]" 2>/dev/null; sleep 2; /usr/bin/pkill -9 -f "gunicorn.*wsgi:applicatio[n]" 2>/dev/null; true'
 ExecStart=/opt/Sanders_Dash_Seal/venv/bin/gunicorn --config deploy/gunicorn.conf.py wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
 Restart=on-failure
