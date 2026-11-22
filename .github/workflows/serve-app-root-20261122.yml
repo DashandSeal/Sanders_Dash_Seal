@@ -1,0 +1,70 @@
+name: Serve the Dash & Seal app at the public root on Oracle instance (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  serve-app-root:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove static root location, verify the app serves "/" on both domains
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== BEFORE: server file ==="
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf
+            echo "=== BEFORE: snippet ==="
+            sudo cat /etc/nginx/snippets/money_factory_legal.conf
+            echo "=== SNIPPET MUST ALREADY PROXY THE APP AT / (else run deploy_all first) ==="
+            if sudo grep -q 'location / {' /etc/nginx/snippets/money_factory_legal.conf; then echo "snippet has location / proxy"; else echo "SNIPPET_MISSING_APP_ROOT_PROXY: the snippet has no location / proxy to the app; run deploy_all first, then re-run this workflow"; exit 1; fi
+            echo "=== BACKUP ==="
+            sudo mkdir -p /tmp/nginx-serve-app-root-20261122
+            sudo cp -a /etc/nginx/conf.d /tmp/nginx-serve-app-root-20261122/conf.d.bak
+            sudo cp -a /etc/nginx/snippets /tmp/nginx-serve-app-root-20261122/snippets.bak
+            sudo cp -a /etc/nginx/nginx.conf /tmp/nginx-serve-app-root-20261122/nginx.conf.bak
+            ls -l /tmp/nginx-serve-app-root-20261122/
+            echo "=== MOVE the dashboard out of the public web root (recoverable, to the backup dir) ==="
+            if [ -f /usr/share/nginx/html/index.html ]; then sudo mv /usr/share/nginx/html/index.html /tmp/nginx-serve-app-root-20261122/index.html.bak && echo "dashboard index.html moved to backup"; else echo "no index.html in web root"; fi
+            echo "=== REMOVE every static root location from the server file ==="
+            sudo python3 - <<'PY'
+            import re
+            path = '/etc/nginx/conf.d/money_factory_legal_server.conf'
+            text = open(path).read()
+            pattern = re.compile(r'^[ \t]*location = / \{\n[ \t]*try_files /index\.html =404;\n[ \t]*\}\n?', re.MULTILINE)
+            new, n = pattern.subn('', text)
+            print('REMOVED static root location blocks: %d' % n)
+            if n == 0:
+                print('NO static root location found (already clean)')
+            open(path, 'w').write(new)
+            PY
+            echo "=== SERVER FILE AFTER ==="
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf
+            echo "=== NGINX TEST ==="
+            sudo nginx -t
+            NGINX_RC=$?
+            echo "nginx -t exit code: $NGINX_RC"
+            if [ "$NGINX_RC" -ne 0 ]; then echo "NGINX_TEST_FAILED, restoring backup"; sudo rm -rf /etc/nginx/conf.d /etc/nginx/snippets; sudo cp -a /tmp/nginx-serve-app-root-20261122/conf.d.bak /etc/nginx/conf.d; sudo cp -a /tmp/nginx-serve-app-root-20261122/snippets.bak /etc/nginx/snippets; sudo nginx -t; exit 1; fi
+            echo "=== RELOAD NGINX ==="
+            sudo systemctl reload nginx || sudo systemctl restart nginx
+            sleep 3
+            sudo systemctl is-active nginx || true
+            echo "=== VERIFY: the app serves '/' on both domains ==="
+            FAIL=0
+            for n in sandersdashandseal.com sanderslegalhelpersllc.com; do echo "--- https://$n/ ---"; CODE=$(curl -s -o /tmp/root-$n.html -w "%{http_code}" "https://$n/"); echo "https://$n/ -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/ returned $CODE"; FAIL=1; continue; fi; if grep -q "POLICE MEN" /tmp/root-$n.html; then echo "FAIL: https://$n/ still serves the Police Men dashboard"; FAIL=1; fi; done
+            if grep -q "Secure Notarization Portal" /tmp/root-sandersdashandseal.com.html; then echo "canonical root serves the Dash & Seal portal"; else echo "FAIL: canonical root is not the Dash & Seal portal"; FAIL=1; fi
+            if grep -q "Imperial Jade" /tmp/root-sanderslegalhelpersllc.com.html; then echo "legalhelpers root serves the Imperial Jade landing"; else echo "FAIL: legalhelpers root is not the Imperial Jade landing"; FAIL=1; fi
+            echo "=== VERIFY: home-page assets ==="
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://sandersdashandseal.com/assets/booking.css"); echo "canonical /assets/booking.css -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: canonical booking.css returned $CODE (deployment.py asset fix not live yet — run deploy_all first)"; FAIL=1; fi
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://sandersdashandseal.com/assets/booking.js"); echo "canonical /assets/booking.js -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: canonical booking.js returned $CODE (deployment.py asset fix not live yet — run deploy_all first)"; FAIL=1; fi
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://sanderslegalhelpersllc.com/assets/jade-landing.css"); echo "legalhelpers /assets/jade-landing.css -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: legalhelpers jade-landing.css returned $CODE"; FAIL=1; fi
+            echo "=== VERIFY: /healthz on both domains ==="
+            for n in sandersdashandseal.com sanderslegalhelpersllc.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/healthz"); echo "https://$n/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/healthz returned $CODE"; FAIL=1; fi; done
+            echo "=== VERIFY: /legal-aid/health and /rtsa/status on both domains ==="
+            for n in sandersdashandseal.com sanderslegalhelpersllc.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/legal-aid/health"); echo "https://$n/legal-aid/health -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/legal-aid/health returned $CODE"; FAIL=1; fi; CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/rtsa/status"); echo "https://$n/rtsa/status -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/rtsa/status returned $CODE"; FAIL=1; fi; done
+            echo "=== VERIFY: Stripe webhook paths answer (not 502) on both domains ==="
+            for n in sandersdashandseal.com sanderslegalhelpersllc.com; do for p in /stripe/webhook /v1/payments/stripe/webhook; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n$p"); echo "https://$n$p -> $CODE"; if [ "$CODE" = "502" ] || [ "$CODE" = "000" ]; then echo "FAIL: https://$n$p unreachable ($CODE)"; FAIL=1; fi; done; done
+            if [ "$FAIL" -ne 0 ]; then echo "APP_ROOT_VERIFICATION_FAILED"; exit 1; fi
+            echo "ALL_CHECKS_PASSED"

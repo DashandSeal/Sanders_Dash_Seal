@@ -118,14 +118,17 @@ jobs:
             OVERRIDE
             fi
 
-            # 4b. Sync The Police Men RTSA (Security Upgrades & CSPU Governance) assets & SELinux context
-            sudo mkdir -p /var/www/rtsa /usr/share/nginx/html
+            # 4b. Sync The Police Men RTSA status file only. The dashboard
+            # itself is NOT copied to the public web root: the public root
+            # on every domain is the Sanders Dash & Seal app. status.json
+            # stays for the /rtsa/status endpoint until the owner decides
+            # the dashboard's new home and access.
+            sudo mkdir -p /var/www/rtsa
             if [ -d "$REPO_DIR/rtsa_police_men" ]; then
-              sudo cp "$REPO_DIR/rtsa_police_men/index.html" /usr/share/nginx/html/index.html
               sudo cp "$REPO_DIR/rtsa_police_men/status.json" /var/www/rtsa/status.json
-              sudo chmod 644 /usr/share/nginx/html/index.html /var/www/rtsa/status.json
+              sudo chmod 644 /var/www/rtsa/status.json
               if command -v restorecon >/dev/null 2>&1; then
-                sudo restorecon -Rv /var/www/rtsa /usr/share/nginx/html || true
+                sudo restorecon -Rv /var/www/rtsa || true
               fi
             fi
 
@@ -148,18 +151,12 @@ jobs:
                 sudo tee /etc/nginx/conf.d/money_factory_legal_server.conf >/dev/null <<'NGINX'
             server {
                 listen 80 default_server;
-                server_name sandersdashandseal.com www.sandersdashandseal.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com 129.146.111.166 _;
-                root /usr/share/nginx/html;
-                index index.html;
+                server_name sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com 129.146.111.166 _;
 
                 server_tokens off;
                 add_header X-Frame-Options "SAMEORIGIN" always;
                 add_header X-Content-Type-Options "nosniff" always;
                 add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-
-                location = / {
-                    try_files /index.html =404;
-                }
 
                 include /etc/nginx/snippets/money_factory_legal.conf;
             }
