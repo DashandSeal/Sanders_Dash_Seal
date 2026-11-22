@@ -459,6 +459,28 @@ def create_application(bindings=None):
                                  {'error': 'voice_unavailable',
                                   'reason': 'web/voice.html is missing from this checkout'})
             return _response(start, '404 Not Found', {'error': 'not_found'})
+        if path in ('/assets/booking.css', '/assets/booking.js'):
+            # Canonical home page assets. web/index.html links both, and
+            # the canonical host 308-redirects every path _api_route does
+            # not serve, so without this the portal home on
+            # sandersdashandseal.com loads with no CSS and no booking
+            # script. Served from web/ like the voice/video pages.
+            # Alias hosts return None here so they keep serving these
+            # files from the customer app, with its own headers.
+            host = env.get('HTTP_HOST', '')
+            if not isinstance(host, str):
+                return _response(start, '421 Misdirected Request', {'error': 'host_denied'})
+            host = host.lower()
+            if host.endswith(':443'):
+                host = host[:-4]
+            if host in ALIAS_HOSTS:
+                return None
+            media_type = ('text/css; charset=utf-8' if path.endswith('.css')
+                          else 'application/javascript; charset=utf-8')
+            served = _serve_web_file(start, path.rsplit('/', 1)[-1], media_type)
+            if served is not None:
+                return served
+            return _response(start, '404 Not Found', {'error': 'not_found'})
         if path == '/api/voice' or path.startswith('/api/voice/'):
             # Real voice adapters (free-first, approval-gated for live
             # providers). No backends are configured when no key/package
