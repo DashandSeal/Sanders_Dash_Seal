@@ -1,0 +1,34 @@
+name: Diagnose gunicorn layout on Oracle instance (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect gunicorn process, cwd, and deployed copies
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== GUNICORN PIDS ==="
+            pgrep -af 'gunicorn wsgi:application' || true
+            echo "=== FULL CMDLINE + CWD + PPID ==="
+            for p in $(pgrep -f 'gunicorn wsgi:application'); do echo "--- pid $p ---"; tr '\0' ' ' < /proc/$p/cmdline; echo; echo "cwd: $(sudo readlink /proc/$p/cwd)"; echo "ppid: $(awk '{print $4}' /proc/$p/stat)"; echo "start: $(ps -o lstart= -p $p)"; done
+            echo "=== PARENT CHAIN ==="
+            ps -ef --forest | grep -E 'gunicorn|sds-venv' | grep -v grep | head -20 || true
+            echo "=== WSGI.PY COPIES ==="
+            sudo find /home /opt /srv /var/www -maxdepth 5 -name 'wsgi.py' 2>/dev/null | head -20
+            for f in $(sudo find /home /opt /srv /var/www -maxdepth 5 -name 'wsgi.py' 2>/dev/null | head -20); do echo "--- $f ---"; sudo grep -n "deployment\|create_application" "$f" | head -10; done
+            echo "=== GIT CHECKOUTS ==="
+            for d in /opt/Sanders_Dash_Seal /home/*/.local/src/Sanders_Dash_Seal /home/*/.local/share/sanders-corporations-secretary/public-source; do if [ -d "$d/.git" ]; then echo "--- $d (git) ---"; git -C "$d" log --oneline -3 2>&1 | head -5; git -C "$d" status --short 2>&1 | head -10; git -C "$d" remote -v 2>&1 | head -4; else echo "--- $d (no .git) ---"; fi; done
+            echo "=== DEPLOYMENT.PY MTIMES ==="
+            sudo ls -l --time-style=long-iso /opt/Sanders_Dash_Seal/deploy/deployment.py /home/*/.local/src/Sanders_Dash_Seal/deploy/deployment.py /home/*/.local/share/sanders-corporations-secretary/public-source/deploy/deployment.py 2>&1
+            echo "=== START SCRIPTS MENTIONING GUNICORN ==="
+            sudo grep -rln "gunicorn" /opt/Sanders_Dash_Seal/deploy /etc/systemd/system 2>/dev/null | head -20 || echo "none found in deploy/systemd"
+            echo "=== CRON / RC ==="
+            sudo crontab -l 2>/dev/null | head -10; crontab -l 2>/dev/null | head -10; ls -l /etc/rc.local 2>/dev/null || echo "no rc.local"
+            echo "DIAG2_DONE"
