@@ -40,8 +40,19 @@ jobs:
           envs: CZDS_USERNAME,CZDS_PASSWORD
           script: |
             set -e
-            cd /tmp/sds-app
-            git pull --ff-only origin main || echo "git pull failed, continuing with deployed copy"
+            # Zone Watch keeps its own checkout, owned by the SSH user.
+            # /tmp/sds-app is the live app's copy and its .git is not
+            # writable by this user (FETCH_HEAD permission denied),
+            # so a pull there fails and the run silently used stale
+            # code without the zone_watch module. A failed pull here
+            # must fail the run loudly instead of running stale code.
+            CHECKOUT=/home/opc/sds-zone-watch
+            if [[ -d "$CHECKOUT/.git" ]]; then
+              git -C "$CHECKOUT" pull --ff-only origin main
+            else
+              git clone --depth 1 https://github.com/DashandSeal/Sanders_Dash_Seal.git "$CHECKOUT"
+            fi
+            cd "$CHECKOUT"
             mkdir -p /home/opc/zone-watch
             CZDS_USERNAME="$CZDS_USERNAME" CZDS_PASSWORD="$CZDS_PASSWORD" python3 -m core_platform.zone_watch.run --data-dir /home/opc/zone-watch
             echo "=== SUMMARY ==="
