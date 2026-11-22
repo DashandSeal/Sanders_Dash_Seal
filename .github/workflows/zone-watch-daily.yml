@@ -1,0 +1,50 @@
+# Zone Watch daily — CZDS brand protection and global DNS check.
+#
+# Runs the Zone Watch service on the Oracle Always Free instance:
+# streams the approved CZDS zone files, keeps only Sanders brand and
+# platform-hostname matches, emits JSON events for the watchdog and
+# Sentinel platforms, and verifies every platform hostname resolves
+# through public DNS.
+#
+# PLACE THIS FILE THROUGH THE GITHUB WEB UI. It is kept out of
+# connector pushes because the GitHub App has no Workflows permission
+# and workflow pushes fail with 403.
+#
+# Owner setup before the first scheduled run:
+#   1. Add CZDS_USERNAME and CZDS_PASSWORD as repository secrets
+#      (Settings -> Secrets and variables -> Actions). The values are
+#      the owner's ICANN account credentials, also stored in the
+#      Secure Vault. They are never committed.
+#   2. The instance needs this code deployed (the workflow pulls main
+#      on the instance first; a deploy run waits on the owner's
+#      Production-Authorization-Gate, which only the owner approves).
+name: Zone Watch daily (CZDS brand protection + global DNS check)
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+jobs:
+  zone-watch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Zone Watch daily run on Oracle Always Free instance
+        uses: appleboy/ssh-action@v1
+        env:
+          CZDS_USERNAME: ${{ secrets.CZDS_USERNAME }}
+          CZDS_PASSWORD: ${{ secrets.CZDS_PASSWORD }}
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          envs: CZDS_USERNAME,CZDS_PASSWORD
+          script: |
+            set -e
+            cd /tmp/sds-app
+            git pull --ff-only origin main || echo "git pull failed, continuing with deployed copy"
+            mkdir -p /home/opc/zone-watch
+            CZDS_USERNAME="$CZDS_USERNAME" CZDS_PASSWORD="$CZDS_PASSWORD" python3 -m core_platform.zone_watch.run --data-dir /home/opc/zone-watch
+            echo "=== SUMMARY ==="
+            cat /home/opc/zone-watch/zone-watch-summary.json
+            echo "=== EVENTS (last 20) ==="
+            tail -n 20 /home/opc/zone-watch/zone-watch-events.jsonl || true
