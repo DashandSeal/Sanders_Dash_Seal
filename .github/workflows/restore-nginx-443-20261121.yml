@@ -1,0 +1,68 @@
+name: Restore nginx 443 and app proxies on Oracle instance (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore snippet proxies and 443 server block, verify
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== BEFORE: listeners ==="
+            sudo ss -ltnp 2>/dev/null | grep -E ':(80|443)' || echo "no 80/443 listeners"
+            echo "=== BEFORE: server file ==="
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf
+            echo "=== BEFORE: snippet ==="
+            sudo cat /etc/nginx/snippets/money_factory_legal.conf
+            echo "=== BACKUP ==="
+            sudo mkdir -p /tmp/nginx-restore-20261121
+            sudo cp -a /etc/nginx/conf.d /tmp/nginx-restore-20261121/conf.d.bak
+            sudo cp -a /etc/nginx/snippets /tmp/nginx-restore-20261121/snippets.bak
+            sudo cp -a /etc/nginx/nginx.conf /tmp/nginx-restore-20261121/nginx.conf.bak
+            ls -l /tmp/nginx-restore-20261121/
+            echo "=== CERT FILES MUST EXIST ==="
+            sudo ls -l /etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem /etc/letsencrypt/live/sandersdashandseal.com/privkey.pem || { echo "CERT_FILES_MISSING"; exit 1; }
+            if [ -f /etc/letsencrypt/options-ssl-nginx.conf ]; then echo "options-ssl-nginx.conf present"; else echo "options-ssl-nginx.conf MISSING, will use inline ssl_protocols"; fi
+            if [ -f /etc/letsencrypt/ssl-dhparams.pem ]; then echo "ssl-dhparams.pem present"; else echo "ssl-dhparams.pem MISSING"; fi
+            echo "=== RESTORE SNIPPET (adds /healthz and / proxies to 8000) ==="
+            printf '%s\n' 'location /healthz {' 'proxy_pass http://127.0.0.1:8000;' 'proxy_set_header Host $host;' 'proxy_set_header X-Real-IP $remote_addr;' 'proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;' 'proxy_set_header X-Forwarded-Proto $scheme;' '}' 'location / {' 'proxy_pass http://127.0.0.1:8000;' 'proxy_set_header Host $host;' 'proxy_set_header X-Real-IP $remote_addr;' 'proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;' 'proxy_set_header X-Forwarded-Proto $scheme;' '}' 'location /legal-aid/ {' 'proxy_pass http://127.0.0.1:8668/;' 'proxy_set_header Host $host;' 'proxy_set_header X-Real-IP $remote_addr;' 'proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;' 'proxy_set_header X-Forwarded-Proto $scheme;' '}' 'location = /rtsa/status {' 'default_type application/json;' 'alias /var/www/rtsa/status.json;' '}' | sudo tee /etc/nginx/snippets/money_factory_legal.conf
+            echo "=== SNIPPET AFTER ==="
+            sudo cat /etc/nginx/snippets/money_factory_legal.conf
+            echo "=== ADD 443 SERVER BLOCK (only if not already present) ==="
+            if sudo grep -q 'listen 443' /etc/nginx/conf.d/money_factory_legal_server.conf; then echo "listen 443 ALREADY PRESENT, not appending"; else
+              printf '%s\n' 'server {' 'listen 443 ssl;' 'server_name sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com;' 'ssl_certificate /etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem;' 'ssl_certificate_key /etc/letsencrypt/live/sandersdashandseal.com/privkey.pem;' | sudo tee -a /etc/nginx/conf.d/money_factory_legal_server.conf
+              if [ -f /etc/letsencrypt/options-ssl-nginx.conf ]; then printf '%s\n' 'include /etc/letsencrypt/options-ssl-nginx.conf;' | sudo tee -a /etc/nginx/conf.d/money_factory_legal_server.conf; else printf '%s\n' 'ssl_protocols TLSv1.2 TLSv1.3;' | sudo tee -a /etc/nginx/conf.d/money_factory_legal_server.conf; fi
+              if [ -f /etc/letsencrypt/ssl-dhparams.pem ]; then printf '%s\n' 'ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;' | sudo tee -a /etc/nginx/conf.d/money_factory_legal_server.conf; fi
+              printf '%s\n' 'root /usr/share/nginx/html;' 'index index.html;' 'server_tokens off;' 'add_header X-Frame-Options "SAMEORIGIN" always;' 'add_header X-Content-Type-Options "nosniff" always;' 'add_header Referrer-Policy "strict-origin-when-cross-origin" always;' 'location = / {' 'try_files /index.html =404;' '}' 'include /etc/nginx/snippets/money_factory_legal.conf;' '}' | sudo tee -a /etc/nginx/conf.d/money_factory_legal_server.conf
+              echo "443 block appended"
+            fi
+            echo "=== SERVER FILE AFTER ==="
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf
+            echo "=== VERIFY server_name HAS ALL TEN NAMES ==="
+            for nm in sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com; do if sudo grep -q "$nm" /etc/nginx/conf.d/money_factory_legal_server.conf; then echo "server_name has $nm"; else echo "MISSING FROM server_name: $nm"; fi; done
+            echo "=== NGINX TEST ==="
+            sudo nginx -t
+            NGINX_RC=$?
+            echo "nginx -t exit code: $NGINX_RC"
+            if [ "$NGINX_RC" -ne 0 ]; then echo "NGINX_TEST_FAILED, restoring backup"; sudo rm -rf /etc/nginx/conf.d /etc/nginx/snippets; sudo cp -a /tmp/nginx-restore-20261121/conf.d.bak /etc/nginx/conf.d; sudo cp -a /tmp/nginx-restore-20261121/snippets.bak /etc/nginx/snippets; sudo nginx -t; exit 1; fi
+            echo "=== RELOAD NGINX ==="
+            sudo systemctl reload nginx || sudo systemctl restart nginx
+            sleep 3
+            sudo systemctl is-active nginx || true
+            sudo ss -ltnp 2>/dev/null | grep -E ':(80|443)' || echo "80/443 NOT LISTENING AFTER RELOAD"
+            echo "=== CERTIFICATE SAN (explicit path) ==="
+            sudo openssl x509 -in /etc/letsencrypt/live/sandersdashandseal.com/cert.pem -noout -subject -dates -ext subjectAltName
+            echo "=== STRICT HTTPS VERIFICATION (no -k) ==="
+            FAIL=0
+            for n in sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com; do echo "--- https://$n/healthz ---"; curl -s "https://$n/healthz"; echo; CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/healthz"); echo "https://$n/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/healthz returned $CODE"; FAIL=1; fi; done
+            for a in sanderssixshield.com sanderssecurestack.com sandersemergencyglobalcommunication.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$a/"); echo "https://$a/ -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$a/ returned $CODE"; FAIL=1; fi; done
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://sandersdashandseal.com/healthz"); echo "https://sandersdashandseal.com/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: sandersdashandseal.com/healthz returned $CODE"; FAIL=1; fi
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://sanderslegalhelpersllc.com/healthz"); echo "https://sanderslegalhelpersllc.com/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: sanderslegalhelpersllc.com/healthz returned $CODE"; FAIL=1; fi
+            if [ "$FAIL" -ne 0 ]; then echo "HTTPS_VERIFICATION_FAILED"; exit 1; fi
+            echo "ALL_CHECKS_PASSED"
