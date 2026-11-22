@@ -1,0 +1,35 @@
+name: Diagnose app host gate on Oracle instance (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect app on port 8000 and its host gate
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== LISTENING ON 8000 ==="
+            sudo ss -ltnp 2>/dev/null | grep 8000 || ss -ltnp 2>/dev/null | grep 8000 || echo "nothing on 8000 via ss"
+            echo "=== PROCESSES ==="
+            ps aux | grep -E 'gunicorn|node|python|worker' | grep -v grep || true
+            echo "=== SYSTEMD APP UNITS ==="
+            systemctl list-units --type=service --all --no-legend | grep -iE 'app|gunicorn|worker|money|deploy|wsgi' || echo "no matching units"
+            echo "=== UNIT FILES ==="
+            for u in $(systemctl list-units --type=service --all --no-legend | awk '{print $1}' | grep -iE 'app|gunicorn|worker|money|deploy|wsgi'); do echo "--- $u active: $(systemctl is-active $u) ---"; systemctl cat "$u" 2>/dev/null | head -50; done
+            echo "=== HOST_GATE IN DEPLOYED CODE ==="
+            sudo grep -rn "host_denied" /home /opt /srv /var/www --include='*.py' --include='*.js' 2>/dev/null | head -20 || echo "no host_denied found under /home /opt /srv /var/www"
+            echo "=== ALIAS_HOSTS IN DEPLOYED deployment.py COPIES ==="
+            for f in $(sudo find /home /opt /srv /var/www /root -name 'deployment.py' 2>/dev/null | head -20); do echo "--- $f ---"; sudo grep -n "ALIAS_HOSTS\|CANONICAL_HOST" "$f" || echo "no ALIAS_HOSTS in $f"; done
+            echo "=== WORKER.JS COPIES ==="
+            for f in $(sudo find /home /opt /srv /var/www /root -path '*worker/src/worker.js' 2>/dev/null | head -10); do echo "--- $f ---"; sudo grep -n "HOST =" "$f" || true; done
+            echo "=== NGINX SNIPPET money_factory_legal.conf ==="
+            sudo cat /etc/nginx/conf.d/money_factory_legal.conf 2>/dev/null || echo "no money_factory_legal.conf"
+            echo "=== DIRECT APP TEST (loopback, Host header) ==="
+            for h in sandersdashandseal.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com sandersemergencyglobalcommunication.com; do echo "--- Host: $h ---"; curl -s -w "\nHTTP %{http_code}\n" -H "Host: $h" http://127.0.0.1:8000/healthz || echo "curl failed"; done
+            echo "DIAG_DONE"
