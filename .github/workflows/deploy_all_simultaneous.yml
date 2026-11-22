@@ -88,6 +88,13 @@ jobs:
               git clone https://github.com/DashandSeal/Sanders_Dash_Seal.git "$REPO_DIR"
             fi
             cd "$REPO_DIR"
+            # The checkout's .git directory must be writable by the deploy
+            # user: a past privileged git operation left root-owned objects
+            # behind, and `git fetch` fails with "insufficient permission
+            # for adding an object to repository database .git/objects"
+            # (deploy_all run #100, 2026-11-22). Re-assert ownership here
+            # so the deploy self-heals instead of failing.
+            sudo chown -R "$USER:$USER" "$REPO_DIR/.git"
             git fetch origin main
             git reset --hard origin/main
 
@@ -191,8 +198,7 @@ jobs:
             # missing from the repository, so deploys landed code without
             # restarting the app and the running copy went stale (the
             # overnight 421 host_denied regression on the three new
-            # domains). PREPARED 2026-11-22, NOT YET PUSHED — workflow
-            # files go through the web UI, not snapshot-push.
+            # domains). Pushed 2026-11-22 (commit 7c7ed46) via the web UI.
             if [ -f deploy/sanders-dash-seal.service ]; then
               # The unit runs as the sanders service user (uid/gid 10001,
               # created by deploy/install-simultaneous.sh). Make sure it
@@ -219,8 +225,7 @@ jobs:
             fi
 
             # 7. Automated End-to-End Health, RTSA & ML-DSA-65 Smoke Test on OCI
-            # Extended 2026-11-22 (PREPARED, NOT YET PUSHED — workflow files
-            # go through the web UI): the old check verified only nginx +
+            # Extended 2026-11-22 (pushed, commit 7c7ed46): the old check verified only nginx +
             # Money Factory, never the Dash & Seal app itself. The new
             # checks also require /healthz on gunicorn (8000), both home
             # pages through nginx, and an unauthenticated GET /api/session
