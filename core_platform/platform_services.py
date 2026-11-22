@@ -48,9 +48,10 @@ No network calls, no spend, no deploy, no merge.
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from typing import Any
+
+from .stripe_connection import StripeConnection
 
 # ---------------------------------------------------------------------------
 # Verified facts (from the 2026-11-13 live checks; re-verify live before deploy)
@@ -106,23 +107,18 @@ class StripeLink:
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> "StripeLink":
-        src = os.environ if env is None else env
-        # P3 (2026-11-13): canonical truthiness, shared with wsgi.py
-        # (_env_truthy) and deploy/deployment.py: "1", "true" or "yes"
-        # (case-insensitive, whitespace-tolerant). Previously this
-        # reader accepted "true" only, so STRIPE_LIVEMODE=1 reported
-        # test mode here while the webhook app ran live -- the two
-        # readers disagreed about the same environment.
-        livemode = (src.get("STRIPE_LIVEMODE") or "").strip().lower() in (
-            "1", "true", "yes")
-        live_verified = (src.get("STRIPE_LIVE_VERIFIED") or "").strip().lower() in (
-            "1", "true", "yes")
+        # The Stripe connection is read once, centrally
+        # (core_platform/stripe_connection.py); this only maps its
+        # fields onto StripeLink. Canonical truthiness (P3, 2026-11-13)
+        # lives in that module now, shared with wsgi.py and
+        # deploy/deployment.py.
+        connection = StripeConnection.from_env(env)
         return cls(
-            secret_key_set=bool((src.get("STRIPE_SECRET_KEY") or "").strip()),
-            webhook_secret_set=bool((src.get("STRIPE_WEBHOOK_SECRET") or "").strip()),
-            livemode_requested=livemode,
-            live_verified=live_verified,
-            test_mode=not livemode,
+            secret_key_set=connection.secret_key_set,
+            webhook_secret_set=connection.webhook_secret_set,
+            livemode_requested=connection.livemode_requested,
+            live_verified=connection.live_verified,
+            test_mode=connection.test_mode,
         )
 
     @property

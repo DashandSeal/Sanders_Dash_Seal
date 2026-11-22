@@ -11,7 +11,6 @@ Description: Real-time autonomous synthetic AI processing loop for incoming raw
 import json
 import logging
 import time
-import stripe
 from stripe import SignatureVerificationError
 
 from core_platform.global_payments import (
@@ -20,6 +19,7 @@ from core_platform.global_payments import (
     normalize_currency,
     validate_webhook_event,
 )
+from core_platform.stripe_connection import construct_webhook_event
 
 # Enterprise security boundaries: Webhook payloads never require more than 64KB
 MAX_WEBHOOK_BODY_BYTES = 65536
@@ -132,11 +132,11 @@ def import_make_app(ledger_engine, webhook_secret, *, enabled=True, expected_liv
             return respond(start_response, '401 Unauthorized', {'error': 'missing_stripe_signature_header'})
 
         try:
-            event = stripe.Webhook.construct_event(
-                payload=raw_body,
-                sig_header=sig_header,
-                secret=webhook_secret
-            )
+            # Webhook event construction goes through the central Stripe
+            # connection: same SDK call, same arguments, same exceptions
+            # as the direct call it replaces.
+            event = construct_webhook_event(
+                raw_body, sig_header, webhook_secret)
         except (ValueError, SignatureVerificationError) as signature_error:
             logging.warning(f"⚠️ Cryptographic verification rejected payload handshake: {str(signature_error)}")
             return respond(start_response, '401 Unauthorized', {'error': 'invalid_cryptographic_signature'})

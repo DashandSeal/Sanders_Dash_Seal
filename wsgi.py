@@ -18,6 +18,7 @@ if str(repo_root) not in sys.path:
 
 from deploy.deployment import create_application
 from core_platform.stream_api import WebhookConfigurationError, import_make_app
+from core_platform.stripe_connection import StripeConnection
 from core_platform.stripe_payments import PaymentLedger
 
 class MockLedgerEngine:
@@ -101,9 +102,12 @@ def create_native_application():
     # The webhook secret comes ONLY from the environment (systemd
     # EnvironmentFile /etc/sanders-dash-seal/runtime.env, written from the
     # owner's OCI Vault by deploy/refresh_provider_secrets.py, or exported
-    # by the installer). There is deliberately no default: a missing secret
-    # must fail loudly here, never silently verify with a baked-in value.
-    webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET")
+    # by the installer), read once through the central Stripe connection
+    # (core_platform/stripe_connection.py). There is deliberately no
+    # default: a missing secret must fail loudly here, never silently
+    # verify with a baked-in value.
+    connection = StripeConnection.from_env()
+    webhook_secret = connection.webhook_secret
     if not webhook_secret:
         raise WebhookConfigurationError(
             "STRIPE_WEBHOOK_SECRET is not set. Set it in the environment "
@@ -111,18 +115,15 @@ def create_native_application():
             "flow) before starting the app; no default secret is baked into the code."
         )
 
-    # Stripe environment comes from the environment, test mode by
+    # Stripe environment comes from the central connection, test mode by
     # default. Live mode requires BOTH STRIPE_LIVEMODE=1 AND
     # STRIPE_LIVE_VERIFIED=1: the second flag is set only after the
     # owner has explicitly confirmed live eligibility and release
     # controls. import_make_app raises (fail closed, no app) if live
     # is requested without verification; a live webhook secret alone
     # can never enable live acceptance.
-    def _env_truthy(name):
-        return os.environ.get(name, "").strip().lower() in ("1", "true", "yes")
-
-    expected_livemode = _env_truthy("STRIPE_LIVEMODE")
-    live_verified = _env_truthy("STRIPE_LIVE_VERIFIED")
+    expected_livemode = connection.livemode_requested
+    live_verified = connection.live_verified
 
     # Bozly (CFO) wiring: the CFO ledger lives next to the platform
     # ledger. The recorder is built best-effort and never fails app

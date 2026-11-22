@@ -31,9 +31,9 @@ gates that prevent accidental live charges:
 
 from __future__ import annotations
 
-import os
 from typing import Any
 
+from .stripe_connection import StripeConnection
 from .stripe_payments import (
     PaymentDenied,
     PaymentLedger,
@@ -54,12 +54,13 @@ class StripeCheckout:
         allow_live: bool = False,
         stripe_client=None,
     ) -> None:
-        key = secret_key or os.environ.get("STRIPE_SECRET_KEY", "")
+        connection = StripeConnection.from_env()
+        key = secret_key or connection.secret_key
         if not key:
             raise ValueError("STRIPE_SECRET_KEY is required for Stripe Checkout")
         self._live = key.startswith("sk_live_")
         if self._live:
-            verified = os.environ.get(LIVE_VERIFIED_ENV, "") == "1"
+            verified = connection.live_verified
             if not (allow_live and verified):
                 raise PaymentDenied(
                     "live Stripe key refused: test-mode first. Pass "
@@ -172,7 +173,7 @@ def verify_then_record(
     event = verify_stripe_webhook(
         payload, signature_header, signing_secret, now=now
     )
-    expected_livemode = os.environ.get("STRIPE_LIVEMODE", "false") == "true"
+    expected_livemode = StripeConnection.from_env().livemode_requested
     if bool(event.get("livemode", False)) != expected_livemode:
         raise PaymentDenied(
             "webhook livemode does not match STRIPE_LIVEMODE "
@@ -182,31 +183,14 @@ def verify_then_record(
 
 
 def checkout_status() -> dict[str, Any]:
-    """Honest Stripe status: key present or missing; mode; verifier gate."""
-    key = os.environ.get("STRIPE_SECRET_KEY", "")
-    if not key:
-        mode = "unknown"
-        live_status = "MISSING_KEY"
-    elif key.startswith("sk_live_"):
-        mode = "live"
-        live_status = (
-            "READY"
-            if os.environ.get(LIVE_VERIFIED_ENV, "") == "1"
-            else "BLOCKED_LIVE_NOT_VERIFIED"
-        )
-    elif key.startswith("sk_test_"):
-        mode = "test"
-        live_status = "READY"
-    else:
-        mode = "unknown"
-        live_status = "MISSING_KEY"
-    return {
-        "service": "stripe-checkout",
-        "mode": mode,
-        "verifier_gate": os.environ.get(LIVE_VERIFIED_ENV, "") == "1",
-        "live_status": live_status,
-        "note": "Test mode is the default; live requires the verifier gate.",
-    }
+    """Honest Stripe status: key present or missing; mode; verifier gate.
+
+    Built from the central connection; the service name stays
+    ``"stripe-checkout"`` so existing callers see the same payload.
+    """
+    status = StripeConnection.from_env().status()
+    status["service"] = "stripe-checkout"
+    return status
 
 
 __all__ = [
