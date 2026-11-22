@@ -185,16 +185,57 @@ jobs:
               fi
             done
 
+            # 5b. Install the Sanders Dash & Seal app unit from the repo
+            # (deploy/sanders-dash-seal.service) so the restart above can
+            # actually restart the app, then restart it. The unit was
+            # missing from the repository, so deploys landed code without
+            # restarting the app and the running copy went stale (the
+            # overnight 421 host_denied regression on the three new
+            # domains). PREPARED 2026-11-22, NOT YET PUSHED — workflow
+            # files go through the web UI, not snapshot-push.
+            if [ -f deploy/sanders-dash-seal.service ]; then
+              # The unit runs as the sanders service user (uid/gid 10001,
+              # created by deploy/install-simultaneous.sh). Make sure it
+              # exists first — without it the service cannot start.
+              if ! getent group sanders >/dev/null; then
+                sudo groupadd --gid 10001 sanders
+              fi
+              if ! id sanders >/dev/null 2>&1; then
+                sudo useradd --uid 10001 --gid 10001 --no-create-home --shell /sbin/nologin sanders
+              fi
+              # Keep the previous unit file, if any, before overwriting it.
+              if [ -f /etc/systemd/system/sanders-dash-seal.service ]; then
+                sudo cp /etc/systemd/system/sanders-dash-seal.service "/tmp/sanders-dash-seal.service.bak.$(date +%Y%m%d%H%M%S)"
+              fi
+              sudo cp deploy/sanders-dash-seal.service /etc/systemd/system/sanders-dash-seal.service
+              sudo systemctl daemon-reload
+              sudo systemctl enable --now sanders-dash-seal.service || true
+              sudo systemctl restart sanders-dash-seal.service || true
+            fi
+
             # 6. Bring up Docker Compose stacks if Docker is installed
             if command -v docker >/dev/null 2>&1 && [ -f compose.yaml ]; then
               docker compose up -d --build || true
             fi
 
             # 7. Automated End-to-End Health, RTSA & ML-DSA-65 Smoke Test on OCI
+            # Extended 2026-11-22 (PREPARED, NOT YET PUSHED — workflow files
+            # go through the web UI): the old check verified only nginx +
+            # Money Factory, never the Dash & Seal app itself. The new
+            # checks also require /healthz on gunicorn (8000), both home
+            # pages through nginx, and an unauthenticated GET /api/session
+            # on the app answering 401 — 401 proves production bindings
+            # are live (the customer API reached authentication); 503
+            # proves diagnostic-only, and a failed connection proves the
+            # app never restarted.
             HEALTH_OK=0
             for i in 1 2 3 4 5; do
               if curl -fsS -H "Host: sandersdashandseal.com" http://127.0.0.1/legal-aid/health && \
-                 curl -fsS -H "Host: sandersdashandseal.com" http://127.0.0.1/rtsa/status >/dev/null; then
+                 curl -fsS -H "Host: sandersdashandseal.com" http://127.0.0.1/rtsa/status >/dev/null && \
+                 curl -fsS -H "Host: sandersdashandseal.com" http://127.0.0.1:8000/healthz >/dev/null && \
+                 curl -fsS -H "Host: sandersdashandseal.com" http://127.0.0.1/ >/dev/null && \
+                 curl -fsS -H "Host: sanderslegalhelpersllc.com" http://127.0.0.1/ >/dev/null && \
+                 [ "$(curl -s -o /dev/null -w '%{http_code}' -H "Host: sandersdashandseal.com" http://127.0.0.1:8000/api/session)" = "401" ]; then
                 HEALTH_OK=1
                 break
               fi
@@ -205,6 +246,10 @@ jobs:
               echo "=== DIAGNOSTICS: Nginx & money-factory-legal.service ==="
               curl -i -sS -H "Host: sandersdashandseal.com" http://127.0.0.1/rtsa/status | head -n 20 || true
               sudo systemctl status money-factory-legal.service --no-pager -l || true
+              echo "=== DIAGNOSTICS: Sanders Dash & Seal app (8000) ==="
+              curl -i -sS -H "Host: sandersdashandseal.com" http://127.0.0.1:8000/healthz | head -n 20 || true
+              curl -s -o /dev/null -w 'GET /api/session (unauthenticated) -> %{http_code}\n' -H "Host: sandersdashandseal.com" http://127.0.0.1:8000/api/session || true
+              sudo systemctl status sanders-dash-seal.service --no-pager -l || true
               exit 1
             fi
 
