@@ -1,0 +1,37 @@
+name: Inspect live nginx config for missing 443 (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump nginx config and listeners
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== LISTENING PORTS (nginx only) ==="
+            sudo ss -ltnp 2>/dev/null | grep -i nginx || ss -ltnp | grep -i nginx
+            echo "=== FILES IN /etc/nginx/conf.d/ ==="
+            sudo ls -l /etc/nginx/conf.d/ 2>&1
+            echo "=== FILES IN /etc/nginx/snippets/ ==="
+            sudo ls -l /etc/nginx/snippets/ 2>&1
+            echo "=== ALL listen / server_name / ssl_certificate LINES ==="
+            sudo grep -Rn -E 'listen |server_name|ssl_certificate' /etc/nginx/ 2>&1
+            echo "=== /etc/nginx/nginx.conf (include lines) ==="
+            sudo grep -n -E 'include|user |worker_processes' /etc/nginx/nginx.conf 2>&1
+            echo "=== money_factory_legal_server.conf (full) ==="
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf 2>&1 || echo "FILE MISSING"
+            echo "=== OTHER conf.d FILES (full) ==="
+            for f in /etc/nginx/conf.d/*.conf; do if [ "$f" != "/etc/nginx/conf.d/money_factory_legal_server.conf" ]; then echo "----- $f -----"; sudo cat "$f" 2>&1; fi; done
+            echo "=== SNIPPET money_factory_legal.conf (full) ==="
+            sudo cat /etc/nginx/snippets/money_factory_legal.conf 2>&1 || echo "SNIPPET MISSING"
+            echo "=== CERT LIVE DIR ==="
+            sudo ls -l /etc/letsencrypt/live/sandersdashandseal.com/ 2>&1
+            echo "=== NGINX -T (first 200 lines) ==="
+            sudo nginx -T 2>&1 | head -n 200
+            echo "INSPECT_DONE"
