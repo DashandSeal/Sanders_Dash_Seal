@@ -6,6 +6,8 @@ Governed by: Sanders Corporate Headquarters (The Sanders Companies • Est. 1996
 Operated by: Sanders Legal Helpers LLC (DBA Sanders Dash & Seal • Colorado SOS ID: 20258029131)
 """
 
+from __future__ import annotations
+
 import hashlib
 import hmac
 import html

@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "sanders-twostep/the_judge.py",
-        "payload_hash": "8df7c0350750a80029ff03921fbcabd966ab2424d471ce76f54b5f8714e1bfef",
+        "payload_hash": "60380bc1770ac366f23b7301a921a468a90bc220ad4cfde9a78af10d3fb1b2ab",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
