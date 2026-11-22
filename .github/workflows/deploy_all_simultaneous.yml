@@ -148,7 +148,7 @@ jobs:
                 sudo tee /etc/nginx/conf.d/money_factory_legal_server.conf >/dev/null <<'NGINX'
             server {
                 listen 80 default_server;
-                server_name sandersdashandseal.com www.sandersdashandseal.com 129.146.111.166 _;
+                server_name sandersdashandseal.com www.sandersdashandseal.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com 129.146.111.166 _;
                 root /usr/share/nginx/html;
                 index index.html;
 
