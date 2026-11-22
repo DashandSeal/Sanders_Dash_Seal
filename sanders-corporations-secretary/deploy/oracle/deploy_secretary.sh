@@ -13,9 +13,10 @@ VENV="$APP_HOME/venv"
 DB_DIR="$APP_HOME/state"
 CONF_DIR="$HOME/.config/sanders-corporations-secretary"
 UNIT_NAME="sanders-corporations-secretary.service"
-UNIT_FILE="/etc/systemd/system/$UNIT_NAME"
+SVC_DIR="$HOME/.config/systemd/user"
+UNIT_FILE="$SVC_DIR/$UNIT_NAME"
 
-mkdir -p "$APP_HOME" "$DB_DIR" "$CONF_DIR"
+mkdir -p "$APP_HOME" "$DB_DIR" "$CONF_DIR" "$SVC_DIR"
 chmod 0700 "$DB_DIR" "$CONF_DIR"
 
 if [[ ! -d "$CHECKOUT/.git" ]]; then
@@ -54,11 +55,18 @@ if [[ ! -f "$CONF_DIR/runtime.env" ]]; then
 fi
 chmod 0600 "$CONF_DIR/runtime.env"
 
-RUN_USER="$(id -un)"
-RUN_GROUP="$(id -gn)"
-# Oracle Linux default SSH users have passwordless sudo. This unit is separate
-# and binds only to loopback; public TLS routing is configured independently.
-sudo -n tee "$UNIT_FILE" >/dev/null <<UNIT
+# Retire the old system service first: under SELinux (Enforcing) it cannot
+# execute the venv under $HOME (203/EXEC, "Permission denied") and keeps
+# restarting in a loop. The user service below replaces it on the same port.
+if [[ -f "/etc/systemd/system/$UNIT_NAME" ]]; then
+    sudo -n systemctl disable --now "$UNIT_NAME" 2>/dev/null || true
+    sudo -n rm -f "/etc/systemd/system/$UNIT_NAME"
+    sudo -n systemctl daemon-reload 2>/dev/null || true
+fi
+# This unit is a systemd USER service (like TwoStep/Judge), not a system
+# service: the user manager runs unconfined, so it can execute the venv.
+# It binds only to loopback; public TLS routing is configured independently.
+cat > "$UNIT_FILE" <<UNIT
 [Unit]
 Description=Sanders Corporations Secretary (Oracle Always Free)
 After=network-online.target
@@ -66,8 +74,6 @@ Wants=network-online.target
 
 [Service]
 Type=simple
-User=$RUN_USER
-Group=$RUN_GROUP
 WorkingDirectory=$PROJECT
 EnvironmentFile=$CONF_DIR/runtime.env
 Environment=SCS_DB_PATH=$DB_DIR/secretary.sqlite3
@@ -78,15 +84,15 @@ NoNewPrivileges=true
 PrivateTmp=true
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 UNIT
 # Keep the opc user manager alive after the SSH session that deployed this
-# ends. The Secretary itself is a system service, but its owner user manager
-# must persist for any user-level helpers. Ignore failure if unavailable.
-loginctl enable-linger opc 2>/dev/null || true
+# ends; without this, systemd stops user units at logout. Ignore failure if
+# the privilege is unavailable in this session.
+loginctl enable-linger opc 2>/dev/null || loginctl enable-linger 2>/dev/null || true
 
-sudo -n systemctl daemon-reload
-sudo -n systemctl enable --now "$UNIT_NAME"
+systemctl --user daemon-reload
+systemctl --user enable --now "$UNIT_NAME"
 
 # Capture the real startup output: run the entrypoint briefly on a test
 # loopback port (8792, never the service port) with the unit's own
@@ -98,7 +104,7 @@ echo "Probing Secretary entrypoint briefly to capture startup output..."
   SCS_DB_PATH="$DB_DIR/secretary.sqlite3" timeout 8 "$VENV/bin/uvicorn" app.main:app --host 127.0.0.1 --port 8792 > /tmp/scs-startup.log 2>&1
 ) || true
 
-sudo -n systemctl restart "$UNIT_NAME"
+systemctl --user restart "$UNIT_NAME"
 printf 'Oracle deployment command completed for commit %s; service %s, loopback port 8791.\n' "$COMMIT_SHA" "$UNIT_NAME"
 printf 'This step does not establish public DNS, TLS or production hardening; see docs/ORACLE_ALWAYS_FREE_DEPLOYMENT.md.\n'
 
@@ -118,12 +124,12 @@ for attempt in 1 2 3 4 5; do
 done
 if [[ "$code" == "000" ]]; then
     echo "Secretary loopback check failed on port 8791; service status and startup output:" >&2
-    sudo -n systemctl status "$UNIT_NAME" --no-pager >&2 || true
+    systemctl --user status "$UNIT_NAME" --no-pager >&2 || true
     if [[ -f /tmp/scs-startup.log ]]; then
         echo "--- startup output (/tmp/scs-startup.log) ---" >&2
         tail -n 80 /tmp/scs-startup.log >&2 || true
     fi
-    sudo -n journalctl -u "$UNIT_NAME" -n 50 --no-pager >&2 || true
+    journalctl --user -u "$UNIT_NAME" -n 50 --no-pager >&2 || true
     exit 1
 fi
 printf 'Secretary loopback responded HTTP %s on port 8791.\n' "$code"
