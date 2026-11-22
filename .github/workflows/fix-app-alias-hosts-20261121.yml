@@ -1,0 +1,90 @@
+name: Fix app ALIAS_HOSTS on Oracle instance (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync live app copy, reload gunicorn, verify
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== BEFORE: gunicorn ==="
+            pgrep -af 'gunicorn wsgi:application' || true
+            echo "=== BEFORE: live ALIAS_HOSTS ==="
+            grep -n "^ALIAS_HOSTS" /tmp/sds-app/deploy/deployment.py || echo "no ALIAS_HOSTS in live copy"
+            wc -l /tmp/sds-app/deploy/deployment.py
+            echo "=== BEFORE: loopback baseline ==="
+            for h in sandersdashandseal.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com; do echo -n "Host $h: "; curl -s -o /dev/null -w "%{http_code}\n" -H "Host: $h" http://127.0.0.1:8000/healthz || echo "curl failed"; done
+            echo "=== SYNC LIVE COPY FROM REPO ==="
+            git config --global --add safe.directory /tmp/sds-app 2>/dev/null || true
+            sudo git config --global --add safe.directory /tmp/sds-app 2>/dev/null || true
+            sudo -u ocarun git config --global --add safe.directory /tmp/sds-app 2>/dev/null || true
+            git -C /tmp/sds-app remote -v 2>&1 | head -4 || true
+            git -C /tmp/sds-app log --oneline -3 2>&1 | head -5 || true
+            PULL_OK=0
+            PULL_OUT=$(sudo -u ocarun git -C /tmp/sds-app pull --ff-only origin main 2>&1); PULL_RC=$?
+            echo "$PULL_OUT" | tail -5
+            if [ "$PULL_RC" -eq 0 ]; then PULL_OK=1; echo "GIT_PULL_OK (ocarun)"; else
+              PULL_OUT=$(sudo git -C /tmp/sds-app pull --ff-only origin main 2>&1); PULL_RC=$?
+              echo "$PULL_OUT" | tail -5
+              if [ "$PULL_RC" -eq 0 ]; then PULL_OK=1; echo "GIT_PULL_OK (root)"; else echo "GIT_PULL_FAILED"; fi
+            fi
+            echo "pull ok flag: $PULL_OK"
+            if ! grep -q "sanderssixshield.com" /tmp/sds-app/deploy/deployment.py; then
+              echo "=== DIRECT EDIT TO LIVE COPY (pull did not bring the fix) ==="
+              sudo cp -a /tmp/sds-app/deploy/deployment.py /tmp/deployment.py.bak-20261121
+              sudo sed -i "s|^ALIAS_HOSTS = .*|ALIAS_HOSTS = {'www.sandersdashandseal.com', 'sanderslegalhelpersllc.com', 'www.sanderslegalhelpersllc.com', 'sanderssixshield.com', 'www.sanderssixshield.com', 'sanderssecurestack.com', 'www.sanderssecurestack.com', 'sandersemergencyglobalcommunication.com', 'www.sandersemergencyglobalcommunication.com'}|" /tmp/sds-app/deploy/deployment.py
+              grep -n "^ALIAS_HOSTS" /tmp/sds-app/deploy/deployment.py
+            fi
+            echo "=== SYNC /opt COPY (best effort) ==="
+            sudo git -C /opt/Sanders_Dash_Seal pull --ff-only origin main 2>&1 | tail -3 || echo "opt pull failed (non-fatal)"
+            echo "=== VERIFY LIVE COPY ==="
+            wc -l /tmp/sds-app/deploy/deployment.py
+            grep -n "^ALIAS_HOSTS" /tmp/sds-app/deploy/deployment.py
+            if [ "$(wc -l < /tmp/sds-app/deploy/deployment.py)" -lt 600 ]; then echo "LIVE COPY TOO SHORT, aborting"; exit 1; fi
+            sudo python3 -m py_compile /tmp/sds-app/deploy/deployment.py && echo "py_compile OK"
+            echo "=== RESTART GUNICORN (HUP master) ==="
+            MASTER=""
+            for p in $(pgrep -f 'gunicorn wsgi:application'); do if [ "$(awk '{print $4}' /proc/$p/stat)" = "1" ]; then MASTER=$p; fi; done
+            echo "gunicorn master pid: $MASTER"
+            if [ -z "$MASTER" ]; then echo "NO_GUNICORN_MASTER_FOUND"; exit 1; fi
+            sudo kill -HUP "$MASTER"
+            echo "HUP sent, waiting 10s for workers to reload"
+            sleep 10
+            pgrep -af 'gunicorn wsgi:application' || true
+            sudo ss -ltnp 2>/dev/null | grep 8000 || ss -ltnp 2>/dev/null | grep 8000 || echo "NOTHING LISTENING ON 8000 AFTER HUP"
+            echo "=== LOOPBACK TEST AFTER HUP ==="
+            FAIL=0
+            for h in sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: $h" http://127.0.0.1:8000/healthz); echo "loopback Host $h -> $CODE"; if [ "$CODE" != "200" ]; then FAIL=1; fi; done
+            if [ "$FAIL" -ne 0 ]; then
+              echo "=== HUP DID NOT TAKE EFFECT, FULL RESTART ==="
+              sudo kill -TERM "$MASTER" || true
+              for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do if ! sudo ss -ltnp 2>/dev/null | grep -q ":8000"; then echo "port 8000 closed after ${i}s"; break; fi; sleep 1; done
+              pgrep -af 'gunicorn wsgi:application' || echo "gunicorn stopped"
+              cd /tmp/sds-app
+              sudo -u ocarun nohup /tmp/sds-venv/bin/gunicorn wsgi:application --bind 0.0.0.0:8000 --timeout 75 > /tmp/sds-app-restart-20261121.log 2>&1 &
+              disown || true
+              echo "restart launched, waiting 10s"
+              sleep 10
+              pgrep -af 'gunicorn wsgi:application' || true
+              sudo ss -ltnp 2>/dev/null | grep 8000 || echo "NOTHING LISTENING ON 8000 AFTER RESTART"
+              echo "=== LOOPBACK TEST AFTER FULL RESTART ==="
+              FAIL=0
+              for h in sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: $h" http://127.0.0.1:8000/healthz); echo "loopback Host $h -> $CODE"; if [ "$CODE" != "200" ]; then FAIL=1; fi; done
+            fi
+            if [ "$FAIL" -ne 0 ]; then echo "LOOPBACK_VERIFICATION_FAILED"; exit 1; fi
+            echo "=== CERTIFICATE SAN (explicit path) ==="
+            sudo openssl x509 -in /etc/letsencrypt/live/sandersdashandseal.com/cert.pem -noout -subject -dates -ext subjectAltName
+            echo "=== STRICT HTTPS VERIFICATION (no -k) ==="
+            FAIL=0
+            for n in sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com; do echo "--- https://$n/healthz ---"; curl -s "https://$n/healthz"; echo; CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/healthz"); echo "https://$n/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/healthz returned $CODE"; FAIL=1; fi; done
+            for a in sanderssixshield.com sanderssecurestack.com sandersemergencyglobalcommunication.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$a/"); echo "https://$a/ -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$a/ returned $CODE"; FAIL=1; fi; done
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://sandersdashandseal.com/healthz"); echo "https://sandersdashandseal.com/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: sandersdashandseal.com/healthz returned $CODE"; FAIL=1; fi
+            if [ "$FAIL" -ne 0 ]; then echo "HTTPS_VERIFICATION_FAILED"; exit 1; fi
+            echo "ALL_CHECKS_PASSED"
