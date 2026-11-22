@@ -1,0 +1,69 @@
+name: Diagnose HTTPS 000 on Oracle instance (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check nginx, firewall, DNS and HTTPS path
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== DATE / UPTIME / MEMORY ==="
+            date -u; uptime; free -m | head -3
+            echo "=== NGINX PROCESS ==="
+            ps aux | grep -i nginx | grep -v grep || echo "NO NGINX PROCESS"
+            sudo systemctl is-active nginx 2>&1 || echo "systemctl is-active failed"
+            sudo systemctl status nginx --no-pager 2>&1 | head -30 || echo "systemctl status failed"
+            echo "=== LISTENING PORTS ==="
+            sudo ss -ltnp 2>/dev/null || ss -ltnp
+            echo "=== NGINX CONFIG TEST ==="
+            sudo nginx -t 2>&1
+            echo "=== NGINX ERROR LOG (last 40 lines) ==="
+            sudo tail -40 /var/log/nginx/error.log 2>&1 || echo "no nginx error log"
+            echo "=== JOURNAL FOR NGINX (last hour) ==="
+            sudo journalctl -u nginx --since "1 hour ago" --no-pager 2>&1 | tail -40 || echo "no journal for nginx"
+            echo "=== DMESG (OOM / nginx) ==="
+            sudo dmesg 2>/dev/null | tail -30 | grep -i -E 'oom|kill|nginx' || echo "no OOM/nginx in dmesg tail"
+            echo "=== FIREWALL ==="
+            sudo firewall-cmd --state 2>&1; sudo firewall-cmd --list-all 2>&1 | head -30 || echo "no firewalld"
+            sudo iptables -S INPUT 2>&1 | head -30 || echo "no iptables INPUT"
+            echo "=== DNS FROM INSTANCE ==="
+            getent hosts sandersdashandseal.com sanderssixshield.com || echo "getent failed"
+            cat /etc/resolv.conf
+            echo "=== CURL TESTS (with timeouts) ==="
+            echo "--- loopback http 80 ---"
+            curl -s -o /dev/null -w "http://127.0.0.1/ Host dash: %{http_code}\n" --max-time 10 -H "Host: sandersdashandseal.com" http://127.0.0.1/ || echo "loopback 80 failed rc=$?"
+            echo "--- loopback https 443 (-k) ---"
+            curl -sk -o /dev/null -w "https://127.0.0.1/healthz Host dash: %{http_code}\n" --max-time 10 -H "Host: sandersdashandseal.com" https://127.0.0.1/healthz || echo "loopback 443 -k failed rc=$?"
+            echo "--- direct public IP https ---"
+            curl -sk -o /dev/null -w "https://129.146.111.166/healthz Host dash: %{http_code}\n" --max-time 10 -H "Host: sandersdashandseal.com" https://129.146.111.166/healthz || echo "public IP curl failed rc=$?"
+            echo "--- verbose strict https (dash) ---"
+            curl -v --max-time 10 "https://sandersdashandseal.com/healthz" 2>&1 | tail -25 || echo "strict curl rc=$?"
+            echo "--- gunicorn still up? ---"
+            pgrep -af 'gunicorn wsgi:application' || echo "NO GUNICORN"
+            curl -s -o /dev/null -w "loopback app Host sixshield: %{http_code}\n" --max-time 10 -H "Host: sanderssixshield.com" http://127.0.0.1:8000/healthz || echo "app loopback failed rc=$?"
+            echo "=== IF NGINX IS DOWN AND CONFIG TEST PASSES, START IT ==="
+            if ! pgrep -f "nginx: master" >/dev/null 2>&1; then
+              echo "nginx master not running"
+              if sudo nginx -t 2>&1 | grep -q "test is successful"; then
+                echo "config test OK, starting nginx"
+                sudo systemctl start nginx 2>&1 || sudo nginx 2>&1
+                sleep 3
+                ps aux | grep -i nginx | grep -v grep || echo "STILL NO NGINX AFTER START"
+                sudo ss -ltnp 2>/dev/null | grep -E ':(80|443)' || echo "80/443 NOT LISTENING AFTER START"
+                curl -sk -o /dev/null -w "after start https://127.0.0.1/healthz Host dash: %{http_code}\n" --max-time 10 -H "Host: sandersdashandseal.com" https://127.0.0.1/healthz || echo "after-start loopback 443 failed rc=$?"
+                curl -s -o /dev/null -w "after start strict https://sanderssixshield.com/healthz: %{http_code}\n" --max-time 10 "https://sanderssixshield.com/healthz" || echo "after-start strict curl failed rc=$?"
+                curl -s -o /dev/null -w "after start strict https://sandersdashandseal.com/healthz: %{http_code}\n" --max-time 10 "https://sandersdashandseal.com/healthz" || echo "after-start strict dash curl failed rc=$?"
+              else
+                echo "CONFIG TEST FAILED, NOT STARTING NGINX"
+              fi
+            else
+              echo "nginx master IS running, no start attempted"
+            fi
+            echo "DIAGNOSE_DONE"
