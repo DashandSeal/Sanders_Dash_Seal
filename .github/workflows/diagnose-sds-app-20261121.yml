@@ -1,0 +1,37 @@
+name: Diagnose sds-app live copy on Oracle instance (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Inspect live app copy in /tmp/sds-app
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== /tmp/sds-app ==="
+            ls -ld /tmp/sds-app /tmp/sds-venv 2>&1
+            ls /tmp/sds-app 2>&1 | head -40
+            echo "=== LIVE deployment.py ==="
+            sudo ls -l --time-style=long-iso /tmp/sds-app/wsgi.py /tmp/sds-app/deploy/deployment.py 2>&1
+            sudo grep -n "ALIAS_HOSTS\|CANONICAL_HOST" /tmp/sds-app/deploy/deployment.py 2>&1
+            echo "=== DIFF LIVE VS OPT VS SRC ==="
+            sudo diff /tmp/sds-app/deploy/deployment.py /opt/Sanders_Dash_Seal/deploy/deployment.py && echo "LIVE SAME AS OPT" || echo "LIVE DIFFERS FROM OPT"
+            sudo diff /tmp/sds-app/deploy/deployment.py /home/*/.local/src/Sanders_Dash_Seal/deploy/deployment.py && echo "LIVE SAME AS SRC" || echo "LIVE DIFFERS FROM SRC"
+            sudo diff /tmp/sds-app/wsgi.py /opt/Sanders_Dash_Seal/wsgi.py && echo "WSGI SAME AS OPT" || echo "WSGI DIFFERS FROM OPT"
+            echo "=== LIVE wsgi.py ==="
+            sudo grep -n "deployment\|create_application" /tmp/sds-app/wsgi.py 2>&1 | head -10
+            echo "=== FULL GUNICORN CMDLINE (one arg per line) ==="
+            for p in $(pgrep -f 'gunicorn wsgi:application'); do echo "--- pid $p ---"; sudo tr '\0' '\n' < /proc/$p/cmdline; done
+            echo "=== HOW IS sds-app POPULATED ==="
+            sudo grep -rn "sds-app" /opt/Sanders_Dash_Seal/deploy /home/*/.local/src/Sanders_Dash_Seal/deploy /etc/systemd/system 2>/dev/null | head -20 || echo "no sds-app refs in deploy/systemd"
+            ls /tmp | grep -i sds 2>&1
+            ls -ld /tmp/sds-app/.git 2>/dev/null || echo "sds-app is not a git repo"
+            echo "=== GUNICORN CONF IN LIVE COPY ==="
+            sudo cat /tmp/sds-app/deploy/gunicorn.conf.py 2>/dev/null | head -30 || echo "no gunicorn.conf.py in live copy"
+            echo "DIAG3_DONE"
