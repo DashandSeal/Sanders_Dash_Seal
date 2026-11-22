@@ -921,7 +921,7 @@ Implementation status: source and operational-evidence code are tracked separate
 
 **Acceptance criteria:** Each of the three is listed in the registry with the same fields as the existing entries, using only verified facts (live endpoints, real module paths, real env vars); the existing nine entries are unchanged.
 
-**Implementation:** Appended three entries to `core_platform/ai_platform_links.json` (9 → 12): `secretary` — "Sanders Corporations Secretary", corporate-headquarters platform serving all four LLCs and all platforms, endpoint http://127.0.0.1:8791, env vars SCS_API_TOKEN and SCS_DB_PATH, local modules `sanders-corporations-secretary/app/*.py`, live since November 22, 2026; `judge` — "The Judge", RTSA Constitutional Adjudicator, endpoint http://127.0.0.1:9405, local module `sanders-twostep/the_judge.py`, deployed with TwoStep, live since November 21, 2026; `police_men` — "The Police Men", S & G Security Inc. sovereign RTSA status dashboard, endpoint https://sanderslegalhelpersllc.com/rtsa/status, local files `rtsa_police_men/index.html` and `rtsa_police_men/status.json`. Paired with the updated `.pbd.json` hash for the registry. Note: TwoStep itself is still not in the registry — the owner named the Judge, not TwoStep.
+**Implementation:** Appended three entries to `core_platform/ai_platform_links.json` (9 → 12): `secretary` — "Sanders Corporations Secretary", corporate-headquarters platform serving all four LLCs and all platforms, endpoint http://127.0.0.1:8791, env vars SCS_API_TOKEN and SCS_DB_PATH, local modules `sanders-corporations-secretary/app/*.py`, live since November 22, 2026; `judge` — "The Judge", RTSA Constitutional Adjudicator, endpoint http://127.0.0.1:9405, local module `sanders-twostep/the_judge.py`, deployed with TwoStep, live since November 21, 2026; `police_men` — "The Police Men", S & G Security Inc. sovereign RTSA status dashboard, endpoint https://sanderslegalhelpersllc.com/rtsa/status, local files `rtsa_police_men/index.html` and `rtsa_police_men/status.json`. Paired with the updated `.pbd.json` hash for the registry. TwoStep was added separately right after, at the owner's direction (see the next section).
 
 ## Platinum Blue Diamond Standard: Bozly containment assets at expected paths (November 22, 2026)
 
@@ -930,3 +930,11 @@ Implementation status: source and operational-evidence code are tracked separate
 **Acceptance criteria:** Both files exist at the paths `verify_assets.py` expects, byte-identical to the copies already in the repo; nothing is deleted and no script is changed.
 
 **Implementation:** Copied both files to `infrastructure/resource-manager/` (hashes verified identical to the sources: profile e0e05e1c…, trigger 994a0fa8…), each paired with a new `.pbd.json` manifest mirroring its nested copy's manifest with only the artifact path changed. The nested copies are left in place. Live operation of the check is unverified until the next Platinum Blue Diamond Standard run on main.
+
+## Platform registry: TwoStep (November 22, 2026)
+
+**Source:** Owner instruction, November 22, 2026: "TwoStep too." Follow-up to the Secretary/Judge/Police Men registry addition (commit 145e883).
+
+**Acceptance criteria:** TwoStep is listed in the registry with the same fields as the existing entries, using only verified facts; the existing twelve entries are unchanged.
+
+**Implementation:** Appended the `twostep` entry to `core_platform/ai_platform_links.json` (12 → 13): "TwoStep", The Sanders TwoStep v2 — Sanders Legal Helpers LLC (CO SOS ID 20258029131), DBA Sanders Dash & Seal, endpoint http://127.0.0.1:9400, local module `sanders-twostep/sanders_twostep_v2.py`, deployed with the Judge, live since November 21, 2026. Paired with the updated `.pbd.json` hash for the registry.
