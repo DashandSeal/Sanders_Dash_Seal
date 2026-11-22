@@ -1,0 +1,51 @@
+name: Repair deployment.py ALIAS_HOSTS (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo with full history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore deployment.py and add six domains
+        run: |
+          set -e
+          echo "=== CURRENT deployment.py ==="
+          wc -l deploy/deployment.py || true
+          echo "=== RESTORE FULL FILE FROM PARENT OF BAD COMMIT 3017229 ==="
+          git show 3017229^:deploy/deployment.py > deploy/deployment.py
+          LINES=$(wc -l < deploy/deployment.py)
+          echo "restored lines: $LINES"
+          if [ "$LINES" -lt 600 ]; then echo "RESTORE_FAILED lines=$LINES"; exit 1; fi
+          grep -c "def create_application" deploy/deployment.py
+          grep -c "host_denied" deploy/deployment.py
+          echo "=== APPLY ALIAS_HOSTS EDIT ==="
+          python3 - <<'PYEOF'
+          import pathlib, re
+          p = pathlib.Path('deploy/deployment.py')
+          text = p.read_text()
+          new_line = "ALIAS_HOSTS = {'www.sandersdashandseal.com', 'sanderslegalhelpersllc.com', 'www.sanderslegalhelpersllc.com', 'sanderssixshield.com', 'www.sanderssixshield.com', 'sanderssecurestack.com', 'www.sanderssecurestack.com', 'sandersemergencyglobalcommunication.com', 'www.sandersemergencyglobalcommunication.com'}"
+          text2, n = re.subn(r"^ALIAS_HOSTS = \{.*\}$", new_line, text, count=1, flags=re.M)
+          assert n == 1, "ALIAS_HOSTS line not replaced"
+          p.write_text(text2)
+          print("ALIAS_HOSTS replaced")
+          PYEOF
+          echo "=== VERIFY ==="
+          wc -l deploy/deployment.py
+          grep -n "^ALIAS_HOSTS" deploy/deployment.py
+          grep -c "def create_application" deploy/deployment.py
+          grep -c "host_denied" deploy/deployment.py
+          python3 -m py_compile deploy/deployment.py && echo "py_compile OK"
+          echo "=== COMMIT + PUSH ==="
+          git config user.name "DashandSeal"
+          git config user.email "rooseveltsanders381@gmail.com"
+          git add deploy/deployment.py
+          git status --short
+          git commit -m "Restore deploy/deployment.py and add six new domains to ALIAS_HOSTS"
+          git push origin main
+          echo "REPAIR_DONE"
+          git log --oneline -3
