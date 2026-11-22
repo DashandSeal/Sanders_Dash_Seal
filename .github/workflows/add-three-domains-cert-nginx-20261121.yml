@@ -1,0 +1,80 @@
+name: Add three new domains to certificate and nginx (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  add-three-domains:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Expand certificate and add domains to nginx on Oracle instance
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== BEFORE ==="
+            if [ -x /usr/local/bin/certbot ]; then CERTBOT=/usr/local/bin/certbot; else CERTBOT=certbot; fi
+            echo "certbot: $CERTBOT"
+            sudo "$CERTBOT" certificates || true
+            echo "--- server_name lines ---"
+            sudo grep -R "server_name" /etc/nginx || true
+            echo "--- money_factory_legal_server.conf ---"
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf || true
+            echo "--- DNS from instance ---"
+            for n in sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com sandersdashandseal.com; do echo -n "$n: "; getent hosts "$n" || echo "NO RESOLUTION"; done
+            echo "--- curl BEFORE (strict, no -k) ---"
+            for u in https://sanderssixshield.com/healthz https://www.sanderssixshield.com/healthz https://sanderssecurestack.com/healthz https://www.sanderssecurestack.com/healthz https://sandersemergencyglobalcommunication.com/healthz https://www.sandersemergencyglobalcommunication.com/healthz https://sandersdashandseal.com/healthz; do echo -n "$u: "; curl -s -o /dev/null -w "%{http_code}\n" "$u" || echo "curl failed"; done
+            echo "=== BACKUP ==="
+            sudo mkdir -p /tmp/cert-add-three-domains-20261121
+            sudo cp -a /etc/nginx/conf.d /tmp/cert-add-three-domains-20261121/conf.d.bak
+            ls /tmp/cert-add-three-domains-20261121/conf.d.bak
+            echo "=== CERTBOT EXPAND ==="
+            sudo "$CERTBOT" --nginx --expand -d sandersdashandseal.com -d www.sandersdashandseal.com -d sanderslegalhelpersllc.com -d sanderssixshield.com -d www.sanderssixshield.com -d sanderssecurestack.com -d www.sanderssecurestack.com -d sandersemergencyglobalcommunication.com -d www.sandersemergencyglobalcommunication.com --non-interactive --agree-tos -m rooseveltsanders381@gmail.com --redirect
+            EXPAND_RC=$?
+            echo "certbot expand exit code: $EXPAND_RC"
+            if [ "$EXPAND_RC" -ne 0 ]; then echo "CERTBOT_EXPAND_FAILED"; sudo "$CERTBOT" certificates || true; exit 1; fi
+            echo "=== AFTER certbot ==="
+            sudo "$CERTBOT" certificates
+            echo "=== ADD SERVER_NAMES ==="
+            sudo python3 - <<'PYEOF'
+            import pathlib
+            conf = pathlib.Path('/etc/nginx/conf.d/money_factory_legal_server.conf')
+            new_names = ['sanderssixshield.com', 'www.sanderssixshield.com', 'sanderssecurestack.com', 'www.sanderssecurestack.com', 'sandersemergencyglobalcommunication.com', 'www.sandersemergencyglobalcommunication.com']
+            lines = conf.read_text().splitlines()
+            changed = False
+            out = []
+            for line in lines:
+                if 'server_name' in line and 'sandersdashandseal.com' in line:
+                    for name in new_names:
+                        if name not in line:
+                            line = line.replace(';', ' ' + name + ';')
+                            changed = True
+                out.append(line)
+            if changed:
+                conf.write_text('\n'.join(out) + '\n')
+                print('server_name updated')
+            else:
+                print('server_name already had all names')
+            PYEOF
+            echo "--- conf after ---"
+            sudo cat /etc/nginx/conf.d/money_factory_legal_server.conf
+            sudo grep -R "server_name" /etc/nginx
+            echo "=== NGINX TEST + RELOAD ==="
+            sudo nginx -t
+            NGINX_RC=$?
+            echo "nginx -t exit code: $NGINX_RC"
+            if [ "$NGINX_RC" -ne 0 ]; then echo "NGINX_TEST_FAILED, restoring backup"; sudo rm -rf /etc/nginx/conf.d; sudo cp -a /tmp/cert-add-three-domains-20261121/conf.d.bak /etc/nginx/conf.d; sudo nginx -t || true; exit 1; fi
+            sudo systemctl reload nginx || sudo systemctl restart nginx
+            sleep 3
+            sudo systemctl is-active nginx || true
+            echo "=== CERTIFICATE SAN ==="
+            for c in /etc/letsencrypt/live/*/cert.pem; do echo "--- $c ---"; sudo openssl x509 -in "$c" -noout -subject -dates -ext subjectAltName 2>/dev/null || sudo openssl x509 -in "$c" -noout -text | grep -A1 "Subject Alternative Name"; done
+            echo "=== VERIFY (strict curl, no -k) ==="
+            FAIL=0
+            for n in sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com; do echo "--- https://$n/healthz ---"; curl -s "https://$n/healthz"; echo; CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/healthz"); echo "https://$n/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/healthz returned $CODE"; FAIL=1; fi; done
+            for a in sanderssixshield.com sanderssecurestack.com sandersemergencyglobalcommunication.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$a/"); echo "https://$a/ -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$a/ returned $CODE"; FAIL=1; fi; done
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://sandersdashandseal.com/healthz"); echo "https://sandersdashandseal.com/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: sandersdashandseal.com/healthz returned $CODE"; FAIL=1; fi
+            if [ "$FAIL" -ne 0 ]; then echo "VERIFICATION_FAILED"; exit 1; fi
+            echo "ALL_CHECKS_PASSED"
