@@ -54,6 +54,23 @@ Environment=SANDERS_RUNTIME_FACTORY=deploy.production_bindings:create_production
 # previous gunicorn is already stopped by systemd before ExecStartPre on
 # restart, so this only ever targets the stale copy. deploy_all installs
 # this unit on every deploy, so the fix rides the next approved deploy.
+# Conditional environment repair (full self-repair layer, 2026-11-23):
+# sds_env_guard.sh checks /etc/sanders-dash-seal/runtime.env at every
+# start. If the file exists and STRIPE_WEBHOOK_SECRET has the whsec_
+# shape, it exits 0 immediately. If the file is missing or malformed,
+# it regenerates it from the owner's OCI Vault secret via
+# deploy/refresh_provider_secrets.py (re-fetch only — it never
+# creates, rotates, or guesses a secret value) and fails loudly if
+# the Vault yields nothing shape-valid. The "-" prefix means a guard
+# failure never blocks the start attempt: the app itself and the
+# deploy preflight surface the real state. The "+" prefix runs it as
+# root even though User=sanders: the Vault refresh requires euid 0
+# and runtime.env is root-owned. It runs BEFORE the pkill below so
+# the port-clearing step stays immediately before ExecStart (the
+# Vault refresh can take some seconds when the network is slow; the
+# kill should be the last thing that happens before gunicorn binds).
+# Installed to /usr/local/sbin by deploy_all.sh step 5c.
+ExecStartPre=-+/usr/local/sbin/sds_env_guard.sh
 ExecStartPre=+/bin/sh -c '/usr/bin/pkill -f "gunicorn.*wsgi:applicatio[n]" 2>/dev/null; sleep 2; /usr/bin/pkill -9 -f "gunicorn.*wsgi:applicatio[n]" 2>/dev/null; true'
 ExecStart=/opt/Sanders_Dash_Seal/venv/bin/gunicorn --config deploy/gunicorn.conf.py wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID

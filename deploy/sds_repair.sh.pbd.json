@@ -1,0 +1,17 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "deploy/sds_repair.sh",
+    "payload_hash": "7196c2da7dff75057c05ca9ef3d04480c1166688fb16449beeaf19bee557f291",
+    "platform": "Sanders Dash & Seal",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

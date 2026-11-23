@@ -7,7 +7,10 @@
 # inline SSH script on 2026-11-23; behavior is unchanged except for the
 # preflight (step 2b), the repo-owned nginx server config (step 4), and the
 # extended failure diagnostics (step 7) added the same day, plus the
-# automatic-recovery watchdog install (step 5c) added later that day.
+# automatic-recovery watchdog install (step 5c) added later that day, and
+# the full self-repair layer — the env guard and repair playbook installs
+# (step 5c) and the last-known-good snapshots (step 8) — added later that
+# day as well.
 set -euo pipefail
 REPO_DIR="/opt/Sanders_Dash_Seal"
 
@@ -208,8 +211,23 @@ fi
 # and does not start at boot. Both of those platforms' own deploy
 # scripts already enable it; repeating it here means a fresh instance
 # gets it from the main deploy as well.
+# The full self-repair layer's two scripts are installed alongside
+# the watchdog (owner decision, 2026-11-23: playbook repairs run
+# autonomously; secrets, gates, and money are never automated):
+# sds_repair.sh is the diagnose-and-repair playbook the watchdog
+# escalates to when a plain restart did not recover a service, and
+# sds_env_guard.sh is the conditional environment repair the app
+# unit runs at every start (ExecStartPre in
+# deploy/sanders-dash-seal.service) to regenerate runtime.env from
+# the OCI Vault when it is missing or malformed.
 if [ -f deploy/sds_watchdog.sh ]; then
   sudo install -m 0755 deploy/sds_watchdog.sh /usr/local/sbin/sds_watchdog.sh
+fi
+if [ -f deploy/sds_repair.sh ]; then
+  sudo install -m 0755 deploy/sds_repair.sh /usr/local/sbin/sds_repair.sh
+fi
+if [ -f deploy/sds_env_guard.sh ]; then
+  sudo install -m 0755 deploy/sds_env_guard.sh /usr/local/sbin/sds_env_guard.sh
 fi
 if [ -f deploy/sds-watchdog.service ]; then
   sudo cp deploy/sds-watchdog.service /etc/systemd/system/sds-watchdog.service
@@ -269,6 +287,59 @@ if [ "$HEALTH_OK" -ne 1 ]; then
   echo "=== DIAGNOSTICS: listeners (80/443/8000/8668) ==="
   sudo ss -ltnp | grep -E ':(80|443|8000|8668)' || true
   exit 1
+fi
+
+# 8. Last-known-good (LKG) snapshot. Reaching this step means the
+# health check above PASSED, so the configuration installed right
+# now is verified working. Snapshot it to
+# /var/lib/sds-lkg/<timestamp>/ on the instance so the repair
+# playbook (deploy/sds_repair.sh, entry point `restore-lkg`) can
+# restore a known-working state without a redeploy: the installed
+# nginx server conf + snippet, the installed app unit, and the
+# watchdog / repair / env-guard scripts as installed. MANIFEST.txt
+# carries the sha256 of every snapshotted file in sha256sum format
+# (the repair script verifies hashes before restoring), and
+# DEPLOYED_COMMIT records the git commit this deploy put live.
+# At most the 3 newest snapshots are kept.
+# runtime.env is snapshotted too — deliberately, and ONLY here:
+# the snapshot directory is root-only (0700) on the instance and
+# the copy is 0600 root:root. It is the owner's own secret file,
+# copied byte-for-byte from /etc on the same instance and NEVER
+# into the repository, so `sds_repair.sh restore-lkg env` can put
+# back the exact file a passing deploy verified. If the health
+# check failed, the deploy already exited above and no snapshot is
+# taken. Snapshot problems are loud warnings, never a deploy
+# failure — the deploy itself has already passed.
+LKG_BASE="/var/lib/sds-lkg"
+LKG_DIR="$LKG_BASE/$(date +%Y%m%d%H%M%S)"
+sudo install -d -m 0755 "$LKG_BASE" || true
+if sudo install -d -m 0700 "$LKG_DIR"; then
+  for pair in \
+    "/etc/nginx/conf.d/money_factory_legal_server.conf money_factory_legal_server.conf" \
+    "/etc/nginx/snippets/money_factory_legal.conf money_factory_legal.conf" \
+    "/etc/systemd/system/sanders-dash-seal.service sanders-dash-seal.service" \
+    "/usr/local/sbin/sds_watchdog.sh sds_watchdog.sh" \
+    "/usr/local/sbin/sds_repair.sh sds_repair.sh" \
+    "/usr/local/sbin/sds_env_guard.sh sds_env_guard.sh" \
+    "/etc/sanders-dash-seal/runtime.env runtime.env"; do
+    src="${pair%% *}"; dst="${pair##* }"
+    if sudo test -f "$src"; then
+      sudo cp "$src" "$LKG_DIR/$dst" || echo "LKG WARNING: could not snapshot $src"
+    else
+      echo "LKG NOTE: $src not present on this instance; not snapshotted"
+    fi
+  done
+  sudo chmod 0600 "$LKG_DIR/runtime.env" 2>/dev/null || true
+  git rev-parse HEAD 2>/dev/null | sudo tee "$LKG_DIR/DEPLOYED_COMMIT" >/dev/null || true
+  sudo sh -c "cd '$LKG_DIR' && sha256sum money_factory_legal_server.conf money_factory_legal.conf sanders-dash-seal.service sds_watchdog.sh sds_repair.sh sds_env_guard.sh runtime.env > MANIFEST.txt" 2>/dev/null \
+    || echo "LKG WARNING: MANIFEST.txt could not be completed (a snapshotted file was missing)"
+  # Keep at most the 3 newest snapshots.
+  ls -1dt "$LKG_BASE"/*/ 2>/dev/null | tail -n +4 | while read -r old; do
+    sudo rm -rf "$old" || true
+  done || true
+  echo "LKG snapshot written: $LKG_DIR"
+else
+  echo "LKG WARNING: could not create $LKG_DIR; no snapshot taken"
 fi
 
 echo ""
