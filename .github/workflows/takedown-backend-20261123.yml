@@ -1,0 +1,111 @@
+name: Take down Police Men backend dashboard (one-time, 2026-11-23)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  takedown-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Take Police Men dashboard off public view and verify
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            FAIL=0
+            TS=$(date +%Y%m%d%H%M%S)
+            BKDIR=/root/sds-backups/police-men-dashboard-20261123
+            echo "=== 1. Sync instance checkout ==="
+            cd /opt/Sanders_Dash_Seal || exit 1
+            sudo chown -R opc:opc .git
+            git fetch origin main
+            git reset --hard origin/main
+            echo "NEW_HEAD:"
+            git log -1 --oneline
+            git rev-parse HEAD
+            echo "=== 2. Safety check: live web root index.html ==="
+            if [ ! -f /usr/share/nginx/html/index.html ]; then
+              echo "SAFETY_CHECK: /usr/share/nginx/html/index.html does NOT exist - stopping, nothing moved."
+              exit 1
+            fi
+            if sudo grep -q "POLICE MEN" /usr/share/nginx/html/index.html; then
+              echo "SAFETY_CHECK: YES - /usr/share/nginx/html/index.html contains POLICE MEN (dashboard copy)."
+            else
+              echo "SAFETY_CHECK: NO - /usr/share/nginx/html/index.html does NOT contain POLICE MEN - stopping."
+              echo "First 5 lines of /usr/share/nginx/html/index.html:"
+              sudo head -n 5 /usr/share/nginx/html/index.html
+              exit 1
+            fi
+            echo "=== 3. Back up current nginx configs (timestamped) ==="
+            sudo mkdir -p "$BKDIR"
+            sudo cp /etc/nginx/conf.d/money_factory_legal_server.conf "$BKDIR/money_factory_legal_server.conf.$TS"
+            sudo cp /etc/nginx/snippets/money_factory_legal.conf "$BKDIR/money_factory_legal.conf.$TS"
+            sudo ls -l "$BKDIR"
+            echo "=== 4. Move dashboard copy out of web root (not deleted) ==="
+            sudo mv /usr/share/nginx/html/index.html "$BKDIR/index.html"
+            sudo ls -l "$BKDIR"
+            if [ ! -e /usr/share/nginx/html/index.html ]; then echo "WEB_ROOT_INDEX_REMOVED: yes"; else echo "WEB_ROOT_INDEX_REMOVED: no"; fi
+            echo "=== 5. Install fixed configs from checkout ==="
+            sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal_server.conf /etc/nginx/conf.d/money_factory_legal_server.conf
+            sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf /etc/nginx/snippets/money_factory_legal.conf
+            echo "=== 6. Gate: nginx -t, then reload only if it passes ==="
+            if sudo nginx -t; then
+              echo "NGINX_TEST: PASS"
+              sudo systemctl reload nginx
+              echo "NGINX_RELOAD: done"
+            else
+              echo "NGINX_TEST: FAIL - restoring backups and reloading"
+              sudo cp "$BKDIR/money_factory_legal_server.conf.$TS" /etc/nginx/conf.d/money_factory_legal_server.conf
+              sudo cp "$BKDIR/money_factory_legal.conf.$TS" /etc/nginx/snippets/money_factory_legal.conf
+              sudo nginx -t || true
+              sudo systemctl reload nginx || true
+              echo "RESTORED_BACKUPS_AND_RELOADED"
+              exit 1
+            fi
+            echo "=== 7. Verification ==="
+            echo "--- ss listeners (ports 80, 443, 8000) ---"
+            sudo ss -tlnp | grep -E ':(80|443|8000)[[:space:]]' || ss -tlnp
+            echo "--- HTTPS home pages ---"
+            for D in sandersdashandseal.com sanderslegalhelpersllc.com; do
+              BODY=$(mktemp)
+              CODE=$(curl -sk -o "$BODY" -w "%{http_code}" "https://$D/")
+              if grep -q "POLICE MEN" "$BODY"; then PM="YES"; FAIL=1; else PM="NO"; fi
+              TITLE=$(grep -o -i '<title>[^<]*</title>' "$BODY" | head -n 1)
+              H1=$(grep -o -i '<h1[^>]*>[^<]*</h1>' "$BODY" | head -n 1)
+              echo "HTTPS https://$D/ code=$CODE POLICE_MEN=$PM title=$TITLE heading=$H1"
+              rm -f "$BODY"
+            done
+            echo "--- HTTP home pages ---"
+            for D in sandersdashandseal.com sanderslegalhelpersllc.com; do
+              BODY=$(mktemp)
+              CODE=$(curl -s -o "$BODY" -w "%{http_code}" "http://$D/")
+              if grep -q "POLICE MEN" "$BODY"; then PM="YES"; FAIL=1; else PM="NO"; fi
+              TITLE=$(grep -o -i '<title>[^<]*</title>' "$BODY" | head -n 1)
+              H1=$(grep -o -i '<h1[^>]*>[^<]*</h1>' "$BODY" | head -n 1)
+              echo "HTTP http://$D/ code=$CODE POLICE_MEN=$PM title=$TITLE heading=$H1"
+              rm -f "$BODY"
+            done
+            RTSA_PUB=$(curl -sk -o /dev/null -w "%{http_code}" https://sandersdashandseal.com/rtsa/status)
+            echo "RTSA_PUBLIC https://sandersdashandseal.com/rtsa/status code=$RTSA_PUB expected=403"
+            [ "$RTSA_PUB" = "403" ] || FAIL=1
+            RTSA_LOOP=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1/rtsa/status -H "Host: sandersdashandseal.com")
+            echo "RTSA_LOOPBACK http://127.0.0.1/rtsa/status Host: sandersdashandseal.com code=$RTSA_LOOP expected=200"
+            [ "$RTSA_LOOP" = "200" ] || FAIL=1
+            echo "--- /healthz all five apex domains ---"
+            for D in sandersdashandseal.com sanderslegalhelpersllc.com sanderssixshield.com sanderssecurestack.com sandersemergencyglobalcommunication.com; do
+              HC=$(curl -sk -o /dev/null -w "%{http_code}" "https://$D/healthz")
+              echo "HEALTHZ https://$D/healthz code=$HC expected=200"
+              [ "$HC" = "200" ] || FAIL=1
+            done
+            echo "=== Result ==="
+            if [ "$FAIL" = "0" ]; then
+              echo "ALL_CHECKS_PASSED"
+            else
+              echo "CHECKS_FAILED: one or more checks above did not meet its expectation (FAIL=$FAIL)"
+              exit 1
+            fi
