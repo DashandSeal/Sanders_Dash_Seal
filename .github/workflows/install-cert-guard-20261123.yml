@@ -1,0 +1,36 @@
+name: Install certificate-coverage guard (one-time, 2026-11-23)
+on:
+  workflow_dispatch:
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install updated watchdog and verify the guard
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set -u
+            cd /opt/Sanders_Dash_Seal || { echo "FAIL: no checkout at /opt/Sanders_Dash_Seal"; exit 1; }
+            git fetch origin main || { echo "FAIL: git fetch"; exit 1; }
+            git checkout main || true
+            git reset --hard origin/main || { echo "FAIL: git reset"; exit 1; }
+            git log --oneline -1
+            sudo install -m 0755 deploy/sds_watchdog.sh /usr/local/sbin/sds_watchdog.sh || { echo "FAIL: install watchdog"; exit 1; }
+            echo "WATCHDOG_INSTALLED"
+            grep -c "check_cert_coverage" /usr/local/sbin/sds_watchdog.sh || true
+            echo "=== WATCHDOG RUN ==="
+            sudo /usr/local/sbin/sds_watchdog.sh 2>&1 | tail -n 25
+            echo "=== CERT COVERAGE LINES ==="
+            sudo journalctl -t sds-watchdog --since "-10 minutes" --no-pager -o cat 2>/dev/null | grep "cert-coverage" | tail -n 5 || true
+            echo "=== CERTBOT TIMER ==="
+            systemctl is-enabled certbot.timer 2>&1 || true
+            systemctl is-active certbot.timer 2>&1 || true
+            systemctl list-timers --all 2>/dev/null | grep -i certbot || true
+            ls /etc/cron.d/ 2>/dev/null | grep -i certbot || true
+            echo "=== CERT EXPIRY ==="
+            sudo openssl x509 -noout -enddate -in /etc/letsencrypt/live/sandersdashandseal.com/cert.pem || true
+            echo "INSTALL_DONE"
