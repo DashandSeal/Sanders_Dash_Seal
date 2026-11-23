@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal_server.conf",
+    "payload_hash": "51a681deaa0b2ae546b8866988a2cbb6f6cf2e10215ba4f2d8487e56a92f4acf",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
