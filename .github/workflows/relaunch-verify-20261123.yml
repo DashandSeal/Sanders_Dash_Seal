@@ -1,0 +1,52 @@
+name: Verify the Dash & Seal relaunch (one-time, 2026-11-23)
+on:
+  workflow_dispatch:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify storefront, portal, assets and health
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set -u
+            FAIL=0
+            cd /opt/Sanders_Dash_Seal || { echo "FAIL: no checkout"; exit 1; }
+            git log --oneline -1
+            systemctl is-active sanders-dash-seal.service || FAIL=1
+            body=$(curl -s https://sandersdashandseal.com/ || true)
+            echo "=== PRICES ==="
+            for p in 'From $150' 'From $250' 'From $499' 'From $500' 'From $5,000' '$20,000+'; do
+              echo "$body" | grep -qF "$p" && echo "PRICE_OK: $p" || { echo "PRICE_MISSING: $p"; FAIL=1; }
+            done
+            echo "$body" | grep -q 'The Sanders Way!' && echo "CLOSING_OK" || { echo "CLOSING_MISSING"; FAIL=1; }
+            echo "$body" | grep -q 'Our family will take great care of your family' && echo "TAGLINE_OK" || { echo "TAGLINE_MISSING"; FAIL=1; }
+            echo "=== OTHER HOSTS ==="
+            for h in sanderslegalhelpersllc.com www.sandersdashandseal.com www.sanderslegalhelpersllc.com; do
+              c=$(curl -s https://$h/ | grep -c "dash-seal-banner.png" || true); echo "$h banner_refs=$c"; [ "$c" -ge 1 ] || FAIL=1
+            done
+            echo "=== ASSETS ==="
+            curl -s -o /dev/null -w 'banner: %{http_code} %{content_type} %{size_download} bytes\n' https://sandersdashandseal.com/assets/dash-seal-banner.png
+            for s in seal-corporate-hq seal-home-healthcare seal-senior-living seal-legal-helpers; do
+              curl -s -o /dev/null -w "$s: %{http_code} %{content_type}\n" https://sandersdashandseal.com/assets/$s.png
+            done
+            echo "=== PORTAL AT /appointments ==="
+            appt=$(curl -s https://sandersdashandseal.com/appointments || true)
+            echo "$appt" | grep -q 'booking-form' && echo "PORTAL_FORM_OK" || { echo "PORTAL_FORM_MISSING"; FAIL=1; }
+            echo "$appt" | grep -q 'seal-corporate-hq.png' && echo "PORTAL_SEAL_OK" || { echo "PORTAL_SEAL_MISSING"; FAIL=1; }
+            css=$(curl -s https://sandersdashandseal.com/assets/booking.css || true)
+            echo "$css" | grep -q 'sds-jade' && echo "PORTAL_JADE_CSS_OK" || { echo "PORTAL_JADE_CSS_MISSING"; FAIL=1; }
+            js=$(curl -s https://sandersdashandseal.com/assets/booking.js || true)
+            echo "$js" | grep -q 'Please sign in to continue' && echo "PORTAL_JS_OK" || { echo "PORTAL_JS_MARKER_MISSING"; FAIL=1; }
+            scode=$(curl -s -o /dev/null -w '%{http_code}' https://sandersdashandseal.com/api/session); echo "session unauthenticated: $scode"; [ "$scode" = "401" ] || FAIL=1
+            echo "=== HEALTHZ ALL NAMES ==="
+            for h in sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com; do
+              c=$(curl -s -o /dev/null -w '%{http_code}' https://$h/healthz); echo "$h healthz=$c"; [ "$c" = "200" ] || FAIL=1
+            done
+            echo "=== CERT GUARD STATE ==="
+            sudo cat /var/lib/sds-watchdog/fails-cert-coverage 2>/dev/null || echo "no cert-coverage counter yet"
+            if [ "$FAIL" = "0" ]; then echo "RELAUNCH_CHECKS_PASSED"; else echo "RELAUNCH_CHECKS_FAILED"; exit 1; fi
