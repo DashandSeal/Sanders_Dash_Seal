@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf",
-    "payload_hash": "55fcf31a8e753aea25111c7f3b6d526cd218e293830eb7dee8f52c525547f7d6",
+    "payload_hash": "dca374fa18c623a7e8184e11283efec67a56e74db2fc088063dc3fa8e912fde7",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
