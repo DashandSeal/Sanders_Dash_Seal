@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Sanders Dash & Seal watchdog (sds-watchdog.service) every 2 minutes
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec=2min
+Persistent=true
+Unit=sds-watchdog.service
+
+[Install]
+WantedBy=timers.target

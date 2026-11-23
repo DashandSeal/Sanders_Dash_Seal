@@ -1,0 +1,12 @@
+[Unit]
+Description=Sanders Dash & Seal watchdog - health-checks the platform services and restarts the ones that stop answering
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=root
+# The script is installed here from the repo (deploy/sds_watchdog.sh) by
+# deploy/deploy_all.sh step 5c on every deploy. It is activated by
+# sds-watchdog.timer, so this unit needs no [Install] section.
+ExecStart=/usr/local/sbin/sds_watchdog.sh

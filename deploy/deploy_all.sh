@@ -6,7 +6,8 @@
 # user (sudo where root is needed). Extracted from the workflow's former
 # inline SSH script on 2026-11-23; behavior is unchanged except for the
 # preflight (step 2b), the repo-owned nginx server config (step 4), and the
-# extended failure diagnostics (step 7) added the same day.
+# extended failure diagnostics (step 7) added the same day, plus the
+# automatic-recovery watchdog install (step 5c) added later that day.
 set -euo pipefail
 REPO_DIR="/opt/Sanders_Dash_Seal"
 
@@ -183,6 +184,33 @@ if [ -f deploy/sanders-dash-seal.service ]; then
   sudo systemctl enable --now sanders-dash-seal.service || true
   sudo systemctl restart sanders-dash-seal.service || true
 fi
+
+# 5c. Install the automatic-recovery watchdog (deploy/sds_watchdog.sh,
+# deploy/sds-watchdog.service, deploy/sds-watchdog.timer) and enable its
+# timer. The watchdog health-checks every platform service every 2
+# minutes and restarts one that has stopped answering (2 consecutive
+# failed checks, at most one restart per service per 5 minutes); see the
+# watchdog script header and docs/SPEC_CONFORMANCE.md (November 23, 2026,
+# automatic-recovery entry). It runs from /usr/local/sbin — installed
+# fresh from the repo on every deploy — so it never depends on the
+# checkout's state. Linger for opc is enabled here too, guarded: the
+# Secretary, TwoStep and Judge services are systemd --user services
+# owned by opc, and without linger the opc user manager stops at logout
+# and does not start at boot. Both of those platforms' own deploy
+# scripts already enable it; repeating it here means a fresh instance
+# gets it from the main deploy as well.
+if [ -f deploy/sds_watchdog.sh ]; then
+  sudo install -m 0755 deploy/sds_watchdog.sh /usr/local/sbin/sds_watchdog.sh
+fi
+if [ -f deploy/sds-watchdog.service ]; then
+  sudo cp deploy/sds-watchdog.service /etc/systemd/system/sds-watchdog.service
+fi
+if [ -f deploy/sds-watchdog.timer ]; then
+  sudo cp deploy/sds-watchdog.timer /etc/systemd/system/sds-watchdog.timer
+  sudo systemctl daemon-reload
+  sudo systemctl enable --now sds-watchdog.timer || true
+fi
+sudo loginctl enable-linger opc || true
 
 # 6. Bring up Docker Compose stacks if Docker is installed
 if command -v docker >/dev/null 2>&1 && [ -f compose.yaml ]; then

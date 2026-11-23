@@ -3,6 +3,13 @@ Description=Sanders Dash & Seal - application server (gunicorn on 127.0.0.1:8000
 Documentation=https://github.com/DashandSeal/Sanders_Dash_Seal
 After=network-online.target
 Wants=network-online.target
+# Never give up restarting this service: StartLimitIntervalSec=0 disables
+# the start-rate limit, so a crash loop is retried indefinitely (with
+# RestartSec=10 between attempts) instead of systemd parking the unit in
+# a failed state until a human intervenes. The sds-watchdog timer is the
+# second half of the recovery: it health-checks the app and restarts it
+# if it stops answering while alive (added 2026-11-23).
+StartLimitIntervalSec=0
 
 [Service]
 Type=simple
@@ -50,10 +57,8 @@ Environment=SANDERS_RUNTIME_FACTORY=deploy.production_bindings:create_production
 ExecStartPre=+/bin/sh -c '/usr/bin/pkill -f "gunicorn.*wsgi:applicatio[n]" 2>/dev/null; sleep 2; /usr/bin/pkill -9 -f "gunicorn.*wsgi:applicatio[n]" 2>/dev/null; true'
 ExecStart=/opt/Sanders_Dash_Seal/venv/bin/gunicorn --config deploy/gunicorn.conf.py wsgi:application
 ExecReload=/bin/kill -s HUP $MAINPID
-Restart=on-failure
-RestartSec=5
-StartLimitIntervalSec=60
-StartLimitBurst=3
+Restart=always
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target

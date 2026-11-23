@@ -1,6 +1,10 @@
 [Unit]
 Description=Money Factory Legal Aid v1.668 ML-DSA-65 API
 After=network.target
+# StartLimitIntervalSec=0: systemd never gives up restarting this
+# service (Restart=always below); the sds-watchdog timer additionally
+# health-checks it and restarts it if it stops answering (2026-11-23).
+StartLimitIntervalSec=0
 
 [Service]
 User=opc
@@ -8,7 +12,7 @@ WorkingDirectory=/opt/Sanders_Dash_Seal/money_factory_legal_aid_v1_668
 Environment="PYTHONPATH=/opt/Sanders_Dash_Seal/money_factory_legal_aid_v1_668"
 ExecStart=/opt/Sanders_Dash_Seal/venv/bin/uvicorn app:app --host 127.0.0.1 --port 8668 --workers 2
 Restart=always
-RestartSec=3
+RestartSec=10
 
 [Install]
 WantedBy=multi-user.target
