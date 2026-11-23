@@ -175,6 +175,15 @@ if [ -f deploy/sanders-dash-seal.service ]; then
   if ! id sanders >/dev/null 2>&1; then
     sudo useradd --uid 10001 --gid 10001 --no-create-home --shell /sbin/nologin sanders
   fi
+  # The app creates <repo>/data at startup (wsgi.py
+  # create_native_application: data_dir.mkdir) and writes its ledgers
+  # there. Under systemd the whole process runs as sanders, which
+  # cannot create that directory inside the opc-owned checkout — the
+  # crash loop found 2026-11-23 once runtime.env was restored. Create
+  # it here, owned by the runtime user, so startup never depends on
+  # directory luck.
+  sudo mkdir -p "$REPO_DIR/data"
+  sudo chown sanders:sanders "$REPO_DIR/data"
   # Keep the previous unit file, if any, before overwriting it.
   if [ -f /etc/systemd/system/sanders-dash-seal.service ]; then
     sudo cp /etc/systemd/system/sanders-dash-seal.service "/tmp/sanders-dash-seal.service.bak.$(date +%Y%m%d%H%M%S)"
