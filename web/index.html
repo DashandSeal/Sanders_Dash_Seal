@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Request mobile notary and document support services through Sanders Dash &amp; Seal.">
     <title>Sanders Dash &amp; Seal - Secure Notarization Portal</title>
     <link rel="stylesheet" href="/assets/booking.css">
@@ -12,22 +12,23 @@
 <body>
     <!-- Unified Corporate Top Navigation Ingress Branding Bar -->
     <header class="sds-enterprise-header">
+        <img class="sds-header-seal" src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc., corporate headquarters">
         <a class="sds-brand-title" href="/" aria-label="Sanders Dash and Seal Home">
             Sanders Dash <span>&amp;</span> Seal
         </a>
-        <div class="sds-tagline-anchor" aria-hidden="true">
-            From the Road to Remote, We Seal the Deal.
+        <div class="sds-tagline-anchor">
+            Our family will take great care of your family
         </div>
     </header>
 
     <main class="sds-main-viewport">
         <!-- Section A: Introduction Block -->
         <section class="sds-action-card" style="margin-bottom: 2rem;">
-            <p class="sds-eyebrow" style="color: #00A3E0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">
+            <p class="sds-eyebrow">
                 Mobile Notary &bull; Document Support
             </p>
-            <h1 style="font-size: 2rem; margin-bottom: 1rem; font-weight: 800;">A Personal Service Where You Are</h1>
-            <div id="notice" class="notice status" role="status" aria-live="polite" style="color: #00A3E0;">
+            <h1>A Personal Service Where You Are</h1>
+            <div id="notice" class="notice status" role="status" aria-live="polite">
                 Initializing secure session connection parameters...
             </div>
         </section>
@@ -37,12 +38,12 @@
             <h2 id="request-title" style="font-size: 1.5rem; margin-bottom: 1.5rem; font-weight: 700;">
                 Initialize Service Intake Request
             </h2>
-            
+
             <form id="booking-form" novalidate>
-                <fieldset id="booking-fields" style="border: none;">
+                <fieldset id="booking-fields">
                     <div style="margin-bottom: 1.25rem;">
-                        <label for="service" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">How can we help?</label>
-                        <select id="service" name="service" required style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;">
+                        <label for="service">How can we help?</label>
+                        <select id="service" name="service" required>
                             <option value="MOBILE_NOTARY">Mobile Notary — from $150</option>
                             <option value="RON">Remote Online Notarization (RON) — from $150</option>
                             <option value="AUTHORIZED_DOCUMENT_SERVICE">Document Support — from $250</option>
@@ -50,8 +51,8 @@
                     </div>
 
                     <div style="margin-bottom: 1.25rem;">
-                        <label for="jurisdiction" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">State of Service</label>
-                        <select id="jurisdiction" name="jurisdiction" required style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;">
+                        <label for="jurisdiction">State of Service</label>
+                        <select id="jurisdiction" name="jurisdiction" required>
                             <option value="CO">Colorado</option>
                             <option value="WI">Wisconsin</option>
                             <option value="AZ">Arizona</option>
@@ -59,26 +60,26 @@
                     </div>
 
                     <div style="margin-bottom: 1.25rem;">
-                        <label for="meeting-area" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">City or Neighborhood</label>
-                        <input type="text" id="meeting-area" name="meeting-area" required placeholder="e.g. Milwaukee" style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;" maxlength="160">
+                        <label for="meeting-area">City or Neighborhood</label>
+                        <input type="text" id="meeting-area" name="meeting-area" required placeholder="e.g. Milwaukee" maxlength="160">
                     </div>
 
                     <div style="margin-bottom: 1.5rem;">
-                        <label for="requested-start" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Preferred Date &amp; Time</label>
-                        <input type="datetime-local" id="requested-start" name="requested-start" required style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;">
-                        <span id="timezone" style="display: block; font-size: 0.85rem; color: #888; margin-top: 0.25rem;"></span>
+                        <label for="requested-start">Preferred Date &amp; Time</label>
+                        <input type="datetime-local" id="requested-start" name="requested-start" required>
+                        <span id="timezone"></span>
                     </div>
 
                     <div style="margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 0.5rem;">
-                        <input type="checkbox" id="consent" name="consent" required style="margin-top: 0.25rem; transform: scale(1.2);">
-                        <label for="consent" style="font-size: 0.9rem; color: #E5E5E5;">
+                        <input type="checkbox" id="consent" name="consent" required style="margin-top: 0.25rem;">
+                        <label for="consent" style="font-size: 0.9rem; font-weight: 500;">
                             I agree to have these data values verified independently. No documents are uploaded during intake.
                         </label>
                     </div>
 
                     <div id="form-message" role="status" aria-live="polite" style="margin-bottom: 1rem; font-weight: 600;"></div>
 
-                    <button class="sds-button-primary" id="submit" type="submit" style="width: 100%;">
+                    <button class="sds-button-primary" id="submit" type="submit">
                         Submit Request Appointment
                     </button>
                 </fieldset>
@@ -88,22 +89,22 @@
         <!-- Section C: Dynamic Real-Time Active Operations Feed -->
         <section class="sds-action-card" id="workspace" style="margin-bottom: 2rem;">
             <h2 style="font-size: 1.5rem; margin-bottom: 1rem; font-weight: 700;">Your Timeline</h2>
-            <div id="requests" style="display: flex; flex-direction: column; gap: 1rem;">
-                <p style="color: #888;">Synchronizing operational timeline channels...</p>
+            <div id="requests">
+                <p style="color: #6b7684;">Synchronizing operational timeline channels...</p>
             </div>
-            <div id="details" hidden style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid #333;"></div>
+            <div id="details" hidden></div>
         </section>
 
         <!-- Section D: Sticky Role Context Navigation Footers -->
-        <p class="signin" id="signin" hidden style="text-align: center; margin-bottom: 2rem;">
-            <a href="/auth/login.html" style="color: #00A3E0; font-weight: 600; text-decoration: none;">
+        <p class="signin" id="signin" hidden style="margin-bottom: 2rem;">
+            <a href="/auth/login.html">
                 Sign in to request and track your appointment &rarr;
             </a>
         </p>
 
         <section class="sds-action-card" id="how-it-works">
             <h3 style="font-size: 1.25rem; margin-bottom: 0.75rem; font-weight: 700;">What Happens Next</h3>
-            <ol style="padding-left: 1.25rem; color: #E5E5E5;">
+            <ol style="padding-left: 1.25rem;">
                 <li style="margin-bottom: 0.5rem;">We review your request metrics.</li>
                 <li style="margin-bottom: 0.5rem;">Your itemized quote will appear right inside your live timeline feed.</li>
                 <li style="margin-bottom: 0.5rem;">Accept the quote to continue to secure Stripe checkouts.</li>
@@ -113,6 +114,26 @@
 
     <!-- Patented Legal Ownership Branding Protection Fence -->
     <footer class="sds-intellectual-property-footer">
+        <div class="sds-seal-strip" aria-label="The Sanders companies">
+            <figure>
+                <img src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc.">
+                <figcaption>S &amp; G Security Inc. — Corporate Headquarters</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-home-healthcare.png" alt="Seal of Sanders Home Healthcare &amp; Caregivers LLC">
+                <figcaption>Sanders Home Healthcare &amp; Caregivers LLC</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-senior-living.png" alt="Seal of Sanders Senior Living LLC">
+                <figcaption>Sanders Senior Living LLC</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC">
+                <figcaption>Sanders Legal Helpers LLC</figcaption>
+            </figure>
+        </div>
+        <div class="sds-footer-tagline">Our family will take great care of your family</div>
+        <div class="sds-footer-closing">The Sanders Way!</div>
         <div>&copy; 2026 Sanders Dash &amp; Seal. All Rights Reserved.</div>
         <div style="font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.7;">
             Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders

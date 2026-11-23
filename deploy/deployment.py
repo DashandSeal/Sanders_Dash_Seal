@@ -466,7 +466,11 @@ def create_application(bindings=None):
                                  {'error': 'voice_unavailable',
                                   'reason': 'web/voice.html is missing from this checkout'})
             return _response(start, '404 Not Found', {'error': 'not_found'})
-        if path in ('/assets/booking.css', '/assets/booking.js'):
+        if path in ('/assets/booking.css', '/assets/booking.js',
+                    '/assets/seal-corporate-hq.png',
+                    '/assets/seal-home-healthcare.png',
+                    '/assets/seal-senior-living.png',
+                    '/assets/seal-legal-helpers.png'):
             # Canonical home page assets. web/index.html links both, and
             # the canonical host 308-redirects every path _api_route does
             # not serve, so without this the portal home on
@@ -474,6 +478,8 @@ def create_application(bindings=None):
             # script. Served from web/ like the voice/video pages.
             # Alias hosts return None here so they keep serving these
             # files from the customer app, with its own headers.
+            # The four seal images joined this list 2026-11-23 with the
+            # portal presentation repair (web/index.html displays them).
             host = env.get('HTTP_HOST', '')
             if not isinstance(host, str):
                 return _response(start, '421 Misdirected Request', {'error': 'host_denied'})
@@ -483,6 +489,7 @@ def create_application(bindings=None):
             if host in ALIAS_HOSTS:
                 return None
             media_type = ('text/css; charset=utf-8' if path.endswith('.css')
+                          else 'image/png' if path.endswith('.png')
                           else 'application/javascript; charset=utf-8')
             served = _serve_web_file(start, path.rsplit('/', 1)[-1], media_type)
             if served is not None:

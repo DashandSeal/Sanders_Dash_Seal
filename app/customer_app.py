@@ -44,6 +44,10 @@ ASSETS = {
     '/assets/operator.js': ('operator.js', 'application/javascript; charset=utf-8'),
     '/assets/booking.css': ('booking.css', 'text/css; charset=utf-8'),
     '/assets/booking.js': ('booking.js', 'application/javascript; charset=utf-8'),
+    '/assets/seal-corporate-hq.png': ('seal-corporate-hq.png', 'image/png'),
+    '/assets/seal-home-healthcare.png': ('seal-home-healthcare.png', 'image/png'),
+    '/assets/seal-senior-living.png': ('seal-senior-living.png', 'image/png'),
+    '/assets/seal-legal-helpers.png': ('seal-legal-helpers.png', 'image/png'),
 }
 
 CASE_ROUTE = re.compile(r'^/api/appointments/([A-Za-z0-9_-]{1,128})/checkout$')

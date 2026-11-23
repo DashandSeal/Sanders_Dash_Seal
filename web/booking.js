@@ -203,7 +203,13 @@ form.addEventListener('submit', async (event) => {
         await functionLoadRequests();
     } catch (error) {
         if (error.status === 401) {
-            $('form-message').textContent = 'Check your requested time and details, then try again.';
+            // A 401 means the session is not signed in — say so and
+            // surface the sign-in path, exactly as functionUnavailable
+            // does for the timeline load. (Before 2026-11-23 this
+            // branch wrongly told the customer to check their date.)
+            $('form-message').textContent = 'Please sign in to continue.';
+            $('signin').hidden = false;
+            $('booking-fields').disabled = true;
         } else {
             $('form-message').textContent = error.message || 'Submission failed. Please check network connection.';
         }
