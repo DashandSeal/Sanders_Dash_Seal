@@ -10,7 +10,9 @@
 # automatic-recovery watchdog install (step 5c) added later that day, and
 # the full self-repair layer — the env guard and repair playbook installs
 # (step 5c) and the last-known-good snapshots (step 8) — added later that
-# day as well.
+# day as well. The certificate-coverage warning (step 7b) and the
+# watchdog's cert-coverage guard were added later on 2026-11-23 (owner
+# directive: correct certification by design, globally).
 set -euo pipefail
 REPO_DIR="/opt/Sanders_Dash_Seal"
 
@@ -287,6 +289,31 @@ if [ "$HEALTH_OK" -ne 1 ]; then
   echo "=== DIAGNOSTICS: listeners (80/443/8000/8668) ==="
   sudo ss -ltnp | grep -E ':(80|443|8000|8668)' || true
   exit 1
+fi
+
+# 7b. Certificate coverage warning (owner directive 2026-11-23:
+# correct certification by design, globally). Every name the installed
+# server config serves must be on the certificate nginx serves — the
+# 2026-11-23 www.sanderslegalhelpersllc.com gap (a name live in DNS
+# with no certificate coverage, found by the owner on his phone) is
+# the incident this exists to catch at deploy time. A gap is a LOUD
+# WARNING here, never a deploy failure (the deployment law: nothing
+# stops deployment). The watchdog's cert-coverage guard
+# (deploy/sds_watchdog.sh) checks the same thing every 2 minutes and
+# escalates until it is fixed. Issuing or expanding a certificate is
+# an owner-approved action; this step only reports.
+CERT_SERVED="$(grep -h '^[[:space:]]*server_name' /etc/nginx/conf.d/money_factory_legal_server.conf 2>/dev/null | tr ';' ' ' | awk '{for (i=2; i<=NF; i++) print $i}' | grep -v '^_$' | grep -vE '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' | sort -u || true)"
+CERT_ON="$(echo | openssl s_client -connect 127.0.0.1:443 -servername sandersdashandseal.com 2>/dev/null | openssl x509 -noout -ext subjectAltName 2>/dev/null | grep -o 'DNS:[^,]*' | sed 's/^DNS://' | sort -u || true)"
+CERT_MISSING=""
+for n in $CERT_SERVED; do
+  printf '%s\n' "$CERT_ON" | grep -qx "$n" || CERT_MISSING="${CERT_MISSING} $n"
+done
+if [ -n "$CERT_MISSING" ]; then
+  echo "CERT COVERAGE WARNING: served name(s) NOT on the certificate:${CERT_MISSING} — visitors to those names will get a certificate warning. Owner step: approve expanding the certificate to add them."
+elif [ -z "$CERT_SERVED" ] || [ -z "$CERT_ON" ]; then
+  echo "CERT COVERAGE WARNING: could not read the served names or the served certificate to compare them."
+else
+  echo "CERT COVERAGE: OK — every served name is on the certificate."
 fi
 
 # 8. Last-known-good (LKG) snapshot. Reaching this step means the

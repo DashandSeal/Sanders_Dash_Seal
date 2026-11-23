@@ -62,6 +62,23 @@
 # State (per-service failure counters and last-restart stamps) lives in
 # /var/lib/sds-watchdog/ so the cooldown survives reboots; /run is the
 # fallback if /var/lib is unavailable.
+#
+# Certificate coverage guard (added 2026-11-23, owner directive the
+# same day: "ensure they always have the right certification by design
+# globally correct"): every cycle also verifies that every name nginx
+# serves (the server_name list in the installed server conf) is
+# present on the certificate nginx actually serves, and that the
+# certificate is not close to expiry. The incident this guards against
+# happened 2026-11-23: www.sanderslegalhelpersllc.com went live in DNS
+# with no certificate coverage (it had no DNS record when the
+# certificate was issued, so it was never on it) and the gap was found
+# by the owner on his phone — not by the platform. The guard DETECTS
+# and ESCALATES only: it never restarts anything and never touches the
+# certificate. Issuing or expanding a certificate is an owner-approved
+# action (the 2026-11-23 boundary: secrets, gates, and money stay the
+# owner's; certificate issuance is in that class). Escalation is a
+# journal record (logger -t sds-watchdog), which the morning briefing
+# reads — the same escalation channel the repair layer uses.
 set -u
 
 STATE_DIR="/var/lib/sds-watchdog"
@@ -248,6 +265,88 @@ check_nginx() {
   fi
 }
 
+CERT_CONF="/etc/nginx/conf.d/money_factory_legal_server.conf"
+CERT_FILE="/etc/letsencrypt/live/sandersdashandseal.com/cert.pem"
+CERT_MIN_DAYS=21
+
+# Names nginx serves, from the installed server conf (bare IPs and the
+# "_" catch-all are not certificate names).
+cert_served_names() {
+  grep -h '^[[:space:]]*server_name' "$CERT_CONF" 2>/dev/null \
+    | tr ';' ' ' \
+    | awk '{for (i=2; i<=NF; i++) print $i}' \
+    | grep -v '^_$' \
+    | grep -vE '^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$' \
+    | sort -u
+}
+
+# Names on the certificate nginx actually serves (asked over loopback
+# TLS, so the answer is the live served cert, not just a file on disk).
+cert_cert_names() {
+  echo | openssl s_client -connect 127.0.0.1:443 -servername sandersdashandseal.com 2>/dev/null \
+    | openssl x509 -noout -ext subjectAltName 2>/dev/null \
+    | grep -o 'DNS:[^,]*' | sed 's/^DNS://' | sort -u
+}
+
+# Record a cert-coverage outcome. Unlike note_result this NEVER
+# restarts anything: a coverage gap is escalated once per incident
+# (cert-escalated stamp) and stays visible in the journal until a
+# check passes again.
+note_cert_result() {
+  local ok="$1" detail="$2"
+  local cf ef count
+  cf="$(counter_file "cert-coverage")"
+  ef="$STATE_DIR/cert-escalated"
+  if [ "$ok" = "1" ]; then
+    if [ "$(read_counter "cert-coverage")" != "0" ] || [ -f "$ef" ]; then
+      log_msg "cert-coverage: recovered — $detail"
+    fi
+    printf '0' > "$cf" 2>/dev/null || true
+    rm -f "$ef" 2>/dev/null || true
+    return 0
+  fi
+  count="$(read_counter "cert-coverage")"
+  count=$(( count + 1 ))
+  printf '%s' "$count" > "$cf" 2>/dev/null || true
+  log_msg "cert-coverage: check FAILED ($count/$FAIL_LIMIT) — $detail"
+  if [ "$count" -ge "$FAIL_LIMIT" ] && [ ! -f "$ef" ]; then
+    printf '%s' "$(date +%s)" > "$ef" 2>/dev/null || true
+    log_msg "cert-coverage: ESCALATED — a certificate coverage gap needs the owner (issuing/expanding a certificate is owner-approved; the watchdog does not touch certificates): $detail"
+  fi
+}
+
+check_cert_coverage() {
+  local served certnames missing="" n
+  served="$(cert_served_names)"
+  certnames="$(cert_cert_names)"
+  if [ -z "$served" ] || [ -z "$certnames" ]; then
+    note_cert_result 0 "cannot read the served names ($CERT_CONF) or the served certificate"
+    return 0
+  fi
+  for n in $served; do
+    printf '%s\n' "$certnames" | grep -qx "$n" || missing="${missing} $n"
+  done
+  # Expiry: automatic renewal should keep the cert far from expiry;
+  # under CERT_MIN_DAYS means renewal is not doing its job.
+  local expiry_note=""
+  if [ -f "$CERT_FILE" ]; then
+    local end_epoch now_epoch days
+    end_epoch="$(date -d "$(openssl x509 -noout -enddate -in "$CERT_FILE" 2>/dev/null | cut -d= -f2)" +%s 2>/dev/null || echo 0)"
+    now_epoch="$(date +%s)"
+    if [ "$end_epoch" -gt 0 ]; then
+      days=$(( (end_epoch - now_epoch) / 86400 ))
+      if [ "$days" -lt "$CERT_MIN_DAYS" ]; then
+        expiry_note=" certificate expires in ${days}d (< ${CERT_MIN_DAYS}d)"
+      fi
+    fi
+  fi
+  if [ -z "$missing" ] && [ -z "$expiry_note" ]; then
+    note_cert_result 1 "every served name is on the certificate"
+  else
+    note_cert_result 0 "missing from certificate:${missing:- none};${expiry_note}"
+  fi
+}
+
 main() {
   if ! command -v curl >/dev/null 2>&1; then
     log_msg "ERROR: curl not found; the watchdog cannot health-check (misconfigured)"
@@ -267,6 +366,7 @@ main() {
   check_http "twostep" "sanders-twostep.service" "user" "http://127.0.0.1:9400/healthz"
   check_http "judge" "sanders-judge.service" "user" "http://127.0.0.1:9405/healthz"
   check_nginx
+  check_cert_coverage
 
   exit 0
 }
