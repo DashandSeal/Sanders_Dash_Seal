@@ -1,0 +1,72 @@
+name: Restore HTTPS and enable automatic repair (one-time, 2026-11-23)
+on:
+  workflow_dispatch:
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync checkout, install watchdog + self-repair, repair nginx, verify
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            echo "=== BEFORE: listeners ==="
+            sudo ss -ltnp 2>/dev/null | grep -E ':(80|443)' || echo "no 80/443 listeners"
+            echo "=== SYNC CHECKOUT TO origin/main ==="
+            cd /opt/Sanders_Dash_Seal || { echo "CHECKOUT_MISSING"; exit 1; }
+            sudo chown -R opc:opc /opt/Sanders_Dash_Seal/.git || true
+            git fetch origin main || { echo "GIT_FETCH_FAILED"; exit 1; }
+            git reset --hard origin/main || { echo "GIT_RESET_FAILED"; exit 1; }
+            git log -1 --oneline | cut -c1-95
+            echo "=== CERT FILES MUST EXIST (no recertification; existing cert only) ==="
+            sudo ls -l /etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem /etc/letsencrypt/live/sandersdashandseal.com/privkey.pem || { echo "CERT_FILES_MISSING"; exit 1; }
+            echo "=== INSTALL AUTOMATIC LAYER (deploy_all step 5c, verbatim) ==="
+            if [ -f deploy/sds_watchdog.sh ]; then sudo install -m 0755 deploy/sds_watchdog.sh /usr/local/sbin/sds_watchdog.sh; echo "watchdog script installed"; fi
+            if [ -f deploy/sds_repair.sh ]; then sudo install -m 0755 deploy/sds_repair.sh /usr/local/sbin/sds_repair.sh; echo "repair script installed"; fi
+            if [ -f deploy/sds_env_guard.sh ]; then sudo install -m 0755 deploy/sds_env_guard.sh /usr/local/sbin/sds_env_guard.sh; echo "env guard installed"; fi
+            if [ -f deploy/sds-watchdog.service ]; then sudo cp deploy/sds-watchdog.service /etc/systemd/system/sds-watchdog.service; fi
+            if [ -f deploy/sds-watchdog.timer ]; then sudo cp deploy/sds-watchdog.timer /etc/systemd/system/sds-watchdog.timer; sudo systemctl daemon-reload; sudo systemctl enable --now sds-watchdog.timer || true; fi
+            sudo loginctl enable-linger opc || true
+            echo "=== APP UNIT REFRESH (env guard wiring; no app restart) + DATA DIR ==="
+            if [ -f deploy/sanders-dash-seal.service ]; then sudo cp deploy/sanders-dash-seal.service /etc/systemd/system/sanders-dash-seal.service; sudo systemctl daemon-reload; echo "app unit refreshed"; fi
+            sudo mkdir -p /opt/Sanders_Dash_Seal/data
+            sudo chown sanders:sanders /opt/Sanders_Dash_Seal/data
+            echo "=== RUN THE AUTOMATIC REPAIR FOR NGINX (playbook P4) ==="
+            sudo /usr/local/sbin/sds_repair.sh nginx
+            echo "REPAIR_RC=$?"
+            sleep 2
+            echo "=== LISTENERS AFTER REPAIR ==="
+            sudo ss -ltnp 2>/dev/null | grep -E ':(80|443)' || echo "no 80/443 listeners"
+            if ! sudo ss -ltn 2>/dev/null | grep -q ':443 '; then
+              echo "=== 443 STILL MISSING: FALLBACK = deploy_all step 4 verbatim ==="
+              sudo mkdir -p /etc/nginx/conf.d /etc/nginx/snippets
+              sudo sed -i 's/default_server//g' /etc/nginx/nginx.conf || true
+              sudo sed -i 's/server_name[[:space:]]\+_;$/server_name localhost;/g' /etc/nginx/nginx.conf || true
+              if [ -f money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf ]; then
+                sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal.conf /etc/nginx/snippets/money_factory_legal.conf
+                if ! grep -q "/rtsa/status" /etc/nginx/snippets/money_factory_legal.conf; then
+                  printf '%s\n' '' 'location = /rtsa/status {' '    default_type application/json;' '    alias /var/www/rtsa/status.json;' '}' | sudo tee -a /etc/nginx/snippets/money_factory_legal.conf >/dev/null
+                fi
+              fi
+              if [ -f /etc/nginx/conf.d/money_factory_legal_server.conf ]; then sudo cp /etc/nginx/conf.d/money_factory_legal_server.conf "/tmp/money_factory_legal_server.conf.bak.$(date +%Y%m%d%H%M%S)"; fi
+              sudo cp money_factory_legal_aid_v1_668/infra/oracle_linux_9/money_factory_legal_server.conf /etc/nginx/conf.d/money_factory_legal_server.conf
+              sudo nginx -t
+              if [ "$?" -ne 0 ]; then echo "NGINX_TEST_FAILED_FALLBACK"; exit 1; fi
+              sudo systemctl restart nginx.service
+              sleep 2
+              sudo ss -ltnp 2>/dev/null | grep -E ':(80|443)' || echo "80/443 NOT LISTENING AFTER FALLBACK"
+            fi
+            echo "=== WATCHDOG TIMER STATE ==="
+            systemctl is-active sds-watchdog.timer || true
+            systemctl is-enabled sds-watchdog.timer || true
+            echo "=== STRICT HTTPS VERIFICATION (no -k) ==="
+            FAIL=0
+            for n in sandersdashandseal.com sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/healthz"); echo "https://$n/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/healthz returned $CODE"; FAIL=1; fi; done
+            for a in sandersdashandseal.com sanderslegalhelpersllc.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$a/"); echo "https://$a/ -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$a/ returned $CODE"; FAIL=1; fi; done
+            if [ "$FAIL" -ne 0 ]; then echo "HTTPS_VERIFICATION_FAILED"; exit 1; fi
+            echo "ALL_CHECKS_PASSED"
