@@ -1,0 +1,101 @@
+name: Expand certificate to add www.sanderslegalhelpersllc.com (one-time, 2026-11-23)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  expand-cert-www:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Expand Let's Encrypt certificate to add www.sanderslegalhelpersllc.com
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            echo "=== STEP 1: CURRENT CERTIFICATE NAMES ==="
+            CURRENT_SAN=$(echo | openssl s_client -connect 127.0.0.1:443 -servername sandersdashandseal.com 2>/dev/null | openssl x509 -noout -ext subjectAltName)
+            echo "$CURRENT_SAN"
+            CURRENT_NAMES=$(echo "$CURRENT_SAN" | grep -o 'DNS:[^,]*' | sed 's/DNS://' | sort -u)
+            echo "CURRENT_NAMES:"
+            echo "$CURRENT_NAMES"
+            ALREADY=0
+            if echo "$CURRENT_NAMES" | grep -qx "www.sanderslegalhelpersllc.com"; then
+              echo "ALREADY_COVERED"
+              ALREADY=1
+            fi
+            if [ "$ALREADY" -eq 0 ]; then
+              echo "=== STEP 3: EXPAND EXISTING CERTIFICATE ==="
+              NEW_NAMES_PLANNED=$(printf "%s\nwww.sanderslegalhelpersllc.com\n" "$CURRENT_NAMES" | sort -u)
+              echo "NEW_NAMES_PLANNED:"
+              echo "$NEW_NAMES_PLANNED"
+              CERTBOT_ARGS=""
+              for NAME in $NEW_NAMES_PLANNED; do
+                CERTBOT_ARGS="$CERTBOT_ARGS -d $NAME"
+              done
+              echo "CERTBOT_ARGS:$CERTBOT_ARGS"
+              if ! command -v certbot >/dev/null 2>&1; then
+                echo "CERTBOT_NOT_INSTALLED: certbot is not installed - stopping, no changes attempted"
+                exit 1
+              fi
+              sudo certbot certonly --nginx --cert-name sandersdashandseal.com --expand --non-interactive --agree-tos $CERTBOT_ARGS
+              CERTBOT_RC=$?
+              echo "CERTBOT_RC=$CERTBOT_RC"
+              if [ "$CERTBOT_RC" -ne 0 ]; then
+                echo "CERTBOT_FAILED: certbot exited with $CERTBOT_RC - stopping"
+                exit 1
+              fi
+              echo "=== STEP 4: NGINX TEST AND RELOAD ==="
+              sudo nginx -t
+              NGINX_RC=$?
+              echo "NGINX_TEST_RC=$NGINX_RC"
+              if [ "$NGINX_RC" -ne 0 ]; then
+                echo "NGINX_TEST_FAILED: sudo nginx -t exited with $NGINX_RC - stopping"
+                exit 1
+              fi
+              sudo systemctl reload nginx
+              echo "NGINX_RELOAD_RC=$?"
+              NEW_SAN=$(echo | openssl s_client -connect 127.0.0.1:443 -servername sandersdashandseal.com 2>/dev/null | openssl x509 -noout -ext subjectAltName)
+              echo "$NEW_SAN"
+              NEW_NAMES=$(echo "$NEW_SAN" | grep -o 'DNS:[^,]*' | sed 's/DNS://' | sort -u)
+              echo "NEW_NAMES:"
+              echo "$NEW_NAMES"
+              echo "EXPIRY:"
+              sudo openssl x509 -noout -enddate -in /etc/letsencrypt/live/sandersdashandseal.com/cert.pem
+            else
+              echo "=== STEP 4: SKIPPED (already covered) ==="
+              NEW_NAMES="$CURRENT_NAMES"
+              echo "NEW_NAMES:"
+              echo "$NEW_NAMES"
+              echo "EXPIRY:"
+              sudo openssl x509 -noout -enddate -in /etc/letsencrypt/live/sandersdashandseal.com/cert.pem
+            fi
+            echo "=== STEP 5: STRICT HTTPS VERIFICATION (curl without -k) ==="
+            FAIL=0
+            CODE=$(curl -s -o /tmp/www_legalhelpers_root.html -w "%{http_code}" https://www.sanderslegalhelpersllc.com/)
+            echo "https://www.sanderslegalhelpersllc.com/ -> $CODE"
+            if [ "$CODE" != "200" ]; then echo "FAIL: https://www.sanderslegalhelpersllc.com/ returned $CODE (expected 200)"; FAIL=1; fi
+            TITLE=$(grep -i -o '<title[^>]*>[^<]*</title>' /tmp/www_legalhelpers_root.html | head -n 1)
+            echo "TITLE: $TITLE"
+            if echo "$TITLE" | grep -q "Imperial Jade"; then echo "TITLE_OK: title contains Imperial Jade"; else echo "FAIL: title does not contain Imperial Jade: $TITLE"; FAIL=1; fi
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" https://www.sanderslegalhelpersllc.com/healthz)
+            echo "https://www.sanderslegalhelpersllc.com/healthz -> $CODE"
+            if [ "$CODE" != "200" ]; then echo "FAIL: https://www.sanderslegalhelpersllc.com/healthz returned $CODE (expected 200)"; FAIL=1; fi
+            for NAME in sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com; do
+              CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$NAME/healthz")
+              echo "https://$NAME/healthz -> $CODE"
+              if [ "$CODE" != "200" ]; then echo "FAIL: https://$NAME/healthz returned $CODE (expected 200)"; FAIL=1; fi
+            done
+            for NAME in sandersdashandseal.com sanderslegalhelpersllc.com; do
+              BODY_FILE="/tmp/root_$(echo "$NAME" | tr '.' '_').html"
+              CODE=$(curl -s -o "$BODY_FILE" -w "%{http_code}" "https://$NAME/")
+              echo "https://$NAME/ -> $CODE"
+              if [ "$CODE" != "200" ]; then echo "FAIL: https://$NAME/ returned $CODE (expected 200)"; FAIL=1; fi
+              if grep -q "POLICE MEN" "$BODY_FILE"; then echo "FAIL: https://$NAME/ body contains POLICE MEN"; FAIL=1; else echo "POLICE_MEN_ABSENT_OK: https://$NAME/"; fi
+            done
+            if [ "$FAIL" -ne 0 ]; then echo "CHECKS_FAILED"; exit 1; fi
+            echo "ALL_CHECKS_PASSED"
