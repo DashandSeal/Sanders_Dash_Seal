@@ -1,0 +1,28 @@
+name: Fix app data directory (one-time)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create data dir and restart app on Oracle instance
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            sudo mkdir -p /opt/Sanders_Dash_Seal/data
+            sudo chown sanders:sanders /opt/Sanders_Dash_Seal/data
+            ls -ld /opt/Sanders_Dash_Seal/data
+            sudo systemctl reset-failed sanders-dash-seal.service || true
+            sudo systemctl restart sanders-dash-seal.service
+            sleep 12
+            systemctl is-active sanders-dash-seal.service || true
+            ss -ltn | grep ':8000' || echo 'NO_LISTENER_8000'
+            curl -s -o /dev/null -w 'healthz %{http_code}\n' http://127.0.0.1:8000/healthz || true
+            curl -s -o /dev/null -w 'session %{http_code}\n' http://127.0.0.1:8000/api/session || true
+            echo FIX_DATA_DIR_DONE
