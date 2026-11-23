@@ -44,6 +44,7 @@ ASSETS = {
     '/assets/operator.js': ('operator.js', 'application/javascript; charset=utf-8'),
     '/assets/booking.css': ('booking.css', 'text/css; charset=utf-8'),
     '/assets/booking.js': ('booking.js', 'application/javascript; charset=utf-8'),
+    '/assets/dash-seal-banner.png': ('dash-seal-banner.png', 'image/png'),
     '/assets/seal-corporate-hq.png': ('seal-corporate-hq.png', 'image/png'),
     '/assets/seal-home-healthcare.png': ('seal-home-healthcare.png', 'image/png'),
     '/assets/seal-senior-living.png': ('seal-senior-living.png', 'image/png'),

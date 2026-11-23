@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "web/index.html",
-        "payload_hash": "d1402245450be8fa01b4e6379b30730c3b0eb3cb41ebbee1848170f0b0b02bdc",
+        "payload_hash": "01269f95eff5c6868ea0f680b654da5b259f237b5cba940eeda9774a1ed962b5",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

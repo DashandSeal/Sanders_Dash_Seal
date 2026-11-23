@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "web/jade-landing.html",
-        "payload_hash": "6709b8f20cc7eb50a479c0ed6d7de76a2a3d8986bad72285049119407774ed23",
+        "payload_hash": "f7b81d537b2118acec3ed27ef585002c011fc847b955b84024d649bb7d2721b8",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

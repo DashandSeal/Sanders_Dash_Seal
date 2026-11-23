@@ -424,10 +424,15 @@ def create_application(bindings=None):
     def _api_route(env, start):
         method, path = env.get('REQUEST_METHOD', ''), env.get('PATH_INFO', '')
         if path == '/':
-            # Portal home. Internal/loopback and canonical hosts get the
-            # real web/index.html. Alias hosts fall through (return None)
-            # to the customer app, which serves jade-landing.html at '/'.
-            # Previously the canonical host 308-redirected '/' to itself.
+            # Storefront home. Since the 2026-11-23 relaunch (owner
+            # directive: "relaunch the real Dash and Seal" — the Imperial
+            # Jade storefront is the public face on its own domain too),
+            # the canonical host serves web/jade-landing.html at '/',
+            # exactly as alias hosts do through the customer app. The
+            # appointment portal (web/index.html) lives at /appointments
+            # on every host. Before the relaunch the canonical host
+            # served the portal at '/' (and, earlier still, 308-redirected
+            # '/' to itself).
             if method != 'GET':
                 return _response(start, '405 Method Not Allowed', {'error': 'method_not_allowed'}, [('Allow', 'GET')])
             host = env.get('HTTP_HOST', '')
@@ -439,7 +444,7 @@ def create_application(bindings=None):
             if host in ALIAS_HOSTS:
                 return None
             try:
-                body = (WEB_ROOT / 'index.html').read_bytes()
+                body = (WEB_ROOT / 'jade-landing.html').read_bytes()
             except OSError:
                 return _response(start, '503 Service Unavailable', {'error': 'home_unavailable'})
             start('200 OK', [
@@ -467,6 +472,7 @@ def create_application(bindings=None):
                                   'reason': 'web/voice.html is missing from this checkout'})
             return _response(start, '404 Not Found', {'error': 'not_found'})
         if path in ('/assets/booking.css', '/assets/booking.js',
+                    '/assets/dash-seal-banner.png',
                     '/assets/seal-corporate-hq.png',
                     '/assets/seal-home-healthcare.png',
                     '/assets/seal-senior-living.png',

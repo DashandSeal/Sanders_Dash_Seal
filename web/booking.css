@@ -3,33 +3,37 @@
  * Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders
  * Tagline: "Our family will take great care of your family" — The Sanders Way!
  *
- * Corporate styling: BLUE and GRAY (the official company colors).
- * Repaired 2026-11-23: the previous file was a 48-line theme patch that
- * defined almost none of the classes the page and script use, forced a
- * black background with dark low-contrast form fields, and carried no
- * layout or mobile rules at all — the portal rendered as unstyled dark
- * blocks on phones. This file is the complete stylesheet: every class
- * referenced by web/index.html and web/booking.js is defined here, the
- * layout is mobile-first and responsive, and every form field is a
- * high-contrast white field with a clear gray border and a blue focus
- * ring, usable in daylight on a phone.
+ * The real Dash & Seal design: IMPERIAL JADE and GOLD, matching the
+ * owner's banner and the storefront (web/jade-landing.css) — deep jade
+ * panels, gold headings and buttons, cream text. Form fields stay
+ * white with dark text and a gold focus ring: clearly visible and
+ * usable on a phone, in daylight, at Fortune 500 standard.
+ *
+ * History: the file was a 48-line theme patch (repaired 2026-11-23 into
+ * a complete stylesheet after it left the page's classes undefined and
+ * its fields near-invisible on black), then re-paletted the same day to
+ * the owner's Imperial Jade banner design for the relaunch of the real
+ * Dash & Seal. Every class referenced by web/index.html and
+ * web/booking.js is defined here; the layout is mobile-first.
  * ========================================================================= */
 
 :root {
-    --sds-blue: #1d5c99;
-    --sds-blue-dark: #123c63;
-    --sds-blue-deep: #0d2c4a;
-    --sds-blue-tint: #e8f1f9;
-    --sds-gray-900: #21272e;
-    --sds-gray-700: #45505c;
-    --sds-gray-500: #6b7684;
-    --sds-gray-400: #98a2ad;
-    --sds-gray-300: #c9d1d9;
-    --sds-gray-100: #eef1f4;
-    --sds-white: #ffffff;
-    --sds-error: #a12622;
-    --sds-error-tint: #f9ecec;
+    --sds-jade-deep: #041b17;
+    --sds-jade: #073a2b;
+    --sds-jade-panel: #0a3527;
+    --sds-jade-panel-2: #082b23;
+    --sds-jade-bar: #031c16;
+    --sds-gold: #e8c879;
+    --sds-gold-bright: #f8dfa1;
+    --sds-gold-deep: #b68a38;
+    --sds-cream: #f7f0df;
+    --sds-cream-dim: #cfe0d6;
+    --sds-field-border: #98a2ad;
+    --sds-ink: #21272e;
+    --sds-error: #f0b4b0;
+    --sds-error-bg: #4a1714;
     --sds-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --sds-serif: Georgia, "Times New Roman", serif;
 }
 
 * { box-sizing: border-box; }
@@ -40,21 +44,25 @@ html, body {
 }
 
 body {
-    background-color: var(--sds-gray-100);
-    color: var(--sds-gray-900);
+    background:
+        radial-gradient(ellipse at 15% 5%, #1a6a50 0, transparent 43%),
+        radial-gradient(ellipse at 92% 48%, #18523e 0, transparent 38%),
+        linear-gradient(135deg, #06251c, #073a2b 48%, #041b17);
+    background-attachment: fixed;
+    color: var(--sds-cream);
     font-family: var(--sds-font-stack);
     font-size: 16px;
     line-height: 1.5;
     -webkit-text-size-adjust: 100%;
 }
 
-a { color: var(--sds-blue); }
+a { color: var(--sds-gold); }
 
 /* ---- Corporate header -------------------------------------------------- */
 
 .sds-enterprise-header {
-    background: var(--sds-blue-dark);
-    border-bottom: 3px solid var(--sds-blue);
+    background: var(--sds-jade-bar);
+    border-bottom: 2px solid var(--sds-gold);
     padding: 0.9rem 1rem;
     display: flex;
     flex-wrap: wrap;
@@ -67,23 +75,25 @@ a { color: var(--sds-blue); }
     width: auto;
     max-width: 42vw;
     object-fit: contain;
-    background: var(--sds-white);
+    background: #ffffff;
     border-radius: 6px;
     padding: 4px;
 }
 
 .sds-brand-title {
-    color: var(--sds-white);
+    color: var(--sds-gold);
+    font-family: var(--sds-serif);
     font-size: 1.35rem;
     font-weight: 800;
     text-decoration: none;
     letter-spacing: 0.2px;
 }
 
-.sds-brand-title span { color: var(--sds-gray-300); }
+.sds-brand-title span { color: var(--sds-cream); }
 
 .sds-tagline-anchor {
-    color: var(--sds-blue-tint);
+    color: var(--sds-gold-bright);
+    font-family: var(--sds-serif);
     font-size: 0.95rem;
     font-style: italic;
     width: 100%;
@@ -98,19 +108,20 @@ a { color: var(--sds-blue); }
 }
 
 .sds-action-card {
-    background: var(--sds-white);
-    border: 1px solid var(--sds-gray-300);
+    background: linear-gradient(150deg, #164b38, var(--sds-jade-panel-2));
+    border: 1px solid rgba(211, 183, 107, 0.55);
     border-radius: 10px;
     padding: 1.25rem;
-    box-shadow: 0 1px 3px rgba(18, 60, 99, 0.08);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+    color: var(--sds-cream);
 }
 
-h1 { font-size: 1.75rem; line-height: 1.2; margin: 0 0 1rem; font-weight: 800; color: var(--sds-blue-deep); }
-h2 { color: var(--sds-blue-deep); }
-h3 { color: var(--sds-blue-deep); }
+h1 { font-family: var(--sds-serif); font-size: 1.75rem; line-height: 1.2; margin: 0 0 1rem; font-weight: 800; color: #fff8e5; }
+h2 { font-family: var(--sds-serif); color: var(--sds-gold); }
+h3 { font-family: var(--sds-serif); color: var(--sds-gold-bright); }
 
 .sds-eyebrow {
-    color: var(--sds-blue);
+    color: var(--sds-gold);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -122,15 +133,15 @@ h3 { color: var(--sds-blue-deep); }
     font-size: 1.15rem;
     font-weight: 700;
     margin: 1.25rem 0 0.75rem;
-    color: var(--sds-blue-deep);
+    color: var(--sds-gold);
 }
 
 /* ---- Notices and messages ---------------------------------------------- */
 
 .notice, .status {
-    color: var(--sds-blue-dark);
-    background: var(--sds-blue-tint);
-    border: 1px solid var(--sds-gray-300);
+    color: var(--sds-cream);
+    background: rgba(12, 61, 48, 0.85);
+    border: 1px solid rgba(211, 183, 107, 0.55);
     border-radius: 6px;
     padding: 0.6rem 0.8rem;
     font-size: 0.95rem;
@@ -138,18 +149,18 @@ h3 { color: var(--sds-blue-deep); }
 
 .notice:empty { display: none; }
 
-#form-message { color: var(--sds-blue-dark); }
+#form-message { color: var(--sds-gold-bright); }
 #form-message:empty { display: none; }
 
 .sds-notice-highlight {
-    background: var(--sds-blue-tint);
-    border-left: 4px solid var(--sds-blue);
+    background: rgba(12, 61, 48, 0.85);
+    border-left: 4px solid var(--sds-gold);
     border-radius: 4px;
     padding: 0.7rem 0.9rem;
-    color: var(--sds-blue-deep);
+    color: var(--sds-cream);
 }
 
-.sds-empty-msg { color: var(--sds-gray-500); }
+.sds-empty-msg { color: var(--sds-cream-dim); }
 
 /* ---- Form controls: clearly visible and usable on a phone --------------- */
 
@@ -160,7 +171,7 @@ label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 600;
-    color: var(--sds-gray-900);
+    color: var(--sds-cream);
 }
 
 input[type="text"],
@@ -170,9 +181,9 @@ select {
     padding: 0.8rem;
     font-size: 16px; /* 16px stops iOS auto-zoom on focus */
     font-family: inherit;
-    background: var(--sds-white);
-    color: var(--sds-gray-900);
-    border: 1.5px solid var(--sds-gray-400);
+    background: #ffffff;
+    color: var(--sds-ink);
+    border: 1.5px solid var(--sds-field-border);
     border-radius: 6px;
     appearance: auto;
 }
@@ -180,8 +191,8 @@ select {
 input[type="text"]:focus,
 input[type="datetime-local"]:focus,
 select:focus {
-    border-color: var(--sds-blue);
-    outline: 3px solid var(--sds-blue-tint);
+    border-color: var(--sds-gold);
+    outline: 3px solid rgba(232, 200, 121, 0.45);
     outline-offset: 0;
 }
 
@@ -189,13 +200,13 @@ input[type="checkbox"] {
     width: 1.35rem;
     height: 1.35rem;
     flex: none;
-    accent-color: var(--sds-blue);
+    accent-color: var(--sds-gold-deep);
 }
 
 #timezone {
     display: block;
     font-size: 0.85rem;
-    color: var(--sds-gray-500);
+    color: var(--sds-cream-dim);
     margin-top: 0.25rem;
 }
 
@@ -211,16 +222,17 @@ button, .sds-button-primary {
     width: 100%;
     min-height: 52px;
     padding: 0.85rem 1rem;
-    background-color: var(--sds-blue);
-    color: var(--sds-white);
+    background: linear-gradient(120deg, #b68a38, #f3d993, #b68a38);
+    color: #16231a;
     font-size: 1.05rem;
     font-weight: 700;
-    border: none;
+    border: 1px solid #f9e2a7;
     border-radius: 6px;
-    transition: background-color 0.2s ease, opacity 0.2s ease;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    transition: opacity 0.2s ease;
 }
 
-.sds-button-primary:hover { background-color: var(--sds-blue-dark); }
+.sds-button-primary:hover { opacity: 0.92; }
 .sds-button-primary:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ---- Timeline ------------------------------------------------------------ */
@@ -235,31 +247,30 @@ button, .sds-button-primary {
     width: 100%;
     min-height: 52px;
     padding: 1rem 1.25rem;
-    background: var(--sds-white);
-    color: var(--sds-gray-900);
-    border: 1px solid var(--sds-gray-300);
+    background: linear-gradient(150deg, #164b38, var(--sds-jade-panel-2));
+    color: var(--sds-cream);
+    border: 1px solid rgba(211, 183, 107, 0.55);
     border-radius: 10px;
-    box-shadow: 0 1px 3px rgba(18, 60, 99, 0.08);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
     font-size: 1rem;
     text-align: left;
 }
 
-.request-item:hover { border-color: var(--sds-blue); }
-.request-item strong { color: var(--sds-blue-deep); font-size: 1.05rem; }
+.request-item:hover { border-color: var(--sds-gold); }
+.request-item strong { color: var(--sds-gold); font-size: 1.05rem; }
 
-.sds-date-string { color: var(--sds-gray-700); font-size: 0.95rem; }
+.sds-date-string { color: var(--sds-cream-dim); font-size: 0.95rem; }
 
 .sds-status-badge {
-    background: var(--sds-blue-tint);
-    color: var(--sds-blue-dark);
-    border: 1px solid var(--sds-gray-300);
+    background: var(--sds-gold);
+    color: #16231a;
     border-radius: 999px;
     padding: 0.15rem 0.65rem;
     font-size: 0.8rem;
     font-weight: 700;
 }
 
-#details { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--sds-gray-300); }
+#details { margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(211, 183, 107, 0.4); }
 
 /* ---- Quote ----------------------------------------------------------------- */
 
@@ -268,13 +279,13 @@ button, .sds-button-primary {
     justify-content: space-between;
     gap: 1rem;
     padding: 0.45rem 0;
-    border-bottom: 1px solid var(--sds-gray-100);
+    border-bottom: 1px solid rgba(247, 240, 223, 0.15);
 }
 
 .sds-total-row {
     font-size: 1.15rem;
     font-weight: 800;
-    color: var(--sds-blue-deep);
+    color: var(--sds-gold);
     text-align: right;
     margin-top: 0.75rem;
 }
@@ -289,16 +300,16 @@ button, .sds-button-primary {
 }
 
 .sds-success-badge {
-    background: var(--sds-blue-tint);
-    color: var(--sds-blue-dark);
-    border: 1px solid var(--sds-blue);
+    background: rgba(232, 200, 121, 0.15);
+    color: var(--sds-gold-bright);
+    border: 1px solid var(--sds-gold);
     border-radius: 6px;
     padding: 0.7rem 0.9rem;
     font-weight: 700;
 }
 
 .sds-error-badge {
-    background: var(--sds-error-tint);
+    background: var(--sds-error-bg);
     color: var(--sds-error);
     border: 1px solid var(--sds-error);
     border-radius: 6px;
@@ -309,19 +320,19 @@ button, .sds-button-primary {
 /* ---- Sign-in prompt --------------------------------------------------------- */
 
 .signin { text-align: center; }
-.signin a { color: var(--sds-blue); font-weight: 600; text-decoration: none; }
+.signin a { color: var(--sds-gold); font-weight: 600; text-decoration: none; }
 .signin a:hover { text-decoration: underline; }
 
 /* ---- Footer ------------------------------------------------------------------ */
 
 .sds-intellectual-property-footer {
-    border-top: 2px solid var(--sds-blue);
-    background: var(--sds-white);
+    border-top: 2px solid var(--sds-gold);
+    background: var(--sds-jade-bar);
     margin-top: 3rem;
     padding: 2rem 1rem;
     text-align: center;
     font-size: 0.85rem;
-    color: var(--sds-gray-700);
+    color: var(--sds-cream);
 }
 
 .sds-seal-strip {
@@ -342,26 +353,31 @@ button, .sds-button-primary {
     width: 120px;
     height: 96px;
     object-fit: contain;
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 6px;
 }
 
 .sds-seal-strip figcaption {
     font-size: 0.72rem;
     font-weight: 600;
-    color: var(--sds-gray-700);
+    color: var(--sds-gold);
     margin-top: 0.35rem;
     line-height: 1.3;
 }
 
 .sds-footer-tagline {
+    font-family: var(--sds-serif);
     font-style: italic;
-    color: var(--sds-blue-dark);
+    color: var(--sds-cream);
     font-size: 1rem;
     margin-bottom: 0.25rem;
 }
 
 .sds-footer-closing {
+    font-family: var(--sds-serif);
     font-weight: 800;
-    color: var(--sds-blue-deep);
+    color: var(--sds-gold-bright);
     font-size: 1.05rem;
     margin-bottom: 1.25rem;
 }

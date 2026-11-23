@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "web/booking.css",
-        "payload_hash": "e0ec3fb238972a3704f8f4536ea2575470d0116d92259c7578d97bd4f9eddb7d",
+        "payload_hash": "a6a7308b08c2b1c5f2a67d0a2a802d06b42931aa485647462a06b761fd98c7dc",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
