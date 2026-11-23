@@ -1,0 +1,43 @@
+name: Set up automatic certificate renewal (one-time, 2026-11-23)
+on:
+  workflow_dispatch:
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe certbot and enable automatic renewal
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set -u
+            echo "=== PROBE ==="
+            which certbot || echo "NO_CERTBOT_BINARY"
+            certbot --version 2>&1 | head -n 1 || true
+            systemctl list-unit-files 2>/dev/null | grep -i certbot || echo "NO_CERTBOT_UNITS"
+            ls /etc/letsencrypt/renewal/ 2>/dev/null || echo "NO_RENEWAL_DIR"
+            echo "=== ENABLE RENEWAL ==="
+            DONE=""
+            if systemctl list-unit-files 2>/dev/null | grep -q "certbot-renew.timer"; then
+              sudo systemctl enable --now certbot-renew.timer && DONE="certbot-renew.timer"
+            elif systemctl list-unit-files 2>/dev/null | grep -q "certbot.timer"; then
+              sudo systemctl enable --now certbot.timer && DONE="certbot.timer"
+            elif command -v certbot >/dev/null 2>&1; then
+              printf '[Unit]\nDescription=Renew Lets Encrypt certificates (Sanders Dash & Seal)\nAfter=network-online.target\nWants=network-online.target\n\n[Service]\nType=oneshot\nExecStart=/usr/bin/certbot renew --quiet\n' | sudo tee /etc/systemd/system/certbot-renew.service >/dev/null
+              printf '[Unit]\nDescription=Twice-daily certificate renewal check\n\n[Timer]\nOnCalendar=*-*-* 00,12:00:00\nRandomizedDelaySec=3600\nPersistent=true\nUnit=certbot-renew.service\n\n[Install]\nWantedBy=timers.target\n' | sudo tee /etc/systemd/system/certbot-renew.timer >/dev/null
+              sudo systemctl daemon-reload
+              sudo systemctl enable --now certbot-renew.timer && DONE="certbot-renew.timer (installed by this run)"
+            fi
+            echo "RENEWAL_MECHANISM: ${DONE:-NONE}"
+            echo "=== VERIFY TIMER ==="
+            systemctl list-timers --all 2>/dev/null | grep -i certbot || echo "NO_CERTBOT_TIMER_LISTED"
+            echo "=== DRY RUN (staging, proves renewal works) ==="
+            if command -v certbot >/dev/null 2>&1; then
+              sudo timeout 420 certbot renew --dry-run 2>&1 | tail -n 15 || echo "DRY_RUN_EXITED_NONZERO_OR_TIMEOUT"
+            fi
+            echo "=== CERT UNCHANGED ==="
+            sudo openssl x509 -noout -enddate -ext subjectAltName -in /etc/letsencrypt/live/sandersdashandseal.com/cert.pem 2>/dev/null | head -n 4 || true
+            echo "SETUP_DONE"
