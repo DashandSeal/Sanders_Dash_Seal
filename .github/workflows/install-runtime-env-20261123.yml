@@ -1,0 +1,33 @@
+name: Install runtime env (Stripe webhook secret) on Oracle instance (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write runtime.env from the repo secret, restart the app, verify
+        uses: appleboy/ssh-action@v1
+        env:
+          SDS_STRIPE_WEBHOOK_SECRET: ${{ secrets.SDS_STRIPE_WEBHOOK_SECRET }}
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          envs: SDS_STRIPE_WEBHOOK_SECRET
+          script: |
+            set -eu
+            if [ -z "${SDS_STRIPE_WEBHOOK_SECRET:-}" ]; then echo "REPO_SECRET_MISSING"; exit 1; fi
+            case "$SDS_STRIPE_WEBHOOK_SECRET" in whsec_*) echo "SECRET_SHAPE_OK";; *) echo "SECRET_SHAPE_BAD"; exit 1;; esac
+            sudo mkdir -p /etc/sanders-dash-seal
+            printf 'STRIPE_WEBHOOK_SECRET=%s\n' "$SDS_STRIPE_WEBHOOK_SECRET" | sudo tee /etc/sanders-dash-seal/runtime.env >/dev/null
+            sudo chown root:root /etc/sanders-dash-seal/runtime.env
+            sudo chmod 600 /etc/sanders-dash-seal/runtime.env
+            if sudo grep -Eq '^STRIPE_WEBHOOK_SECRET=whsec_[A-Za-z0-9_]+$' /etc/sanders-dash-seal/runtime.env; then echo "RUNTIME_ENV_WRITTEN_OK"; else echo "RUNTIME_ENV_WRITE_FAILED"; exit 1; fi
+            sudo systemctl restart sanders-dash-seal.service || true
+            sleep 6
+            echo "service active: $(sudo systemctl is-active sanders-dash-seal.service || true)"
+            ss -ltn | grep ':8000' || echo "nothing on 8000 yet"
+            curl -s -o /dev/null -w 'local healthz: %{http_code}\n' http://127.0.0.1:8000/healthz || true
+            curl -s -o /dev/null -w 'local api/session unauthenticated: %{http_code}\n' http://127.0.0.1:8000/api/session || true
+            echo "INSTALL_RUNTIME_ENV_DONE"
