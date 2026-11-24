@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/INDEPENDENT_SECURITY_TEST_PHASE_B_2026-11-24.md",
+    "payload_hash": "5de8312b181e6f101fa85f19cc72e7261157594be8135f747409aac913c768e9",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
