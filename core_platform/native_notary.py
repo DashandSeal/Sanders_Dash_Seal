@@ -15,6 +15,7 @@ import time
 import hashlib
 from pathlib import Path
 from datetime import datetime, timezone
+from .native_authority import KINDS as AUTHORITY_KINDS
 
 METHODS = frozenset({'E_NOTARY', 'RON'})
 STATES = frozenset({'DRAFT', 'AWAITING_AUTHORITY', 'READY', 'COMPLETED', 'CANCELLED'})
@@ -235,6 +236,46 @@ class NativeNotarySessions:
 
             if row is None or row['state'] not in ('AWAITING_AUTHORITY', 'READY'):
                 raise NativeNotaryDenied("Session state configuration does not permit completion changes")
+
+            # Recorded acceptance for this transition (docs/
+            # SPEC_CONFORMANCE.md, native completion increment):
+            # completion requires the durable authority registry to
+            # hold an unexpired decision of every required kind for
+            # this session's method, and a RON session additionally
+            # requires its room's consent and indexed recording
+            # evidence. The check runs inside this same transaction;
+            # a missing registry or room table fails closed.
+            try:
+                decisions = db.execute("""
+                    SELECT kind, expires_at FROM native_authority_decisions
+                    WHERE session_id = ?
+                """, (session_id,)).fetchall()
+            except sqlite3.OperationalError:
+                decisions = []
+            checked_at = int(time.time())
+            valid_kinds = {entry['kind'] for entry in decisions
+                           if entry['expires_at'] > checked_at}
+            required_kinds = set(AUTHORITY_KINDS)
+            if row['method'] == 'E_NOTARY':
+                required_kinds.discard('RON_PROVIDER_AUTHORIZATION')
+            missing_kinds = sorted(required_kinds - valid_kinds)
+            if missing_kinds:
+                raise NativeNotaryDenied(
+                    "Session authority incomplete: missing "
+                    + ", ".join(missing_kinds))
+            if row['method'] == 'RON':
+                try:
+                    room = db.execute("""
+                        SELECT state, consent_digest, recording_digest
+                        FROM native_ron_rooms WHERE session_id = ?
+                    """, (session_id,)).fetchone()
+                except sqlite3.OperationalError:
+                    room = None
+                if (room is None or room['state'] != 'RECORDING_INDEXED'
+                        or not room['consent_digest']
+                        or not room['recording_digest']):
+                    raise NativeNotaryDenied(
+                        "RON session recording evidence incomplete")
 
             now = int(time.time())
             db.execute("""

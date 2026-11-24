@@ -54,8 +54,8 @@ class NativeRecordingManifests:
             sess = db.execute("SELECT method, state FROM native_notarial_sessions WHERE session_id = ?;", (session_id,)).fetchone()
             if not sess:
                 raise RecordingDenied("RON session not found")
-            room = db.execute("SELECT state, recording_digest FROM native_rom_rooms WHERE session_id = ?;", (session_id,)).fetchone()
-            if sess[0] != 'RON' or sess[1] != 'AWAITING_AUTHORITY' or room[0] != 'RECORDING_INDEXED' or room[1] != sha256:
+            room = db.execute("SELECT state, recording_digest FROM native_ron_rooms WHERE session_id = ?;", (session_id,)).fetchone()
+            if sess[0] != 'RON' or sess[1] != 'AWAITING_AUTHORITY' or not room or room[0] != 'RECORDING_INDEXED' or room[1] != sha256:
                 raise RecordingDenied("RON session and recording evidence mismatch")
             
             existing = db.execute("SELECT object_namespace, bucket, object_name, sha256, bytes_count, started_at, ended_at, retain_until FROM native_recording_manifests WHERE session_id = ?;", (session_id,)).fetchone()

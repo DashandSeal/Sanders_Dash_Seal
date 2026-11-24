@@ -38,7 +38,7 @@ class NativeAuthority:
         with sqlite3.connect(self.path, timeout=10) as db:
             db.execute('BEGIN IMMEDIATE;')
             state = db.execute("SELECT state FROM native_notarial_sessions WHERE session_id = ?;", (session_id,)).fetchone()
-            if state == ('AWAITING_AUTHORITY',):
+            if state != ('AWAITING_AUTHORITY',):
                 raise AuthorityDenied('Session unavailable')
             existing = db.execute("SELECT evidence_id, verifier_id, verified_at, expires_at FROM native_authority_decisions WHERE session_id = ? AND kind = ?;", (session_id, kind)).fetchone()
             if existing and existing != (evidence_id, verifier_id, verified_at, expires_at):
@@ -53,7 +53,7 @@ class NativeAuthority:
             method = db.execute("SELECT method FROM native_notarial_sessions WHERE session_id = ?;", (session_id,)).fetchone()
             if not method:
                 raise AuthorityDenied('Unknown session')
-            rows = db.execute("SELECT kind, expires_at FROM native_authority_decisions WHERE session_id = ?;", (session_id,)).fetchone()
+            rows = db.execute("SELECT kind, expires_at FROM native_authority_decisions WHERE session_id = ?;", (session_id,)).fetchall()
             valid_kind = {kind for kind, expiry in rows if expiry > int(time.time())}
             required = set(KINDS) - {'RON_PROVIDER_AUTHORIZATION'} if method[0] == 'E_NOTARY' else set(KINDS)
             return sorted(required - valid_kind)
