@@ -316,6 +316,32 @@ else
   echo "CERT COVERAGE: OK — every served name is on the certificate."
 fi
 
+# 7c. Public-face warning (owner standing rule 2026-11-23: "Everything
+# that has its own domain name should always be the public facing RTSA
+# platform"). Every served name must return the public Dash & Seal
+# storefront at / — the marker is the storefront banner
+# ("dash-seal-banner" in the response body, verified live on all 10
+# served names 2026-11-23) — never a backend, a placeholder, or a dead
+# page. A wrong face is a LOUD WARNING here, never a deploy failure.
+# The watchdog's public-face guard (deploy/sds_watchdog.sh) checks the
+# same thing every 2 minutes and escalates until it is fixed; neither
+# this step nor the watchdog changes what a name serves.
+FACE_BAD=""
+for n in $CERT_SERVED; do
+  FACE_BODY="$(curl -sk --max-time 15 --resolve "${n}:443:127.0.0.1" "https://${n}/" 2>/dev/null || true)"
+  case "$FACE_BODY" in
+    *dash-seal-banner*) : ;;
+    *) FACE_BAD="${FACE_BAD} $n" ;;
+  esac
+done
+if [ -n "$FACE_BAD" ]; then
+  echo "PUBLIC FACE WARNING: served name(s) NOT returning the public Dash & Seal storefront at /:${FACE_BAD} — every domain must serve its public-facing RTSA platform, never a backend or placeholder. Fix through the normal content/config deploy path."
+elif [ -z "$CERT_SERVED" ]; then
+  echo "PUBLIC FACE WARNING: could not read the served names to check their public faces."
+else
+  echo "PUBLIC FACE: OK — every served name returns the public storefront."
+fi
+
 # 8. Last-known-good (LKG) snapshot. Reaching this step means the
 # health check above PASSED, so the configuration installed right
 # now is verified working. Snapshot it to

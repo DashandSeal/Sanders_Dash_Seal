@@ -79,6 +79,20 @@
 # owner's; certificate issuance is in that class). Escalation is a
 # journal record (logger -t sds-watchdog), which the morning briefing
 # reads — the same escalation channel the repair layer uses.
+#
+# Public-face guard (added 2026-11-23, owner standing rule the same
+# day: "Everything that has its own domain name should always be the
+# public facing RTSA platform"): every cycle also verifies that every
+# name nginx serves returns the public Dash & Seal storefront at / —
+# the marker is the storefront banner ("dash-seal-banner" in the
+# response body, verified live on all 10 served names 2026-11-23) —
+# never a backend, a placeholder, or a dead page. The incident class
+# this guards against is a backend exposed as a domain's public face
+# (the Police Men dashboard, taken off public view 2026-11-23). Like
+# the certificate guard, this guard DETECTS and ESCALATES only: it
+# never restarts anything and never changes what a name serves.
+# Fixing a wrong face is a content/config change through the normal
+# deploy path, not a watchdog action.
 set -u
 
 STATE_DIR="/var/lib/sds-watchdog"
@@ -347,6 +361,61 @@ check_cert_coverage() {
   fi
 }
 
+FACE_MARKER="dash-seal-banner"
+
+# Record a public-face outcome. Mirrors note_cert_result: this NEVER
+# restarts or changes anything — a wrong public face is escalated
+# once per incident (public-face-escalated stamp) and stays visible
+# in the journal until a check passes again.
+note_face_result() {
+  local ok="$1" detail="$2"
+  local cf ef count
+  cf="$(counter_file "public-face")"
+  ef="$STATE_DIR/public-face-escalated"
+  if [ "$ok" = "1" ]; then
+    if [ "$(read_counter "public-face")" != "0" ] || [ -f "$ef" ]; then
+      log_msg "public-face: recovered — $detail"
+    fi
+    printf '0' > "$cf" 2>/dev/null || true
+    rm -f "$ef" 2>/dev/null || true
+    return 0
+  fi
+  count="$(read_counter "public-face")"
+  count=$(( count + 1 ))
+  printf '%s' "$count" > "$cf" 2>/dev/null || true
+  log_msg "public-face: check FAILED ($count/$FAIL_LIMIT) — $detail"
+  if [ "$count" -ge "$FAIL_LIMIT" ] && [ ! -f "$ef" ]; then
+    printf '%s' "$(date +%s)" > "$ef" 2>/dev/null || true
+    log_msg "public-face: ESCALATED — a served name is not returning the public Dash & Seal storefront (owner standing rule 2026-11-23: every domain serves its public-facing RTSA platform, never a backend or placeholder; the watchdog does not change what a name serves): $detail"
+  fi
+}
+
+# Every served name must return the public storefront at /. Each name
+# is asked over loopback TLS with --resolve, so the answer is what
+# THIS nginx serves for that name (the www name's public path goes
+# through the Cloudflare proxy; what the origin serves is the part
+# this platform controls and the part that can silently regress).
+check_public_face() {
+  local served bad="" n body
+  served="$(cert_served_names)"
+  if [ -z "$served" ]; then
+    note_face_result 0 "cannot read the served names ($CERT_CONF)"
+    return 0
+  fi
+  for n in $served; do
+    body="$(curl -sk --max-time 15 --resolve "${n}:443:127.0.0.1" "https://${n}/" 2>/dev/null || true)"
+    case "$body" in
+      *"$FACE_MARKER"*) : ;;
+      *) bad="${bad} $n" ;;
+    esac
+  done
+  if [ -z "$bad" ]; then
+    note_face_result 1 "every served name returns the public storefront"
+  else
+    note_face_result 0 "served name(s) NOT returning the public storefront:${bad}"
+  fi
+}
+
 main() {
   if ! command -v curl >/dev/null 2>&1; then
     log_msg "ERROR: curl not found; the watchdog cannot health-check (misconfigured)"
@@ -367,6 +436,7 @@ main() {
   check_http "judge" "sanders-judge.service" "user" "http://127.0.0.1:9405/healthz"
   check_nginx
   check_cert_coverage
+  check_public_face
 
   exit 0
 }
