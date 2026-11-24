@@ -368,7 +368,17 @@ class RoomService:
             'on_hold': row['state'] == 'EVIDENCE_HOLD',
         }
 
-    def _room_view(self, db, row, viewer):
+    def _room_view(self, db, row, viewer, actor=None):
+        """Assemble the room view for a visibility category.
+
+        'viewer' is the category ('host' | 'operator' | 'participant'
+        | None); 'actor' is the viewer's account identity. Identity-
+        keyed exposure — a participant's own consent state, a user's
+        own invitations — is keyed to 'actor', never to the category
+        (D-4: keying it to the category both hid every participant's
+        own consent state and exposed the consent of an account
+        literally named 'participant' to co-participants).
+        """
         view = {
             'room_id': row['room_id'],
             'room_type': row['room_type'],
@@ -403,7 +413,7 @@ class RoomService:
                 'via': participant['via'],
                 'added_by': participant['added_by'],
             }
-            if privileged or participant['identity'] == viewer:
+            if privileged or participant['identity'] == actor:
                 entry['consent'] = self._current_consent(
                     db, row['room_id'], participant['identity'])
             participants.append(entry)
@@ -413,7 +423,7 @@ class RoomService:
             "SELECT * FROM room_invites WHERE room_id = ? "
             "ORDER BY created_at, invite_id;", (row['room_id'],)).fetchall()
         for invite in invite_rows:
-            if not privileged and invite['invitee'] != viewer:
+            if not privileged and invite['invitee'] != actor:
                 continue
             invites.append({
                 'invite_id': invite['invite_id'],
@@ -531,7 +541,7 @@ class RoomService:
                 db.rollback()
                 raise
             row = self._room_row(db, room_id)
-            return self._room_view(db, row, 'host')
+            return self._room_view(db, row, 'host', actor)
 
     def get_room(self, room_id, actor):
         """Full room view for the host, an operator, or a participant."""
@@ -540,7 +550,7 @@ class RoomService:
         with self._connect() as db:
             row = self._visible_row(db, room_id, actor)
             viewer = self._visibility(db, row, actor)
-            return self._room_view(db, row, viewer)
+            return self._room_view(db, row, viewer, actor)
 
     def list_for_actor(self, actor):
         """Rooms the actor hosts or participates in; operators see all."""
@@ -561,7 +571,7 @@ class RoomService:
                     (actor, actor)).fetchall()
             result = []
             for row in rows:
-                view = self._room_view(db, row, None)
+                view = self._room_view(db, row, None, actor)
                 view['participant_count'] = db.execute(
                     "SELECT COUNT(*) AS n FROM room_participants "
                     "WHERE room_id = ? AND status = 'ADMITTED';",
@@ -680,7 +690,7 @@ class RoomService:
                 raise
             row = self._room_row(db, room_id)
             viewer = self._visibility(db, row, actor)
-            return self._room_view(db, row, viewer)
+            return self._room_view(db, row, viewer, actor)
 
     # -- participants and invitations -----------------------------------
 
@@ -733,7 +743,7 @@ class RoomService:
                 db.rollback()
                 raise
             row = self._room_row(db, room_id)
-            return self._room_view(db, row, self._visibility(db, row, actor))
+            return self._room_view(db, row, self._visibility(db, row, actor), actor)
 
     def remove_participant(self, room_id, actor, identity):
         """Remove a participant (host/operator), or leave (the
@@ -776,7 +786,7 @@ class RoomService:
                 db.rollback()
                 raise
             row = self._room_row(db, room_id)
-            return self._room_view(db, row, self._visibility(db, row, actor))
+            return self._room_view(db, row, self._visibility(db, row, actor), actor)
 
     def issue_invite(self, room_id, actor, invitee, role, ttl_seconds=None):
         """Issue a time-limited invitation to an account (22.5). The
@@ -910,7 +920,7 @@ class RoomService:
                 db.rollback()
                 raise
             row = self._room_row(db, room_id)
-            return self._room_view(db, row, self._visibility(db, row, actor))
+            return self._room_view(db, row, self._visibility(db, row, actor), actor)
 
     def revoke_invite(self, room_id, actor, invite_id):
         """Revoke a pending invitation (host/operator)."""
@@ -1054,7 +1064,7 @@ class RoomService:
                 db.rollback()
                 raise
             row = self._room_row(db, room_id)
-            return self._room_view(db, row, self._visibility(db, row, actor))
+            return self._room_view(db, row, self._visibility(db, row, actor), actor)
 
     def revoke_recording(self, room_id, actor):
         """Revoke a recording authorization (host/operator)."""
@@ -1077,4 +1087,4 @@ class RoomService:
                 db.rollback()
                 raise
             row = self._room_row(db, room_id)
-            return self._room_view(db, row, self._visibility(db, row, actor))
+            return self._room_view(db, row, self._visibility(db, row, actor), actor)
