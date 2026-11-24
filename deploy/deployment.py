@@ -44,6 +44,7 @@ class RuntimeBindings:
     transaction_store: object = None
     stream_verifier: object = None
     provider_workflows: object = None
+    native_bridge: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -381,7 +382,9 @@ def create_application(bindings=None):
             bindings.payments, bindings.auth_app, ORIGIN, release_verifier=verifier,
             allowed_origins=SITE_ORIGINS,
             provider_workflows=bindings.provider_workflows,
-            provider_gate=lambda: _is_approved('ron_notarial')
+            provider_gate=lambda: _is_approved('ron_notarial'),
+            native_bridge=bindings.native_bridge,
+            native_gate=lambda: _is_approved('ron_notarial')
         )
     else:
         verifier = _denied

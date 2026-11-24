@@ -16,6 +16,7 @@ from core_platform.provider_workflows import (
     ProviderRequestConflict,
     ProviderUnavailable,
 )
+from core_platform.native_case_bridge import BridgeDenied
 from core_platform.stripe_payments import PaymentDenied
 
 ASSETS = {
@@ -62,8 +63,9 @@ CASE_ROUTE = re.compile(r'^/api/appointments/([A-Za-z0-9_-]{1,128})/checkout$')
 CASE_DETAIL_ROUTE = re.compile(r'^/api/appointments/([A-Za-z0-9_-]{1,128})$')
 OPERATOR_ROUTE = re.compile(r'^/api/operator/appointments/([A-Za-z0-9_-]{1,128})/quote$')
 PROVIDER_ROUTE = re.compile(r'^/api/operator/appointments/([A-Za-z0-9_-]{1,128})/provider$')
+NATIVE_ROUTE = re.compile(r'^/api/operator/appointments/([A-Za-z0-9_-]{1,128})/native$')
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -110,14 +112,16 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         detail_match = CASE_DETAIL_ROUTE.fullmatch(path)
         operator_match = OPERATOR_ROUTE.fullmatch(path)
         provider_match = PROVIDER_ROUTE.fullmatch(path)
+        native_match = NATIVE_ROUTE.fullmatch(path)
         is_operator_route = (path == '/api/operator/appointments'
                              or operator_match is not None
-                             or provider_match is not None)
+                             or provider_match is not None
+                             or native_match is not None)
 
         if path not in ('/api/session', '/api/appointments') and not case_match and not detail_match and not is_operator_route:
             return respond(start, '404 Not Found', {'error': 'not_found'})
 
-        allowed = ('GET', 'POST') if path == '/api/appointments' or provider_match else (
+        allowed = ('GET', 'POST') if path == '/api/appointments' or provider_match or native_match else (
             ('POST',) if operator_match or case_match else ('GET',)
         )
         if method not in allowed:
@@ -186,6 +190,29 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                 receipt = provider_workflows.submit(
                     case_id, identity, data['provider'], data['request'])
                 return respond(start, '201 Created', {'request': receipt})
+            if native_match:
+                case_id = native_match.group(1)
+                if native_bridge is None:
+                    # No native bridge is wired in this runtime; the
+                    # operator UI renders this as "no native session".
+                    return respond(start, '200 OK', {'native_session': None})
+                if method == 'GET':
+                    return respond(start, '200 OK', {
+                        'native_session': native_bridge.status_for_case(
+                            case_id)})
+                if set(data) != {'action'} or data.get('action') != 'open':
+                    raise ValueError('unexpected fields')
+                # Opening a native notarial session is a live notarial
+                # operation: it requires the owner's ron_notarial
+                # approval gate, the same rule the provider route and
+                # deploy/deployment.py apply. Absent or unapproved
+                # fails closed.
+                if native_gate is None or native_gate() is not True:
+                    return respond(start, '503 Service Unavailable', {
+                        'error': 'approval_required',
+                        'gate': 'ron_notarial'})
+                record = native_bridge.open_session(case_id, identity)
+                return respond(start, '201 Created', {'native_session': record})
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -217,6 +244,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             result = payments.checkout(case_id, identity, **data)
             return respond(start, '200 OK', result)
 
+        except BridgeDenied:
+            return respond(start, '400 Bad Request', {'error': 'native_session_denied'})
         except AppointmentDenied:
             return respond(start, '400 Bad Request' if path == '/api/appointments' else '404 Not Found', {'error': 'appointment_unavailable'})
         except (ValueError, TypeError, KeyError, CaseDenied):

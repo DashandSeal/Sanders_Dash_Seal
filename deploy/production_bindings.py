@@ -43,6 +43,11 @@ What it wires:
   ``<provider>_credentials_not_configured`` status from the workflow
   layer instead of faking a connection. ``SIGNWELL_TEST_MODE`` is
   read with the same boolean convention as the Stripe live flags.
+- the native track is wired alongside the provider workspace:
+  ``NativeNotarySessions`` and the case-to-native-session bridge
+  (``CaseNativeBridge``) share ``data/native_notary.db``; the bridge
+  reads settlement from the same Stripe ledger, so a case whose
+  payment has not settled opens no native session.
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -60,6 +65,8 @@ from core_platform.appointment_payments import AppointmentPayments
 from core_platform.appointments import AppointmentStore
 from core_platform.cases import CaseRegistry
 from core_platform.glass_box_audit import GlassBoxAudit
+from core_platform.native_case_bridge import CaseNativeBridge
+from core_platform.native_notary import NativeNotarySessions
 from core_platform.provider_connections import WriteProviderClient
 from core_platform.provider_workflows import ProviderWorkflows
 from core_platform.session_auth import SessionAuth
@@ -203,6 +210,11 @@ def create_production_bindings():
         data_dir / 'provider_requests.db', cases, auth.operator_verifier,
         audit, _provider_clients(), signwell_test_mode=signwell_test_mode)
 
+    native_sessions = NativeNotarySessions(data_dir / 'native_notary.db')
+    native_bridge = CaseNativeBridge(
+        data_dir / 'native_notary.db', cases, ledger, native_sessions,
+        auth.operator_verifier, audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -210,4 +222,5 @@ def create_production_bindings():
         auth_app=auth.auth_app,
         release_verifier=lambda: True,
         provider_workflows=provider_workflows,
+        native_bridge=native_bridge,
     )
