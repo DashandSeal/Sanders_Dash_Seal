@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/rtsa_foundation.py",
+        "payload_hash": "cc49d4caf69f44e2bd4ce49c5a5d7867f3591c28a86b7d4a18afe85577a181a1",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
