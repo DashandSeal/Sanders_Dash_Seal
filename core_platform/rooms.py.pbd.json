@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/rooms.py",
-        "payload_hash": "37cf53aa6b36e2f237bd83931c763a0b834843ad38d2de920ce7e84c0ae21ff0",
+        "payload_hash": "3d46fb3439fe2b2e2e5ddc5e05210757b4ad8279d47ef37b2b84fea27b7635f7",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

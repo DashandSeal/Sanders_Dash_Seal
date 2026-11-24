@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/rooms_reconciliation.py",
+        "payload_hash": "46dff1af6beb328045f0e20e4e5a388a61bf961d96dbe52aec27f7385617f2cd",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

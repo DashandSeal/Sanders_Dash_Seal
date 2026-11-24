@@ -748,12 +748,18 @@ class RoomService:
             try:
                 row = self._visible_row(db, room_id, actor)
                 self._require_participant_change_state(row)
-                if identity == row['host']:
-                    raise RoomDenied('The host cannot be removed')
+                # Authority is checked BEFORE the host check: an
+                # actor with no removal authority over anyone must
+                # receive the same refusal whether the target is the
+                # host or any other participant, so the refusal's
+                # shape cannot reveal that the target is the host
+                # (Phase B residual remediation, R-C).
                 if (actor != identity and row['host'] != actor
                         and not self._is_operator(actor)):
                     raise RoomForbidden(
                         'Host or operator authority required')
+                if identity == row['host']:
+                    raise RoomDenied('The host cannot be removed')
                 existing = self._participant(db, room_id, identity)
                 if existing is None or existing['status'] == 'REMOVED':
                     raise RoomDenied('Not a participant')
@@ -872,6 +878,28 @@ class RoomService:
                 db.execute(
                     "UPDATE room_invites SET status = 'ACCEPTED', "
                     "updated_at = ? WHERE invite_id = ?;", (now, invite_id))
+                # Every other PENDING invitation for this room and
+                # invitee is superseded by this acceptance, in the
+                # same transaction and receipted per invitation: a
+                # duplicate pending invite can never succeed once the
+                # invitee is a participant, so it does not linger
+                # (Phase B residual remediation, R-B). SUPERSEDED is
+                # terminal, like ACCEPTED/EXPIRED/REVOKED.
+                superseded = db.execute(
+                    "SELECT invite_id FROM room_invites WHERE "
+                    "room_id = ? AND invitee = ? AND status = 'PENDING' "
+                    "AND invite_id != ? ORDER BY created_at, invite_id;",
+                    (room_id, actor, invite_id)).fetchall()
+                for stale in superseded:
+                    db.execute(
+                        "UPDATE room_invites SET status = 'SUPERSEDED', "
+                        "updated_at = ? WHERE invite_id = ?;",
+                        (now, stale['invite_id']))
+                    self._record('ROOM_INVITE_SUPERSEDED',
+                                 room_id=room_id, actor=actor,
+                                 invite_id=stale['invite_id'],
+                                 invitee=actor,
+                                 superseded_by=invite_id)
                 self._revoke_recording_locked(
                     db, self._room_row(db, room_id), 'participant_changed')
                 self._record('ROOM_INVITE_ACCEPTED', room_id=room_id,
