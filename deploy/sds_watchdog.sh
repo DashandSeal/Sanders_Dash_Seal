@@ -46,6 +46,10 @@
 #
 # Service table (unit, owner, health check) — established from the repo:
 #   sanders-dash-seal.service              system  http://127.0.0.1:8000/healthz (app /healthz)
+#   uncle-nickey-mao                       system  http://127.0.0.1:8000/api/uncle-nickey-mao/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   carehive-os                            system  http://127.0.0.1:8000/api/carehive-os/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   home-healthcare                        system  http://127.0.0.1:8000/api/home-healthcare/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   grantwriter                            system  http://127.0.0.1:8000/api/grantwriter/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   money-factory-legal.service            system  http://127.0.0.1:8668/health (Money Factory /health)
 #   sanders-corporations-secretary.service user    http://127.0.0.1:8791/api/health (app/main.py @app.get("/api/health"))
 #   sanders-twostep.service                user    http://127.0.0.1:9400/healthz (sanders_twostep_v2.py)
@@ -430,6 +434,10 @@ main() {
   fi
 
   check_http "sanders-dash-seal" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/healthz"
+  check_http "uncle-nickey-mao" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/uncle-nickey-mao/healthz"
+  check_http "carehive-os" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/carehive-os/healthz"
+  check_http "home-healthcare" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/home-healthcare/healthz"
+  check_http "grantwriter" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/grantwriter/healthz"
   check_http "money-factory-legal" "money-factory-legal.service" "system" "http://127.0.0.1:8668/health"
   check_http "secretary" "sanders-corporations-secretary.service" "user" "http://127.0.0.1:8791/api/health"
   check_http "twostep" "sanders-twostep.service" "user" "http://127.0.0.1:9400/healthz"

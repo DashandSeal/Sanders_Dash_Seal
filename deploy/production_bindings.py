@@ -60,6 +60,34 @@ What it wires:
   no notarial function; media issuance stays behind the
   ``voice_video_provider`` gate in the realtime module (Phase B,
   2026-11-24).
+- the Uncle Nickey / Mao healthcare bridge (Three Originals
+  Reconstruction Program) is ``UncleNickeyMaoBridge`` on
+  ``data/uncle_nickey_mao.db``, bound to the session auth's operator
+  verifier and the same audit chain: referrals routing opaque
+  references between the six bridged healthcare industries behind a
+  jurisdiction geofence and a HIPAA-by-design access guard.
+- CareHive OS is ``CareHiveSidecar`` on ``data/carehive_os.db``,
+  bound to the same operator verifier and audit chain: supervised
+  subjects, hash-chained evidence, postconditions, supervision
+  cycles, the evergreen version cycle and local interop envelope
+  validation.
+- Sanders Home Healthcare & Caregivers is ``HomeHealthcarePlatform``
+  on ``data/home_healthcare.db``, bound to the same operator
+  verifier, audit chain and the ``RoomService`` above (consultation
+  rooms bind through it; the rooms service is not rebuilt):
+  client intakes, caregiver assignments and consultation-room links
+  across the six healthcare service lines.
+- Grantwriter is ``GrantwriterPlatform`` on
+  ``data/grantwriter_service.db``, bound to the existing Grantwriter
+  base store (constructed by ``app/grantwriter_mother.py``'s
+  ``database()`` factory, aimed at ``data/grantwriter.db`` through
+  the ``SANDERS_GRANTWRITER_DB`` environment variable it reads), the
+  same operator verifier and audit chain, and the established
+  approval-gate checker (``core_platform.ai_platform_approval``'s
+  ``is_approved``) as its ``approval_checker``: live draft generation
+  stays behind the owner's ``grantwriter_purpose`` gate, which is
+  UNAPPROVED, so live drafts refuse and offline drafts are labeled
+  offline.
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -73,10 +101,15 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
+from app import grantwriter_mother
+from core_platform.ai_platform_approval import is_approved as _gate_is_approved
 from core_platform.appointment_payments import AppointmentPayments
 from core_platform.appointments import AppointmentStore
+from core_platform.carehive_os import CareHiveSidecar
 from core_platform.cases import CaseRegistry
 from core_platform.glass_box_audit import GlassBoxAudit
+from core_platform.grantwriter_service import GrantwriterPlatform
+from core_platform.home_healthcare import HomeHealthcarePlatform
 from core_platform.native_case_bridge import CaseNativeBridge
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.provider_connections import WriteProviderClient
@@ -85,6 +118,7 @@ from core_platform.rooms import RoomService
 from core_platform.session_auth import SessionAuth
 from core_platform.stripe_connection import StripeConnection
 from core_platform.stripe_payments import PaymentDenied, PaymentLedger
+from core_platform.uncle_nickey_mao import UncleNickeyMaoBridge
 from core_platform.upgrade_sidecar import CORE_LAWS
 from deploy.deployment import ALIAS_HOSTS, ORIGIN, RuntimeBindings
 
@@ -231,6 +265,25 @@ def create_production_bindings():
     rooms = RoomService(
         data_dir / 'rooms.db', cases, auth.operator_verifier, audit)
 
+    uncle_nickey_mao = UncleNickeyMaoBridge(
+        data_dir / 'uncle_nickey_mao.db', auth.operator_verifier, audit)
+    carehive_os = CareHiveSidecar(
+        data_dir / 'carehive_os.db', auth.operator_verifier, audit)
+    home_healthcare = HomeHealthcarePlatform(
+        data_dir / 'home_healthcare.db', auth.operator_verifier, audit,
+        rooms=rooms)
+
+    # Grantwriter's base store comes from the existing data layer's
+    # own database() factory, which reads the SANDERS_GRANTWRITER_DB
+    # environment variable for its path: point it at the production
+    # data directory for this process before calling the factory.
+    os.environ['SANDERS_GRANTWRITER_DB'] = str(data_dir / 'grantwriter.db')
+    grantwriter_base = grantwriter_mother.database()
+    grantwriter = GrantwriterPlatform(
+        data_dir / 'grantwriter_service.db', grantwriter_base,
+        auth.operator_verifier, audit,
+        approval_checker=_gate_is_approved)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -241,4 +294,8 @@ def create_production_bindings():
         native_bridge=native_bridge,
         audit=audit,
         rooms=rooms,
+        uncle_nickey_mao=uncle_nickey_mao,
+        carehive_os=carehive_os,
+        home_healthcare=home_healthcare,
+        grantwriter=grantwriter,
     )

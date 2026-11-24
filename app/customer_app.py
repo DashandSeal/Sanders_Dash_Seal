@@ -19,6 +19,17 @@ from core_platform.provider_workflows import (
 from core_platform.native_case_bridge import BridgeDenied
 from core_platform.rooms import RoomDenied, RoomForbidden, RoomNotFound
 from core_platform.stripe_payments import PaymentDenied
+from core_platform.uncle_nickey_mao import BridgeDenied, BridgeForbidden
+from core_platform.carehive_os import CareHiveDenied, CareHiveForbidden
+from core_platform.home_healthcare import (
+    HomeHealthcareDenied,
+    HomeHealthcareForbidden,
+)
+from core_platform.grantwriter_service import (
+    GrantwriterPlatformDenied,
+    GrantwriterPlatformForbidden,
+)
+from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
     '/auth/login': ('auth.html', 'text/html; charset=utf-8'),
@@ -74,9 +85,29 @@ ROOM_INVITE_ACCEPT_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/invit
 ROOM_INVITE_REVOKE_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/invites/([A-Za-z0-9_-]{1,128})/revoke$')
 ROOM_CONSENT_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/consent$')
 ROOM_RECORDING_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/recording$')
+UNM_REFERRAL_ROUTE = re.compile(r'^/api/uncle-nickey-mao/referrals/([A-Za-z0-9_-]{1,128})$')
+UNM_REFERRAL_TRANSITION_ROUTE = re.compile(r'^/api/uncle-nickey-mao/referrals/([A-Za-z0-9_-]{1,128})/transition$')
+CH_SUBJECT_ROUTE = re.compile(r'^/api/carehive-os/subjects/([A-Za-z0-9_-]{1,128})$')
+CH_SUBJECT_CLAIM_ROUTE = re.compile(r'^/api/carehive-os/subjects/([A-Za-z0-9_-]{1,128})/claim$')
+CH_SUBJECT_EVIDENCE_ROUTE = re.compile(r'^/api/carehive-os/subjects/([A-Za-z0-9_-]{1,128})/evidence$')
+CH_SUBJECT_POSTCONDITIONS_ROUTE = re.compile(r'^/api/carehive-os/subjects/([A-Za-z0-9_-]{1,128})/postconditions$')
+CH_VERSION_PROMOTE_ROUTE = re.compile(r'^/api/carehive-os/versions/([A-Za-z0-9_-]{1,128})/promote$')
+CH_INTEROP_ROUTE = re.compile(r'^/api/carehive-os/interop/([A-Za-z0-9_-]{1,128})/validate$')
+HH_INTAKE_ROUTE = re.compile(r'^/api/home-healthcare/intakes/([A-Za-z0-9_-]{1,128})$')
+HH_INTAKE_TRANSITION_ROUTE = re.compile(r'^/api/home-healthcare/intakes/([A-Za-z0-9_-]{1,128})/transition$')
+HH_INTAKE_ROOM_ROUTE = re.compile(r'^/api/home-healthcare/intakes/([A-Za-z0-9_-]{1,128})/consultation-room$')
+HH_ASSIGNMENT_ROUTE = re.compile(r'^/api/home-healthcare/assignments/([A-Za-z0-9_-]{1,128})$')
+HH_ASSIGNMENT_TRANSITION_ROUTE = re.compile(r'^/api/home-healthcare/assignments/([A-Za-z0-9_-]{1,128})/transition$')
+GW_APPLICATION_STAGE_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/stage$')
+GW_APPLICATION_BUDGET_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/budget-lines$')
+GW_APPLICATION_EVIDENCE_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/evidence$')
+GW_APPLICATION_TRANSITIONS_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/transitions$')
+GW_APPLICATION_SUBMISSION_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/submission$')
+GW_APPLICATION_DRAFT_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/draft$')
+GW_APPLICATION_COMPLIANCE_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/compliance$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -133,6 +164,68 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         room_revoke_match = ROOM_INVITE_REVOKE_ROUTE.fullmatch(path)
         room_consent_match = ROOM_CONSENT_ROUTE.fullmatch(path)
         room_recording_match = ROOM_RECORDING_ROUTE.fullmatch(path)
+        unm_referral_match = UNM_REFERRAL_ROUTE.fullmatch(path)
+        unm_referral_transition_match = UNM_REFERRAL_TRANSITION_ROUTE.fullmatch(path)
+        ch_subject_match = CH_SUBJECT_ROUTE.fullmatch(path)
+        ch_subject_claim_match = CH_SUBJECT_CLAIM_ROUTE.fullmatch(path)
+        ch_subject_evidence_match = CH_SUBJECT_EVIDENCE_ROUTE.fullmatch(path)
+        ch_subject_postconditions_match = CH_SUBJECT_POSTCONDITIONS_ROUTE.fullmatch(path)
+        ch_version_promote_match = CH_VERSION_PROMOTE_ROUTE.fullmatch(path)
+        ch_interop_match = CH_INTEROP_ROUTE.fullmatch(path)
+        hh_intake_match = HH_INTAKE_ROUTE.fullmatch(path)
+        hh_intake_transition_match = HH_INTAKE_TRANSITION_ROUTE.fullmatch(path)
+        hh_intake_room_match = HH_INTAKE_ROOM_ROUTE.fullmatch(path)
+        hh_assignment_match = HH_ASSIGNMENT_ROUTE.fullmatch(path)
+        hh_assignment_transition_match = HH_ASSIGNMENT_TRANSITION_ROUTE.fullmatch(path)
+        gw_stage_match = GW_APPLICATION_STAGE_ROUTE.fullmatch(path)
+        gw_budget_match = GW_APPLICATION_BUDGET_ROUTE.fullmatch(path)
+        gw_evidence_match = GW_APPLICATION_EVIDENCE_ROUTE.fullmatch(path)
+        gw_transitions_match = GW_APPLICATION_TRANSITIONS_ROUTE.fullmatch(path)
+        gw_submission_match = GW_APPLICATION_SUBMISSION_ROUTE.fullmatch(path)
+        gw_draft_match = GW_APPLICATION_DRAFT_ROUTE.fullmatch(path)
+        gw_compliance_match = GW_APPLICATION_COMPLIANCE_ROUTE.fullmatch(path)
+        is_unm_route = (path in ('/api/uncle-nickey-mao/status',
+                                 '/api/uncle-nickey-mao/guardian-relay',
+                                 '/api/uncle-nickey-mao/referrals',
+                                 '/api/uncle-nickey-mao/check-in')
+                        or unm_referral_match is not None
+                        or unm_referral_transition_match is not None)
+        is_carehive_route = (path in ('/api/carehive-os/status',
+                                      '/api/carehive-os/subjects',
+                                      '/api/carehive-os/cycles',
+                                      '/api/carehive-os/versions',
+                                      '/api/carehive-os/versions/rollback',
+                                      '/api/carehive-os/check-in')
+                             or ch_subject_match is not None
+                             or ch_subject_claim_match is not None
+                             or ch_subject_evidence_match is not None
+                             or ch_subject_postconditions_match is not None
+                             or ch_version_promote_match is not None
+                             or ch_interop_match is not None)
+        is_home_healthcare_route = (path in ('/api/home-healthcare/status',
+                                             '/api/home-healthcare/intakes',
+                                             '/api/home-healthcare/assignments',
+                                             '/api/home-healthcare/check-in')
+                                    or hh_intake_match is not None
+                                    or hh_intake_transition_match is not None
+                                    or hh_intake_room_match is not None
+                                    or hh_assignment_match is not None
+                                    or hh_assignment_transition_match is not None)
+        is_grantwriter_route = (path in ('/api/grantwriter/status',
+                                         '/api/grantwriter/opportunities',
+                                         '/api/grantwriter/applications',
+                                         '/api/grantwriter/portfolio',
+                                         '/api/grantwriter/check-in')
+                                or gw_stage_match is not None
+                                or gw_budget_match is not None
+                                or gw_evidence_match is not None
+                                or gw_transitions_match is not None
+                                or gw_submission_match is not None
+                                or gw_draft_match is not None
+                                or gw_compliance_match is not None)
+        is_platform_route = (is_unm_route or is_carehive_route
+                             or is_home_healthcare_route
+                             or is_grantwriter_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -148,10 +241,22 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or provider_match is not None
                              or native_match is not None)
 
-        if path not in ('/api/session', '/api/appointments') and not case_match and not detail_match and not is_operator_route and not is_rooms_route:
+        if path not in ('/api/session', '/api/appointments') and not case_match and not detail_match and not is_operator_route and not is_rooms_route and not is_platform_route:
             return respond(start, '404 Not Found', {'error': 'not_found'})
 
-        if is_rooms_route:
+        if is_platform_route:
+            allowed = ('GET',) if (path in ('/api/uncle-nickey-mao/status',
+                                            '/api/uncle-nickey-mao/guardian-relay',
+                                            '/api/carehive-os/status',
+                                            '/api/home-healthcare/status',
+                                            '/api/grantwriter/status',
+                                            '/api/grantwriter/portfolio')
+                                   or unm_referral_match is not None
+                                   or hh_intake_match is not None
+                                   or hh_assignment_match is not None
+                                   or gw_stage_match is not None
+                                   or gw_compliance_match is not None) else ('POST',)
+        elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
         else:
@@ -312,6 +417,198 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                     if data['action'] == 'revoke':
                         return respond(start, '200 OK', {'room': rooms.revoke_recording(room_id, identity)})
                     raise ValueError('unexpected fields')
+            if is_platform_route:
+                # The four reconstructed RTSA platforms (Three
+                # Originals Reconstruction Program): governed service
+                # objects in the rooms pattern — authority enforced
+                # inside each service, the routes only bind the
+                # session identity as actor and translate the service
+                # exceptions into the family's error shapes. Operator
+                # status uses the same determination the operator
+                # routes use (payments.operator_verifier).
+                def is_operator():
+                    try:
+                        return payments.operator_verifier(identity) is True
+                    except Exception:
+                        return False
+
+                def check_in(service):
+                    if set(data) != {'deployment_location', 'operational_status'}:
+                        raise ValueError('unexpected fields')
+                    return respond(start, '201 Created', {
+                        'check_in': service.record_check_in(
+                            identity, data['deployment_location'],
+                            data['operational_status'])})
+
+                if is_unm_route:
+                    if uncle_nickey_mao is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'uncle_nickey_mao_unavailable'})
+                    if path == '/api/uncle-nickey-mao/status':
+                        return respond(start, '200 OK', {'status': uncle_nickey_mao.status()})
+                    if path == '/api/uncle-nickey-mao/guardian-relay':
+                        return respond(start, '200 OK', {'guardian_relay': uncle_nickey_mao.guardian_relay_status()})
+                    if path == '/api/uncle-nickey-mao/referrals':
+                        if set(data) != {'from_industry', 'to_industry', 'subject_ref', 'jurisdiction'}:
+                            raise ValueError('unexpected fields')
+                        record = uncle_nickey_mao.create_referral(identity, **data)
+                        return respond(start, '201 Created', {'referral': record})
+                    if unm_referral_match:
+                        role = 'OPERATOR' if is_operator() else 'COORDINATOR'
+                        record = uncle_nickey_mao.referral_view(identity, role, unm_referral_match.group(1))
+                        return respond(start, '200 OK', {'referral': record})
+                    if unm_referral_transition_match:
+                        if set(data) != {'target'}:
+                            raise ValueError('unexpected fields')
+                        record = uncle_nickey_mao.transition_referral(identity, unm_referral_transition_match.group(1), data['target'])
+                        return respond(start, '200 OK', {'referral': record})
+                    return check_in(uncle_nickey_mao)
+                if is_carehive_route:
+                    if carehive_os is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'carehive_os_unavailable'})
+                    if path == '/api/carehive-os/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': carehive_os.status()})
+                    if path == '/api/carehive-os/subjects':
+                        if set(data) != {'subject_id', 'kind', 'status_claim'}:
+                            raise ValueError('unexpected fields')
+                        record = carehive_os.register_subject(identity, **data)
+                        return respond(start, '201 Created', {'subject': record})
+                    if ch_subject_claim_match:
+                        if set(data) != {'status_claim'}:
+                            raise ValueError('unexpected fields')
+                        record = carehive_os.update_claim(identity, ch_subject_claim_match.group(1), data['status_claim'])
+                        return respond(start, '200 OK', {'subject': record})
+                    if ch_subject_evidence_match:
+                        if set(data) != {'kind', 'payload'}:
+                            raise ValueError('unexpected fields')
+                        record = carehive_os.append_evidence(identity, ch_subject_evidence_match.group(1), **data)
+                        return respond(start, '201 Created', {'evidence': record})
+                    if ch_subject_postconditions_match:
+                        if set(data) != {'postcondition', 'observed_state'}:
+                            raise ValueError('unexpected fields')
+                        record = carehive_os.verify_postcondition(identity, ch_subject_postconditions_match.group(1), **data)
+                        return respond(start, '201 Created', {'postcondition': record})
+                    if path == '/api/carehive-os/cycles':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        return respond(start, '201 Created', {'cycle': carehive_os.run_cycle(identity)})
+                    if path == '/api/carehive-os/versions':
+                        if set(data) != {'version_label'}:
+                            raise ValueError('unexpected fields')
+                        record = carehive_os.propose_version(identity, data['version_label'])
+                        return respond(start, '201 Created', {'version': record})
+                    if ch_version_promote_match:
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = carehive_os.promote_version(identity, ch_version_promote_match.group(1))
+                        return respond(start, '200 OK', {'version': record})
+                    if path == '/api/carehive-os/versions/rollback':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        return respond(start, '200 OK', {'version': carehive_os.rollback_version(identity)})
+                    if ch_interop_match:
+                        if set(data) != {'payload'}:
+                            raise ValueError('unexpected fields')
+                        result = carehive_os.validate_envelope(ch_interop_match.group(1), data['payload'])
+                        return respond(start, '200 OK', {'validation': result})
+                    return check_in(carehive_os)
+                if is_home_healthcare_route:
+                    if home_healthcare is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'home_healthcare_unavailable'})
+                    if path == '/api/home-healthcare/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': home_healthcare.status()})
+                    if path == '/api/home-healthcare/intakes':
+                        if set(data) != {'client_ref', 'service_line', 'jurisdiction'}:
+                            raise ValueError('unexpected fields')
+                        record = home_healthcare.create_intake(identity, **data)
+                        return respond(start, '201 Created', {'intake': record})
+                    if hh_intake_match:
+                        role = 'OPERATOR' if is_operator() else 'CLIENT'
+                        record = home_healthcare.intake_view(identity, role, hh_intake_match.group(1))
+                        return respond(start, '200 OK', {'intake': record})
+                    if hh_intake_transition_match:
+                        if set(data) != {'target'}:
+                            raise ValueError('unexpected fields')
+                        record = home_healthcare.transition_intake(identity, hh_intake_transition_match.group(1), data['target'])
+                        return respond(start, '200 OK', {'intake': record})
+                    if hh_intake_room_match:
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = home_healthcare.create_consultation_room(identity, hh_intake_room_match.group(1))
+                        return respond(start, '201 Created', {'room': record})
+                    if path == '/api/home-healthcare/assignments':
+                        if set(data) != {'intake_id', 'caregiver_ref', 'starts_at', 'ends_at'}:
+                            raise ValueError('unexpected fields')
+                        record = home_healthcare.create_assignment(identity, **data)
+                        return respond(start, '201 Created', {'assignment': record})
+                    if hh_assignment_match:
+                        role = 'OPERATOR' if is_operator() else 'CAREGIVER'
+                        record = home_healthcare.assignment_view(identity, role, hh_assignment_match.group(1))
+                        return respond(start, '200 OK', {'assignment': record})
+                    if hh_assignment_transition_match:
+                        if set(data) != {'target'}:
+                            raise ValueError('unexpected fields')
+                        record = home_healthcare.transition_assignment(identity, hh_assignment_transition_match.group(1), data['target'])
+                        return respond(start, '200 OK', {'assignment': record})
+                    return check_in(home_healthcare)
+                if is_grantwriter_route:
+                    if grantwriter is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'grantwriter_unavailable'})
+                    if path == '/api/grantwriter/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': grantwriter.status()})
+                    if path == '/api/grantwriter/opportunities':
+                        if 'jurisdiction' not in data:
+                            raise ValueError('unexpected fields')
+                        fields = dict(data)
+                        jurisdiction = fields.pop('jurisdiction')
+                        record = grantwriter.create_opportunity(identity, jurisdiction, **fields)
+                        return respond(start, '201 Created', {'opportunity': record})
+                    if path == '/api/grantwriter/applications':
+                        if 'jurisdiction' not in data:
+                            raise ValueError('unexpected fields')
+                        fields = dict(data)
+                        jurisdiction = fields.pop('jurisdiction')
+                        record = grantwriter.create_application(identity, jurisdiction, **fields)
+                        return respond(start, '201 Created', {'application': record})
+                    if gw_stage_match:
+                        record = grantwriter.workflow_for(gw_stage_match.group(1))
+                        return respond(start, '200 OK', {'stage': record['stage'] if record else None, 'workflow': record})
+                    if gw_budget_match:
+                        record = grantwriter.add_budget_line(identity, gw_budget_match.group(1), **data)
+                        return respond(start, '201 Created', {'budget_line': record})
+                    if gw_evidence_match:
+                        record = grantwriter.attach_evidence(identity, gw_evidence_match.group(1), **data)
+                        return respond(start, '201 Created', {'evidence': record})
+                    if gw_transitions_match:
+                        if set(data) != {'target_stage'}:
+                            raise ValueError('unexpected fields')
+                        record = grantwriter.transition_stage(identity, gw_transitions_match.group(1), data['target_stage'])
+                        return respond(start, '200 OK', {'workflow': record})
+                    if gw_submission_match:
+                        if set(data) != {'external_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = grantwriter.record_submission(identity, gw_submission_match.group(1), data['external_ref'])
+                        return respond(start, '200 OK', {'workflow': record})
+                    if gw_draft_match:
+                        if set(data) - {'mode'}:
+                            raise ValueError('unexpected fields')
+                        record = grantwriter.generate_draft(identity, gw_draft_match.group(1), mode=data.get('mode', 'offline'))
+                        return respond(start, '200 OK', {'draft': record})
+                    if path == '/api/grantwriter/portfolio':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'portfolio': grantwriter.portfolio_view(identity, 'OPERATOR')})
+                    if gw_compliance_match:
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        result = grantwriter.compliance_evaluate(identity, 'OPERATOR', gw_compliance_match.group(1))
+                        return respond(start, '200 OK', {'compliance': result})
+                    return check_in(grantwriter)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -343,6 +640,22 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             result = payments.checkout(case_id, identity, **data)
             return respond(start, '200 OK', result)
 
+        except (BridgeForbidden, FoundationForbidden):
+            return respond(start, '403 Forbidden', {'error': 'uncle_nickey_mao_forbidden'})
+        except BridgeDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'uncle_nickey_mao_denied', 'detail': str(exc)})
+        except CareHiveForbidden:
+            return respond(start, '403 Forbidden', {'error': 'carehive_os_forbidden'})
+        except CareHiveDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'carehive_os_denied', 'detail': str(exc)})
+        except HomeHealthcareForbidden:
+            return respond(start, '403 Forbidden', {'error': 'home_healthcare_forbidden'})
+        except HomeHealthcareDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'home_healthcare_denied', 'detail': str(exc)})
+        except GrantwriterPlatformForbidden:
+            return respond(start, '403 Forbidden', {'error': 'grantwriter_forbidden'})
+        except GrantwriterPlatformDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'grantwriter_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

@@ -47,6 +47,10 @@ class RuntimeBindings:
     native_bridge: object = None
     audit: object = None
     rooms: object = None
+    uncle_nickey_mao: object = None
+    carehive_os: object = None
+    home_healthcare: object = None
+    grantwriter: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -361,7 +365,11 @@ def create_application(bindings=None):
             provider_gate=lambda: _is_approved('ron_notarial'),
             native_bridge=bindings.native_bridge,
             native_gate=lambda: _is_approved('ron_notarial'),
-            rooms=bindings.rooms
+            rooms=bindings.rooms,
+            uncle_nickey_mao=getattr(bindings, 'uncle_nickey_mao', None),
+            carehive_os=getattr(bindings, 'carehive_os', None),
+            home_healthcare=getattr(bindings, 'home_healthcare', None),
+            grantwriter=getattr(bindings, 'grantwriter', None)
         )
     else:
         verifier = _denied
@@ -677,6 +685,26 @@ def create_application(bindings=None):
             except Exception:
                 return _response(start, '503 Service Unavailable',
                                  {'error': 'bozly_status_unavailable'})
+        if path in ('/api/uncle-nickey-mao/healthz', '/api/carehive-os/healthz',
+                    '/api/home-healthcare/healthz', '/api/grantwriter/healthz'):
+            # Per-platform liveness for the four reconstructed RTSA
+            # platforms (Three Originals Reconstruction Program): no
+            # auth, liveness only, like /healthz — answerable from
+            # loopback so the watchdog can probe each in-process
+            # surface of this service. 200 only when the platform's
+            # bindings field is present; otherwise its honest 503.
+            if method != 'GET':
+                return _response(start, '405 Method Not Allowed', {'error': 'method_not_allowed'}, [('Allow', 'GET')])
+            platform_health = {
+                '/api/uncle-nickey-mao/healthz': ('uncle_nickey_mao', 'uncle_nickey_mao', 'uncle_nickey_mao_unavailable'),
+                '/api/carehive-os/healthz': ('carehive_os', 'carehive_os', 'carehive_os_unavailable'),
+                '/api/home-healthcare/healthz': ('home_healthcare', 'sanders_home_healthcare', 'home_healthcare_unavailable'),
+                '/api/grantwriter/healthz': ('grantwriter', 'grantwriter', 'grantwriter_unavailable'),
+            }
+            field, platform_id, unavailable = platform_health[path]
+            if bindings is None or getattr(bindings, field, None) is None:
+                return _response(start, '503 Service Unavailable', {'error': unavailable})
+            return _response(start, '200 OK', {'platform': platform_id, 'ok': True})
         if path in ('/healthz', '/readyz'):
             if method != 'GET':
                 return _response(start, '405 Method Not Allowed', {'error': 'method_not_allowed'}, [('Allow', 'GET')])
@@ -714,7 +742,15 @@ def create_application(bindings=None):
                 or path == '/api/operator/appointments'
                 or path.startswith('/api/operator/appointments/')
                 or path == '/api/rooms'
-                or path.startswith('/api/rooms/'))
+                or path.startswith('/api/rooms/')
+                or path == '/api/uncle-nickey-mao'
+                or path.startswith('/api/uncle-nickey-mao/')
+                or path == '/api/carehive-os'
+                or path.startswith('/api/carehive-os/')
+                or path == '/api/home-healthcare'
+                or path.startswith('/api/home-healthcare/')
+                or path == '/api/grantwriter'
+                or path.startswith('/api/grantwriter/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')
