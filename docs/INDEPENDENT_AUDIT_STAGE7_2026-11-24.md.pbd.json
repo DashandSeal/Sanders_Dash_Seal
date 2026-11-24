@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/INDEPENDENT_AUDIT_STAGE7_2026-11-24.md",
+    "payload_hash": "c0bb20b5b3239613cd16e2fa78f2226117ec3fd58a65c7b8c5dc81db00f4b996",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
