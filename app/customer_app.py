@@ -29,9 +29,12 @@ ASSETS = {
     '/auth/logout.html': ('auth.html', 'text/html; charset=utf-8'),
     '/operator.html': ('operator.html', 'text/html; charset=utf-8'),
     '/index.html': ('index.html', 'text/html; charset=utf-8'),
-    '/resources.html': ('resources.html', 'text/html; charset=utf-8'),
+    # '/resources.html' and '/resources.js' retired from public serving
+    # 2026-11-23 (owner ruling: "No tiers are free" — the page was publicly
+    # titled "Cloud Free Tier Status" and advertised zero-cost allowances).
+    # The files remain in web/ but are deliberately unrouted: this map is
+    # the only route that ever served them.
     '/assets/auth.js': ('auth.js', 'application/javascript; charset=utf-8'),
-    '/resources.js': ('resources.js', 'application/javascript; charset=utf-8'),
     '/landing': ('jade-landing.html', 'text/html; charset=utf-8'),
     '/assets/jade-landing.css': ('jade-landing.css', 'text/css; charset=utf-8'),
     '/assets/jade-landing.js': ('jade-landing.js', 'application/javascript; charset=utf-8'),

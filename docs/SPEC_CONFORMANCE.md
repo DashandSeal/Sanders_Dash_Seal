@@ -1166,3 +1166,17 @@ Caps and records: the attempt counter is incremented BEFORE any mutation; at mos
 **Manifests:** the manifests for web/auth.html, web/operator.html, web/voice.html, web/video.html, web/booking.css, and this file are updated in place, formats preserved; every payload_hash is the SHA-256 of the file's bytes; signatures remain UNSIGNED_SOURCE_MANIFEST — none fabricated.
 
 **Open items:** (1) This change is pushed to main; it reaches the live site through the owner's gated deploy path, and live re-verification of the four pages follows that deploy. (2) The audit's remaining items stand: `web/resources.html` and `web/dashboard.html` await owner decisions, and the systemic watchdog public-face guard (served source must carry the seal strip/tagline/closing and must not contain the banned tokens) is a separate build.
+
+## Resources page retired from public serving — "No tiers are free" (November 23, 2026)
+
+**Owner's ruling (2026-11-23 18:59 MST):** "No tiers are free." Nothing in the platforms is presented as free-tier, and the standing rule that Always Free is never public knowledge applies in full. `web/resources.html` was publicly titled "Cloud Free Tier Status" and advertised zero-cost allowance records; it is retired from public serving on this ruling.
+
+**Changes:** `app/customer_app.py` — the `'/resources.html'` and `'/resources.js'` entries are removed from the `ASSETS` route map, replaced by a comment recording the retirement. `'/resources.js'` is removed with the page: `web/resources.js` is exclusively the retired page's viewer script (it loads and renders the free-resources catalog) and no other page references it. No served page linked to `/resources.html`, so no link removals were needed in the landing, portal, auth, or operator pages.
+
+**Route behavior after this change:** the route map was the only way in — `deploy/deployment.py` serves `web/` files only through fixed allowlists that never included this page, and no nginx root points at the repo `web/` directory — so the files `web/resources.html` and `web/resources.js` remain in the repo, unrouted. On the canonical host an unknown path now answers exactly as other unserved paths do (308 redirect to `/`); on alias hosts the customer app answers 404 `not_found`, the same as any path not in the map.
+
+**Preserved, deliberately untouched:** the page and script files themselves (kept for the record, reachable by no route); the internal `/api/platform/free-resources` catalog route in `deploy/deployment.py` (an API route, not the public page — outside this change); `web/dashboard.html` (separate owner decision, still pending).
+
+**Manifests:** the manifests for `app/customer_app.py` and this file are updated in place, formats preserved; every payload_hash is the SHA-256 of the file's bytes; signatures remain UNSIGNED_SOURCE_MANIFEST — none fabricated. The manifests for `web/resources.html` and `web/resources.js` are unchanged because the files are unchanged.
+
+**Open items:** this change is pushed to main; it reaches the live site through the owner's gated deploy path, and live re-verification (the page's URL no longer serving the free-tier catalog) follows that deploy.
