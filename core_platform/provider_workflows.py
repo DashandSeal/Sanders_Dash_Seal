@@ -130,6 +130,8 @@ class ProviderWorkflows:
 
     def submit(self, case_id, actor, provider, data):
         self.authorize(case_id, actor)
+        if self.cases.get(case_id)['status'] == 'NATIVE_SESSION_COMPLETED':
+            raise ProviderRequestConflict('Case status does not permit provider submission.')
         request_id, payload = prepare(provider, data, case_id, signwell_test_mode=self.signwell_test_mode)
         fingerprint = hashlib.sha256(json.dumps(payload, sort_keys=True, separators=(',', ':'),
                                                allow_nan=False).encode()).hexdigest()
