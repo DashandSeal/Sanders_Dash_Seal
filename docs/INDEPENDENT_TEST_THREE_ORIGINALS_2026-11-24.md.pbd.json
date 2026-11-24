@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/INDEPENDENT_TEST_THREE_ORIGINALS_2026-11-24.md",
+        "payload_hash": "b2497a88628c8da946325d5ff7557e482c47b52b3760619d2b921500ffcdbbd5",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
