@@ -46,7 +46,10 @@ class ReadOnlyProviderClient:
         if self.provider == 'signwell':
             return {'X-Api-Key': self._api_key}
         elif self.provider == 'bluenotary':
-            return {'X-Authorization-Token': self._api_key}
+            # BlueNotary API v2 authenticates with a Bearer key (the
+            # provider's documented getting-started reference, recorded
+            # in docs/SPEC_CONFORMANCE.md, October 22, 2026).
+            return {'Authorization': 'Bearer ' + self._api_key}
         return {}
 
     def _get(self, url):
@@ -70,13 +73,13 @@ class ReadOnlyProviderClient:
         if self.provider != 'signwell':
             raise ProviderConnectionError('SignWell operation track only')
         safe_id = self._safe_id(document_id)
-        return self._get(f'https://signwell.com{safe_id}/')
+        return self._get(f'https://www.signwell.com/api/v1/documents/{safe_id}')
 
     def get_session(self, session_id):
         if self.provider != 'bluenotary':
             raise ProviderConnectionError('BlueNotary operation track only')
         safe_id = self._safe_id(session_id)
-        return self._get(f'https://bluenotary.us{safe_id}')
+        return self._get(f'https://app.bluenotary.us/api/integrationsv2/sessions/{safe_id}')
 
     def _safe_id(self, value):
         if not isinstance(value, str) or not value or len(value) > 128:

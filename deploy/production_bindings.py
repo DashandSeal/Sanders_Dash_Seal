@@ -33,6 +33,16 @@ What it wires:
   stops answering 503 ``appointments_unavailable``.
 - the pipeline / stream bindings stay None: those routes keep their
   honest 503 until a transaction processor is supplied.
+- the provider workspace is ``ProviderWorkflows`` on
+  ``data/provider_requests.db``, bound to the same cases, operator
+  verifier and audit trail. Its clients are built only for provider
+  keys the owner has configured (``SIGNWELL_API_KEY`` /
+  ``BLUENOTARY_API_KEY``, the names the provider-secret publisher
+  uses), each bound to the provider's documented fixed endpoint, so
+  an unconfigured provider answers its honest
+  ``<provider>_credentials_not_configured`` status from the workflow
+  layer instead of faking a connection. ``SIGNWELL_TEST_MODE`` is
+  read with the same boolean convention as the Stripe live flags.
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -50,6 +60,8 @@ from core_platform.appointment_payments import AppointmentPayments
 from core_platform.appointments import AppointmentStore
 from core_platform.cases import CaseRegistry
 from core_platform.glass_box_audit import GlassBoxAudit
+from core_platform.provider_connections import WriteProviderClient
+from core_platform.provider_workflows import ProviderWorkflows
 from core_platform.session_auth import SessionAuth
 from core_platform.stripe_connection import StripeConnection
 from core_platform.stripe_payments import PaymentDenied, PaymentLedger
@@ -109,6 +121,53 @@ def _stripe_client(connection):
     return stripe.StripeClient(connection.secret_key)
 
 
+SIGNWELL_CREATE_DOCUMENT_URL = (
+    'https://www.signwell.com/api/v1/document_templates/documents/')
+BLUENOTARY_CREATE_SESSION_URL = (
+    'https://app.bluenotary.us/api/integrationsv2/sessions')
+
+
+class _ProviderClient:
+    """Adapt the repo's ``WriteProviderClient`` to the workflow shape.
+
+    ``ProviderWorkflows`` calls ``client.create_request(payload)``; the
+    repo client takes the endpoint explicitly, so each adapter binds
+    exactly one documented fixed endpoint: SignWell's create-document-
+    from-template and BlueNotary's create-notarization-session (API
+    v2) — the provider references recorded in
+    ``docs/SPEC_CONFORMANCE.md`` (October 22, 2026).
+    """
+
+    def __init__(self, provider, api_key, url):
+        self._client = WriteProviderClient(provider, api_key)
+        self._url = url
+
+    def create_request(self, payload):
+        return self._client.create_request(self._url, payload)
+
+
+def _provider_clients():
+    """Live provider clients for the keys the owner has configured.
+
+    A provider whose key is absent (or unusable) is simply left out,
+    so ``ProviderWorkflows`` answers its honest
+    ``<provider>_credentials_not_configured`` status for it.
+    """
+    clients = {}
+    for provider, env_name, url in (
+            ('signwell', 'SIGNWELL_API_KEY', SIGNWELL_CREATE_DOCUMENT_URL),
+            ('bluenotary', 'BLUENOTARY_API_KEY',
+             BLUENOTARY_CREATE_SESSION_URL)):
+        key = (os.environ.get(env_name) or '').strip()
+        if not key:
+            continue
+        try:
+            clients[provider] = _ProviderClient(provider, key, url)
+        except ValueError:
+            continue
+    return clients
+
+
 def create_production_bindings():
     """Build the production ``RuntimeBindings`` from the repo's own modules."""
     repo_root = Path(__file__).resolve().parent.parent
@@ -138,10 +197,17 @@ def create_production_bindings():
         expected_livemode=bool(
             connection.live_allowed and connection.mode == 'live'))
 
+    signwell_test_mode = (os.environ.get('SIGNWELL_TEST_MODE') or ''
+                          ).strip().lower() in ('1', 'true', 'yes')
+    provider_workflows = ProviderWorkflows(
+        data_dir / 'provider_requests.db', cases, auth.operator_verifier,
+        audit, _provider_clients(), signwell_test_mode=signwell_test_mode)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
         authenticate=auth.authenticate,
         auth_app=auth.auth_app,
         release_verifier=lambda: True,
+        provider_workflows=provider_workflows,
     )

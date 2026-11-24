@@ -12,6 +12,10 @@ from pathlib import Path
 from urllib.parse import urlparse
 from core_platform.appointments import AppointmentDenied, IDENT
 from core_platform.cases import CaseDenied
+from core_platform.provider_workflows import (
+    ProviderRequestConflict,
+    ProviderUnavailable,
+)
 from core_platform.stripe_payments import PaymentDenied
 
 ASSETS = {
@@ -59,7 +63,7 @@ CASE_DETAIL_ROUTE = re.compile(r'^/api/appointments/([A-Za-z0-9_-]{1,128})$')
 OPERATOR_ROUTE = re.compile(r'^/api/operator/appointments/([A-Za-z0-9_-]{1,128})/quote$')
 PROVIDER_ROUTE = re.compile(r'^/api/operator/appointments/([A-Za-z0-9_-]{1,128})/provider$')
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -113,7 +117,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path not in ('/api/session', '/api/appointments') and not case_match and not detail_match and not is_operator_route:
             return respond(start, '404 Not Found', {'error': 'not_found'})
 
-        allowed = ('GET', 'POST') if path == '/api/appointments' else (
+        allowed = ('GET', 'POST') if path == '/api/appointments' or provider_match else (
             ('POST',) if operator_match or case_match else ('GET',)
         )
         if method not in allowed:
@@ -158,10 +162,30 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             if path == '/api/operator/appointments':
                 return respond(start, '200 OK', {'appointments': appointments.list_for_operator()})
             if provider_match:
-                # No provider workspace backend exists yet; the operator UI
-                # already renders an empty list as "No remote connection
-                # requests initialized yet." Previously this route 404d.
-                return respond(start, '200 OK', {'requests': []})
+                case_id = provider_match.group(1)
+                if provider_workflows is None:
+                    # No provider workspace backend is wired in this
+                    # runtime; the operator UI renders an empty list as
+                    # "No remote connection requests initialized yet."
+                    return respond(start, '200 OK', {'requests': []})
+                if method == 'GET':
+                    return respond(start, '200 OK', {
+                        'requests': provider_workflows.records(
+                            case_id, identity)})
+                if (set(data) != {'provider', 'request'}
+                        or not isinstance(data.get('request'), dict)):
+                    raise ValueError('unexpected fields')
+                # A live provider call requires the owner's ron_notarial
+                # approval gate, the same rule deploy/deployment.py
+                # applies to every live provider route. The gate check
+                # is injected; absent or unapproved fails closed.
+                if provider_gate is None or provider_gate() is not True:
+                    return respond(start, '503 Service Unavailable', {
+                        'error': 'approval_required',
+                        'gate': 'ron_notarial'})
+                receipt = provider_workflows.submit(
+                    case_id, identity, data['provider'], data['request'])
+                return respond(start, '201 Created', {'request': receipt})
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -199,6 +223,12 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '400 Bad Request', {'error': 'invalid_request'})
         except PaymentDenied:
             return respond(start, '409 Conflict', {'error': 'checkout_unavailable'})
+        except ProviderUnavailable as exc:
+            return respond(start, '503 Service Unavailable', {'error': 'provider_unavailable', 'detail': str(exc)})
+        except ProviderRequestConflict:
+            return respond(start, '409 Conflict', {'error': 'provider_request_conflict'})
+        except PermissionError:
+            return respond(start, '403 Forbidden', {'error': 'operator_required'})
         except Exception:
             return respond(start, '503 Service Unavailable', {'error': 'temporarily_unavailable'})
 

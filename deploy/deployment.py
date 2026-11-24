@@ -43,6 +43,7 @@ class RuntimeBindings:
     transaction_processor: object = None
     transaction_store: object = None
     stream_verifier: object = None
+    provider_workflows: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -378,7 +379,9 @@ def create_application(bindings=None):
         customer = create_customer_app(
             bindings.appointments, bindings.authenticate,
             bindings.payments, bindings.auth_app, ORIGIN, release_verifier=verifier,
-            allowed_origins=SITE_ORIGINS
+            allowed_origins=SITE_ORIGINS,
+            provider_workflows=bindings.provider_workflows,
+            provider_gate=lambda: _is_approved('ron_notarial')
         )
     else:
         verifier = _denied
