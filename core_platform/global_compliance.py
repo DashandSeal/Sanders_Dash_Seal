@@ -29,10 +29,12 @@ Honesty rules enforced by this module:
 
 Related, pre-existing repo behaviour this module does NOT change:
 
-- ``core_platform/appointments.py`` accepts jurisdictions ``CO`` and
-  ``WY`` for appointment *requests* (an appointment request is not a
-  notarization). ``core_platform/cases.py`` accepts any
-  identifier-shaped jurisdiction string for case records.
+- ``core_platform/appointments.py`` accepts jurisdictions ``CO``,
+  ``WI`` and ``AZ`` for appointment *requests* (an appointment request
+  is not a notarization; the set was aligned to the owner's named
+  states on November 22, 2026 — ``WY`` was removed then).
+  ``core_platform/cases.py`` accepts any identifier-shaped
+  jurisdiction string for case records.
 - ``core_platform/authority_review.py`` maps services to providers
   (``MOBILE_NOTARY`` -> Navu, ``E_NOTARY`` -> Signwell, ``RON`` ->
   BlueNotary) for human authority review; it performs no provider
@@ -99,9 +101,12 @@ class JurisdictionRule:
 
 
 # Jurisdictions named in the repo (MASTER design doc, appointments,
-# web copy). "WY" is Wyoming, which appointments.py accepts; the MASTER
-# doc names Wisconsin ("WI") instead — that mismatch is a declared gap
-# in the audit doc, not resolved here.
+# web copy). Appointments accept CO, WI and AZ (owner-named set,
+# November 22, 2026); the MASTER doc names Colorado and Wisconsin as
+# authority tracks and Florida as a future authority path. "WY" is
+# Wyoming, which appointments accepted before November 22, 2026 and
+# no longer do — its entry is kept as a declared gap so the framework
+# still answers for it.
 JURISDICTIONS: Dict[str, JurisdictionRule] = {
     "CO": JurisdictionRule(
         code="CO",
@@ -128,7 +133,16 @@ JURISDICTIONS: Dict[str, JurisdictionRule] = {
         privacy_regime="US state law; no GDPR/CCPA-style regime implemented.",
         ron_status="needs_owner_approval",
         status="declared_gap",
-        notes="Accepted by core_platform/appointments.py but NOT named in the MASTER doc (which names Wisconsin). Mismatch needs owner clarification; RON is NOT approved.",
+        notes="Was accepted by core_platform/appointments.py until the owner-named set (CO, WI, AZ) replaced it on November 22, 2026; NOT named in the MASTER doc. RON is NOT approved.",
+    ),
+    "AZ": JurisdictionRule(
+        code="AZ",
+        name="Arizona, US",
+        data_residency="US only; primary region us-phoenix-1 (Oracle Always Free). No data-residency enforcement in code.",
+        privacy_regime="US state law; no GDPR/CCPA-style regime implemented. No privacy policy page exists in the repo.",
+        ron_status="needs_owner_approval",
+        status="needs_owner_approval",
+        notes="Named in the owner's appointment jurisdiction set (CO, WI, AZ) on November 22, 2026; appointments accept AZ. Not a MASTER authority track. RON is NOT approved.",
     ),
     "FL": JurisdictionRule(
         code="FL",
