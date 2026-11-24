@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "nginx.conf",
-        "payload_hash": "589d1cf0330fabc7980d68f26de35dfba60260eeab29312411ce8b08c7a71100",
+        "payload_hash": "6a5dd8a1762c9ab2853ad4a67ad4cd4e22786671118172f535b05b5629ee1476",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
