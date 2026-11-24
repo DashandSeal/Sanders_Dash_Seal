@@ -1,0 +1,41 @@
+name: Deploy Resources retirement to Imperial Jade (one-time, 2026-11-23)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy-resources-retire:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync checkout to main (incl. f3f4917), restart app, verify Resources retirement
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set -u
+            FAIL=0
+            cd /opt/Sanders_Dash_Seal || { echo "FAIL: no checkout"; exit 1; }
+            git fetch origin main || { echo "FAIL: git fetch"; exit 1; }
+            git checkout main || true
+            git reset --hard origin/main || { echo "FAIL: git reset"; exit 1; }
+            git log --oneline -5
+            git merge-base --is-ancestor f3f4917 HEAD || { echo "FAIL: f3f4917 is not an ancestor of deployed HEAD"; FAIL=1; }
+            sudo systemctl restart sanders-dash-seal.service || { echo "FAIL: app restart"; exit 1; }
+            sleep 4
+            systemctl is-active sanders-dash-seal.service || FAIL=1
+            code=$(curl -s -o /dev/null -w "%{http_code}" http://127.0.0.1:8000/healthz); echo "local healthz: $code"; [ "$code" = "200" ] || FAIL=1
+            echo "=== PUBLIC HEALTHZ AND STOREFRONT ==="
+            code=$(curl -s -o /dev/null -w "%{http_code}" https://sandersdashandseal.com/healthz); echo "public healthz: $code"; [ "$code" = "200" ] || FAIL=1
+            code=$(curl -s -o /dev/null -w "%{http_code}" https://sandersdashandseal.com/); echo "storefront: $code"; [ "$code" = "200" ] || FAIL=1
+            code=$(curl -s -o /dev/null -w "%{http_code}" https://sandersdashandseal.com/appointments); echo "appointments: $code"; [ "$code" = "200" ] || FAIL=1
+            echo "=== RESOURCES RETIREMENT ==="
+            for p in resources.html resources.js; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" "https://sandersdashandseal.com/$p"); echo "$p: $code"
+              case "$code" in 301|302|303|307|308|404) echo "$p: RETIRED_STATUS_OK: $p $code";; *) echo "RESOURCES_NOT_RETIRED: $p $code"; FAIL=1;; esac
+              body=$(curl -s "https://sandersdashandseal.com/$p" || true)
+              echo "$body" | grep -q "Cloud Free Tier Status" && { echo "RESOURCES_FREE_TIER_STILL_SERVED: $p"; FAIL=1; } || echo "$p: no free-tier content"
+            done
+            if [ "$FAIL" = "0" ]; then echo "RESOURCES_RETIRE_CHECKS_PASSED"; else echo "RESOURCES_RETIRE_CHECKS_FAILED"; exit 1; fi
