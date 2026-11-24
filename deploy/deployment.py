@@ -46,6 +46,7 @@ class RuntimeBindings:
     provider_workflows: object = None
     native_bridge: object = None
     audit: object = None
+    rooms: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -359,7 +360,8 @@ def create_application(bindings=None):
             provider_workflows=bindings.provider_workflows,
             provider_gate=lambda: _is_approved('ron_notarial'),
             native_bridge=bindings.native_bridge,
-            native_gate=lambda: _is_approved('ron_notarial')
+            native_gate=lambda: _is_approved('ron_notarial'),
+            rooms=bindings.rooms
         )
     else:
         verifier = _denied
@@ -710,7 +712,9 @@ def create_application(bindings=None):
                 or path == '/api/appointments'
                 or path.startswith('/api/appointments/')
                 or path == '/api/operator/appointments'
-                or path.startswith('/api/operator/appointments/'))
+                or path.startswith('/api/operator/appointments/')
+                or path == '/api/rooms'
+                or path.startswith('/api/rooms/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

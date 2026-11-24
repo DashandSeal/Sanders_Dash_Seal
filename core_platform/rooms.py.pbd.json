@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/rooms.py",
+        "payload_hash": "a8aab915b3a0d0a36200ce90ef5f610c2bb7005aa9c0ccf690a327ed557a245e",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

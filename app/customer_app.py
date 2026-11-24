@@ -17,6 +17,7 @@ from core_platform.provider_workflows import (
     ProviderUnavailable,
 )
 from core_platform.native_case_bridge import BridgeDenied
+from core_platform.rooms import RoomDenied, RoomForbidden, RoomNotFound
 from core_platform.stripe_payments import PaymentDenied
 
 ASSETS = {
@@ -64,8 +65,18 @@ CASE_DETAIL_ROUTE = re.compile(r'^/api/appointments/([A-Za-z0-9_-]{1,128})$')
 OPERATOR_ROUTE = re.compile(r'^/api/operator/appointments/([A-Za-z0-9_-]{1,128})/quote$')
 PROVIDER_ROUTE = re.compile(r'^/api/operator/appointments/([A-Za-z0-9_-]{1,128})/provider$')
 NATIVE_ROUTE = re.compile(r'^/api/operator/appointments/([A-Za-z0-9_-]{1,128})/native$')
+ROOM_DETAIL_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})$')
+ROOM_TRANSITION_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/transition$')
+ROOM_PARTICIPANTS_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/participants$')
+ROOM_PARTICIPANT_REMOVE_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/participants/([A-Za-z0-9_-]{1,128})/remove$')
+ROOM_INVITES_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/invites$')
+ROOM_INVITE_ACCEPT_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/invites/([A-Za-z0-9_-]{1,128})/accept$')
+ROOM_INVITE_REVOKE_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/invites/([A-Za-z0-9_-]{1,128})/revoke$')
+ROOM_CONSENT_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/consent$')
+ROOM_RECORDING_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/recording$')
+ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -113,17 +124,40 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         operator_match = OPERATOR_ROUTE.fullmatch(path)
         provider_match = PROVIDER_ROUTE.fullmatch(path)
         native_match = NATIVE_ROUTE.fullmatch(path)
+        room_detail_match = ROOM_DETAIL_ROUTE.fullmatch(path)
+        room_transition_match = ROOM_TRANSITION_ROUTE.fullmatch(path)
+        room_participants_match = ROOM_PARTICIPANTS_ROUTE.fullmatch(path)
+        room_remove_match = ROOM_PARTICIPANT_REMOVE_ROUTE.fullmatch(path)
+        room_invites_match = ROOM_INVITES_ROUTE.fullmatch(path)
+        room_accept_match = ROOM_INVITE_ACCEPT_ROUTE.fullmatch(path)
+        room_revoke_match = ROOM_INVITE_REVOKE_ROUTE.fullmatch(path)
+        room_consent_match = ROOM_CONSENT_ROUTE.fullmatch(path)
+        room_recording_match = ROOM_RECORDING_ROUTE.fullmatch(path)
+        is_rooms_route = (path == '/api/rooms'
+                          or room_detail_match is not None
+                          or room_transition_match is not None
+                          or room_participants_match is not None
+                          or room_remove_match is not None
+                          or room_invites_match is not None
+                          or room_accept_match is not None
+                          or room_revoke_match is not None
+                          or room_consent_match is not None
+                          or room_recording_match is not None)
         is_operator_route = (path == '/api/operator/appointments'
                              or operator_match is not None
                              or provider_match is not None
                              or native_match is not None)
 
-        if path not in ('/api/session', '/api/appointments') and not case_match and not detail_match and not is_operator_route:
+        if path not in ('/api/session', '/api/appointments') and not case_match and not detail_match and not is_operator_route and not is_rooms_route:
             return respond(start, '404 Not Found', {'error': 'not_found'})
 
-        allowed = ('GET', 'POST') if path == '/api/appointments' or provider_match or native_match else (
-            ('POST',) if operator_match or case_match else ('GET',)
-        )
+        if is_rooms_route:
+            allowed = ('GET', 'POST') if path == '/api/rooms' else (
+                ('GET',) if room_detail_match else ('POST',))
+        else:
+            allowed = ('GET', 'POST') if path == '/api/appointments' or provider_match or native_match else (
+                ('POST',) if operator_match or case_match else ('GET',)
+            )
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
 
@@ -213,6 +247,71 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         'gate': 'ron_notarial'})
                 record = native_bridge.open_session(case_id, identity)
                 return respond(start, '201 Created', {'native_session': record})
+            if is_rooms_route:
+                # Commercial meeting rooms (MASTER Section 22 control
+                # plane): governed room objects — lifecycle, roles,
+                # invitations, consent, retention — with authority
+                # enforced inside the rooms service itself. Rooms carry
+                # no notarial function and mint no media token; media
+                # issuance stays behind the voice_video_provider gate
+                # in the realtime module.
+                if rooms is None:
+                    return respond(start, '503 Service Unavailable', {'error': 'rooms_unavailable'})
+                if path == '/api/rooms':
+                    if method == 'GET':
+                        return respond(start, '200 OK', {'rooms': rooms.list_for_actor(identity)})
+                    if set(data) - ROOM_CREATE_FIELDS or not {'room_type', 'purpose'} <= set(data):
+                        raise ValueError('unexpected fields')
+                    record = rooms.create_room(identity, **data)
+                    return respond(start, '201 Created', {'room': record})
+                room_match = (room_detail_match or room_transition_match
+                              or room_participants_match or room_remove_match
+                              or room_invites_match or room_accept_match
+                              or room_revoke_match or room_consent_match
+                              or room_recording_match)
+                room_id = room_match.group(1)
+                if room_detail_match:
+                    return respond(start, '200 OK', {'room': rooms.get_room(room_id, identity)})
+                if room_transition_match:
+                    if set(data) - {'action', 'scheduled_start', 'scheduled_end'} or 'action' not in data:
+                        raise ValueError('unexpected fields')
+                    action = data.pop('action')
+                    return respond(start, '200 OK', {'room': rooms.transition(room_id, identity, action, **data)})
+                if room_participants_match:
+                    if set(data) != {'identity', 'role'}:
+                        raise ValueError('unexpected fields')
+                    return respond(start, '200 OK', {'room': rooms.add_participant(room_id, identity, data['identity'], data['role'])})
+                if room_remove_match:
+                    if set(data) != set():
+                        raise ValueError('unexpected fields')
+                    return respond(start, '200 OK', {'room': rooms.remove_participant(room_id, identity, room_remove_match.group(2))})
+                if room_invites_match:
+                    if set(data) - {'invitee', 'role', 'ttl_seconds'} or not {'invitee', 'role'} <= set(data):
+                        raise ValueError('unexpected fields')
+                    invite = rooms.issue_invite(room_id, identity, **data)
+                    return respond(start, '201 Created', {'invite': invite})
+                if room_accept_match:
+                    if set(data) != set():
+                        raise ValueError('unexpected fields')
+                    return respond(start, '200 OK', {'room': rooms.accept_invite(room_id, identity, room_accept_match.group(2))})
+                if room_revoke_match:
+                    if set(data) != set():
+                        raise ValueError('unexpected fields')
+                    invite = rooms.revoke_invite(room_id, identity, room_revoke_match.group(2))
+                    return respond(start, '200 OK', {'invite': invite})
+                if room_consent_match:
+                    if set(data) != {'decision', 'notice_version'}:
+                        raise ValueError('unexpected fields')
+                    consent = rooms.record_consent(room_id, identity, **data)
+                    return respond(start, '201 Created', {'consent': consent})
+                if room_recording_match:
+                    if set(data) != {'action'}:
+                        raise ValueError('unexpected fields')
+                    if data['action'] == 'authorize':
+                        return respond(start, '200 OK', {'room': rooms.authorize_recording(room_id, identity)})
+                    if data['action'] == 'revoke':
+                        return respond(start, '200 OK', {'room': rooms.revoke_recording(room_id, identity)})
+                    raise ValueError('unexpected fields')
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -244,6 +343,12 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             result = payments.checkout(case_id, identity, **data)
             return respond(start, '200 OK', result)
 
+        except RoomNotFound:
+            return respond(start, '404 Not Found', {'error': 'not_found'})
+        except RoomForbidden:
+            return respond(start, '403 Forbidden', {'error': 'room_forbidden'})
+        except RoomDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'room_denied', 'detail': str(exc)})
         except BridgeDenied:
             return respond(start, '400 Bad Request', {'error': 'native_session_denied'})
         except AppointmentDenied:

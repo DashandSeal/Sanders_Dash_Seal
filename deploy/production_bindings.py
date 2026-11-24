@@ -52,6 +52,14 @@ What it wires:
   so the deployment can wire it into the realtime media routes:
   every room/token issuance decision (granted or denied) is recorded
   on the chain (Phase A remediation, 2026-11-24 — finding F-11).
+- the commercial meeting rooms control plane (MASTER Section 22) is
+  ``RoomService`` on ``data/rooms.db``, bound to the same cases, the
+  session auth's operator verifier and the same audit chain: room
+  lifecycle, participant roles, invitations, recording consent and
+  retention as governed records. It mints no media token and carries
+  no notarial function; media issuance stays behind the
+  ``voice_video_provider`` gate in the realtime module (Phase B,
+  2026-11-24).
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -73,6 +81,7 @@ from core_platform.native_case_bridge import CaseNativeBridge
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.provider_connections import WriteProviderClient
 from core_platform.provider_workflows import ProviderWorkflows
+from core_platform.rooms import RoomService
 from core_platform.session_auth import SessionAuth
 from core_platform.stripe_connection import StripeConnection
 from core_platform.stripe_payments import PaymentDenied, PaymentLedger
@@ -219,6 +228,9 @@ def create_production_bindings():
         data_dir / 'native_notary.db', cases, ledger, native_sessions,
         auth.operator_verifier, audit)
 
+    rooms = RoomService(
+        data_dir / 'rooms.db', cases, auth.operator_verifier, audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -228,4 +240,5 @@ def create_production_bindings():
         provider_workflows=provider_workflows,
         native_bridge=native_bridge,
         audit=audit,
+        rooms=rooms,
     )
