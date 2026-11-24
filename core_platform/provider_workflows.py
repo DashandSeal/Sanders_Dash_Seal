@@ -141,15 +141,45 @@ class ProviderWorkflows:
         key = (case_id, provider, request_id)
         self.audit.preserve({'stage': 'HUMAN_PROVIDER_REQUEST', 'case_id': case_id,
             'provider': provider, 'request_id': request_id, 'actor': actor, 'sha256': fingerprint})
-        with self.connect() as db:
-            db.execute('BEGIN IMMEDIATE')
-            previous = db.execute('SELECT * FROM provider_requests WHERE case_id=? AND provider=? AND request_id=?', key).fetchone()
-            if previous:
-                if previous['fingerprint'] != fingerprint or previous['state'] != 'CREATED':
-                    raise ProviderRequestConflict('Request reused or outcome requires provider reconciliation')
-                return self.receipt(previous)
-            db.execute('INSERT INTO provider_requests VALUES (?,?,?,?,?,?,?,?)',
-                       (*key, actor, fingerprint, 'SUBMITTING', None, int(time.time())))
+        # Cross-store serialization point (concurrency closure, recorded in
+        # docs/SPEC_CONFORMANCE.md): the completion guard above reads the
+        # case status from the cases store, while the request record is
+        # written to this module's own store — two databases, so that read
+        # alone cannot order this creation against a native completion
+        # committing in between. The native completion path propagates to
+        # the case record under BEGIN IMMEDIATE on the cases store
+        # (CaseNativeBridge._propagate_completion), and SQLite admits
+        # exactly one writer to a database file at a time. This submit
+        # therefore takes the same write lock on the cases store and holds
+        # it across both the authoritative status re-read and the commit
+        # of the request-record insert below: while the lock is held no
+        # status change can commit, and if completion committed first the
+        # re-read observes it and refuses. Creation and completion are
+        # thereby ordered by the storage engine, not by timing.
+        cases_path = getattr(self.cases, 'db_path', None) or getattr(self.cases, 'path', None)
+        if cases_path is None:
+            raise ProviderUnavailable('case_store_unavailable')
+        guard = sqlite3.connect(cases_path, timeout=10)
+        try:
+            guard.execute('BEGIN IMMEDIATE')
+            status_row = guard.execute('SELECT status FROM cases WHERE case_id=?',
+                                       (case_id,)).fetchone()
+            if status_row is not None and status_row[0] == 'NATIVE_SESSION_COMPLETED':
+                raise ProviderRequestConflict('Case status does not permit provider submission.')
+            with self.connect() as db:
+                db.execute('BEGIN IMMEDIATE')
+                previous = db.execute('SELECT * FROM provider_requests WHERE case_id=? AND provider=? AND request_id=?', key).fetchone()
+                if previous:
+                    if previous['fingerprint'] != fingerprint or previous['state'] != 'CREATED':
+                        raise ProviderRequestConflict('Request reused or outcome requires provider reconciliation')
+                    return self.receipt(previous)
+                db.execute('INSERT INTO provider_requests VALUES (?,?,?,?,?,?,?,?)',
+                           (*key, actor, fingerprint, 'SUBMITTING', None, int(time.time())))
+            # The request-record insert has committed while the cases-store
+            # write lock is still held; only now is the lock released.
+        finally:
+            guard.rollback()
+            guard.close()
         try:
             result = client.create_request(payload)
             resource = identifier(result.get('id') if provider == 'signwell' else result.get('bn_session_id'))
