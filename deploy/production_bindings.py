@@ -48,6 +48,10 @@ What it wires:
   (``CaseNativeBridge``) share ``data/native_notary.db``; the bridge
   reads settlement from the same Stripe ledger, so a case whose
   payment has not settled opens no native session.
+- the same ``GlassBoxAudit`` is exposed on the bindings as ``audit``
+  so the deployment can wire it into the realtime media routes:
+  every room/token issuance decision (granted or denied) is recorded
+  on the chain (Phase A remediation, 2026-11-24 — finding F-11).
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -223,4 +227,5 @@ def create_production_bindings():
         release_verifier=lambda: True,
         provider_workflows=provider_workflows,
         native_bridge=native_bridge,
+        audit=audit,
     )

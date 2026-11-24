@@ -194,11 +194,16 @@ async function joinViaLiveKit() {
   const sessionId = sessionInput.value.trim();
   if (!sessionId) { setStatus('Enter a session id (used as the LiveKit room) first.'); return; }
   try {
+    /* No identity is sent: the server binds the token to the signed-in
+     * account (Phase A remediation, 2026-11-24 — finding F-2). A
+     * caller-asserted identity is refused, so this page never invents
+     * one. Sign-in is required; a 401 says so. */
     const res = await fetch('/api/realtime/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ room: sessionId, identity: 'user-' + sessionId }),
+      body: JSON.stringify({ room: sessionId }),
     });
+    if (res.status === 401) throw new Error('sign-in required: sign in first, then join');
     if (!res.ok) throw new Error('token endpoint HTTP ' + res.status);
     const data = await res.json();
     /* The LiveKit client SDK is loaded on demand only in this branch.

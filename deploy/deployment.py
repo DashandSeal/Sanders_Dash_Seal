@@ -45,6 +45,7 @@ class RuntimeBindings:
     stream_verifier: object = None
     provider_workflows: object = None
     native_bridge: object = None
+    audit: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -73,10 +74,11 @@ def _denied():
 # provider key present in the environment and (b) the matching owner
 # approval gate APPROVED (all 9 gates are UNAPPROVED until the owner
 # approves a specific gate by name).
+# Phase A remediation (2026-11-24): the voice/realtime apps are built
+# per application instance inside create_application, wired with that
+# application's session verifier, audit chain and gate check — see
+# voice_apps()/realtime_app() there.
 # ---------------------------------------------------------------------------
-
-_VOICE_APPS = {}  # process-local cache: {"voice": app, "daedalus": app}
-_REALTIME_APP = {}  # process-local cache: {"app": app}
 
 
 def _utcnow_iso():
@@ -176,33 +178,6 @@ def _voice_backends():
         except Exception:
             continue
     return transcriber, synthesizer
-
-
-def _voice_apps():
-    """(plain voice app, Daedalus voice-turn app), built once per process.
-    The turn app has runtime=None: no Daedalus signing key, durable
-    evidence store, or daedalus_live approval is wired in this pass, so
-    POST /api/voice/turn honestly answers 503
-    daedalus_runtime_not_configured."""
-    if "voice" not in _VOICE_APPS:
-        from core_platform.voice_api import (
-            create_daedalus_voice_app,
-            create_voice_app,
-        )
-        transcriber, synthesizer = _voice_backends()
-        _VOICE_APPS["voice"] = create_voice_app(transcriber, synthesizer)
-        _VOICE_APPS["daedalus"] = create_daedalus_voice_app(
-            runtime=None, transcriber=transcriber, synthesizer=synthesizer)
-    return _VOICE_APPS["voice"], _VOICE_APPS["daedalus"]
-
-
-def _realtime_app():
-    """Realtime/video app (env-wired LiveKit/Daily clients, no transport:
-    room/token answer honest 503s until a provider is configured)."""
-    if "app" not in _REALTIME_APP:
-        from core_platform.realtime_api import create_realtime_app
-        _REALTIME_APP["app"] = create_realtime_app()
-    return _REALTIME_APP["app"]
 
 
 def _serve_web_file(start, filename, media_type):
@@ -406,6 +381,50 @@ def create_application(bindings=None):
         store=bindings.transaction_store if bindings else None,
         stream_verifier=bindings.stream_verifier if bindings else None)
 
+    # Media apps (voice + realtime), built lazily per application
+    # instance — never at startup (the voice backends load models on
+    # first use) and never shared across instances, because each is
+    # wired with THIS application's session verifier and audit chain
+    # (Phase A remediation, 2026-11-24 — findings F-1/F-2/F-5/F-11).
+    # With no bindings (diagnostic startup) the authenticator is None
+    # and the media apps fail closed: issuance and voice work refuse.
+    media_apps = {}
+
+    def voice_apps():
+        """(plain voice app, Daedalus voice-turn app) for this instance.
+        The turn app has runtime=None: no Daedalus signing key, durable
+        evidence store, or daedalus_live approval is wired in this pass,
+        so POST /api/voice/turn honestly answers 503
+        daedalus_runtime_not_configured."""
+        if "voice" not in media_apps:
+            from core_platform.voice_api import (
+                create_daedalus_voice_app,
+                create_voice_app,
+            )
+            transcriber, synthesizer = _voice_backends()
+            media_apps["voice"] = create_voice_app(
+                transcriber, synthesizer,
+                authenticate=bindings.authenticate if bindings else None,
+                allowed_origins=SITE_ORIGINS)
+            media_apps["daedalus"] = create_daedalus_voice_app(
+                runtime=None, transcriber=transcriber, synthesizer=synthesizer)
+        return media_apps["voice"], media_apps["daedalus"]
+
+    def realtime_app():
+        """Realtime/video app for this instance (env-wired LiveKit/Daily
+        clients, no transport: room/token answer honest 503s until a
+        provider is configured). The gate check, session verifier,
+        audit chain and origin set are injected here; enforcement runs
+        inside the realtime module itself."""
+        if "realtime" not in media_apps:
+            from core_platform.realtime_api import create_realtime_app
+            media_apps["realtime"] = create_realtime_app(
+                authenticate=bindings.authenticate if bindings else None,
+                audit=bindings.audit if bindings else None,
+                gate_approved=lambda: _is_approved("voice_video_provider"),
+                allowed_origins=SITE_ORIGINS)
+        return media_apps["realtime"]
+
     def ready():
         try:
             return verifier() is True
@@ -515,7 +534,7 @@ def create_application(bindings=None):
             # until a Daedalus runtime is wired (signing key + durable
             # evidence store + daedalus_live approval).
             try:
-                voice_app, daedalus_app = _voice_apps()
+                voice_app, daedalus_app = voice_apps()
             except Exception as exc:
                 return _response(start, '503 Service Unavailable',
                                  {'error': 'voice_unavailable',
@@ -537,19 +556,20 @@ def create_application(bindings=None):
                                   'reason': f'Daedalus engine failed to load: {type(exc).__name__}: {exc}'})
         if path == '/api/realtime/status' or path == '/api/video/status' or path.startswith('/api/realtime/'):
             # LiveKit/Daily realtime + video signalling (env-wired, no
-            # transport). Room/token POSTs need a configured provider;
-            # when one IS configured they additionally need the
-            # voice_video_provider approval gate, else honest 503.
-            if path in ('/api/realtime/room', '/api/realtime/token') and method == 'POST':
-                try:
-                    from core_platform.livekit_realtime import RealtimeConfig
-                    provider = RealtimeConfig.from_env().provider()
-                except Exception:
-                    provider = 'none'
-                if provider != 'none' and not _is_approved('voice_video_provider'):
-                    return _approval_503(start, 'voice_video_provider')
+            # transport). Room/token issuance is enforced inside the
+            # realtime app itself (Phase A remediation, 2026-11-24 —
+            # findings F-1/F-2/F-11): the voice_video_provider gate,
+            # session authentication, session-bound identity and a
+            # Glass-Box receipt are all evaluated by the module that
+            # mints, so no router path can bypass them and every
+            # denial is recorded on the audit chain. This router
+            # previously evaluated the gate here via
+            # RealtimeConfig.from_env().provider() — calling a
+            # @property as a method; the TypeError was swallowed by
+            # the surrounding except, the provider read as 'none',
+            # and the gate check never ran (F-1).
             try:
-                return _realtime_app()(env, start)
+                return realtime_app()(env, start)
             except Exception as exc:
                 return _response(start, '503 Service Unavailable',
                                  {'error': 'realtime_unavailable',
