@@ -1,0 +1,46 @@
+name: Deploy layout uplift to Imperial Jade (one-time, 2026-11-23)
+on:
+  workflow_dispatch:
+jobs:
+  deploy-layout-uplift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync checkout to main (incl. c87ec6b), restart app, verify layout uplift
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set -u
+            FAIL=0
+            cd /opt/Sanders_Dash_Seal || { echo "FAIL: no checkout"; exit 1; }
+            git fetch origin main || { echo "FAIL: git fetch"; exit 1; }
+            git checkout main || true
+            git reset --hard origin/main || { echo "FAIL: git reset"; exit 1; }
+            git log --oneline -5
+            git merge-base --is-ancestor c87ec6b53d9ebb28ad6adbab124840dc72adfbf8 HEAD || { echo "FAIL: c87ec6b is not an ancestor of deployed HEAD"; FAIL=1; }
+            sudo systemctl restart sanders-dash-seal.service || { echo "FAIL: app restart"; exit 1; }
+            sleep 4
+            systemctl is-active sanders-dash-seal.service || FAIL=1
+            code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/healthz); echo "local healthz: $code"; [ "$code" = "200" ] || FAIL=1
+            echo "=== PUBLIC HEALTHZ AND STOREFRONT ==="
+            code=$(curl -s -o /dev/null -w '%{http_code}' https://sandersdashandseal.com/healthz); echo "public healthz: $code"; [ "$code" = "200" ] || FAIL=1
+            code=$(curl -s -o /dev/null -w '%{http_code}' https://sandersdashandseal.com/); echo "storefront: $code"; [ "$code" = "200" ] || FAIL=1
+            echo "=== LAYOUT UPLIFT PAGES ==="
+            for p in auth/login operator.html voice.html video.html; do
+              url="https://sandersdashandseal.com/$p"
+              code=$(curl -s -o /dev/null -w '%{http_code}' "$url"); echo "$p: $code"
+              [ "$code" = "200" ] || { echo "PAGE_NOT_200: $p $code"; FAIL=1; continue; }
+              body=$(curl -s "$url" || true)
+              echo "$body" | grep -q "#00A3E0" && { echo "LEGACY_BLUE_PRESENT: $p"; FAIL=1; } || echo "$p: no #00A3E0"
+              echo "$body" | grep -q "user-scalable=no" && { echo "USER_SCALABLE_NO_PRESENT: $p"; FAIL=1; } || echo "$p: no user-scalable=no"
+              echo "$body" | grep -q "sds-seal-strip" && echo "$p: SEAL_STRIP_OK" || { echo "SEAL_STRIP_MISSING: $p"; FAIL=1; }
+              echo "$body" | grep -q "sds-intellectual-property-footer" && echo "$p: FOOTER_OK" || { echo "FOOTER_MISSING: $p"; FAIL=1; }
+              echo "$body" | grep -q "seal-corporate-hq.png" && echo "$p: SEAL_IMAGE_OK" || { echo "SEAL_IMAGE_MISSING: $p"; FAIL=1; }
+            done
+            echo "=== BOOKING CSS ==="
+            css=$(curl -s https://sandersdashandseal.com/assets/booking.css || true)
+            echo "$css" | grep -q "sds-media-actions" && echo "BOOKING_CSS_MEDIA_OK" || { echo "BOOKING_CSS_MEDIA_MISSING"; FAIL=1; }
+            if [ "$FAIL" = "0" ]; then echo "LAYOUT_UPLIFT_CHECKS_PASSED"; else echo "LAYOUT_UPLIFT_CHECKS_FAILED"; exit 1; fi
