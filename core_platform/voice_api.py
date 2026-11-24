@@ -16,6 +16,16 @@ to work.  Pass explicit fakes in tests, or use
 ``create_voice_app_from_env()`` which wires faster-whisper / system TTS
 only when their packages are actually installed.
 
+Authentication (Phase A remediation, 2026-11-24 — inventory finding
+F-5): ``POST /api/voice/transcribe`` and ``POST /api/voice/speak``
+perform real work on the owner's infrastructure, so they require an
+authenticated platform session (injected ``authenticate``, the customer
+app's session verifier) and, when ``allowed_origins`` is wired, an
+allowed Origin — the customer app's pattern. An unwired authenticator
+refuses every such call (401 ``sign_in_required``, fail closed); the
+deployment injects the real verifier and the site's origin set.
+``GET /api/voice/status`` stays public: it reports backend names only.
+
 Audio format note: browsers record different codecs
 (Chrome/Firefox Opus/WebM, Safari AAC/MP4).  This endpoint accepts WAV
 PCM-16 only; non-WAV uploads must be normalised server-side with ffmpeg
@@ -75,8 +85,42 @@ def _read_body(env):
 def create_voice_app(
     transcriber: Transcriber | None = None,
     synthesizer: Synthesizer | None = None,
+    *,
+    authenticate: Callable | None = None,
+    allowed_origins: frozenset | None = None,
 ) -> Callable:
-    """Build the voice WSGI app with the given (possibly None) backends."""
+    """Build the voice WSGI app with the given (possibly None) backends.
+
+    ``authenticate`` / ``allowed_origins`` wire the F-5 session control
+    described in the module docstring; the default (unwired) fails
+    closed for transcribe/speak.
+    """
+
+    def _session_identity(env):
+        if authenticate is None:
+            return None
+        try:
+            identity = authenticate(env)
+        except Exception:
+            return None
+        return identity if isinstance(identity, str) and identity else None
+
+    def _work_guard(env, start):
+        """Session -> origin before any transcription/synthesis work.
+
+        Returns ``(identity, None)`` when work may proceed, or
+        ``(None, response)`` with the denial already answered
+        (401 ``sign_in_required`` / 403 ``origin_denied``).
+        """
+        identity = _session_identity(env)
+        if identity is None:
+            return None, _json_response(start, "401 Unauthorized",
+                                        {"error": "sign_in_required"})
+        if (allowed_origins is not None
+                and env.get("HTTP_ORIGIN") not in allowed_origins):
+            return None, _json_response(start, "403 Forbidden",
+                                        {"error": "origin_denied"})
+        return identity, None
 
     def application(env, start):
         method = env.get("REQUEST_METHOD", "")
@@ -102,6 +146,9 @@ def create_voice_app(
             return _json_response(start, "200 OK", payload)
 
         if path == "/api/voice/transcribe" and method == "POST":
+            _, denial = _work_guard(env, start)
+            if denial is not None:
+                return denial
             if transcriber is None:
                 return _json_response(start, "503 Service Unavailable",
                                       {"error": "transcriber_not_configured"})
@@ -119,6 +166,9 @@ def create_voice_app(
             return _json_response(start, "200 OK", {"transcript": transcript})
 
         if path == "/api/voice/speak" and method == "POST":
+            _, denial = _work_guard(env, start)
+            if denial is not None:
+                return denial
             if synthesizer is None:
                 return _json_response(start, "503 Service Unavailable",
                                       {"error": "synthesizer_not_configured"})
@@ -178,8 +228,15 @@ def create_voice_app_from_env() -> Callable:
 
 
 def create_fake_voice_app() -> Callable:
-    """Voice app with deterministic fake backends, for tests and demos."""
-    return create_voice_app(FakeTranscriber(), FakeSynthesizer())
+    """Voice app with deterministic fake backends, for tests and demos.
+
+    Explicitly local: a stub session (identity ``local-test-user``)
+    stands in for the platform session verifier, so the fake backends
+    can be exercised without an account store. Production compositions
+    inject the real verifier instead.
+    """
+    return create_voice_app(FakeTranscriber(), FakeSynthesizer(),
+                            authenticate=lambda env: "local-test-user")
 
 
 def describe_voice_backends() -> dict[str, dict[str, object]]:

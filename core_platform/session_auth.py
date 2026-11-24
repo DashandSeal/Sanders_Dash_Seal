@@ -15,6 +15,9 @@ is the human who approves quotes; the customer app asks this module
 
 ``authenticate(env)`` is the independent session verifier the customer app
 calls: it reads the ``session`` cookie and returns the username, or None.
+Issuing a session rotates it: every prior session for the account is
+invalidated at login/register/setup (Phase A remediation, 2026-11-24),
+and the setup token is compared in constant time.
 ``auth_app`` is the WSGI app behind ``/auth/login`` / ``/auth/register`` /
 ``/auth/setup`` / ``/auth/logout`` (POST only, JSON in and out, same
 ``{ok, role}`` / ``{error}`` shape ``web/auth.js`` already expects,
@@ -147,6 +150,12 @@ class SessionAuth:
             raise SessionAuthError('username_taken') from exc
 
     def _open_session(self, db, username):
+        # Session rotation (Phase A remediation, 2026-11-24 — inventory
+        # finding F-6): issuing a session invalidates every prior
+        # session for the account, so a stolen token's life ends at the
+        # account's next sign-in instead of running to its own expiry,
+        # and a fresh login is proof the old credentials are dead.
+        db.execute('DELETE FROM sds_sessions WHERE username = ?;', (username,))
         token = secrets.token_urlsafe(32)
         now = int(self.clock())
         db.execute(
@@ -257,7 +266,13 @@ class SessionAuth:
     def _setup(self, start, data):
         if set(data) != {'username', 'password', 'setup_token'}:
             raise SessionAuthError('invalid_request')
-        if not self.setup_token or data['setup_token'] != self.setup_token:
+        # Constant-time comparison (Phase A remediation, 2026-11-24 —
+        # finding F-6): the owner-held setup token is compared with
+        # hmac.compare_digest, never !=, so its value cannot be probed
+        # through response timing.
+        provided = data['setup_token']
+        if (not self.setup_token or not isinstance(provided, str)
+                or not hmac.compare_digest(provided, self.setup_token)):
             return self._respond(start, '503 Service Unavailable',
                                  {'error': 'setup_unavailable'})
         with self._connect() as db:
