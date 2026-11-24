@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Secure credential entry gate for Sanders Dash &amp; Seal.">
     <title>Sanders Dash &amp; Seal - Identity Authorization Gateway</title>
     <link rel="stylesheet" href="/assets/booking.css">
@@ -11,10 +11,11 @@
 <body>
     <!-- Unified Corporate Top Navigation Ingress Branding Bar -->
     <header class="sds-enterprise-header">
+        <img class="sds-header-seal" src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc., corporate headquarters">
         <a class="sds-brand-title" href="/" aria-label="Sanders Dash and Seal Home">
             Sanders Dash <span>&amp;</span> Seal
         </a>
-        <div class="sds-tagline-anchor" aria-hidden="true">
+        <div class="sds-tagline-anchor">
             From the Road to Remote, We Seal the Deal.
         </div>
     </header>
@@ -25,7 +26,7 @@
             <h1 id="auth-title" style="font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem; text-align: center;">
                 Sign In
             </h1>
-            <p id="auth-description" style="font-size: 0.95rem; color: #E5E5E5; text-align: center; margin-bottom: 2rem;">
+            <p id="auth-description" style="font-size: 0.95rem; color: #cfe0d6; text-align: center; margin-bottom: 2rem;">
                 Sign in to request an appointment and secure documents.
             </p>
 
@@ -34,24 +35,24 @@
                     
                     <!-- Username Text Block Input -->
                     <div style="margin-bottom: 1.25rem;">
-                        <label for="username" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Account Identity Name</label>
-                        <input type="text" id="username" name="username" required autocomplete="username" placeholder="Enter your username" style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;">
+                        <label for="username">Account Identity Name</label>
+                        <input type="text" id="username" name="username" required autocomplete="username" placeholder="Enter your username">
                     </div>
 
                     <!-- Cryptographic Passphrase Entry Field -->
                     <div style="margin-bottom: 1.5rem;">
-                        <label for="password" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Passphrase</label>
-                        <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your secret passphrase" style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #FFF; border: 1px solid #444; border-radius: 4px;">
+                        <label for="password">Passphrase</label>
+                        <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your secret passphrase">
                     </div>
 
                     <!-- Dynamic Volatile Owner Setup Key Container -->
                     <div id="setup-field" hidden style="margin-bottom: 1.5rem;">
-                        <label for="setup-token" style="display: block; margin-bottom: 0.5rem; font-weight: 600; color: #00A3E0;">Private Owner Setup Key</label>
-                        <input type="password" id="setup-token" name="setup-token" placeholder="Enter administrative authorization token" style="width: 100%; padding: 0.75rem; background: #2A2A2A; color: #00A3E0; border: 1px solid #00A3E0; border-radius: 4px;">
+                        <label for="setup-token">Private Owner Setup Key</label>
+                        <input type="password" id="setup-token" name="setup-token" placeholder="Enter administrative authorization token">
                     </div>
 
                     <!-- Dynamic Real-Time Feedback Text Node -->
-                    <div id="auth-message" role="status" aria-live="polite" style="margin-bottom: 1.5rem; min-height: 1.5rem; font-size: 0.95rem; font-weight: 600; color: #00A3E0; text-align: center;"></div>
+                    <div id="auth-message" role="status" aria-live="polite" style="margin-bottom: 1.5rem; min-height: 1.5rem; font-size: 0.95rem; font-weight: 600; text-align: center;"></div>
 
                     <!-- High-Contrast Touch Control Action Button -->
                     <button class="sds-button-primary" id="account-submit" type="submit" style="width: 100%; padding: 1rem;">
@@ -64,7 +65,7 @@
 
         <!-- Dynamic Alternative Alternative Interface Route Tracing -->
         <p style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem;">
-            <a id="auth-alternative" href="/" style="color: #888; text-decoration: none; transition: color 0.2s;">
+            <a id="auth-alternative" href="/" style="text-decoration: none; transition: color 0.2s;">
                 &larr; Cancel and return to home screen
             </a>
         </p>
@@ -72,6 +73,26 @@
 
     <!-- Patented Legal Ownership Branding Protection Fence -->
     <footer class="sds-intellectual-property-footer">
+        <div class="sds-seal-strip" aria-label="The Sanders companies">
+            <figure>
+                <img src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc.">
+                <figcaption>S &amp; G Security Inc. — Corporate Headquarters</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-home-healthcare.png" alt="Seal of Sanders Home Healthcare &amp; Caregivers LLC">
+                <figcaption>Sanders Home Healthcare &amp; Caregivers LLC</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-senior-living.png" alt="Seal of Sanders Senior Living LLC">
+                <figcaption>Sanders Senior Living LLC</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC">
+                <figcaption>Sanders Legal Helpers LLC</figcaption>
+            </figure>
+        </div>
+        <div class="sds-footer-tagline">Our family will take great care of your family</div>
+        <div class="sds-footer-closing">The Sanders Way!</div>
         <div>&copy; 2026 Sanders Dash &amp; Seal. All Rights Reserved.</div>
         <div style="font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.7;">
             Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders

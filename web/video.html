@@ -1,60 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sanders Dash &amp; Seal — Video</title>
-<style>
-  body { font-family: system-ui, sans-serif; margin: 2rem auto; max-width: 720px; padding: 0 1rem; }
-  button { margin: 0.25rem 0.5rem 0.25rem 0; padding: 0.5rem 1rem; }
-  video { width: 100%; max-height: 320px; background: #111; }
-  pre { white-space: pre-wrap; word-break: break-word; background: #f4f4f4; padding: 1rem; }
-  input { padding: 0.4rem; width: 16rem; }
-</style>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Video and realtime sessions for Sanders Dash &amp; Seal.">
+    <title>Sanders Dash &amp; Seal — Video</title>
+    <link rel="stylesheet" href="/assets/booking.css">
 </head>
 <body>
-<h1>Video — Sanders Dash &amp; Seal</h1>
-<!--
-  Video / realtime page. Logic lives in web/video.js (dependency-free).
+    <header class="sds-enterprise-header">
+        <img class="sds-header-seal" src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc., corporate headquarters">
+        <a class="sds-brand-title" href="/" aria-label="Sanders Dash and Seal Home">
+            Sanders Dash <span>&amp;</span> Seal
+        </a>
+        <div class="sds-tagline-anchor">
+            From the Road to Remote, We Seal the Deal.
+        </div>
+    </header>
 
-  WHAT WORKS WITHOUT ANY PROVIDER:
-  - Camera/mic preview (getUserMedia) and screen share (getDisplayMedia).
-  - Signalling message shapes mirror worker/src/webrtc.js exactly
-    (initialize_session / offer / answer / ice_candidate).
+    <main class="sds-main-viewport">
+        <section class="sds-action-card">
+            <h1>Video — Sanders Dash &amp; Seal</h1>
+            <p id="status" class="notice status" role="status" aria-live="polite">Loading realtime status…</p>
+            <div style="margin-bottom: 1.25rem;">
+                <label for="sessionId">Session / room id:</label>
+                <input id="sessionId" type="text" value="session-1" maxlength="128">
+            </div>
+            <video id="preview" autoplay muted playsinline></video>
+            <h2>Screen share preview</h2>
+            <video id="screen" autoplay muted playsinline></video>
+            <p class="sds-media-actions">
+                <button id="startBtn" type="button">Start camera preview</button>
+                <button id="shareBtn" type="button">Share screen</button>
+                <button id="stopShareBtn" type="button" disabled>Stop sharing</button>
+            </p>
+            <p class="sds-media-actions">
+                <button id="joinBtn" type="button">Join (signalling-only)</button>
+                <button id="leaveBtn" type="button" disabled>Leave</button>
+                <button id="livekitBtn" type="button">Join via LiveKit</button>
+            </p>
+            <h2>Log</h2>
+            <pre id="log">(no events yet)</pre>
+        </section>
+    </main>
 
-  WHAT NEEDS A SERVER (honest limits):
-  - A live call needs a signalling server / SFU: LiveKit (self-hosted or
-    LiveKit Cloud, LIVEKIT_URL + API key/secret), Daily.co, or the in-repo
-    relay in worker/src/webrtc.js plus a TURN server for NAT traversal.
-    No signalling server, SFU, or peer exists in this repo today.
-  - The LiveKit button does nothing unless /api/realtime/status reports
-    livekit_configured; then it fetches a session-scoped token from
-    /api/realtime/token and loads the LiveKit client SDK on demand.
-  - Screen share is video-only via getDisplayMedia; system-audio capture
-    is browser-dependent and is not promised.
-  - Requires HTTPS or localhost, and camera/mic/screen permission.
-  - Nothing is captured, uploaded, or stored until you press a button.
--->
-<p id="status">Loading realtime status…</p>
-<p>
-  <label for="sessionId">Session / room id:</label>
-  <input id="sessionId" type="text" value="session-1" maxlength="128">
-</p>
-<video id="preview" autoplay muted playsinline></video>
-<h2>Screen share preview</h2>
-<video id="screen" autoplay muted playsinline></video>
-<p>
-  <button id="startBtn" type="button">Start camera preview</button>
-  <button id="shareBtn" type="button">Share screen</button>
-  <button id="stopShareBtn" type="button" disabled>Stop sharing</button>
-</p>
-<p>
-  <button id="joinBtn" type="button">Join (signalling-only)</button>
-  <button id="leaveBtn" type="button" disabled>Leave</button>
-  <button id="livekitBtn" type="button">Join via LiveKit</button>
-</p>
-<h2>Log</h2>
-<pre id="log">(no events yet)</pre>
+    <footer class="sds-intellectual-property-footer">
+        <div class="sds-seal-strip" aria-label="The Sanders companies">
+            <figure>
+                <img src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc.">
+                <figcaption>S &amp; G Security Inc. — Corporate Headquarters</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-home-healthcare.png" alt="Seal of Sanders Home Healthcare &amp; Caregivers LLC">
+                <figcaption>Sanders Home Healthcare &amp; Caregivers LLC</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-senior-living.png" alt="Seal of Sanders Senior Living LLC">
+                <figcaption>Sanders Senior Living LLC</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC">
+                <figcaption>Sanders Legal Helpers LLC</figcaption>
+            </figure>
+        </div>
+        <div class="sds-footer-tagline">Our family will take great care of your family</div>
+        <div class="sds-footer-closing">The Sanders Way!</div>
+        <div>&copy; 2026 Sanders Dash &amp; Seal. All Rights Reserved.</div>
+        <div style="font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.7;">
+            Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders
+        </div>
+    </footer>
+
 <script src="video.js"></script>
 </body>
 </html>

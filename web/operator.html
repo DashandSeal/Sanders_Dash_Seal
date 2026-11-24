@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Notary management control deck for Sanders Dash &amp; Seal.">
     <title>Sanders Dash &amp; Seal - Operator Dashboard Workspace</title>
     <link rel="stylesheet" href="/assets/booking.css">
@@ -11,10 +11,11 @@
 <body>
     <!-- Unified Corporate Top Navigation Ingress Branding Bar -->
     <header class="sds-enterprise-header">
+        <img class="sds-header-seal" src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc., corporate headquarters">
         <a class="sds-brand-title" href="/" aria-label="Sanders Dash and Seal Home">
             Sanders Dash <span>&amp;</span> Seal
         </a>
-        <div class="sds-tagline-anchor" aria-hidden="true">
+        <div class="sds-tagline-anchor">
             From the Road to Remote, We Seal the Deal.
         </div>
     </header>
@@ -22,11 +23,11 @@
     <main class="sds-main-viewport">
         <!-- Section A: Header Status Box -->
         <section class="sds-action-card" style="margin-bottom: 2rem;">
-            <p class="sds-eyebrow" style="color: #00A3E0; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">
+            <p class="sds-eyebrow" style="font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem;">
                 Internal Notary Operations Desk
             </p>
             <h1 style="font-size: 2rem; margin-bottom: 1rem; font-weight: 800;">Assigned Case Queue</h1>
-            <div id="notice" class="notice status" role="status" aria-live="polite" style="color: #00A3E0; font-weight: 600;">
+            <div id="notice" class="notice status" role="status" aria-live="polite" style="font-weight: 600;">
                 Synchronizing live assignment streams...
             </div>
         </section>
@@ -37,13 +38,13 @@
         </section>
 
         <!-- Section C: Dynamic RON Provider Connection Details Workspace -->
-        <section class="sds-action-card" id="details" hidden style="margin-bottom: 2rem; border-color: #00A3E0;">
+        <section class="sds-action-card" id="details" hidden style="margin-bottom: 2rem;">
             <!-- Dynamic workspace management elements inject cleanly here at runtime -->
         </section>
 
         <!-- Section D: Navigation Options Footer Ingress -->
         <p style="text-align: center; margin-bottom: 2rem;">
-            <a href="/auth/logout.html" style="color: #FF4444; font-weight: 600; text-decoration: none; font-size: 0.95rem;">
+            <a href="/auth/logout.html" style="color: #e8c879; font-weight: 600; text-decoration: none; font-size: 0.95rem;">
                 &larr; Terminate session and sign out
             </a>
         </p>
@@ -51,6 +52,26 @@
 
     <!-- Patented Legal Ownership Branding Protection Fence -->
     <footer class="sds-intellectual-property-footer">
+        <div class="sds-seal-strip" aria-label="The Sanders companies">
+            <figure>
+                <img src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc.">
+                <figcaption>S &amp; G Security Inc. — Corporate Headquarters</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-home-healthcare.png" alt="Seal of Sanders Home Healthcare &amp; Caregivers LLC">
+                <figcaption>Sanders Home Healthcare &amp; Caregivers LLC</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-senior-living.png" alt="Seal of Sanders Senior Living LLC">
+                <figcaption>Sanders Senior Living LLC</figcaption>
+            </figure>
+            <figure>
+                <img src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC">
+                <figcaption>Sanders Legal Helpers LLC</figcaption>
+            </figure>
+        </div>
+        <div class="sds-footer-tagline">Our family will take great care of your family</div>
+        <div class="sds-footer-closing">The Sanders Way!</div>
         <div>&copy; 2026 Sanders Dash &amp; Seal. All Rights Reserved.</div>
         <div style="font-size: 0.75rem; margin-top: 0.25rem; opacity: 0.7;">
             Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders
