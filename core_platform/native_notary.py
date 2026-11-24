@@ -16,6 +16,7 @@ import hashlib
 from pathlib import Path
 from datetime import datetime, timezone
 from .native_authority import KINDS as AUTHORITY_KINDS
+from .native_journal import NativeNotaryJournal
 
 METHODS = frozenset({'E_NOTARY', 'RON'})
 STATES = frozenset({'DRAFT', 'AWAITING_AUTHORITY', 'READY', 'COMPLETED', 'CANCELLED'})
@@ -228,6 +229,11 @@ class NativeNotarySessions:
             }
         }
 
+        # Instantiate before opening the transaction so the journal's
+        # tables exist on this database file; the entry itself is
+        # written inside the transaction below.
+        journal = NativeNotaryJournal(self.path)
+
         with self._connect() as db:
             db.execute("BEGIN IMMEDIATE;")
             row = db.execute("""
@@ -283,6 +289,11 @@ class NativeNotarySessions:
                 SET state = 'COMPLETED', completed_at = ?, evidence_json = ?
                 WHERE session_id = ?
             """, (now, json.dumps(evidence, sort_keys=True), session_id))
+            # The completion is journaled in the same transaction: a
+            # completed notarial act that cannot be journaled does not
+            # complete (the journal is the act's durable record, and
+            # the transaction rolls back with the session update).
+            journal.record_completion(session_id, db=db)
             db.commit()
 
         return {
