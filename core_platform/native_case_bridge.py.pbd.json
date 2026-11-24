@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/native_case_bridge.py",
+        "payload_hash": "43cca343e7fbeca7fbae631ccf4b5159abe9ad8f38229d971cc90025e633fcc9",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
