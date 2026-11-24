@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/sanders_signal/guardrails.py",
+        "payload_hash": "79009972025f8bda1c2073979eddcffef2d2d97bd70db1a681d0deb2a03da34c",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

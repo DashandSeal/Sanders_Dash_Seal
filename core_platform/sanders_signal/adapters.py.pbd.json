@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/sanders_signal/adapters.py",
+        "payload_hash": "ec3962f9a7233f19dd71b893b1ea678825f55f4f52a4a89896a1b34479767a1e",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

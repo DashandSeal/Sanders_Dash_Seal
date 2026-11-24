@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/sanders_signal/roles.py",
+        "payload_hash": "eb0c2531a9ebfb75f0cb322cc3ca56ada2f6f28cb58c95a9817ee7ca49d6bfb2",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/sanders_signal/inbox.py",
+        "payload_hash": "4c1fd8038b911fd20f8a979bd77ee9b582f34fda573b91fdbf5104fe1226a25e",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

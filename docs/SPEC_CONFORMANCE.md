@@ -1180,3 +1180,65 @@ Caps and records: the attempt counter is incremented BEFORE any mutation; at mos
 **Manifests:** the manifests for `app/customer_app.py` and this file are updated in place, formats preserved; every payload_hash is the SHA-256 of the file's bytes; signatures remain UNSIGNED_SOURCE_MANIFEST — none fabricated. The manifests for `web/resources.html` and `web/resources.js` are unchanged because the files are unchanged.
 
 **Open items:** this change is pushed to main; it reaches the live site through the owner's gated deploy path, and live re-verification (the page's URL no longer serving the free-tier catalog) follows that deploy.
+
+## Sanders Signal social-distribution hub — November 22, 2026
+
+Source: owner direction 2026-11-22 14:43–14:49 MST ("Yes, start building the
+hub"; audio/video top-notch globally; the seven additions; real-time
+language, sign language, Braille, globally) and
+`social-distribution-build-plan.md` (working name Sanders Signal; owner
+picks the final name). No MASTER section covers social distribution; this is
+a new owner-directed platform inside Sanders Dash & Seal, built native
+(not a third-party scheduler), under Core Laws 10 and 11 (Always Free only,
+actually used).
+
+Acceptance: one composed post fans out to the four companies' Facebook Pages
+and Instagram Business accounts (Meta Graph API, token from env only);
+a company post reaches that company only; an S & G Security Inc. broadcast
+reaches all four companies only after explicit owner approval (default deny);
+every publish is logged with what, where, when and who approved it; a failed
+post on one network never blocks the others and reports its reason; no
+address or contact info is added by the hub; unconfigured adapters report
+not-configured diagnostically and never block import or startup; no live post
+is made without configured tokens. Audio/video: the post model carries
+vertical video, standard video and standalone audio; each adapter declares
+its accepted formats and the hub declines unsupported formats with a reason,
+never silently. Global: no region, no geo-gating, no language restriction.
+Accessibility metadata (language, sign-language track, Braille-ready text)
+travels with the post through queue, approval and fan-out. Scheduling is
+timezone-aware; guardrails block address / wrong phone / wrong-company posts;
+roles are writer / approver / publisher per company, tied to the Bozly
+officer model; the media library stores references, not file copies;
+notifications fire on approval-waiting, published, and failed-with-reason.
+
+Bozly scope decision: the HQ approval is recorded through
+`BozlyAuthGate.generate_action_payload_hash` and, when the owner supplies
+signatures and provisioned public keys, `evaluate_executive_approvals`; no
+signature or receipt is ever invented, and an unconfigured Bozly hook is
+recorded as such on the approval record. `bozly_claim_integrity` is not used
+(the post is not a recorded financial transaction).
+
+Verification: local dry-run 2026-11-22, 11/11 cases passed, offline with a
+recording stub transport (urllib.urlopen monkeypatched to raise, proving no
+request left the machine): (1) import + hub constructs with no env set, all
+adapters NOT_CONFIGURED; (2) company text post routes to that company only,
+FB+IG published; (3) company vertical video, Meta published, others
+decline/not-configured with reasons; (4) company audio post, all networks
+decline with reasons, zero publish attempts; (5) HQ broadcast without
+approval denied, awaiting_approval, zero attempts; (6) HQ broadcast with
+approval routes to all four companies, Bozly hook note recorded;
+(7) scheduled post queued until due, then published; (8) guardrails block
+address / wrong phone / wrong-company posts; (9) role denial, writer cannot
+approve or publish, zero attempts; (10) accessibility metadata (language
+es, sign-language ASL, Braille-ready text) identical through queue,
+approval and fan-out; (11) analytics aggregate per network/company, missing
+metrics NOT_AVAILABLE. No live posting, no tokens, HTTP layer stubbed. Do
+not claim live posting until a Meta app + tokens exist and one real publish
+is observed.
+
+Named next increments (not silently dropped): translation engine (the hook
+is the interface; no engine invented); sign-language interpretation
+production and which sign languages are covered (owner decision); Braille
+rendering (Braille-ready text ships now; embosser/display rendering is a
+later increment); notification delivery channel; LinkedIn/Threads/YouTube
+live connections; TikTok app approval; X paid-tier decision (owner).
