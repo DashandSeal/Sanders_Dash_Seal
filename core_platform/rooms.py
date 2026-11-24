@@ -41,6 +41,12 @@ Fail-closed throughout, on the platform's established disciplines:
   room that the invited account itself accepts. Nobody acts under a
   self-asserted identity, and nobody records consent for another
   participant.
+* recording authorization exists only while the room is live
+  (WAITING_ROOM or ACTIVE) and only on unanimous current consent
+  recorded against the room's canonical consent notice version;
+  leaving the live states, or any change to the consent or
+  participant record the authorization rests on, revokes it in the
+  same transaction (Phase B corrective fix — D-1, D-2).
 """
 
 import re
@@ -83,6 +89,14 @@ RECORDING_POLICIES = frozenset((
 
 CONSENT_DECISIONS = frozenset(('GRANTED', 'REFUSED', 'WITHDRAWN'))
 CONSENT_SCOPE = 'RECORDING'
+
+# The platform's current recording-consent notice version. Each room
+# records a canonical consent notice version at creation (this
+# default, or the version supplied at creation); a participant's
+# consent counts toward recording authorization only when it was
+# recorded against the room's canonical version (Phase B corrective
+# fix, discrepancy D-2 — see docs/SPEC_CONFORMANCE.md).
+DEFAULT_CONSENT_NOTICE_VERSION = 'v1'
 
 # The one record category this phase produces (22.8: retention is per
 # record category and jurisdiction; no universal rule is presumed).
@@ -179,6 +193,7 @@ class RoomService:
                 scheduled_end INTEGER,
                 recording_policy TEXT NOT NULL,
                 recording_state TEXT NOT NULL,
+                consent_notice_version TEXT,
                 retention_category TEXT NOT NULL,
                 retention_days INTEGER NOT NULL,
                 retention_basis TEXT NOT NULL,
@@ -189,6 +204,16 @@ class RoomService:
                 updated_at INTEGER NOT NULL,
                 state_changed_at INTEGER NOT NULL
             );""")
+            columns = {row[1] for row in db.execute(
+                "PRAGMA table_info(rooms);").fetchall()}
+            if 'consent_notice_version' not in columns:
+                # A store created before the D-2 corrective fix has no
+                # canonical consent notice version. Its rooms fail
+                # closed on recording authorization: no recorded
+                # consent can match a NULL canonical version.
+                db.execute(
+                    "ALTER TABLE rooms ADD COLUMN "
+                    "consent_notice_version TEXT;")
             db.execute("""CREATE TABLE IF NOT EXISTS room_participants (
                 room_id TEXT NOT NULL,
                 identity TEXT NOT NULL,
@@ -286,13 +311,27 @@ class RoomService:
     def _record(self, stage, **fields):
         self.audit.preserve({'stage': stage, **fields})
 
-    def _current_consent(self, db, room_id, identity):
-        row = db.execute(
-            "SELECT decision FROM room_consents WHERE room_id = ? "
-            "AND identity = ? AND scope = ? "
+    def _current_consent_record(self, db, room_id, identity):
+        return db.execute(
+            "SELECT decision, notice_version FROM room_consents "
+            "WHERE room_id = ? AND identity = ? AND scope = ? "
             "ORDER BY recorded_at DESC, rowid DESC LIMIT 1;",
             (room_id, identity, CONSENT_SCOPE)).fetchone()
+
+    def _current_consent(self, db, room_id, identity):
+        row = self._current_consent_record(db, room_id, identity)
         return row['decision'] if row is not None else None
+
+    @staticmethod
+    def _consent_counts(record, canonical_version):
+        """Whether a participant's current consent record counts
+        toward recording authorization: it must be a GRANTED decision
+        recorded against the room's canonical consent notice version.
+        A consent recorded against any other version stays on the
+        append-only record but does not satisfy authorization (D-2)."""
+        return (record is not None
+                and record['decision'] == 'GRANTED'
+                and record['notice_version'] == canonical_version)
 
     def _admitted(self, db, room_id):
         return db.execute(
@@ -342,6 +381,7 @@ class RoomService:
             'scheduled_end': row['scheduled_end'],
             'recording_policy': row['recording_policy'],
             'recording_state': row['recording_state'],
+            'consent_notice_version': row['consent_notice_version'],
             'retention': self._retention_view(row),
             'created_by': row['created_by'],
             'created_at': row['created_at'],
@@ -391,10 +431,13 @@ class RoomService:
     def create_room(self, actor, *, room_type, purpose, case_id=None,
                     jurisdiction=None, scheduled_start=None,
                     scheduled_end=None, recording_policy=None,
-                    retention_days=None):
+                    retention_days=None, consent_notice_version=None):
         """Create a room in DRAFT; the creator is its host and first
         participant. A case binding is validated against the case
-        registry: a customer binds only their own case."""
+        registry: a customer binds only their own case. The room
+        records a canonical consent notice version (the create input,
+        or the platform default): only consent recorded against that
+        version counts toward recording authorization (D-2)."""
         self._check_actor(actor)
         if room_type not in ROOM_TYPES:
             raise RoomDenied('Unsupported room type')
@@ -405,6 +448,11 @@ class RoomService:
             recording_policy = 'PERMITTED_WITH_CONSENT'
         if recording_policy not in RECORDING_POLICIES:
             raise RoomDenied('Unsupported recording policy')
+        if consent_notice_version is None:
+            consent_notice_version = DEFAULT_CONSENT_NOTICE_VERSION
+        if (not isinstance(consent_notice_version, str)
+                or not NOTICE_VERSION.fullmatch(consent_notice_version)):
+            raise RoomDenied('Invalid consent notice version')
         if retention_days is None:
             retention_days = DEFAULT_RETENTION_DAYS
             retention_basis = 'PLATFORM_DEFAULT'
@@ -434,11 +482,17 @@ class RoomService:
                 raise RoomDenied('Case binding is not wired in this runtime')
             try:
                 case = self.cases.get(case_id)
-            except CaseDenied as exc:
-                raise RoomDenied('Unknown case') from exc
-            if (not self._is_operator(actor)
-                    and case.get('requester') != actor):
-                raise RoomDenied('Case cannot be bound by this actor')
+            except CaseDenied:
+                case = None
+            if (case is None or (not self._is_operator(actor)
+                    and case.get('requester') != actor)):
+                # One caller-facing denial for both failures: a case
+                # that does not exist and a case this actor may not
+                # bind answer identically, so room creation cannot be
+                # used to enumerate which case identities exist — the
+                # same isolation discipline this service applies to
+                # room visibility (D-3).
+                raise RoomDenied('Case cannot be bound')
             if jurisdiction is None:
                 jurisdiction = case.get('jurisdiction')
         room_id = 'room-' + secrets.token_urlsafe(12)
@@ -450,13 +504,15 @@ class RoomService:
                     "INSERT INTO rooms (room_id, room_type, purpose, state, "
                     "host, case_id, jurisdiction, scheduled_start, "
                     "scheduled_end, recording_policy, recording_state, "
-                    "retention_category, retention_days, retention_basis, "
+                    "consent_notice_version, retention_category, "
+                    "retention_days, retention_basis, "
                     "created_by, created_at, updated_at, state_changed_at) "
                     "VALUES (?, ?, ?, 'DRAFT', ?, ?, ?, ?, ?, ?, "
-                    "'NOT_AUTHORIZED', ?, ?, ?, ?, ?, ?, ?);",
+                    "'NOT_AUTHORIZED', ?, ?, ?, ?, ?, ?, ?, ?);",
                     (room_id, room_type, purpose, actor, case_id,
                      jurisdiction, scheduled_start, scheduled_end,
-                     recording_policy, RETENTION_CATEGORY, retention_days,
+                     recording_policy, consent_notice_version,
+                     RETENTION_CATEGORY, retention_days,
                      retention_basis, actor, now, now, now))
                 db.execute(
                     "INSERT INTO room_participants (room_id, identity, role, "
@@ -467,6 +523,7 @@ class RoomService:
                              room_type=room_type, case_id=case_id,
                              jurisdiction=jurisdiction,
                              recording_policy=recording_policy,
+                             consent_notice_version=consent_notice_version,
                              retention_days=retention_days,
                              retention_basis=retention_basis)
                 db.commit()
@@ -602,8 +659,15 @@ class RoomService:
                     "UPDATE rooms SET state = ?, state_changed_at = ?, "
                     "updated_at = ? WHERE room_id = ?;",
                     (target, now, now, room_id))
-                if target in ('ENDED', 'CANCELLED', 'ARCHIVED',
-                              'EVIDENCE_HOLD'):
+                if target not in RECORDING_AUTHORIZABLE_STATES:
+                    # Recording authorization may exist only while the
+                    # room is in WAITING_ROOM or ACTIVE. Any transition
+                    # landing anywhere else — lock, suspend, end,
+                    # cancel, archive, hold, schedule — revokes it in
+                    # this same transaction (D-1): an authorization
+                    # describes a live, continuously authorized room,
+                    # and a room that unlocks or resumes re-earns it
+                    # through a fresh authorization pass.
                     fresh = self._room_row(db, room_id)
                     self._revoke_recording_locked(
                         db, fresh, f'room_{target.lower()}')
@@ -859,7 +923,12 @@ class RoomService:
         or operator cannot consent on a participant's behalf.
         Decisions are append-only; the current decision is the
         latest. A refusal or withdrawal while recording is authorized
-        revokes the authorization in the same transaction."""
+        revokes the authorization in the same transaction, as does a
+        grant recorded against a notice version other than the room's
+        canonical version: such a grant is preserved on the record
+        but no longer counts toward authorization, so the standing
+        authorization no longer describes the consent on record
+        (D-2)."""
         self._check_actor(actor)
         self._check_room_id(room_id)
         if decision not in CONSENT_DECISIONS:
@@ -894,7 +963,9 @@ class RoomService:
                              actor=actor, identity=actor,
                              scope=CONSENT_SCOPE, decision=decision,
                              notice_version=notice_version)
-                if decision != 'GRANTED':
+                if (decision != 'GRANTED'
+                        or notice_version
+                        != row['consent_notice_version']):
                     self._revoke_recording_locked(
                         db, self._room_row(db, room_id), 'consent_changed')
                 db.commit()
@@ -912,8 +983,11 @@ class RoomService:
         consent gate in front of it (22.8): the room must be live or
         in its waiting state, the room's policy must not prohibit
         recording, and EVERY admitted participant — host included —
-        must hold a current GRANTED consent. Anything less refuses
-        and changes nothing."""
+        must hold a current GRANTED consent recorded against the
+        room's canonical consent notice version. A consent recorded
+        against any other version remains on the append-only record
+        but does not count (D-2). Anything less refuses and changes
+        nothing."""
         self._check_actor(actor)
         self._check_room_id(room_id)
         now = int(time.time())
@@ -931,9 +1005,11 @@ class RoomService:
                 if row['recording_state'] == 'AUTHORIZED':
                     raise RoomDenied('Recording is already authorized')
                 admitted = self._admitted(db, room_id)
+                canonical = row['consent_notice_version']
                 missing = [p['identity'] for p in admitted
-                           if self._current_consent(
-                               db, room_id, p['identity']) != 'GRANTED']
+                           if not self._consent_counts(
+                               self._current_consent_record(
+                                   db, room_id, p['identity']), canonical)]
                 if missing:
                     raise RoomDenied(
                         'Recording consent is missing for '
@@ -943,6 +1019,7 @@ class RoomService:
                     "updated_at = ? WHERE room_id = ?;", (now, room_id))
                 self._record('ROOM_RECORDING_AUTHORIZED', room_id=room_id,
                              actor=actor,
+                             notice_version=canonical,
                              participants=len(admitted))
                 db.commit()
             except Exception:

@@ -74,7 +74,7 @@ ROOM_INVITE_ACCEPT_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/invit
 ROOM_INVITE_REVOKE_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/invites/([A-Za-z0-9_-]{1,128})/revoke$')
 ROOM_CONSENT_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/consent$')
 ROOM_RECORDING_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/recording$')
-ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days'}
+ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
 def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None):
     # allowed_origins: every origin a browser may POST from. The app serves
