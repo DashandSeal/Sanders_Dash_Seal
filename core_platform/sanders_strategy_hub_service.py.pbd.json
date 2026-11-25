@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/sanders_strategy_hub_service.py",
+        "payload_hash": "6b076cdd189bc9ed6995868de6e91f9508e583504d4cc4fe11cf124da77babee",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

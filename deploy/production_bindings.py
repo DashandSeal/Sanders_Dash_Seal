@@ -223,6 +223,7 @@ from core_platform.sanders_wellness_service import SandersWellnessService
 from core_platform.sanders_steward_sentinel_service import SandersStewardSentinelService
 from core_platform.sanders_patriot_saint_service import SandersPatriotSaintService
 from core_platform.sanders_freedom_revolution_service import SandersFreedomRevolutionService
+from core_platform.sanders_strategy_hub_service import SandersStrategyHubService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -999,6 +1000,15 @@ def create_production_bindings():
     sanders_freedom_revolution = SandersFreedomRevolutionService(
         data_dir / 'sanders_freedom_revolution.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Strategy Hub platform (Q76, RTSA
+    # Build Program tranche 21): governed
+    # strategic planning records over its own
+    # store — it executes no strategy, conducts
+    # no war game, and directs no operations
+    # itself. Radar is a display name only (D-N14).
+    sanders_strategy_hub = SandersStrategyHubService(
+        data_dir / 'sanders_strategy_hub.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1076,4 +1086,5 @@ def create_production_bindings():
         sanders_steward_sentinel=sanders_steward_sentinel,
         sanders_patriot_saint=sanders_patriot_saint,
         sanders_freedom_revolution=sanders_freedom_revolution,
+        sanders_strategy_hub=sanders_strategy_hub,
     )
