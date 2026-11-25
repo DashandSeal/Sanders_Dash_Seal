@@ -62,6 +62,7 @@ class RuntimeBindings:
     minotaur: object = None
     glass_box_audit: object = None
     architect: object = None
+    archimedes: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -391,7 +392,8 @@ def create_application(bindings=None):
             labyrinth_shield=getattr(bindings, 'labyrinth_shield', None),
             minotaur=getattr(bindings, 'minotaur', None),
             glass_box_audit=getattr(bindings, 'glass_box_audit', None),
-            architect=getattr(bindings, 'architect', None)
+            architect=getattr(bindings, 'architect', None),
+            archimedes=getattr(bindings, 'archimedes', None)
         )
     else:
         verifier = _denied
@@ -719,7 +721,8 @@ def create_application(bindings=None):
                     '/api/labyrinth-shield/healthz',
                     '/api/minotaur/healthz',
                     '/api/glass-box-audit/healthz',
-                    '/api/architect/healthz'):
+                    '/api/architect/healthz',
+                    '/api/archimedes-43/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -745,6 +748,7 @@ def create_application(bindings=None):
                 '/api/minotaur/healthz': ('minotaur', 'minotaur_sentinel', 'minotaur_unavailable'),
                 '/api/glass-box-audit/healthz': ('glass_box_audit', 'glass_box_audit', 'glass_box_audit_unavailable'),
                 '/api/architect/healthz': ('architect', 'architect', 'architect_unavailable'),
+                '/api/archimedes-43/healthz': ('archimedes', 'archimedes_43', 'archimedes_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -817,7 +821,9 @@ def create_application(bindings=None):
                 or path == '/api/glass-box-audit'
                 or path.startswith('/api/glass-box-audit/')
                 or path == '/api/architect'
-                or path.startswith('/api/architect/'))
+                or path.startswith('/api/architect/')
+                or path == '/api/archimedes-43'
+                or path.startswith('/api/archimedes-43/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

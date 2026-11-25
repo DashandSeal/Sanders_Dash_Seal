@@ -46,6 +46,7 @@ from core_platform.labyrinth_shield_service import LabyrinthShieldDenied, Labyri
 from core_platform.minotaur_service import MinotaurDenied, MinotaurForbidden
 from core_platform.glass_box_audit_service import GlassBoxAuditPlatformDenied, GlassBoxAuditPlatformForbidden
 from core_platform.architect_service import ArchitectDenied, ArchitectForbidden
+from core_platform.archimedes_service import ArchimedesDenied, ArchimedesForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -155,9 +156,12 @@ GBA_INCIDENT_ROUTE = re.compile(r'^/api/glass-box-audit/incidents/([A-Za-z0-9_-]
 GBA_INCIDENT_ACTION_ROUTE = re.compile(r'^/api/glass-box-audit/incidents/([A-Za-z0-9_-]{1,128})/action$')
 ARC_DESIGN_ROUTE = re.compile(r'^/api/architect/designs/([A-Za-z0-9_-]{1,128})$')
 ARC_DESIGN_ACTION_ROUTE = re.compile(r'^/api/architect/designs/([A-Za-z0-9_-]{1,128})/action$')
+A43_JOB_ROUTE = re.compile(r'^/api/archimedes-43/jobs/([A-Za-z0-9_-]{1,128})$')
+A43_JOB_ACTION_ROUTE = re.compile(r'^/api/archimedes-43/jobs/([A-Za-z0-9_-]{1,128})/action$')
+A43_JOB_OUTCOME_ROUTE = re.compile(r'^/api/archimedes-43/jobs/([A-Za-z0-9_-]{1,128})/outcome$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -261,6 +265,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         gba_incident_action_match = GBA_INCIDENT_ACTION_ROUTE.fullmatch(path)
         arc_design_match = ARC_DESIGN_ROUTE.fullmatch(path)
         arc_design_action_match = ARC_DESIGN_ACTION_ROUTE.fullmatch(path)
+        a43_job_match = A43_JOB_ROUTE.fullmatch(path)
+        a43_job_action_match = A43_JOB_ACTION_ROUTE.fullmatch(path)
+        a43_job_outcome_match = A43_JOB_OUTCOME_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -407,6 +414,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                  '/api/architect/check-in')
                         or arc_design_match is not None
                         or arc_design_action_match is not None)
+        is_a43_route = (path in ('/api/archimedes-43/status',
+                                 '/api/archimedes-43/jobs',
+                                 '/api/archimedes-43/contract',
+                                 '/api/archimedes-43/operation-check',
+                                 '/api/archimedes-43/check-in')
+                        or a43_job_match is not None
+                        or a43_job_action_match is not None
+                        or a43_job_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -420,7 +435,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_ls_route
                              or is_mn_route
                              or is_gba_route
-                             or is_arc_route)
+                             or is_arc_route
+                             or is_a43_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -474,7 +490,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/glass-box-audit/keys',
                                             '/api/architect/status',
                                             '/api/architect/designs',
-                                            '/api/architect/contract')
+                                            '/api/architect/contract',
+                                            '/api/archimedes-43/status',
+                                            '/api/archimedes-43/jobs',
+                                            '/api/archimedes-43/contract')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -496,7 +515,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or gba_anchor_match is not None
                                    or gba_verification_match is not None
                                    or gba_incident_match is not None
-                                   or arc_design_match is not None) else ('POST',)
+                                   or arc_design_match is not None
+                                   or a43_job_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -512,6 +532,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                     '/api/glass-box-audit/snapshots/produce'):
             allowed = ('POST',)
         if path == '/api/architect/designs':
+            allowed = ('GET', 'POST')
+        if path == '/api/archimedes-43/jobs':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -1363,6 +1385,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = architect.record_review(identity, arc_role, data['design_id'], data['verdict'], data['note'])
                         return respond(start, '201 Created', {'review': record})
                     return check_in(architect)
+                if is_a43_route:
+                    if archimedes is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'archimedes_unavailable'})
+                    a43_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/archimedes-43/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': archimedes.status()})
+                    if path == '/api/archimedes-43/contract':
+                        return respond(start, '200 OK', {'contract': archimedes.contract_view()})
+                    if path == '/api/archimedes-43/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = archimedes.operation_check(identity, a43_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/archimedes-43/jobs':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'jobs': archimedes.jobs_list(identity, a43_role)})
+                        if set(data) != {'kind', 'target_ref', 'source_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = archimedes.create_job(identity, data['kind'], data['target_ref'], data['source_ref'])
+                        return respond(start, '201 Created', {'job': record})
+                    if a43_job_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = archimedes.job_action(identity, a43_job_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'job': record})
+                    if a43_job_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = archimedes.record_outcome(identity, a43_job_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'job': record})
+                    if a43_job_match:
+                        record = archimedes.job_view(identity, a43_role, a43_job_match.group(1))
+                        return respond(start, '200 OK', {'job': record})
+                    return check_in(archimedes)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -1454,6 +1512,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'architect_forbidden'})
         except ArchitectDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'architect_denied', 'detail': str(exc)})
+        except ArchimedesForbidden:
+            return respond(start, '403 Forbidden', {'error': 'archimedes_forbidden'})
+        except ArchimedesDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'archimedes_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

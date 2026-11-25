@@ -164,6 +164,7 @@ from core_platform.labyrinth_shield_service import LabyrinthShieldService
 from core_platform.minotaur_service import MinotaurService
 from core_platform.glass_box_audit_service import GlassBoxAuditService
 from core_platform.architect_service import ArchitectService
+from core_platform.archimedes_service import ArchimedesService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -440,6 +441,16 @@ def create_production_bindings():
         data_dir / 'architect.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # ARCHIMEDES #43 (RTSA Build Program): the build-engineering
+    # role contract built as its own platform — governed build,
+    # test, and deployment-record jobs under the contract's
+    # discipline (it performs no build, test, or deployment;
+    # production deployment is prohibited by its own contract),
+    # on its own store.
+    archimedes = ArchimedesService(
+        data_dir / 'archimedes_43.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -465,4 +476,5 @@ def create_production_bindings():
         minotaur=minotaur,
         glass_box_audit=glass_box_audit,
         architect=architect,
+        archimedes=archimedes,
     )
