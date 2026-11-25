@@ -1,0 +1,98 @@
+name: Carrier step - owner setup token, approvals, Bozly officer key (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  carrier:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Place carrier items on the instance, restart the app, verify
+        uses: appleboy/ssh-action@v1
+        env:
+          SDS_OWNER_SETUP_TOKEN: ${{ secrets.SDS_OWNER_SETUP_TOKEN }}
+          BOZLY_OFFICER_PRIVATE_KEY_B64: ${{ secrets.BOZLY_OFFICER_PRIVATE_KEY_B64 }}
+          BOZLY_OFFICER_PUBLIC_KEYS_JSON: ${{ secrets.BOZLY_OFFICER_PUBLIC_KEYS_JSON }}
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          envs: SDS_OWNER_SETUP_TOKEN,BOZLY_OFFICER_PRIVATE_KEY_B64,BOZLY_OFFICER_PUBLIC_KEYS_JSON
+          script: |
+            set -eu
+            if [ -z "${SDS_OWNER_SETUP_TOKEN:-}" ]; then echo "SETUP_TOKEN_SECRET_MISSING"; exit 1; fi
+            echo "SETUP_TOKEN_SECRET_PRESENT"
+            if [ -z "${BOZLY_OFFICER_PRIVATE_KEY_B64:-}" ]; then echo "BOZLY_PRIVATE_KEY_SECRET_MISSING"; exit 1; fi
+            echo "BOZLY_PRIVATE_KEY_SECRET_PRESENT"
+            if [ -z "${BOZLY_OFFICER_PUBLIC_KEYS_JSON:-}" ]; then echo "BOZLY_PUBLIC_KEYS_SECRET_MISSING"; exit 1; fi
+            echo "BOZLY_PUBLIC_KEYS_SECRET_PRESENT"
+            sudo mkdir -p /etc/sanders-dash-seal /etc/sanders-dash-seal/bozly
+            sudo chmod 700 /etc/sanders-dash-seal/bozly
+            sudo --preserve-env=SDS_OWNER_SETUP_TOKEN,BOZLY_OFFICER_PRIVATE_KEY_B64,BOZLY_OFFICER_PUBLIC_KEYS_JSON python3 - <<'PYEOF'
+            import os
+            import tempfile
+            from pathlib import Path
+
+            token = os.environ.get("SDS_OWNER_SETUP_TOKEN", "")
+            priv = os.environ.get("BOZLY_OFFICER_PRIVATE_KEY_B64", "")
+            pubs = os.environ.get("BOZLY_OFFICER_PUBLIC_KEYS_JSON", "")
+            if not token or not priv or not pubs:
+                raise SystemExit("CARRIER_VALUE_NOT_IN_ENV")
+
+            target = Path("/etc/sanders-dash-seal/environment")
+            existing = target.read_text().splitlines() if target.exists() else []
+            drop = (
+                "SDS_OWNER_SETUP_TOKEN=",
+                "SDS_OWNER_APPROVAL_STREAM_API=",
+                "SDS_OWNER_APPROVAL_DAEDALUS=",
+                "BOZLY_OFFICER_PUBLIC_KEYS_JSON=",
+            )
+            kept = [ln for ln in existing if not ln.strip().startswith(drop)]
+            kept.append("SDS_OWNER_SETUP_TOKEN=" + token)
+            kept.append("SDS_OWNER_APPROVAL_STREAM_API=yes")
+            kept.append("SDS_OWNER_APPROVAL_DAEDALUS=yes")
+            kept.append("BOZLY_OFFICER_PUBLIC_KEYS_JSON=" + pubs)
+            data = "\n".join(kept) + "\n"
+            fd, tmp = tempfile.mkstemp(dir=str(target.parent), prefix=".environment.")
+            os.write(fd, data.encode())
+            os.close(fd)
+            os.chown(tmp, 0, 0)
+            os.chmod(tmp, 0o600)
+            os.replace(tmp, target)
+            print("ENVIRONMENT_FILE_WRITTEN")
+
+            keydir = Path("/etc/sanders-dash-seal/bozly")
+            keyfile = keydir / "officer_ed25519_private.b64"
+            fd, tmp = tempfile.mkstemp(dir=str(keydir), prefix=".officer.")
+            os.write(fd, (priv.strip() + "\n").encode())
+            os.close(fd)
+            os.chown(tmp, 0, 0)
+            os.chmod(tmp, 0o600)
+            os.replace(tmp, keyfile)
+            os.chown(keydir, 0, 0)
+            os.chmod(keydir, 0o700)
+            print("BOZLY_KEY_FILE_WRITTEN")
+            PYEOF
+            for k in SDS_OWNER_SETUP_TOKEN SDS_OWNER_APPROVAL_STREAM_API SDS_OWNER_APPROVAL_DAEDALUS BOZLY_OFFICER_PUBLIC_KEYS_JSON; do
+              echo "env line count $k: $(sudo grep -c "^$k=" /etc/sanders-dash-seal/environment || true)"
+            done
+            if sudo grep -Eq '^SDS_OWNER_APPROVAL_STREAM_API=yes$' /etc/sanders-dash-seal/environment; then echo "STREAM_APPROVAL_LINE_OK"; else echo "STREAM_APPROVAL_LINE_BAD"; exit 1; fi
+            if sudo grep -Eq '^SDS_OWNER_APPROVAL_DAEDALUS=yes$' /etc/sanders-dash-seal/environment; then echo "DAEDALUS_APPROVAL_LINE_OK"; else echo "DAEDALUS_APPROVAL_LINE_BAD"; exit 1; fi
+            sudo stat -c 'bozly key file: mode=%a owner=%U:%G size=%s' /etc/sanders-dash-seal/bozly/officer_ed25519_private.b64
+            sudo systemctl restart sanders-dash-seal.service || true
+            sleep 6
+            echo "service active: $(sudo systemctl is-active sanders-dash-seal.service || true)"
+            curl -s -H 'Host: sandersdashandseal.com' http://127.0.0.1:8000/api/platform/status | python3 -c "
+            import sys, json
+            d = json.load(sys.stdin)
+            s = d.get('services') or d.get('platforms') or {}
+            for name in ('daedalus', 'stream_api'):
+                print(name, json.dumps(s.get(name), sort_keys=True))
+            " || echo "LOCAL_STATUS_PROBE_FAILED"
+            curl -s https://sandersdashandseal.com/api/platform/status | python3 -c "
+            import sys, json
+            d = json.load(sys.stdin)
+            s = d.get('services') or d.get('platforms') or {}
+            for name in ('daedalus', 'stream_api'):
+                print(name, json.dumps(s.get(name), sort_keys=True))
+            " || echo "PUBLIC_STATUS_PROBE_FAILED"
+            echo "CARRIER_STEP_DONE"
