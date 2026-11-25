@@ -123,6 +123,7 @@ class RuntimeBindings:
     sanders_banking_hub: object = None
     sanders_legal_services: object = None
     sanders_strategy_intel: object = None
+    sanders_analytics: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -513,7 +514,8 @@ def create_application(bindings=None):
             sanders_communications=getattr(bindings, 'sanders_communications', None),
             sanders_banking_hub=getattr(bindings, 'sanders_banking_hub', None),
             sanders_legal_services=getattr(bindings, 'sanders_legal_services', None),
-            sanders_strategy_intel=getattr(bindings, 'sanders_strategy_intel', None)
+            sanders_strategy_intel=getattr(bindings, 'sanders_strategy_intel', None),
+            sanders_analytics=getattr(bindings, 'sanders_analytics', None)
         )
     else:
         verifier = _denied
@@ -902,7 +904,8 @@ def create_application(bindings=None):
                     '/api/sanders-communications/healthz',
                     '/api/sanders-banking-hub/healthz',
                     '/api/sanders-legal-services/healthz',
-                    '/api/sanders-strategy-intel/healthz'):
+                    '/api/sanders-strategy-intel/healthz',
+                    '/api/sanders-analytics/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -989,6 +992,7 @@ def create_application(bindings=None):
                 '/api/sanders-banking-hub/healthz': ('sanders_banking_hub', 'sanders_banking_hub', 'sanders_banking_hub_unavailable'),
                 '/api/sanders-legal-services/healthz': ('sanders_legal_services', 'sanders_legal_services', 'sanders_legal_services_unavailable'),
                 '/api/sanders-strategy-intel/healthz': ('sanders_strategy_intel', 'sanders_strategy_intel', 'sanders_strategy_intel_unavailable'),
+                '/api/sanders-analytics/healthz': ('sanders_analytics', 'sanders_analytics', 'sanders_analytics_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -1183,7 +1187,9 @@ def create_application(bindings=None):
                 or path == '/api/sanders-legal-services'
                 or path.startswith('/api/sanders-legal-services/')
                 or path == '/api/sanders-strategy-intel'
-                or path.startswith('/api/sanders-strategy-intel/'))
+                or path.startswith('/api/sanders-strategy-intel/')
+                or path == '/api/sanders-analytics'
+                or path.startswith('/api/sanders-analytics/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

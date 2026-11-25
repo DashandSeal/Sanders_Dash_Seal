@@ -233,6 +233,7 @@ from core_platform.sanders_communications_service import SandersCommunicationsSe
 from core_platform.sanders_banking_hub_service import SandersBankingHubService
 from core_platform.sanders_legal_services_service import SandersLegalServicesService
 from core_platform.sanders_strategy_intel_service import SandersStrategyIntelService
+from core_platform.sanders_analytics_service import SandersAnalyticsService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1104,6 +1105,14 @@ def create_production_bindings():
     sanders_strategy_intel = SandersStrategyIntelService(
         data_dir / 'sanders_strategy_intel.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Analytics platform (Q86,
+    # RTSA Build Program tranche 24): governed
+    # analytics records over its own store
+    # — it runs no analysis, trains no
+    # model, and accesses no live data itself.
+    sanders_analytics = SandersAnalyticsService(
+        data_dir / 'sanders_analytics.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1191,4 +1200,5 @@ def create_production_bindings():
         sanders_banking_hub=sanders_banking_hub,
         sanders_legal_services=sanders_legal_services,
         sanders_strategy_intel=sanders_strategy_intel,
+        sanders_analytics=sanders_analytics,
     )
