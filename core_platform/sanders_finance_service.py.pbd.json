@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/sanders_finance_service.py",
+        "payload_hash": "7ff9bef23e455cf5126a80713653539b7bd85dbd9b7bc3adf3dc111ed7de266c",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

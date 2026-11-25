@@ -206,6 +206,7 @@ from core_platform.sanders_recon_service import SandersReconService
 from core_platform.sanders_senior_living_service import SandersSeniorLivingService
 from core_platform.sanders_legal_helpers_service import SandersLegalHelpersService
 from core_platform.sanders_education_service import SandersEducationService
+from core_platform.sanders_finance_service import SandersFinanceService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -846,6 +847,13 @@ def create_production_bindings():
     sanders_education = SandersEducationService(
         data_dir / 'sanders_education.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Finance platform (Q59, RTSA Build Program
+    # tranche 15): governed finance records over its own
+    # store — records only; it holds no funds, moves no
+    # money, and pays no one. Bozly remains the HQ CFO.
+    sanders_finance = SandersFinanceService(
+        data_dir / 'sanders_finance.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -906,4 +914,5 @@ def create_production_bindings():
         sanders_senior_living=sanders_senior_living,
         sanders_legal_helpers=sanders_legal_helpers,
         sanders_education=sanders_education,
+        sanders_finance=sanders_finance,
     )
