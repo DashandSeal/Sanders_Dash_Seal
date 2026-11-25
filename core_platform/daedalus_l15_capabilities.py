@@ -15,14 +15,28 @@ occupied by Daedalus's own native core
 (``core_platform/daedalus_native_core.py``). The provider transports
 remain optional gated tools; they are not the head capability and
 are not declared here. The inventory is extended to the founder's
-20+ design set (22 capabilities) with names sourced only from his
-own design records — the 2026-11-13 contract below and
+20+ design set (23 capabilities: 22 with names sourced only from
+his own design records, plus the one founder-directed addition
+named below) — the 2026-11-13 contract below and
 ``docs/DAEDALUS_LIVE_UPGRADE_2026-10-23.md`` /
 ``docs/DAEDALUS_RECOVERED_INVENTORY_2026-11-03.md`` — recorded per
 capability in ``CAPABILITY_SOURCES``. A declared capability is a
 design scope statement, never a claim of live operation: each
 capability carries its explicit observed state, and a state flips
 only on evidence (see ``observed_profile``).
+
+One capability is a founder-directed addition of 2026-11-25 rather
+than a name from the records above: ``real_time_learning``, added
+on the founder's direction of that day — "He's got to have the
+ability to actually learn in real time" — and recorded as such in
+``CAPABILITY_SOURCES``. It is performed by the persistent
+learned-knowledge store and the native core's incorporation loop
+(``core_platform/daedalus_knowledge_store.py``,
+``core_platform/daedalus_native_core.py``). It is a different
+capability from ``real_time_events``: learning is the incorporation
+of taught knowledge and recorded outcomes into later reasoning,
+not real-time event handling, and the two are declared and
+observed separately.
 """
 from __future__ import annotations
 
@@ -79,6 +93,7 @@ CAPABILITIES = (
     "multi_agent_validation",
     "neurosymbolic_checks",
     "build_deploy_orchestration",
+    "real_time_learning",
 )
 
 
@@ -142,6 +157,12 @@ CAPABILITY_SOURCES = {
     "build_deploy_orchestration": (
         "docs/DAEDALUS_RECOVERED_INVENTORY_2026-11-03.md (polyglot "
         "build/deploy orchestration)"
+    ),
+    "real_time_learning": (
+        "founder-directed addition 2026-11-25 (\"He's got to have "
+        "the ability to actually learn in real time\"); no learning "
+        "capability is named in the 2026-11-13 contract or the "
+        "2026-10-23 / 2026-11-03 design records"
     ),
 }
 
