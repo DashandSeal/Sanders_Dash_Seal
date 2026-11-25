@@ -207,6 +207,7 @@ from core_platform.sanders_senior_living_service import SandersSeniorLivingServi
 from core_platform.sanders_legal_helpers_service import SandersLegalHelpersService
 from core_platform.sanders_education_service import SandersEducationService
 from core_platform.sanders_finance_service import SandersFinanceService
+from core_platform.sanders_retail_service import SandersRetailService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -854,6 +855,13 @@ def create_production_bindings():
     sanders_finance = SandersFinanceService(
         data_dir / 'sanders_finance.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Retail platform (Q60, RTSA Build Program
+    # tranche 16): governed retail-operations records over
+    # its own store — it sells nothing, fulfills no
+    # order, and processes no payment itself.
+    sanders_retail = SandersRetailService(
+        data_dir / 'sanders_retail.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -915,4 +923,5 @@ def create_production_bindings():
         sanders_legal_helpers=sanders_legal_helpers,
         sanders_education=sanders_education,
         sanders_finance=sanders_finance,
+        sanders_retail=sanders_retail,
     )
