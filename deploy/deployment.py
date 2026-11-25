@@ -90,6 +90,7 @@ class RuntimeBindings:
     baby_girl: object = None
     sanders_omniconn: object = None
     gia_mind: object = None
+    ai_doctor: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -447,7 +448,8 @@ def create_application(bindings=None):
             lil_mama=getattr(bindings, 'lil_mama', None),
             baby_girl=getattr(bindings, 'baby_girl', None),
             sanders_omniconn=getattr(bindings, 'sanders_omniconn', None),
-            gia_mind=getattr(bindings, 'gia_mind', None)
+            gia_mind=getattr(bindings, 'gia_mind', None),
+            ai_doctor=getattr(bindings, 'ai_doctor', None)
         )
     else:
         verifier = _denied
@@ -803,7 +805,8 @@ def create_application(bindings=None):
                     '/api/lil-mama/healthz',
                     '/api/baby-girl/healthz',
                     '/api/sanders-omniconn/healthz',
-                    '/api/gia-mind/healthz'):
+                    '/api/gia-mind/healthz',
+                    '/api/ai-doctor/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -857,6 +860,7 @@ def create_application(bindings=None):
                 '/api/baby-girl/healthz': ('baby_girl', 'baby_girl', 'baby_girl_unavailable'),
                 '/api/sanders-omniconn/healthz': ('sanders_omniconn', 'sanders_omniconn', 'sanders_omniconn_unavailable'),
                 '/api/gia-mind/healthz': ('gia_mind', 'gia_mind', 'gia_mind_unavailable'),
+                '/api/ai-doctor/healthz': ('ai_doctor', 'ai_doctor', 'ai_doctor_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -985,7 +989,9 @@ def create_application(bindings=None):
                 or path == '/api/sanders-omniconn'
                 or path.startswith('/api/sanders-omniconn/')
                 or path == '/api/gia-mind'
-                or path.startswith('/api/gia-mind/'))
+                or path.startswith('/api/gia-mind/')
+                or path == '/api/ai-doctor'
+                or path.startswith('/api/ai-doctor/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

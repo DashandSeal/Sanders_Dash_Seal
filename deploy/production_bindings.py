@@ -192,6 +192,7 @@ from core_platform.lil_mama_service import LilMamaService
 from core_platform.baby_girl_service import BabyGirlService
 from core_platform.sanders_omniconn_service import SandersOmniconnService
 from core_platform.gia_mind_service import GiaMindService
+from core_platform.ai_doctor_service import AIDoctorService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -776,6 +777,14 @@ def create_production_bindings():
     gia_mind = GiaMindService(
         data_dir / 'gia_mind.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # AI Doctor platform (Q53, RTSA Build Program tranche
+    # 13): governed AI-system health case records over
+    # his own store — AI-to-AI only, never humans;
+    # human subjects are refused by construction and
+    # determinations are records, never acts.
+    ai_doctor = AIDoctorService(
+        data_dir / 'ai_doctor.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -830,4 +839,5 @@ def create_production_bindings():
         baby_girl=baby_girl,
         sanders_omniconn=sanders_omniconn,
         gia_mind=gia_mind,
+        ai_doctor=ai_doctor,
     )

@@ -4449,3 +4449,191 @@ wrong origin 403, check-in 201, unwired service 503
 gia_mind_unavailable). Deployed-composition verification
 through create_application on the final composed tree is
 recorded in the tranche 13 entry of the build queue.
+
+## RTSA Build Program Q53 — AI Doctor (2026-11-24)
+
+**Scope**: build the AI Doctor design whole as its own
+platform service (canonical catalog row #61, Band 2D), per
+the established tranche pattern, under the standards
+gate: Fortune 500 governs end to end, the MASTER
+architecture within it, and the Sanders Royal Enterprise
+Standard for presentation within it. Fortune 500 judgment:
+the platform meets the standard within its honest scope
+limits — it is an internal operator/auditor record surface
+over governed AI-system health case records; no public or
+customer surface is designed for the AI Doctor in any
+examined source, and none could be: he is an AI-to-AI
+service, never a human-facing one, so no public surface
+is built and the Royal Enterprise presentation layer does
+not apply; no security internals are exposed anywhere.
+Scope limits stated plainly: he serves AI systems only,
+never humans — human subjects are refused by
+construction, there is no code path by which a human
+subject can be recorded, and no human-care operation
+exists; his determinations are records, never acts — a
+SYSTEM_REPAIR_REQUIRED outcome records that repair is
+required, and the platform performs no repair, modifies
+no AI system, and treats no one; he holds subjects and
+findings by reference only — no model weights, no patient
+data of any kind, and no live-system state ever. Naming
+verification: the canonical catalog (row #61), the master
+grid (deploy/oracle/sanders_master_grid.json id 6), and
+the pre-existing registry record name this platform "AI
+Doctor" — the name was verified against those sources
+before building, per the name law recorded after tranche
+8. RECORDS CONFLICTS, flagged and not harmonized (the
+sources carry six distinct descriptions of this platform
+and the owner's recorded position is that the multiplicity
+is by design; they are not collapsed): (1) Set A and Set
+C carry the fuller form "Sanders AI Doctor" — recorded
+exactly as found; the built name is AI Doctor, the form
+the grid, the catalog row, and the registry record carry.
+(2) AI-TO-AI ONLY vs Set C: the grid and the registry
+hold "AI-to-AI medical services (never humans)" and the
+owner's design (restated in the CareHiveOS inventory the
+owner supplied 2026-11-24) is AI-to-AI ONLY — never a
+human-patient service; Set C's purpose text ("AI
+healthcare, FDA-approved diagnostics, patient care
+automation, Nobel medical AI") carries patient-care
+language with no AI-only qualifier. The texts alone do
+not settle the reading; the owner's design governs this
+build. (3) The Police Men status record names his
+protocol "AI-Only Legal & Humanity-First Protocol" (his
+M1 seat in the ai_oversight topology, paired with M2,
+the AI Psychiatrist): the word "Legal" appears in
+exactly one source and is glossed in none, and D-N16
+awaits the owner's re-rule — the protocol name is
+recorded verbatim as an attested facet and nothing is
+built on the word. (4) NAICS: three sources attest three
+different sets — the grid (541715, 541512, 541511,
+541519, 519190), Set B (541715, 621399), and the
+DeployPad README map (621111, 541618, 561612, 541110,
+541512, 611430) — attested and unruled; no owner ruling
+assigns a set and the canonical catalog row carries
+none, so NO NAICS set is carried into his built
+identity. (5) Personas attested — "AI-Only Healer"
+(grid nickname) and "Aunt" (Set B and Set C) — recorded
+as facets; neither is adopted as the built identity's
+persona. His designed address
+(ai-doctor.sandershomehealthcare.com, Set A) sits under
+the unowned parent sandershomehealthcare.com; it is
+recorded as the designed address and nothing is served
+there. core_platform/agent_registry.py and
+core_platform/rtsa_registry.py remain byte-untouched.
+The AI Doctor is his own platform — not the AI
+Psychiatrist (catalog #62 — his M2 counterpart, a
+separate platform), not Sanders Healthcare (catalog
+#132), not Sanders Home Healthcare & Caregivers (catalog
+#64), and not Sanders Health Solutions (catalog #96) —
+never merged.
+
+**Built**: core_platform/ai_doctor_service.py
+(AIDoctorService over core_platform/rtsa_foundation.py;
+independent identity ai_doctor; design view carrying the
+designed role "AI-to-AI medical services (never
+humans)", its design sources, the discipline
+AI_TO_AI_ONLY, and the closed subject-kind set;
+fail-closed operation check refusing the human-care and
+execution boundary by name under that signal —
+treat_human, diagnose_human, prescribe, repair_system,
+modify_ai_system, external_execution — and unknown
+operations; case records carried as durable, receipted
+records over a subject reference, its subject kind, a
+declared diagnostic-finding reference set, and a scope
+reference, with lifecycle REQUESTED → APPROVED /
+REJECTED (the recorded human decision) →
+OUTCOME_RECORDED; the subject kind enforced as a closed
+set whose only member is AI_SYSTEM — any other subject
+kind (HUMAN, PATIENT, PERSON, or anything else) is
+refused at record creation with AI_TO_AI_ONLY; the
+findings discipline enforced in the record model — a
+record declared with no findings stands
+NO_FINDINGS_SUBMITTED in every view and in the status
+tallies, and both determinations
+(SYSTEM_HEALTH_CONFIRMED, SYSTEM_REPAIR_REQUIRED) are
+refused on it, while INCONCLUSIVE, which asserts
+nothing, records against evidence; outcomes recorded
+only for APPROVED records and only against a presented
+evidence reference, with a closed outcome set; every
+state change writes its Glass-Box receipt inside the
+same transaction; operator-only check-in bound to the
+identity integrity digest). Route family /api/ai-doctor/
+wired through app/customer_app.py (create_customer_app
+parameter ai_doctor), deploy/deployment.py
+(RuntimeBindings.ai_doctor, health route
+/api/ai-doctor/healthz, forwarding through
+create_application), and deploy/production_bindings.py
+(construction on his own store ai_doctor.db); watchdog
+check_http entry in deploy/sds_watchdog.sh; registry
+entry in core_platform/ai_platform_links.json updated in
+place (registry remains 77 entries — the entry
+pre-existed from the records layer and now carries the
+built platform; its former grid endpoint, a file claim
+on an unreachable host, is replaced by the in-process
+status endpoint).
+
+**Pricing/teaching audit** (examined set: canonical
+catalog row #61; Set B database_schema.sql, read
+directly — row ('AI Doctor', 'Aunt', 'ultra_premium',
+12, 19999, 7999600, ARRAY['541715','621399']) — and Set
+B tier_pricing_global.py, read directly — the name in
+the ultra_premium list; Set C catalog (DeployPad branch
+README), read directly — Tier 3 entry "Sanders AI Doctor
+| Aunt | $420,000,000/yr" with the purpose text recorded
+above; the MASTER design — the name does not appear;
+the master grid; the Police Men status record; the
+collected descriptions document
+(ai-doctor-psychiatrist-descriptions.md)): the design
+carries NO price for the AI Doctor that may be wired —
+Set B's $7,999,600 figure and Set C's $420,000,000/yr
+figure are BLOCKER FIGURES under the owner's 2026-11-24
+21:31 ruling (unrealistic figures placed as blockers,
+never chargeable prices); both are flagged here, none is
+built, none is wired, and the two figures' conflict is
+not settled because neither is a price. The design
+carries NO teaching function for the AI Doctor — none
+built, none invented.
+
+**Verification**: scratch drive (never committed) —
+58/58 checks: identity and design view (designed role
+and discipline exact; the closed subject-kind set
+carried in the design view; the flagged items carried in
+the design note); constructor refuses a missing audit
+adapter; operation check (record operation RECORD_ONLY;
+all six human-care and execution operations refused by
+name with AI_TO_AI_ONLY; unknown operation refused);
+subject-kind construction (HUMAN, PATIENT, PERSON,
+CLINICIAN, and empty subject kinds all refused at record
+creation with AI_TO_AI_ONLY; status tallies subjects by
+kind with AI_SYSTEM the only kind present); record
+lifecycle (operator-only creation; subject/scope
+references required; finding set must be a list of
+non-empty references, capped; outcome refused before
+approval; outcome without evidence refused; outcome set
+closed — CURED is not an outcome; the with-findings
+record's SYSTEM_HEALTH_CONFIRMED outcome records against
+evidence and a second outcome is refused; the
+no-findings record stands NO_FINDINGS_SUBMITTED with
+both determinations refused on it while INCONCLUSIVE
+records; reject records REJECTED and approve from
+REJECTED is refused; unknown record denied; geofence
+refuses an undeclared region; status totals including
+records_no_findings_submitted and
+findings_declared_total; operator-only check-in);
+registry at 77 entries with the updated entry carrying
+the built platform and naming the blocker figures as
+blockers; all 9 approval gates UNAPPROVED; WSGI through
+create_customer_app (signed-out 401, status 200,
+human-care operation 400 with AI_TO_AI_ONLY in the
+detail, create refused for non-operator 403, create 201
+standing NO_FINDINGS_SUBMITTED, approve 200,
+SYSTEM_HEALTH_CONFIRMED on the no-findings record
+refused 400 with NO_FINDINGS_SUBMITTED in the detail,
+INCONCLUSIVE outcome 200, records list 200, WSGI create
+with a HUMAN subject kind refused 400 with AI_TO_AI_ONLY
+in the detail, WSGI create with an AI_SYSTEM subject
+kind 201, unexpected fields 400, wrong origin 403,
+check-in 201, unwired service 503
+ai_doctor_unavailable). Deployed-composition verification
+through create_application on the final composed tree is
+recorded in the tranche 13 entry of the build queue.

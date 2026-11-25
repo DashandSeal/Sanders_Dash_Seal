@@ -74,6 +74,7 @@ from core_platform.lil_mama_service import LilMamaDenied, LilMamaForbidden
 from core_platform.baby_girl_service import BabyGirlDenied, BabyGirlForbidden
 from core_platform.sanders_omniconn_service import SandersOmniconnDenied, SandersOmniconnForbidden
 from core_platform.gia_mind_service import GiaMindDenied, GiaMindForbidden
+from core_platform.ai_doctor_service import AIDoctorDenied, AIDoctorForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -272,6 +273,9 @@ SANDERS_OMNICONN_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-omniconn/reco
 GIA_MIND_RECORD_ROUTE = re.compile(r'^/api/gia-mind/records/([A-Za-z0-9_-]{1,128})$')
 GIA_MIND_RECORD_ACTION_ROUTE = re.compile(r'^/api/gia-mind/records/([A-Za-z0-9_-]{1,128})/action$')
 GIA_MIND_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/gia-mind/records/([A-Za-z0-9_-]{1,128})/outcome$')
+AI_DOCTOR_RECORD_ROUTE = re.compile(r'^/api/ai-doctor/records/([A-Za-z0-9_-]{1,128})$')
+AI_DOCTOR_RECORD_ACTION_ROUTE = re.compile(r'^/api/ai-doctor/records/([A-Za-z0-9_-]{1,128})/action$')
+AI_DOCTOR_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/ai-doctor/records/([A-Za-z0-9_-]{1,128})/outcome$')
 BABY_GIRL_CUSTODY_ROUTE = re.compile(r'^/api/baby-girl/custody/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
@@ -280,7 +284,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -472,6 +476,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         gia_mind_record_match = GIA_MIND_RECORD_ROUTE.fullmatch(path)
         gia_mind_record_action_match = GIA_MIND_RECORD_ACTION_ROUTE.fullmatch(path)
         gia_mind_record_outcome_match = GIA_MIND_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        ai_doctor_record_match = AI_DOCTOR_RECORD_ROUTE.fullmatch(path)
+        ai_doctor_record_action_match = AI_DOCTOR_RECORD_ACTION_ROUTE.fullmatch(path)
+        ai_doctor_record_outcome_match = AI_DOCTOR_RECORD_OUTCOME_ROUTE.fullmatch(path)
         baby_girl_custody_match = BABY_GIRL_CUSTODY_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
@@ -854,6 +861,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or gia_mind_record_match is not None
                                   or gia_mind_record_action_match is not None
                                   or gia_mind_record_outcome_match is not None)
+        is_ai_doctor_route = (path in ('/api/ai-doctor/status',
+                                       '/api/ai-doctor/records',
+                                       '/api/ai-doctor/design',
+                                       '/api/ai-doctor/operation-check',
+                                       '/api/ai-doctor/check-in')
+                                  or ai_doctor_record_match is not None
+                                  or ai_doctor_record_action_match is not None
+                                  or ai_doctor_record_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -895,7 +910,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_lil_mama_route
                              or is_baby_girl_route
                              or is_omniconn_route
-                             or is_gia_mind_route)
+                             or is_gia_mind_route
+                             or is_ai_doctor_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -1036,7 +1052,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/sanders-omniconn/design',
                                             '/api/gia-mind/status',
                                             '/api/gia-mind/records',
-                                            '/api/gia-mind/design')
+                                            '/api/gia-mind/design',
+                                            '/api/ai-doctor/status',
+                                            '/api/ai-doctor/records',
+                                            '/api/ai-doctor/design')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -1090,7 +1109,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or baby_girl_record_match is not None
                                    or baby_girl_custody_match is not None
                                    or omniconn_record_match is not None
-                                   or gia_mind_record_match is not None) else ('POST',)
+                                   or gia_mind_record_match is not None
+                                   or ai_doctor_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -1164,6 +1184,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-omniconn/records':
             allowed = ('GET', 'POST')
         if path == '/api/gia-mind/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/ai-doctor/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/custody':
             allowed = ('GET', 'POST')
@@ -3075,6 +3097,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = gia_mind.record_view(identity, gia_mind_role, gia_mind_record_match.group(1))
                         return respond(start, '200 OK', {'record': record})
                     return check_in(gia_mind)
+                if is_ai_doctor_route:
+                    if ai_doctor is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'ai_doctor_unavailable'})
+                    ai_doctor_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/ai-doctor/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': ai_doctor.status()})
+                    if path == '/api/ai-doctor/design':
+                        return respond(start, '200 OK', {'design': ai_doctor.design_view()})
+                    if path == '/api/ai-doctor/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = ai_doctor.operation_check(identity, ai_doctor_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/ai-doctor/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': ai_doctor.records_list(identity, ai_doctor_role)})
+                        if set(data) != {'subject_ref', 'subject_kind', 'finding_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = ai_doctor.create_record(identity, data['subject_ref'], data['subject_kind'], data['finding_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if ai_doctor_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = ai_doctor.record_action(identity, ai_doctor_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if ai_doctor_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = ai_doctor.record_outcome(identity, ai_doctor_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if ai_doctor_record_match:
+                        record = ai_doctor.record_view(identity, ai_doctor_role, ai_doctor_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(ai_doctor)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -3278,6 +3336,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'gia_mind_forbidden'})
         except GiaMindDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'gia_mind_denied', 'detail': str(exc)})
+        except AIDoctorForbidden:
+            return respond(start, '403 Forbidden', {'error': 'ai_doctor_forbidden'})
+        except AIDoctorDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'ai_doctor_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
