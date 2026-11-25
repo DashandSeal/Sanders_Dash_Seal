@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/internal/grantwriter-surn-dashboard.html",
+        "payload_hash": "06e9a1b7824f46aba0971d59a3a31118251d730262fcf2add84aa7303bfe5ad5",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

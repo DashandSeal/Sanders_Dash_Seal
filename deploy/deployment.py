@@ -843,6 +843,43 @@ def create_application(bindings=None):
             except Exception:
                 return _response(start, '503 Service Unavailable',
                                  {'error': 'bozly_status_unavailable'})
+        if path == '/internal/grantwriter-surn':
+            # INTERNAL ONLY — Grantwriter + SURN architecture
+            # dashboard (HL37 air-gapped confidentiality / HL40 zero
+            # knowledge public footprint). Served only on internal /
+            # loopback hosts; on every public host this branch
+            # returns None so the path follows the ordinary
+            # unknown-path flow and is indistinguishable from any
+            # other nonexistent path. It is in no public navigation,
+            # no customer-app asset map, and no public route family.
+            host = env.get('HTTP_HOST', '')
+            if not isinstance(host, str):
+                return _response(start, '421 Misdirected Request', {'error': 'host_denied'})
+            host = host.lower()
+            if host.endswith(':443'):
+                host = host[:-4]
+            if not _is_internal(host):
+                return None
+            if method != 'GET':
+                return _response(start, '405 Method Not Allowed', {'error': 'method_not_allowed'}, [('Allow', 'GET')])
+            try:
+                from core_platform.grantwriter_surn_architecture import (
+                    dashboard_snapshot, render_dashboard)
+                gw = getattr(bindings, 'grantwriter', None) \
+                    if bindings is not None else None
+                body = render_dashboard(
+                    dashboard_snapshot(gw)).encode('utf-8')
+            except Exception:
+                return _response(start, '503 Service Unavailable',
+                                 {'error': 'internal_dashboard_unavailable'})
+            start('200 OK', [
+                ('Content-Type', 'text/html; charset=utf-8'),
+                ('Content-Length', str(len(body))),
+                ('Cache-Control', 'no-store'),
+                ('X-Content-Type-Options', 'nosniff'),
+                ('Referrer-Policy', 'no-referrer'),
+            ])
+            return [body]
         if path in ('/api/uncle-nickey-mao/healthz', '/api/carehive-os/healthz',
                     '/api/home-healthcare/healthz', '/api/grantwriter/healthz',
                     '/api/pbd-validation/healthz',
