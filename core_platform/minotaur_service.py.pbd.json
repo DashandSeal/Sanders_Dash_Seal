@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/minotaur_service.py",
+        "payload_hash": "06c7987357f7ba1e05b4de323866c82591fa217c082254113d2b52b9eb5a13c9",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -43,6 +43,7 @@ from core_platform.it_ai_manager import ITAIManagerDenied, ITAIManagerForbidden
 from core_platform.twin_gate_service import TwinGateServiceDenied, TwinGateServiceForbidden
 from core_platform.sharpshooter_service import SharpshooterDenied, SharpshooterForbidden
 from core_platform.labyrinth_shield_service import LabyrinthShieldDenied, LabyrinthShieldForbidden
+from core_platform.minotaur_service import MinotaurDenied, MinotaurForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -141,9 +142,12 @@ SS_REMEDIATION_ROUTE = re.compile(r'^/api/sharpshooter/remediations/([A-Za-z0-9_
 SS_REMEDIATION_ACTION_ROUTE = re.compile(r'^/api/sharpshooter/remediations/([A-Za-z0-9_-]{1,128})/(execute|rollback)$')
 LS_EVALUATION_ROUTE = re.compile(r'^/api/labyrinth-shield/evaluations/([A-Za-z0-9_-]{1,128})$')
 LS_ISOLATION_RELEASE_ROUTE = re.compile(r'^/api/labyrinth-shield/isolations/([A-Za-z0-9_-]{1,128})/release$')
+MN_ANOMALY_ROUTE = re.compile(r'^/api/minotaur/anomalies/([A-Za-z0-9_-]{1,128})$')
+MN_ANOMALY_ACTION_ROUTE = re.compile(r'^/api/minotaur/anomalies/([A-Za-z0-9_-]{1,128})/action$')
+MN_CLEARANCE_ROUTE = re.compile(r'^/api/minotaur/clearances/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -236,6 +240,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         tg_action_match = TG_AUTH_ACTION_ROUTE.fullmatch(path)
         ss_incident_match = SS_INCIDENT_ROUTE.fullmatch(path)
         ls_evaluation_match = LS_EVALUATION_ROUTE.fullmatch(path)
+        mn_anomaly_match = MN_ANOMALY_ROUTE.fullmatch(path)
+        mn_anomaly_action_match = MN_ANOMALY_ACTION_ROUTE.fullmatch(path)
+        mn_clearance_match = MN_CLEARANCE_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -342,6 +349,17 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                 '/api/labyrinth-shield/check-in')
                        or ls_evaluation_match is not None
                        or ls_isolation_release_match is not None)
+        is_mn_route = (path in ('/api/minotaur/status',
+                                '/api/minotaur/targets',
+                                '/api/minotaur/pin',
+                                '/api/minotaur/pin-all',
+                                '/api/minotaur/patrol',
+                                '/api/minotaur/anomalies',
+                                '/api/minotaur/clearances',
+                                '/api/minotaur/check-in')
+                       or mn_anomaly_match is not None
+                       or mn_anomaly_action_match is not None
+                       or mn_clearance_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -352,7 +370,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_itm_route
                              or is_tg_route
                              or is_ss_route
-                             or is_ls_route)
+                             or is_ls_route
+                             or is_mn_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -393,7 +412,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/labyrinth-shield/status',
                                             '/api/labyrinth-shield/blocklist',
                                             '/api/labyrinth-shield/isolations',
-                                            '/api/labyrinth-shield/integrity')
+                                            '/api/labyrinth-shield/integrity',
+                                            '/api/minotaur/status',
+                                            '/api/minotaur/targets',
+                                            '/api/minotaur/anomalies')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -409,7 +431,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or tg_auth_match is not None
                                    or ss_incident_match is not None
                                    or ss_remediation_match is not None
-                                   or ls_evaluation_match is not None) else ('POST',)
+                                   or ls_evaluation_match is not None
+                                   or mn_anomaly_match is not None
+                                   or mn_clearance_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -1111,6 +1135,50 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = labyrinth_shield.integrity_pin(identity)
                         return respond(start, '200 OK', {'integrity': record})
                     return check_in(labyrinth_shield)
+                if is_mn_route:
+                    if minotaur is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'minotaur_unavailable'})
+                    mn_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/minotaur/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': minotaur.status()})
+                    if path == '/api/minotaur/targets':
+                        return respond(start, '200 OK', {'targets': minotaur.targets(identity, mn_role)})
+                    if path == '/api/minotaur/pin':
+                        if set(data) != {'target'}:
+                            raise ValueError('unexpected fields')
+                        record = minotaur.pin_baseline(identity, data['target'])
+                        return respond(start, '201 Created', {'baseline': record})
+                    if path == '/api/minotaur/pin-all':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = minotaur.pin_all_baselines(identity)
+                        return respond(start, '201 Created', {'baselines': record})
+                    if path == '/api/minotaur/patrol':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = minotaur.patrol(identity)
+                        return respond(start, '201 Created', {'patrol': record})
+                    if path == '/api/minotaur/anomalies':
+                        return respond(start, '200 OK', {'anomalies': minotaur.anomalies_list(identity, mn_role)})
+                    if mn_anomaly_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = minotaur.anomaly_action(identity, mn_anomaly_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'anomaly': record})
+                    if mn_anomaly_match:
+                        record = minotaur.anomaly_view(identity, mn_role, mn_anomaly_match.group(1))
+                        return respond(start, '200 OK', {'anomaly': record})
+                    if path == '/api/minotaur/clearances':
+                        if set(data) != {'subject'}:
+                            raise ValueError('unexpected fields')
+                        record = minotaur.clearance_issue(identity, data['subject'])
+                        return respond(start, '201 Created', {'clearance': record})
+                    if mn_clearance_match:
+                        record = minotaur.clearance_view(identity, mn_role, mn_clearance_match.group(1))
+                        return respond(start, '200 OK', {'clearance': record})
+                    return check_in(minotaur)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -1190,6 +1258,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'labyrinth_shield_forbidden'})
         except LabyrinthShieldDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'labyrinth_shield_denied', 'detail': str(exc)})
+        except MinotaurForbidden:
+            return respond(start, '403 Forbidden', {'error': 'minotaur_forbidden'})
+        except MinotaurDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'minotaur_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

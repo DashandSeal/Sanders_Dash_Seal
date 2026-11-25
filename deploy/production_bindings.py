@@ -161,6 +161,7 @@ from core_platform.native_case_bridge import CaseNativeBridge
 from core_platform.twin_gate_service import TwinGateService
 from core_platform.sharpshooter_service import SharpshooterService
 from core_platform.labyrinth_shield_service import LabyrinthShieldService
+from core_platform.minotaur_service import MinotaurService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -399,6 +400,17 @@ def create_production_bindings():
         data_dir / 'labyrinth_shield.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # RTSA Minotaur (RTSA Build Program): the production build-out
+    # of the recovered minotaur_sentinel.py foundation — durable
+    # operator-pinned baselines over the repository root, recorded
+    # patrol cycles, the anomaly lifecycle, and clearance
+    # determinations for the Twin-Gate section 8 chain, on its
+    # own store.
+    minotaur = MinotaurService(
+        data_dir / 'minotaur.db',
+        Path(__file__).resolve().parent.parent,
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -421,4 +433,5 @@ def create_production_bindings():
         twin_gate=twin_gate,
         sharpshooter=sharpshooter,
         labyrinth_shield=labyrinth_shield,
+        minotaur=minotaur,
     )
