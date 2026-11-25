@@ -1,0 +1,613 @@
+"""Sanders Coordinator — the platform
+coordination and cross-platform integration
+platform.
+
+The production build-out of the Sanders
+Coordinator design (canonical catalog row #97,
+Band 2D), built whole as its own platform service
+over the shared RTSA foundation (RTSA Build
+Program Q78).
+
+NAME — verified before building, per the name
+law: the canonical catalog (row #97), Set B, and
+Set C Tier 6 all name this platform **Sanders
+Coordinator** — the queue-note reading matched
+the source name exactly.
+
+PERSONA — OWNER-RULED, recorded exactly as ruled
+and nothing beyond: the platform's persona is
+**Butterscotch** (the owner's ruling, recorded
+in decisions.md with his confirmations of
+2026-11-23: "The Coordinator is Butterscotch" —
+consistent across Set B's persona column and Set
+C's nickname). The persona is recorded here as
+ruled; no further persona material is adopted or
+presented.
+
+Set C's purpose text for this name — "Platform
+coordination, cross-platform integration,
+workflow automation, collaboration" — is
+recorded verbatim as found and is NOT the built
+scope beyond governed platform-coordination
+records: no platform is coordinated, integrated,
+or directed by this build, and no workflow is
+automated. The designed addresses are records
+only: Set A carries the hostname
+sanders-coordinator.vercel.app — from the
+retired Vercel era (D-N18; the owner has since
+directed all deployment off Vercel onto GitHub
+to Oracle), so it is recorded and nothing is
+served there; Set C's registry record carries
+coordinator.sandersglobal.com under the
+unowned parent sandersglobal.com, likewise
+recorded, nothing served.
+
+RECOVERED vs REBUILT — the discipline of this
+module is absolute: a rebuilt component is never
+described as recovered or original.
+
+RECOVERED (records only, stated exactly): the
+designed purpose — platform coordination,
+cross-platform integration, workflow automation,
+and collaboration (canonical catalog row #97;
+Set C Tier 6; the Set B schema seed carries the
+platform at the premium tier). No Sanders
+Coordinator module existed in any examined
+source.
+
+REBUILT (everything executable in this module):
+the governed platform below — the Sanders
+Coordinator platform's own identity and store,
+carrying platform-coordination records:
+
+- **Coordination records**: a subject reference
+  (a coordination matter, platform workflow, or
+  collaboration program under service, by
+  reference), a declared set of coordination
+  references, and a scope reference, carried as
+  durable, receipted records with a lifecycle:
+  REQUESTED, then APPROVED or REJECTED by a
+  human operator's recorded decision, then an
+  outcome recorded against presented evidence
+  (OUTCOME_RECORDED).
+- **The coordination discipline**: outcomes are
+  recorded only for APPROVED records and only
+  against a presented evidence reference, with a
+  closed outcome set
+  (COORDINATION_POSITION_CONFIRMED /
+  COORDINATION_ACTION_REQUIRED / INCONCLUSIVE).
+  A record declared with no coordinations stands
+  NO_COORDINATIONS_SUBMITTED in every view and
+  in the status tallies, and both determinations
+  are refused on it — no coordinations were
+  presented to determine from; INCONCLUSIVE,
+  which asserts nothing, records against
+  evidence.
+- **Records, never direction**: determinations
+  are records placed before human operators. The
+  platform coordinates no platform, integrates
+  no platform, automates no workflow, and
+  directs no collaboration —
+  coordinate_platforms, integrate_platforms,
+  automate_workflow, direct_collaboration, and
+  external_execution are refused by name under
+  COORDINATOR_RECORDS_ONLY.
+- **Reference-only discipline**: subjects and
+  coordinations are carried by reference only;
+  the platform holds no platform credentials, no
+  workflow definitions, no live-system state,
+  and no cross-platform control channel —
+  references and workflow state only, as across
+  the ecosystem. No public or customer surface
+  is designed for this platform in any examined
+  source, so none was built; no security
+  internals are exposed.
+- **NAICS**: two sources attest two different
+  sets — Set B (541611, 541512) and the Set C
+  registry NAICS map (621610, 541618, 561612,
+  523991, 541512, 611430). No owner ruling
+  assigns a set, and the canonical catalog row
+  carries none — NO NAICS set is carried into
+  the platform's built identity; both sets stand
+  recorded as attested and unruled.
+- **Separation**: the Sanders Coordinator
+  platform is its own platform. It is not the IT
+  AI Manager (catalog #21 — the dedicated
+  manager of the twelve IT agents), not Sanders
+  Omniconn (catalog #59 — oversight and
+  AI-coordination records), and not CHORUS
+  (catalog #35 — multimodal synthesis and
+  orchestration) — identities are never merged.
+
+No record, no action: every state-changing
+operation writes its Glass-Box receipt inside
+the same transaction, through the shared
+foundation's audit adapter; the service refuses
+to exist without one.
+"""
+
+from __future__ import annotations
+
+import json
+import sqlite3
+import time
+import uuid
+from pathlib import Path
+
+from .rtsa_foundation import (
+    AccessGuard,
+    FoundationDenied,
+    FoundationForbidden,
+    GeofencePolicy,
+    PlatformIdentity,
+    ensure_checkin_schema,
+    validate_identity,
+)
+from .rtsa_foundation import (
+    latest_check_in as _foundation_latest_check_in,
+)
+from .rtsa_foundation import (
+    record_check_in as _foundation_record_check_in,
+)
+
+
+IDENTITY = validate_identity(PlatformIdentity(
+    platform_id='sanders_coordinator',
+    name='Sanders Coordinator',
+    legal_entities=('s_and_g_security_inc',),
+    naics_codes=(),
+    authorized_regions=('US-CO', 'US-WI'),
+    status='BUILT',
+))
+
+DESIGNED_ROLE = 'Platform coordination, cross-platform integration'
+DISCIPLINE = 'COORDINATOR_RECORDS_ONLY'
+RECORD_OPERATIONS = ('record_coordinator', 'approve_coordinator', 'record_outcome',
+    'view_coordinator', 'view_design')
+EXECUTION_OPERATIONS = ('coordinate_platforms', 'integrate_platforms',
+    'automate_workflow', 'direct_collaboration',
+    'external_execution')
+RECORD_STATUSES = ('REQUESTED', 'APPROVED', 'REJECTED',
+                   'OUTCOME_RECORDED')
+RECORD_TRANSITIONS = {
+    'approve': {'REQUESTED': 'APPROVED'},
+    'reject': {'REQUESTED': 'REJECTED'},
+}
+OUTCOMES = ('COORDINATION_POSITION_CONFIRMED', 'COORDINATION_ACTION_REQUIRED',
+            'INCONCLUSIVE')
+DETERMINATIONS = ('COORDINATION_POSITION_CONFIRMED', 'COORDINATION_ACTION_REQUIRED')
+MAX_REFS = 100
+
+
+class SandersCoordinatorDenied(Exception):
+    """The requested Sanders Coordinator operation is not
+    allowed."""
+
+
+class SandersCoordinatorForbidden(Exception):
+    """The actor lacks authority for the requested operation."""
+
+
+class SandersCoordinatorService:
+    """Sanders Coordinator: governed platform-coordination records under the coordinator records discipline."""
+
+    def __init__(self, database_path, *, operator_verifier, audit,
+                 clock=time.time):
+        if audit is None or not callable(getattr(audit, 'preserve', None)):
+            raise SandersCoordinatorDenied(
+                'Sanders Coordinator requires a working'
+                ' Glass-Box audit adapter')
+        self._path = Path(database_path)
+        self._path.parent.mkdir(parents=True, exist_ok=True)
+        self.operator_verifier = operator_verifier
+        self._audit = audit
+        self._clock = clock
+        self.identity = IDENTITY
+        self.geofence = GeofencePolicy(IDENTITY)
+        self.guard = AccessGuard(audit, 'sanders_coordinator', {
+            'OPERATOR': {'SANDERS_COORDINATOR'},
+            'AUDITOR': {'SANDERS_COORDINATOR'},
+        })
+        with self._connect() as db:
+            ensure_checkin_schema(db)
+            db.executescript(
+                """
+                CREATE TABLE IF NOT EXISTS sanders_coordinator_records (
+                    record_id TEXT PRIMARY KEY,
+                    subject_ref TEXT NOT NULL,
+                    coordination_refs TEXT NOT NULL,
+                    coordination_count INTEGER NOT NULL,
+                    scope_ref TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    outcome TEXT,
+                    evidence_ref TEXT,
+                    requested_by TEXT NOT NULL,
+                    requested_at REAL NOT NULL,
+                    updated_by TEXT NOT NULL,
+                    updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                """
+            )
+
+    # -- plumbing ---------------------------------------------------
+
+    def _connect(self):
+        db = sqlite3.connect(self._path, timeout=10,
+                             isolation_level='IMMEDIATE')
+        db.row_factory = sqlite3.Row
+        return db
+
+    def _now(self) -> float:
+        return float(self._clock())
+
+    def _check_actor(self, actor):
+        if not isinstance(actor, str) or not actor.strip():
+            raise SandersCoordinatorForbidden(
+                'A non-empty actor is required')
+
+    def _is_operator(self, actor):
+        try:
+            return self.operator_verifier(actor) is True
+        except Exception:
+            return False
+
+    def _require_operator(self, actor):
+        self._check_actor(actor)
+        if not self._is_operator(actor):
+            raise SandersCoordinatorForbidden(
+                'Operator authority is required for this operation')
+
+    def _record(self, event, **fields):
+        return self._audit.preserve(event, **fields)
+
+    def _geo(self, region):
+        if region is None:
+            return
+        decision = self.geofence.evaluate(region)
+        if decision != 'ALLOW':
+            raise SandersCoordinatorForbidden(
+                f'Geofence {decision} for declared jurisdiction'
+                f' {region!r}')
+
+    def _guard_access(self, actor, role, record_ref, purpose):
+        self._check_actor(actor)
+        try:
+            self.guard.access(actor, role, 'SANDERS_COORDINATOR',
+                              record_ref, purpose=purpose)
+        except FoundationForbidden as exc:
+            raise SandersCoordinatorForbidden(str(exc)) from exc
+        except FoundationDenied as exc:
+            raise SandersCoordinatorDenied(str(exc)) from exc
+
+    # -- design -----------------------------------------------------
+
+    @staticmethod
+    def design_view() -> dict:
+        return {
+            'name': IDENTITY.name,
+            'designed_role': DESIGNED_ROLE,
+            'design_sources': ['canonical catalog row #97', 'Set A platform registry (name, retired vercel.app address)', 'Set B schema seed row (read directly)', 'Set C Tier 6 catalog entry (read directly)', 'owner ruling (decisions.md): the Coordinator is Butterscotch; D-N18 retired Vercel address'],
+            'discipline': DISCIPLINE,
+            'record_operations': list(RECORD_OPERATIONS),
+            'note': 'Sanders Coordinator is the platform coordination and cross-platform integration platform: it carries governed platform-coordination records over coordination matters, platform workflows, and collaboration programs and declared coordination sets presented by reference only. Set C’s purpose text for this name — Platform coordination, cross-platform integration, workflow automation, collaboration — is recorded verbatim as found and is NOT the built scope: no platform is coordinated, integrated, or directed by this build, and no workflow is automated. The platform coordinates no platform, integrates no platform, automates no workflow, and directs no collaboration: coordinate_platforms, integrate_platforms, automate_workflow, direct_collaboration, and external_execution are refused by name under COORDINATOR_RECORDS_ONLY, and determinations are records for human operators, never direction. A record declared with no coordinations stands NO_COORDINATIONS_SUBMITTED and no determination can be recorded on it. PERSONA — OWNER-RULED: the platform’s persona is Butterscotch (the owner’s ruling, decisions.md, confirmed 2026-11-23: “The Coordinator is Butterscotch”, consistent across Set B’s persona column and Set C’s nickname) — recorded exactly as ruled, nothing beyond it. The designed addresses are records only: Set A’s sanders-coordinator.vercel.app belongs to the retired Vercel era (D-N18; deployment has since been directed off Vercel onto GitHub to Oracle) and Set C’s registry record carries coordinator.sandersglobal.com under the unowned parent sandersglobal.com — both recorded, nothing served at either. Its two attested NAICS sets are recorded as found, and no NAICS set is carried into its identity. The platform holds references and workflow state only — no platform credentials, no workflow definitions, no cross-platform control channel. No public or customer surface is designed for this platform in any examined source, so none was built and no security internals are exposed. Sanders Coordinator is distinct from the IT AI Manager (catalog 21), Sanders Omniconn (catalog 59), and CHORUS (catalog 35) — identities are never merged.',
+        }
+
+
+
+    def operation_check(self, actor, role, operation, *, region=None):
+        """Fail-closed design check: a named operation is either
+        a record operation this platform carries, or it is
+        refused — a sales operation or an execution operation
+        the coordinator records discipline does not
+        authorize, or unknown."""
+        self._geo(region)
+        self._guard_access(actor, role, 'design',
+                           'operation design check')
+        if operation in EXECUTION_OPERATIONS:
+            raise SandersCoordinatorDenied(
+                f'Operation {operation!r} is refused: the'
+                ' Sanders Coordinator platform'
+                ' carries coordinator records'
+                ' only \u2014 it coordinates no platform,'
+                ' integrates no platform, automates'
+                ' no workflow, and directs no'
+                ' collaboration itself'
+                ' (COORDINATOR_RECORDS_ONLY)')
+        if operation not in RECORD_OPERATIONS:
+            raise SandersCoordinatorDenied(
+                f'Unknown operation: {operation!r}')
+        return {
+            'operation': operation,
+            'permitted_as': 'RECORD_ONLY',
+            'discipline': DISCIPLINE,
+            'designed_role': DESIGNED_ROLE,
+        }
+
+    # -- records ------------------------------------------------------
+
+    @staticmethod
+    def _record_view(row):
+        operations = json.loads(row['coordination_refs'])
+        return {
+            'record_id': row['record_id'],
+            'subject_ref': row['subject_ref'],
+            'coordination_refs': operations,
+            'coordination_count': row['coordination_count'],
+            'coordination_state': ('NO_COORDINATIONS_SUBMITTED'
+                             if row['coordination_count'] == 0
+                             else 'COORDINATIONS_SUBMITTED'),
+            'scope_ref': row['scope_ref'],
+            'status': row['status'],
+            'outcome': row['outcome'],
+            'evidence_ref': row['evidence_ref'],
+            'requested_by': row['requested_by'],
+            'requested_at': row['requested_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def create_record(self, actor, subject_ref, coordination_refs,
+                      scope_ref, *, region=None):
+        """Record one coordinator record (operator only) over
+        a subject and a declared set of operation
+        references, presented by reference. The operation set
+        may be empty — the record then stands
+        NO_COORDINATIONS_SUBMITTED, exactly as the operation
+        discipline holds, and no determination can be recorded
+        on it. Recording the record coordinates no
+        platform, integrates nothing, and
+        automates no workflow."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (('subject_ref', subject_ref),
+                             ('scope_ref', scope_ref)):
+            if not isinstance(value, str) or not value.strip():
+                raise SandersCoordinatorDenied(
+                    f'A {label} is required')
+        if not isinstance(coordination_refs, (list, tuple)):
+            raise SandersCoordinatorDenied(
+                'coordination_refs must be a list of references')
+        if len(coordination_refs) > MAX_REFS:
+            raise SandersCoordinatorDenied(
+                f'At most {MAX_REFS} operation'
+                ' references per record')
+        operations = []
+        for ref in coordination_refs:
+            if not isinstance(ref, str) or not ref.strip():
+                raise SandersCoordinatorDenied(
+                    'Every operation reference must be a'
+                    ' non-empty string')
+            operations.append(ref.strip())
+        now = self._now()
+        record_id = f'sanders-coordinator-record-{uuid.uuid4().hex[:16]}'
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_COORDINATOR_RECORD_RECORDED',
+                    actor=actor, record_id=record_id,
+                    subject_ref=subject_ref.strip(),
+                    coordination_count=len(operations))
+                db.execute(
+                    'INSERT INTO sanders_coordinator_records'
+                    ' (record_id, subject_ref, coordination_refs,'
+                    ' coordination_count, scope_ref, status, outcome,'
+                    ' evidence_ref, requested_by, requested_at,'
+                    ' updated_by, updated_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (record_id, subject_ref.strip(),
+                     json.dumps(operations), len(operations),
+                     scope_ref.strip(), 'REQUESTED', None, None,
+                     actor, now, actor, now, receipt_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM sanders_coordinator_records'
+                ' WHERE record_id = ?',
+                (record_id,)).fetchone()
+        return self._record_view(row)
+
+    def records_list(self, actor, role, *, region=None):
+        self._geo(region)
+        self._guard_access(actor, role, 'records', 'records view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM sanders_coordinator_records'
+                ' ORDER BY requested_at',
+            ).fetchall()
+        return [self._record_view(row) for row in rows]
+
+    def record_view(self, actor, role, record_id, *, region=None):
+        self._geo(region)
+        self._guard_access(actor, role, record_id, 'record view')
+        with self._connect() as db:
+            row = db.execute(
+                'SELECT * FROM sanders_coordinator_records'
+                ' WHERE record_id = ?',
+                (record_id,)).fetchone()
+        if row is None:
+            raise SandersCoordinatorDenied(
+                'Coordinator record not found')
+        return self._record_view(row)
+
+    def record_action(self, actor, record_id, action, *,
+                      region=None):
+        """Approve or reject one requested coordinator record
+        (operator only) — the recorded human decision the
+        record lifecycle requires. Approval approves the
+        RECORD; it authorizes no action against any subject."""
+        self._geo(region)
+        self._require_operator(actor)
+        transitions = RECORD_TRANSITIONS.get(action)
+        if transitions is None:
+            raise SandersCoordinatorDenied(
+                f'Unknown record action: {action!r}')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM sanders_coordinator_records'
+                    ' WHERE record_id = ?',
+                    (record_id,)).fetchone()
+                if row is None:
+                    raise SandersCoordinatorDenied(
+                        'Coordinator record not found')
+                new_status = transitions.get(row['status'])
+                if new_status is None:
+                    raise SandersCoordinatorDenied(
+                        f"Cannot {action} a coordinator record"
+                        f" in status {row['status']}")
+                receipt_id = self._record(
+                    'SANDERS_COORDINATOR_RECORD_ACTION',
+                    actor=actor, record_id=record_id,
+                    action=action, from_status=row['status'],
+                    to_status=new_status)
+                db.execute(
+                    'UPDATE sanders_coordinator_records SET status = ?,'
+                    ' updated_by = ?, updated_at = ?, receipt_id = ?'
+                    ' WHERE record_id = ?',
+                    (new_status, actor, now, receipt_id,
+                     record_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM sanders_coordinator_records'
+                ' WHERE record_id = ?',
+                (record_id,)).fetchone()
+        return self._record_view(updated)
+
+    def record_outcome(self, actor, record_id, outcome,
+                       evidence_ref, *, region=None):
+        """Record one approved record's outcome (operator
+        only), against a presented evidence reference. An
+        outcome without evidence is refused. A determination
+        (COORDINATION_POSITION_CONFIRMED or COORDINATION_ACTION_REQUIRED) on a
+        record declared with no operations is refused —
+        NO_COORDINATIONS_SUBMITTED: no operations were presented to
+        determine from. An escalation outcome is a record for
+        a human decision; it dispatches and enforces
+        nothing."""
+        self._geo(region)
+        self._require_operator(actor)
+        if outcome not in OUTCOMES:
+            raise SandersCoordinatorDenied(
+                f'Unknown outcome: {outcome!r}')
+        if not isinstance(evidence_ref, str) or not evidence_ref.strip():
+            raise SandersCoordinatorDenied(
+                'An evidence reference is required to record an'
+                ' outcome')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM sanders_coordinator_records'
+                    ' WHERE record_id = ?',
+                    (record_id,)).fetchone()
+                if row is None:
+                    raise SandersCoordinatorDenied(
+                        'Coordinator record not found')
+                if row['status'] != 'APPROVED':
+                    raise SandersCoordinatorDenied(
+                        'Outcomes are recorded only for APPROVED'
+                        f" coordinator records (this one is"
+                        f" {row['status']})")
+                if outcome in DETERMINATIONS \
+                        and row['coordination_count'] == 0:
+                    raise SandersCoordinatorDenied(
+                        'NO_COORDINATIONS_SUBMITTED: a record'
+                        ' declared with no operations cannot be'
+                        f' determined {outcome}')
+                receipt_id = self._record(
+                    'SANDERS_COORDINATOR_OUTCOME_RECORDED',
+                    actor=actor, record_id=record_id,
+                    outcome=outcome,
+                    evidence_ref=evidence_ref.strip())
+                db.execute(
+                    'UPDATE sanders_coordinator_records SET status = ?,'
+                    ' outcome = ?, evidence_ref = ?, updated_by'
+                    ' = ?, updated_at = ?, receipt_id = ?'
+                    ' WHERE record_id = ?',
+                    ('OUTCOME_RECORDED', outcome,
+                     evidence_ref.strip(), actor, now, receipt_id,
+                     record_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM sanders_coordinator_records'
+                ' WHERE record_id = ?',
+                (record_id,)).fetchone()
+        return self._record_view(updated)
+
+    # -- status / check-in ----------------------------------------------
+
+    def status(self) -> dict:
+        with self._connect() as db:
+            by_status = {s: 0 for s in RECORD_STATUSES}
+            for row in db.execute(
+                    'SELECT status, COUNT(*) AS n'
+                    ' FROM sanders_coordinator_records'
+                    ' GROUP BY status'):
+                by_status[row['status']] = row['n']
+            by_outcome = {o: 0 for o in OUTCOMES}
+            for row in db.execute(
+                    'SELECT outcome, COUNT(*) AS n'
+                    ' FROM sanders_coordinator_records'
+                    ' WHERE outcome IS NOT NULL GROUP BY outcome'):
+                by_outcome[row['outcome']] = row['n']
+            no_refs = db.execute(
+                'SELECT COUNT(*) AS n FROM sanders_coordinator_records'
+                ' WHERE coordination_count = 0').fetchone()['n']
+            refs_total = db.execute(
+                'SELECT COALESCE(SUM(coordination_count), 0) AS n'
+                ' FROM sanders_coordinator_records').fetchone()['n']
+            latest = _foundation_latest_check_in(db,
+                                                 IDENTITY.platform_id)
+        return {
+            'identity': IDENTITY.to_dict(),
+            'design': self.design_view(),
+            'records_total': sum(by_status.values()),
+            'records_by_status': by_status,
+            'records_by_outcome': by_outcome,
+            'records_no_coordinations_submitted': no_refs,
+            'coordinations_declared_total': refs_total,
+            'latest_check_in': latest,
+        }
+
+    def record_check_in(self, actor, deployment_location,
+                        operational_status) -> dict:
+        """Record a platform check-in (operator-only), bound to
+        the platform identity's integrity digest via the shared
+        foundation, with its receipt inside the transaction."""
+        self._require_operator(actor)
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                try:
+                    record = _foundation_record_check_in(
+                        db, IDENTITY, deployment_location,
+                        operational_status)
+                except FoundationDenied as exc:
+                    raise SandersCoordinatorDenied(str(exc)) from exc
+                self._record('SANDERS_COORDINATOR_CHECK_IN',
+                             actor=actor,
+                             deployment_location=deployment_location,
+                             operational_status=operational_status,
+                             seq=record['seq'])
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return record
