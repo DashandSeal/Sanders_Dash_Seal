@@ -86,6 +86,7 @@ from core_platform.sanders_logistics_service import SandersLogisticsDenied, Sand
 from core_platform.sanders_security_service import SandersSecurityDenied, SandersSecurityForbidden
 from core_platform.sanders_real_estate_service import SandersRealEstateDenied, SandersRealEstateForbidden
 from core_platform.sanders_energy_service import SandersEnergyDenied, SandersEnergyForbidden
+from core_platform.sanders_transportation_service import SandersTransportationDenied, SandersTransportationForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -322,6 +323,9 @@ SANDERS_REAL_ESTATE_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-real-estat
 SANDERS_ENERGY_RECORD_ROUTE = re.compile(r'^/api/sanders-energy/records/([A-Za-z0-9_-]{1,128})$')
 SANDERS_ENERGY_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-energy/records/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_ENERGY_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-energy/records/([A-Za-z0-9_-]{1,128})/outcome$')
+SANDERS_TRANSPORTATION_RECORD_ROUTE = re.compile(r'^/api/sanders-transportation/records/([A-Za-z0-9_-]{1,128})$')
+SANDERS_TRANSPORTATION_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-transportation/records/([A-Za-z0-9_-]{1,128})/action$')
+SANDERS_TRANSPORTATION_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-transportation/records/([A-Za-z0-9_-]{1,128})/outcome$')
 BABY_GIRL_CUSTODY_ROUTE = re.compile(r'^/api/baby-girl/custody/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
@@ -330,7 +334,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -560,6 +564,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         energy_record_match = SANDERS_ENERGY_RECORD_ROUTE.fullmatch(path)
         energy_record_action_match = SANDERS_ENERGY_RECORD_ACTION_ROUTE.fullmatch(path)
         energy_record_outcome_match = SANDERS_ENERGY_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        transportation_record_match = SANDERS_TRANSPORTATION_RECORD_ROUTE.fullmatch(path)
+        transportation_record_action_match = SANDERS_TRANSPORTATION_RECORD_ACTION_ROUTE.fullmatch(path)
+        transportation_record_outcome_match = SANDERS_TRANSPORTATION_RECORD_OUTCOME_ROUTE.fullmatch(path)
         baby_girl_custody_match = BABY_GIRL_CUSTODY_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
@@ -1041,6 +1048,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or energy_record_match is not None
                                   or energy_record_action_match is not None
                                   or energy_record_outcome_match is not None)
+        is_transportation_route = (path in ('/api/sanders-transportation/status',
+                                            '/api/sanders-transportation/records',
+                                            '/api/sanders-transportation/design',
+                                            '/api/sanders-transportation/operation-check',
+                                            '/api/sanders-transportation/check-in')
+                                  or transportation_record_match is not None
+                                  or transportation_record_action_match is not None
+                                  or transportation_record_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -1094,7 +1109,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_logistics_route
                              or is_security_route
                              or is_real_estate_route
-                             or is_energy_route)
+                             or is_energy_route
+                             or is_transportation_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -1271,7 +1287,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/sanders-real-estate/design',
                                             '/api/sanders-energy/status',
                                             '/api/sanders-energy/records',
-                                            '/api/sanders-energy/design')
+                                            '/api/sanders-energy/design',
+                                            '/api/sanders-transportation/status',
+                                            '/api/sanders-transportation/records',
+                                            '/api/sanders-transportation/design')
                                    or unm_referral_match is not None
                                    or unm_subject_referrals_match is not None
                                    or unm_person_activation_match is not None
@@ -1339,7 +1358,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or logistics_record_match is not None
                                    or security_record_match is not None
                                    or real_estate_record_match is not None
-                                   or energy_record_match is not None) else ('POST',)
+                                   or energy_record_match is not None
+                                   or transportation_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -1437,6 +1457,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-real-estate/records':
             allowed = ('GET', 'POST')
         if path == '/api/sanders-energy/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-transportation/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/custody':
             allowed = ('GET', 'POST')
@@ -3793,6 +3815,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = sanders_energy.record_view(identity, energy_role, energy_record_match.group(1))
                         return respond(start, '200 OK', {'record': record})
                     return check_in(sanders_energy)
+                if is_transportation_route:
+                    if sanders_transportation is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'sanders_transportation_unavailable'})
+                    transportation_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/sanders-transportation/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': sanders_transportation.status()})
+                    if path == '/api/sanders-transportation/design':
+                        return respond(start, '200 OK', {'design': sanders_transportation.design_view()})
+                    if path == '/api/sanders-transportation/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_transportation.operation_check(identity, transportation_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/sanders-transportation/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': sanders_transportation.records_list(identity, transportation_role)})
+                        if set(data) != {'subject_ref', 'route_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_transportation.create_record(identity, data['subject_ref'], data['route_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if transportation_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_transportation.record_action(identity, transportation_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if transportation_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_transportation.record_outcome(identity, transportation_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if transportation_record_match:
+                        record = sanders_transportation.record_view(identity, transportation_role, transportation_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(sanders_transportation)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -4044,6 +4102,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'sanders_energy_forbidden'})
         except SandersEnergyDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'sanders_energy_denied', 'detail': str(exc)})
+        except SandersTransportationForbidden:
+            return respond(start, '403 Forbidden', {'error': 'sanders_transportation_forbidden'})
+        except SandersTransportationDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'sanders_transportation_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
