@@ -236,6 +236,7 @@ from core_platform.sanders_strategy_intel_service import SandersStrategyIntelSer
 from core_platform.sanders_analytics_service import SandersAnalyticsService
 from core_platform.sanders_innovation_lab_service import SandersInnovationLabService
 from core_platform.sanders_supply_chain_service import SandersSupplyChainService
+from core_platform.sanders_logical_framework_service import SandersLogicalFrameworkService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1134,6 +1135,14 @@ def create_production_bindings():
     sanders_supply_chain = SandersSupplyChainService(
         data_dir / 'sanders_supply_chain.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Logical Framework platform (Q89,
+    # RTSA Build Program tranche 25): governed
+    # operations-framework records over its own
+    # store — it enforces no SOP, modifies no
+    # process, and directs no operation itself.
+    sanders_logical_framework = SandersLogicalFrameworkService(
+        data_dir / 'sanders_logical_framework.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1224,4 +1233,5 @@ def create_production_bindings():
         sanders_analytics=sanders_analytics,
         sanders_innovation_lab=sanders_innovation_lab,
         sanders_supply_chain=sanders_supply_chain,
+        sanders_logical_framework=sanders_logical_framework,
     )
