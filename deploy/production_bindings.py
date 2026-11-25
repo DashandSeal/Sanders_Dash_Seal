@@ -214,6 +214,7 @@ from core_platform.sanders_real_estate_service import SandersRealEstateService
 from core_platform.sanders_energy_service import SandersEnergyService
 from core_platform.sanders_transportation_service import SandersTransportationService
 from core_platform.sanders_agriculture_service import SandersAgricultureService
+from core_platform.sanders_manufacturing_service import SandersManufacturingService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -913,6 +914,14 @@ def create_production_bindings():
     sanders_agriculture = SandersAgricultureService(
         data_dir / 'sanders_agriculture.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Manufacturing platform (Q67, RTSA Build
+    # Program tranche 18): governed manufacturing
+    # records over its own store — it manufactures
+    # no goods, operates no plant, and assembles
+    # no product itself.
+    sanders_manufacturing = SandersManufacturingService(
+        data_dir / 'sanders_manufacturing.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -981,4 +990,5 @@ def create_production_bindings():
         sanders_energy=sanders_energy,
         sanders_transportation=sanders_transportation,
         sanders_agriculture=sanders_agriculture,
+        sanders_manufacturing=sanders_manufacturing,
     )
