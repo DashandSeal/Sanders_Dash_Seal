@@ -218,6 +218,7 @@ from core_platform.sanders_manufacturing_service import SandersManufacturingServ
 from core_platform.sanders_consulting_service import SandersConsultingService
 from core_platform.sanders_hospitality_service import SandersHospitalityService
 from core_platform.sanders_entertainment_service import SandersEntertainmentService
+from core_platform.sanders_sports_service import SandersSportsService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -950,6 +951,14 @@ def create_production_bindings():
     sanders_entertainment = SandersEntertainmentService(
         data_dir / 'sanders_entertainment.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Sports platform (Q71, RTSA Build
+    # Program tranche 19): governed sports
+    # records over its own store — it stages
+    # no event, sells no ticket, and manages
+    # no team itself.
+    sanders_sports = SandersSportsService(
+        data_dir / 'sanders_sports.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1022,4 +1031,5 @@ def create_production_bindings():
         sanders_consulting=sanders_consulting,
         sanders_hospitality=sanders_hospitality,
         sanders_entertainment=sanders_entertainment,
+        sanders_sports=sanders_sports,
     )
