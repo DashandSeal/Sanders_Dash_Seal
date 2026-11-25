@@ -190,6 +190,7 @@ from core_platform.it_support_agent_service import ITSupportAgentService
 from core_platform.sanders_sentinel_service import SandersSentinelService
 from core_platform.lil_mama_service import LilMamaService
 from core_platform.baby_girl_service import BabyGirlService
+from core_platform.sanders_omniconn_service import SandersOmniconnService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -758,6 +759,14 @@ def create_production_bindings():
     baby_girl = BabyGirlService(
         data_dir / 'baby_girl.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Omniconn platform (Q51, RTSA Build Program
+    # tranche 13): governed oversight and AI-coordination
+    # records over its own store — oversight and
+    # coordination by record only; it directs, commands,
+    # overrides, and surveils nothing.
+    sanders_omniconn = SandersOmniconnService(
+        data_dir / 'sanders_omniconn.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -810,4 +819,5 @@ def create_production_bindings():
         sanders_sentinel=sanders_sentinel,
         lil_mama=lil_mama,
         baby_girl=baby_girl,
+        sanders_omniconn=sanders_omniconn,
     )

@@ -4135,3 +4135,161 @@ the 23 misses are the known stale registry-count assertions
 in drives written when the registry was smaller (each
 asserts an older count; the registry is 77). The 9 approval
 gates remain UNAPPROVED; nothing in this build opens a gate.
+
+## RTSA Build Program Q51 — Sanders Omniconn (2026-11-24)
+
+**Scope**: build the Sanders Omniconn design whole as
+its own platform service (canonical catalog row #59, Band
+2D), per the established tranche pattern, under the
+standards gate: Fortune 500 governs end to end, the MASTER
+architecture within it, and the Sanders Royal Enterprise
+Standard for presentation within it. Fortune 500 judgment:
+the platform meets the standard within its honest scope
+limits — it is an internal operator/auditor record surface
+over governed oversight records; no public or customer
+surface is designed for Sanders Omniconn in any examined
+source (its designed hostname is a status endpoint under an
+unowned parent domain, not a storefront), so none is built
+and the Royal Enterprise presentation layer does not apply;
+no security internals are exposed anywhere. Scope limits
+stated plainly: the platform oversees and coordinates by
+record only — it directs nothing, commands nothing,
+overrides nothing, and surveils nothing live; an outcome
+is a record placed before the subject platform's human
+operators, never an instruction any system executes; it
+holds subjects and observations by reference only — no
+telemetry, no traffic, no live feeds, and no live-system
+state ever. Naming verification: the canonical catalog
+(row #59), the master grid (deploy/oracle/
+sanders_master_grid.json id 4), and the owner's recorded
+ruling D-N1 name this platform "Sanders Omniconn" — the
+name was verified against those sources before building,
+per the name law recorded after tranche 8. D-N1 rules
+expressly against the catalog's own Omniconm
+recommendation: the canonical name is Sanders Omniconn.
+RECORDS CONFLICT, flagged and not harmonized: Set A (the
+baseline registry), Set C (the tier catalog), and the
+designed hostname (omniconm.sandersglobal.com) carry the
+"Omniconm" spelling — all recorded exactly as found and
+none adopted as a name. The hostname stays as designed
+(the owner's call under D-N1: name and address differ);
+it sits under the unowned parent sandersglobal.com, so it
+is recorded as the designed address and nothing is served
+there. The grid nickname and Set C nickname "Big Brother"
+are likewise recorded as found and are not adopted as this
+platform's identity. Set C's purpose text for this name —
+"Full-spectrum surveillance, DARPA/NSA integration,
+nuclear command capability, Five Eyes coordination" — is
+recorded exactly as found and is NOT the built scope: no
+source the owner has ruled adopts it, and this build
+constructs no surveillance, no external-agency
+integration, and no command capability of any kind; the
+built purpose is the grid's "Oversight, AI coordination".
+core_platform/agent_registry.py and
+core_platform/rtsa_registry.py remain byte-untouched.
+Sanders Omniconn is its own platform — not Sanders
+Coordinator (catalog #97 — platform coordination,
+cross-platform integration, and workflow automation as a
+business platform; a different designed purpose), not the
+IT AI Manager (Q5), not the Police Men layer, and not any
+watchdog — never merged.
+
+**Built**: core_platform/sanders_omniconn_service.py
+(SandersOmniconnService over
+core_platform/rtsa_foundation.py; independent identity
+sanders_omniconn; design view carrying the designed role
+"Oversight, AI coordination", its design sources, and the
+discipline OVERSIGHT_AND_COORDINATION_RECORDS_ONLY;
+fail-closed operation check refusing the execution
+boundary by name with that signal — direct_platform,
+command_platform, override_platform, surveil_subject,
+external_execution — and unknown operations; oversight
+records carried as durable, receipted records over a
+subject reference, a declared observation reference set,
+and a scope reference, with lifecycle REQUESTED →
+APPROVED / REJECTED (the recorded human decision) →
+OUTCOME_RECORDED; the observation discipline enforced in
+the record model — a record declared with no observations
+stands NO_OBSERVATIONS_SUBMITTED in every view and in the
+status tallies, and both determinations
+(OVERSIGHT_CONFIRMED, OVERSIGHT_FINDING_RECORDED) are
+refused on it, while INCONCLUSIVE, which asserts nothing,
+records against evidence; outcomes recorded only for
+APPROVED records and only against a presented evidence
+reference, with a closed outcome set; every state change
+writes its Glass-Box receipt inside the same transaction;
+operator-only check-in bound to the identity integrity
+digest). Route family /api/sanders-omniconn/ wired
+through app/customer_app.py (create_customer_app
+parameter sanders_omniconn), deploy/deployment.py
+(RuntimeBindings.sanders_omniconn, health route
+/api/sanders-omniconn/healthz, forwarding through
+create_application), and deploy/production_bindings.py
+(construction on its own store sanders_omniconn.db);
+watchdog check_http entry in deploy/sds_watchdog.sh;
+registry entry in core_platform/ai_platform_links.json
+updated in place (registry remains 77 entries — the
+entry pre-existed from the records layer and now carries
+the built platform; its former grid endpoint, a file
+claim on an unreachable host, is replaced by the
+in-process status endpoint).
+
+**Pricing/teaching audit** (examined set: canonical
+catalog row #59; Set B database_schema.sql, read
+directly — no row under either spelling — and Set B
+tier_pricing_global.py, read directly — the name does
+not appear in the ultra_premium list; Set C catalog
+(DeployPad branch README), read directly — Tier 1 entry
+"Sanders Omniconm | Big Brother | $700,000,000/yr" with
+the purpose text recorded above; the MASTER design — the
+name does not appear; the master grid): the design
+carries NO price for Sanders Omniconn that may be wired
+— Set C's $700,000,000/yr figure is a BLOCKER FIGURE
+under the owner's 2026-11-24 21:31 ruling (unrealistic
+figures placed as blockers, never chargeable prices); it
+is flagged here, none is built, none is wired. The grid
+carries a NAICS string for this name and Set C's branch
+map associates a further pair; the canonical catalog row
+carries none and no owner ruling assigns NAICS codes to
+Sanders Omniconn, so none is carried into its built
+identity. The design carries NO teaching function for
+Sanders Omniconn — none built, none invented.
+
+**Verification**: scratch drive (never committed) —
+48/48 checks: identity and design view (designed role
+and discipline exact; the D-N1 name ruling and the
+Omniconm records conflict carried in the design note);
+constructor refuses a missing audit adapter; operation
+check (record operation RECORD_ONLY; all five execution
+operations refused by name with the discipline signal;
+unknown operation refused); record lifecycle
+(operator-only creation; subject/scope references
+required; observation set must be a list of non-empty
+references, capped; outcome refused before approval;
+outcome without evidence refused; outcome set closed —
+DIRECTED is not an outcome; the with-observations
+record's OVERSIGHT_CONFIRMED outcome records against
+evidence and a second outcome is refused; the
+no-observations record stands NO_OBSERVATIONS_SUBMITTED
+with both determinations refused on it while INCONCLUSIVE
+records; reject records REJECTED and approve from
+REJECTED is refused; unknown record denied; geofence
+refuses an undeclared region; status totals including
+records_no_observations_submitted and
+observations_declared_total; operator-only check-in);
+registry at 77 entries with the updated entry carrying
+the built platform and naming the blocker figure as a
+blocker; all 9 approval gates UNAPPROVED; WSGI through
+create_customer_app (signed-out 401, status 200,
+execution operation 400 with
+OVERSIGHT_AND_COORDINATION_RECORDS_ONLY in the detail,
+create refused for non-operator 403, create 201 standing
+NO_OBSERVATIONS_SUBMITTED, approve 200,
+OVERSIGHT_CONFIRMED on the no-observations record
+refused 400 with NO_OBSERVATIONS_SUBMITTED in the
+detail, INCONCLUSIVE outcome 200, records list 200,
+unexpected fields 400, wrong origin 403, check-in 201,
+unwired service 503 sanders_omniconn_unavailable).
+Deployed-composition verification through
+create_application on the final composed tree is recorded
+in the tranche 13 entry of the build queue.

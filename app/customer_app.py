@@ -72,6 +72,7 @@ from core_platform.it_support_agent_service import ITSupportAgentDenied, ITSuppo
 from core_platform.sanders_sentinel_service import SandersSentinelDenied, SandersSentinelForbidden
 from core_platform.lil_mama_service import LilMamaDenied, LilMamaForbidden
 from core_platform.baby_girl_service import BabyGirlDenied, BabyGirlForbidden
+from core_platform.sanders_omniconn_service import SandersOmniconnDenied, SandersOmniconnForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -264,6 +265,9 @@ LIL_MAMA_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_
 BABY_GIRL_RECORD_ROUTE = re.compile(r'^/api/baby-girl/records/([A-Za-z0-9_-]{1,128})$')
 BABY_GIRL_RECORD_ACTION_ROUTE = re.compile(r'^/api/baby-girl/records/([A-Za-z0-9_-]{1,128})/action$')
 BABY_GIRL_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/baby-girl/records/([A-Za-z0-9_-]{1,128})/outcome$')
+SANDERS_OMNICONN_RECORD_ROUTE = re.compile(r'^/api/sanders-omniconn/records/([A-Za-z0-9_-]{1,128})$')
+SANDERS_OMNICONN_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-omniconn/records/([A-Za-z0-9_-]{1,128})/action$')
+SANDERS_OMNICONN_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-omniconn/records/([A-Za-z0-9_-]{1,128})/outcome$')
 BABY_GIRL_CUSTODY_ROUTE = re.compile(r'^/api/baby-girl/custody/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
@@ -272,7 +276,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -458,6 +462,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         baby_girl_record_match = BABY_GIRL_RECORD_ROUTE.fullmatch(path)
         baby_girl_record_action_match = BABY_GIRL_RECORD_ACTION_ROUTE.fullmatch(path)
         baby_girl_record_outcome_match = BABY_GIRL_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        omniconn_record_match = SANDERS_OMNICONN_RECORD_ROUTE.fullmatch(path)
+        omniconn_record_action_match = SANDERS_OMNICONN_RECORD_ACTION_ROUTE.fullmatch(path)
+        omniconn_record_outcome_match = SANDERS_OMNICONN_RECORD_OUTCOME_ROUTE.fullmatch(path)
         baby_girl_custody_match = BABY_GIRL_CUSTODY_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
@@ -824,6 +831,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or baby_girl_record_action_match is not None
                                   or baby_girl_record_outcome_match is not None
                                   or baby_girl_custody_match is not None)
+        is_omniconn_route = (path in ('/api/sanders-omniconn/status',
+                                      '/api/sanders-omniconn/records',
+                                      '/api/sanders-omniconn/design',
+                                      '/api/sanders-omniconn/operation-check',
+                                      '/api/sanders-omniconn/check-in')
+                                  or omniconn_record_match is not None
+                                  or omniconn_record_action_match is not None
+                                  or omniconn_record_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -863,7 +878,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_it_support_route
                              or is_sentinel_route
                              or is_lil_mama_route
-                             or is_baby_girl_route)
+                             or is_baby_girl_route
+                             or is_omniconn_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -998,7 +1014,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/baby-girl/status',
                                             '/api/baby-girl/records',
                                             '/api/baby-girl/design',
-                                            '/api/baby-girl/custody')
+                                            '/api/baby-girl/custody',
+                                            '/api/sanders-omniconn/status',
+                                            '/api/sanders-omniconn/records',
+                                            '/api/sanders-omniconn/design')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -1050,7 +1069,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or sentinel_record_match is not None
                                    or lil_mama_record_match is not None
                                    or baby_girl_record_match is not None
-                                   or baby_girl_custody_match is not None) else ('POST',)
+                                   or baby_girl_custody_match is not None
+                                   or omniconn_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -1120,6 +1140,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/lil-mama/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-omniconn/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/custody':
             allowed = ('GET', 'POST')
@@ -2959,6 +2981,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = baby_girl.record_view(identity, baby_girl_role, baby_girl_record_match.group(1))
                         return respond(start, '200 OK', {'record': record})
                     return check_in(baby_girl)
+                if is_omniconn_route:
+                    if sanders_omniconn is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'sanders_omniconn_unavailable'})
+                    omniconn_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/sanders-omniconn/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': sanders_omniconn.status()})
+                    if path == '/api/sanders-omniconn/design':
+                        return respond(start, '200 OK', {'design': sanders_omniconn.design_view()})
+                    if path == '/api/sanders-omniconn/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_omniconn.operation_check(identity, omniconn_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/sanders-omniconn/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': sanders_omniconn.records_list(identity, omniconn_role)})
+                        if set(data) != {'subject_ref', 'observation_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_omniconn.create_record(identity, data['subject_ref'], data['observation_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if omniconn_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_omniconn.record_action(identity, omniconn_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if omniconn_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_omniconn.record_outcome(identity, omniconn_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if omniconn_record_match:
+                        record = sanders_omniconn.record_view(identity, omniconn_role, omniconn_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(sanders_omniconn)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -3154,6 +3212,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'baby_girl_forbidden'})
         except BabyGirlDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'baby_girl_denied', 'detail': str(exc)})
+        except SandersOmniconnForbidden:
+            return respond(start, '403 Forbidden', {'error': 'sanders_omniconn_forbidden'})
+        except SandersOmniconnDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'sanders_omniconn_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
