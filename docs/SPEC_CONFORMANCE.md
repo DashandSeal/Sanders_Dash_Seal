@@ -1748,3 +1748,94 @@ live connections; TikTok app approval; X paid-tier decision (owner).
 **Verification (exercised, not assumed):** scratch drive 40/40 (never committed): constructor refusal without an audit adapter; officer-key config parsing (valid/malformed/wrong-length/non-object); a signed officer action -> receipt -> independent Ed25519 verification against the receipt's payload hash (verified signatory recorded; invalid signature recorded as invalid with none verified; no-keys service records the receipt with keys_configured False and verifies nothing); machine event -> hash-chained receipt recomputed independently, second event chained to the first, duplicate event_ref returning the original; a purchase recorded through the recovered purchasing engine -> claim assessed CONSISTENT_WITH_RECORD, a wrong amount CONTRADICTED_BY_RECORD, a missing record INSUFFICIENT_EVIDENCE, intent never inferred; the full WSGI route family exercised through the real customer app (401 unauthenticated, 403 for an auditor write, 201/200 happy paths, no key material in any response); production bindings constructed and the deployment application answering /api/bozly/healthz 200. Full regression on the final composed tree (this build rebased onto tranche 7's landing, 502a4fa): 1040/1049 across the nineteen tranche 1–7 drives — the only nine failures are the known stale registry-count assertions inside the Q10/Q25/Q26/Q27/Q28/Q29/Q30/Q31/Q32 drives, each correct at its own landing; the composed registry is verified at 63 entries.
 
 **Residual limitations, stated exactly:** (1) No officer public keys are configured in production yet: until the owner provisions BOZLY_OFFICER_PUBLIC_KEYS_JSON, officer-action receipts record payload hashes with keys_configured False and verify no signatures — the mechanism is live, the keys are the owner's step. (2) Claim assessments against purchases/global transactions return INSUFFICIENT_EVIDENCE until such records exist in the production ledger (the purchasing workflow that creates them lives in the standalone service, item (5) of the inventory); Stripe-event observations are recorded by the CFO core as before. (3) The standalone shield service's books, P0 alert delivery, global traceback/forensic encryption, and PQ identity remain owner-blocked on the named unprovisioned items in the inventory — built up to those items, not around them. (4) Noted in passing: at this build's starting head (194b4e1), deploy/deployment.py did not forward the promethean, hydra_q and labyrinth bindings to the customer app, so those three route families would have answered 503 in the deployed composition. Tranche 6's Q30 landing found and fixed that gap independently (main head a222955), and this build was rebased onto that head (and subsequently onto tranche 7's landing, 502a4fa): the merged deployment.py forwards every constructed platform binding — promethean, hydra_q, labyrinth, cerberus, chorus, cobol_synthetic_ai and bozly — and the deployed-composition checks in the verification above exercise the application assembled by create_application, not services wired directly.
+
+## RTSA Build Program Q34 — Fraud RTSA (2026-11-24)
+
+**Scope**: build the Fraud RTSA role contract whole as its own
+platform service (canonical catalog row #39, Band 2B), per the
+established tranche pattern, under the standards gate: Fortune
+500 governs end to end, the MASTER architecture within it, and
+the Sanders Royal Enterprise Standard for presentation within
+it. Fortune 500 judgment: the platform meets the standard
+within its honest scope limits — it is an internal operator/
+auditor record surface over governed fraud-intelligence case
+records; no public or customer surface exists for it by
+design, so the Royal Enterprise presentation layer does not
+apply, and no security internals are exposed anywhere. Scope
+limits stated plainly: the platform freezes, holds, reverses,
+and transfers nothing; it holds no personal records, no
+financial records, and no signal payloads (subjects and
+signals by reference only); it performs no external
+execution, no credential access, and no enforcement action.
+The role contract in core_platform/rtsa_registry.py remains
+SPECIFIED and enabled: False, byte-untouched.
+
+**Built**: core_platform/fraud_rtsa_service.py
+(FraudRtsaService over core_platform/rtsa_foundation.py;
+independent identity fraud_rtsa; contract view of the Fraud
+RTSA role contract; fail-closed operation check refusing the
+contract's prohibited operations by name — external_execution,
+credential_access, notarization, legal_filing,
+financial_transfer, production_deployment — and unknown
+operations; fraud-intelligence cases carried as durable,
+receipted records over a subject reference, a declared
+signal-reference set, and a scope reference, with lifecycle
+REQUESTED → APPROVED / REJECTED (the recorded human
+fraud-review decision the contract and the designed offline
+assessment require) → DETERMINATION_RECORDED; the designed
+signal discipline enforced in the record model — a case
+declared with no signals stands NO_SIGNALS_SUBMITTED in every
+view and in the status tallies and a FRAUD_SUBSTANTIATED
+determination on it is refused, while a case with signals
+stands FRAUD_REVIEW_REQUIRED; determinations recorded only
+for APPROVED cases and only against a presented evidence
+reference, with a closed verdict set — FRAUD_SUBSTANTIATED /
+FRAUD_NOT_SUBSTANTIATED / INCONCLUSIVE; a determination is a
+governed record inside this platform, not an accusation
+published anywhere; every state change writes its Glass-Box
+receipt inside the same transaction; operator-only check-in
+bound to the identity integrity digest). Route family
+/api/fraud-rtsa/ wired through app/customer_app.py
+(create_customer_app parameter fraud_rtsa), deploy/
+deployment.py (RuntimeBindings.fraud_rtsa, health route
+/api/fraud-rtsa/healthz, forwarding through
+create_application), and deploy/production_bindings.py
+(construction on its own store fraud_rtsa.db); watchdog
+check_http entry in deploy/sds_watchdog.sh; registry entry in
+core_platform/ai_platform_links.json (62 → 64 across this
+tranche's first two landings; fraud_rtsa entry added here).
+
+**Pricing/teaching audit** (examined set: canonical catalog
+row #39; Set B database_schema.sql + tier_pricing_global.py;
+Set C catalog; the MASTER; the Fraud RTSA role contract): the
+design carries NO price for Fraud RTSA — none built, none
+invented, no blocker figure attaches to this name. The design
+carries NO teaching function for Fraud RTSA — none built,
+none invented.
+
+**Verification**: scratch drive (never committed) — 48/48
+checks: identity and contract view; constructor refuses a
+missing audit adapter; operation check (record operation
+RECORD_ONLY; all six prohibited operations refused by name;
+unknown operation refused); case lifecycle (operator-only
+creation; subject/scope references required; signal set must
+be a list of non-empty references, capped; determination
+refused before approval; determination without evidence
+refused; verdict set closed; a no-signal case stands
+NO_SIGNALS_SUBMITTED and its FRAUD_SUBSTANTIATED
+determination is refused while a non-substantiation verdict
+records against evidence; reject terminal; unknown case
+denied; geofence refuses an undeclared region); status
+tallies including cases_no_signals_submitted and
+signals_declared_total; operator-only check-in; registry at
+64 entries; all 9 approval gates UNAPPROVED; WSGI through
+create_customer_app (signed-out 401, status 200, prohibited
+operation 400, create refused for non-operator 403, create
+201 with an empty signal set standing NO_SIGNALS_SUBMITTED,
+approve 200, substantiation on the no-signal case refused
+400 with NO_SIGNALS_SUBMITTED in the detail, verdict 200,
+cases list 200, unexpected fields 400, wrong origin 403,
+check-in 201, unwired service 503 fraud_rtsa_unavailable).
+Deployed-composition verification through create_application
+runs on the final composed tree for this tranche and covers
+every built platform's route family.

@@ -71,6 +71,7 @@ class RuntimeBindings:
     cobol_synthetic_ai: object = None
     juggernaut: object = None
     bozly: object = None
+    fraud_rtsa: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -409,7 +410,8 @@ def create_application(bindings=None):
             chorus=getattr(bindings, 'chorus', None),
             cobol_synthetic_ai=getattr(bindings, 'cobol_synthetic_ai', None),
             juggernaut=getattr(bindings, 'juggernaut', None),
-            bozly=getattr(bindings, 'bozly', None)
+            bozly=getattr(bindings, 'bozly', None),
+            fraud_rtsa=getattr(bindings, 'fraud_rtsa', None)
         )
     else:
         verifier = _denied
@@ -746,7 +748,8 @@ def create_application(bindings=None):
                     '/api/chorus/healthz',
                     '/api/cobol-synthetic-ai/healthz',
                     '/api/juggernaut/healthz',
-                    '/api/bozly/healthz'):
+                    '/api/bozly/healthz',
+                    '/api/fraud-rtsa/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -781,6 +784,7 @@ def create_application(bindings=None):
                 '/api/cobol-synthetic-ai/healthz': ('cobol_synthetic_ai', 'cobol_synthetic_ai', 'cobol_synthetic_ai_unavailable'),
                 '/api/juggernaut/healthz': ('juggernaut', 'juggernaut', 'juggernaut_unavailable'),
                 '/api/bozly/healthz': ('bozly', 'bozly', 'bozly_unavailable'),
+                '/api/fraud-rtsa/healthz': ('fraud_rtsa', 'fraud_rtsa', 'fraud_rtsa_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -871,7 +875,9 @@ def create_application(bindings=None):
                 or path == '/api/juggernaut'
                 or path.startswith('/api/juggernaut/')
                 or path == '/api/bozly-cfo'
-                or path.startswith('/api/bozly-cfo/'))
+                or path.startswith('/api/bozly-cfo/')
+                or path == '/api/fraud-rtsa'
+                or path.startswith('/api/fraud-rtsa/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

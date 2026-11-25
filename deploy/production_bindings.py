@@ -173,6 +173,7 @@ from core_platform.chorus_service import ChorusService
 from core_platform.cobol_synthetic_ai_service import CobolSyntheticAiService
 from core_platform.juggernaut_service import JuggernautService
 from core_platform.bozly_service import BozlyService
+from core_platform.fraud_rtsa_service import FraudRtsaService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -554,6 +555,18 @@ def create_production_bindings():
         data_dir / 'bozly.db', ledger_db_path=bozly_ledger_db,
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Fraud RTSA (RTSA Build Program): the fraud intelligence
+    # role contract built as its own platform — governed
+    # fraud-intelligence case records under the contract's
+    # discipline (subjects and signal sets by reference only;
+    # a case with no signals stands NO_SIGNALS_SUBMITTED and
+    # cannot be determined FRAUD_SUBSTANTIATED; it freezes,
+    # holds, reverses, and transfers nothing), on its own
+    # store.
+    fraud_rtsa = FraudRtsaService(
+        data_dir / 'fraud_rtsa.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -588,4 +601,5 @@ def create_production_bindings():
         cobol_synthetic_ai=cobol_synthetic_ai,
         juggernaut=juggernaut,
         bozly=bozly,
+        fraud_rtsa=fraud_rtsa,
     )
