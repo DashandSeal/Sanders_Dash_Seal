@@ -235,6 +235,7 @@ from core_platform.sanders_legal_services_service import SandersLegalServicesSer
 from core_platform.sanders_strategy_intel_service import SandersStrategyIntelService
 from core_platform.sanders_analytics_service import SandersAnalyticsService
 from core_platform.sanders_innovation_lab_service import SandersInnovationLabService
+from core_platform.sanders_supply_chain_service import SandersSupplyChainService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1122,6 +1123,17 @@ def create_production_bindings():
     sanders_innovation_lab = SandersInnovationLabService(
         data_dir / 'sanders_innovation_lab.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Supply Chain platform (Q88,
+    # RTSA Build Program tranche 25): governed
+    # supply-chain records over its own store
+    # — it ships no goods, procures no
+    # materials, and dispatches no shipment
+    # itself. Distinct from Sanders Logistics
+    # (catalog #70); the Flow nickname conflict
+    # is recorded, never harmonized.
+    sanders_supply_chain = SandersSupplyChainService(
+        data_dir / 'sanders_supply_chain.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1211,4 +1223,5 @@ def create_production_bindings():
         sanders_strategy_intel=sanders_strategy_intel,
         sanders_analytics=sanders_analytics,
         sanders_innovation_lab=sanders_innovation_lab,
+        sanders_supply_chain=sanders_supply_chain,
     )

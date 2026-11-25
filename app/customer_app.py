@@ -109,6 +109,7 @@ from core_platform.sanders_legal_services_service import SandersLegalServicesDen
 from core_platform.sanders_strategy_intel_service import SandersStrategyIntelDenied, SandersStrategyIntelForbidden
 from core_platform.sanders_analytics_service import SandersAnalyticsDenied, SandersAnalyticsForbidden
 from core_platform.sanders_innovation_lab_service import SandersInnovationLabDenied, SandersInnovationLabForbidden
+from core_platform.sanders_supply_chain_service import SandersSupplyChainDenied, SandersSupplyChainForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -414,6 +415,9 @@ SANDERS_ANALYTICS_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-analytics/re
 SANDERS_INNOVATION_LAB_RECORD_ROUTE = re.compile(r'^/api/sanders-innovation-lab/records/([A-Za-z0-9_-]{1,128})$')
 SANDERS_INNOVATION_LAB_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-innovation-lab/records/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_INNOVATION_LAB_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-innovation-lab/records/([A-Za-z0-9_-]{1,128})/outcome$')
+SANDERS_SUPPLY_CHAIN_RECORD_ROUTE = re.compile(r'^/api/sanders-supply-chain/records/([A-Za-z0-9_-]{1,128})$')
+SANDERS_SUPPLY_CHAIN_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-supply-chain/records/([A-Za-z0-9_-]{1,128})/action$')
+SANDERS_SUPPLY_CHAIN_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-supply-chain/records/([A-Za-z0-9_-]{1,128})/outcome$')
 BABY_GIRL_CUSTODY_ROUTE = re.compile(r'^/api/baby-girl/custody/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
@@ -422,7 +426,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None, sanders_sports=None, sanders_wellness=None, sanders_steward_sentinel=None, sanders_patriot_saint=None, sanders_freedom_revolution=None, sanders_strategy_hub=None, sanders_global_freedom=None, sanders_coordinator=None, sanders_intelligence=None, sanders_ai_research=None, sanders_research=None, sanders_communications=None, sanders_banking_hub=None, sanders_legal_services=None, sanders_strategy_intel=None, sanders_analytics=None, sanders_innovation_lab=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None, sanders_sports=None, sanders_wellness=None, sanders_steward_sentinel=None, sanders_patriot_saint=None, sanders_freedom_revolution=None, sanders_strategy_hub=None, sanders_global_freedom=None, sanders_coordinator=None, sanders_intelligence=None, sanders_ai_research=None, sanders_research=None, sanders_communications=None, sanders_banking_hub=None, sanders_legal_services=None, sanders_strategy_intel=None, sanders_analytics=None, sanders_innovation_lab=None, sanders_supply_chain=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -721,6 +725,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         innovation_lab_record_match = SANDERS_INNOVATION_LAB_RECORD_ROUTE.fullmatch(path)
         innovation_lab_record_action_match = SANDERS_INNOVATION_LAB_RECORD_ACTION_ROUTE.fullmatch(path)
         innovation_lab_record_outcome_match = SANDERS_INNOVATION_LAB_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        supply_chain_record_match = SANDERS_SUPPLY_CHAIN_RECORD_ROUTE.fullmatch(path)
+        supply_chain_record_action_match = SANDERS_SUPPLY_CHAIN_RECORD_ACTION_ROUTE.fullmatch(path)
+        supply_chain_record_outcome_match = SANDERS_SUPPLY_CHAIN_RECORD_OUTCOME_ROUTE.fullmatch(path)
         baby_girl_custody_match = BABY_GIRL_CUSTODY_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
@@ -1386,6 +1393,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or innovation_lab_record_match is not None
                                   or innovation_lab_record_action_match is not None
                                   or innovation_lab_record_outcome_match is not None)
+        is_supply_chain_route = (path in ('/api/sanders-supply-chain/status',
+                                          '/api/sanders-supply-chain/records',
+                                          '/api/sanders-supply-chain/design',
+                                          '/api/sanders-supply-chain/operation-check',
+                                          '/api/sanders-supply-chain/check-in')
+                                  or supply_chain_record_match is not None
+                                  or supply_chain_record_action_match is not None
+                                  or supply_chain_record_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -1462,7 +1477,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_legal_services_route
                              or is_strategy_intel_route
                              or is_analytics_route
-                             or is_innovation_lab_route)
+                             or is_innovation_lab_route
+                             or is_supply_chain_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -1708,7 +1724,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/sanders-analytics/design',
                                             '/api/sanders-innovation-lab/status',
                                             '/api/sanders-innovation-lab/records',
-                                            '/api/sanders-innovation-lab/design')
+                                            '/api/sanders-innovation-lab/design',
+                                            '/api/sanders-supply-chain/status',
+                                            '/api/sanders-supply-chain/records',
+                                            '/api/sanders-supply-chain/design')
                                    or unm_referral_match is not None
                                    or unm_subject_referrals_match is not None
                                    or unm_person_activation_match is not None
@@ -1799,7 +1818,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or legal_services_record_match is not None
                                    or strategy_intel_record_match is not None
                                    or analytics_record_match is not None
-                                   or innovation_lab_record_match is not None) else ('POST',)
+                                   or innovation_lab_record_match is not None
+                                   or supply_chain_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -1943,6 +1963,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-analytics/records':
             allowed = ('GET', 'POST')
         if path == '/api/sanders-innovation-lab/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-supply-chain/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/custody':
             allowed = ('GET', 'POST')
@@ -5127,6 +5149,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = sanders_innovation_lab.record_view(identity, innovation_lab_role, innovation_lab_record_match.group(1))
                         return respond(start, '200 OK', {'record': record})
                     return check_in(sanders_innovation_lab)
+                if is_supply_chain_route:
+                    if sanders_supply_chain is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'sanders_supply_chain_unavailable'})
+                    supply_chain_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/sanders-supply-chain/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': sanders_supply_chain.status()})
+                    if path == '/api/sanders-supply-chain/design':
+                        return respond(start, '200 OK', {'design': sanders_supply_chain.design_view()})
+                    if path == '/api/sanders-supply-chain/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_supply_chain.operation_check(identity, supply_chain_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/sanders-supply-chain/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': sanders_supply_chain.records_list(identity, supply_chain_role)})
+                        if set(data) != {'subject_ref', 'shipment_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_supply_chain.create_record(identity, data['subject_ref'], data['shipment_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if supply_chain_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_supply_chain.record_action(identity, supply_chain_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if supply_chain_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_supply_chain.record_outcome(identity, supply_chain_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if supply_chain_record_match:
+                        record = sanders_supply_chain.record_view(identity, supply_chain_role, supply_chain_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(sanders_supply_chain)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -5470,6 +5528,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'sanders_innovation_lab_forbidden'})
         except SandersInnovationLabDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'sanders_innovation_lab_denied', 'detail': str(exc)})
+        except SandersSupplyChainForbidden:
+            return respond(start, '403 Forbidden', {'error': 'sanders_supply_chain_forbidden'})
+        except SandersSupplyChainDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'sanders_supply_chain_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
