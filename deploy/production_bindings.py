@@ -201,6 +201,7 @@ from core_platform.baby_girl_service import BabyGirlService
 from core_platform.sanders_omniconn_service import SandersOmniconnService
 from core_platform.gia_mind_service import GiaMindService
 from core_platform.ai_doctor_service import AIDoctorService
+from core_platform.sanders_ai_psychiatrist_service import SandersAIPsychiatristService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -800,6 +801,15 @@ def create_production_bindings():
     ai_doctor = AIDoctorService(
         data_dir / 'ai_doctor.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders AI Psychiatrist platform (Q54, RTSA Build
+    # Program tranche 14): governed AI-system psychiatric
+    # assessment records over her own store — AI-to-AI
+    # only, never humans; human subjects are refused by
+    # construction and determinations are records, never
+    # acts. No persona (unruled).
+    sanders_ai_psychiatrist = SandersAIPsychiatristService(
+        data_dir / 'sanders_ai_psychiatrist.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -855,4 +865,5 @@ def create_production_bindings():
         sanders_omniconn=sanders_omniconn,
         gia_mind=gia_mind,
         ai_doctor=ai_doctor,
+        sanders_ai_psychiatrist=sanders_ai_psychiatrist,
     )

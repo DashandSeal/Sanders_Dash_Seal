@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/sanders_ai_psychiatrist_service.py",
+        "payload_hash": "4482fa33fc4df3f6d49032907d99dd7e66d5d0c182fb3fb7121bedc3b976b815",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
