@@ -221,6 +221,7 @@ from core_platform.sanders_entertainment_service import SandersEntertainmentServ
 from core_platform.sanders_sports_service import SandersSportsService
 from core_platform.sanders_wellness_service import SandersWellnessService
 from core_platform.sanders_steward_sentinel_service import SandersStewardSentinelService
+from core_platform.sanders_patriot_saint_service import SandersPatriotSaintService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -979,6 +980,15 @@ def create_production_bindings():
     sanders_steward_sentinel = SandersStewardSentinelService(
         data_dir / 'sanders_steward_sentinel.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Patriot Saint platform (Q74, RTSA
+    # Build Program tranche 20): governed
+    # governance records over its own store — it
+    # issues no directive, exercises no authority,
+    # and delivers no briefing itself. Separate
+    # from The Godfather (owner correction).
+    sanders_patriot_saint = SandersPatriotSaintService(
+        data_dir / 'sanders_patriot_saint.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1054,4 +1064,5 @@ def create_production_bindings():
         sanders_sports=sanders_sports,
         sanders_wellness=sanders_wellness,
         sanders_steward_sentinel=sanders_steward_sentinel,
+        sanders_patriot_saint=sanders_patriot_saint,
     )
