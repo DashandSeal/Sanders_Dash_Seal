@@ -250,6 +250,7 @@ from core_platform.sanders_security_ops_service import SandersSecurityOpsService
 from core_platform.sanders_global_relations_service import SandersGlobalRelationsService
 from core_platform.sanders_healthcare_service import SandersHealthcareService
 from core_platform.the_godfather_service import TheGodfatherService
+from core_platform.sanders_ethics_impact_collective_service import SandersEthicsImpactCollectiveService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1272,6 +1273,14 @@ def create_production_bindings():
     the_godfather = TheGodfatherService(
         data_dir / 'the_godfather.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Ethics & Impact Collective (SEIC)
+    # platform (owner-directed, 2026-11-25):
+    # governed engagement records over its own
+    # store — it practices no law, administers
+    # no grant, and disburses no funds itself.
+    sanders_ethics_impact_collective = SandersEthicsImpactCollectiveService(
+        data_dir / 'sanders_ethics_impact_collective.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1375,4 +1384,5 @@ def create_production_bindings():
         sanders_global_relations=sanders_global_relations,
         sanders_healthcare=sanders_healthcare,
         the_godfather=the_godfather,
+        sanders_ethics_impact_collective=sanders_ethics_impact_collective,
     )

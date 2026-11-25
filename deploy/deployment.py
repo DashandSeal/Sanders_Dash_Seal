@@ -139,6 +139,7 @@ class RuntimeBindings:
     sanders_global_relations: object = None
     sanders_healthcare: object = None
     the_godfather: object = None
+    sanders_ethics_impact_collective: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -545,7 +546,8 @@ def create_application(bindings=None):
             sanders_security_ops=getattr(bindings, 'sanders_security_ops', None),
             sanders_global_relations=getattr(bindings, 'sanders_global_relations', None),
             sanders_healthcare=getattr(bindings, 'sanders_healthcare', None),
-            the_godfather=getattr(bindings, 'the_godfather', None)
+            the_godfather=getattr(bindings, 'the_godfather', None),
+            sanders_ethics_impact_collective=getattr(bindings, 'sanders_ethics_impact_collective', None)
         )
     else:
         verifier = _denied
@@ -987,7 +989,8 @@ def create_application(bindings=None):
                     '/api/sanders-security-ops/healthz',
                     '/api/sanders-global-relations/healthz',
                     '/api/sanders-healthcare/healthz',
-                    '/api/the-godfather/healthz'):
+                    '/api/the-godfather/healthz',
+                    '/api/sanders-ethics-impact-collective/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -1090,6 +1093,7 @@ def create_application(bindings=None):
                 '/api/sanders-global-relations/healthz': ('sanders_global_relations', 'sanders_global_relations', 'sanders_global_relations_unavailable'),
                 '/api/sanders-healthcare/healthz': ('sanders_healthcare', 'sanders_healthcare', 'sanders_healthcare_unavailable'),
                 '/api/the-godfather/healthz': ('the_godfather', 'the_godfather', 'the_godfather_unavailable'),
+                '/api/sanders-ethics-impact-collective/healthz': ('sanders_ethics_impact_collective', 'sanders_ethics_impact_collective', 'sanders_ethics_impact_collective_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -1316,7 +1320,9 @@ def create_application(bindings=None):
                 or path == '/api/sanders-healthcare'
                 or path.startswith('/api/sanders-healthcare/')
                 or path == '/api/the-godfather'
-                or path.startswith('/api/the-godfather/'))
+                or path.startswith('/api/the-godfather/')
+                or path == '/api/sanders-ethics-impact-collective'
+                or path.startswith('/api/sanders-ethics-impact-collective/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')
