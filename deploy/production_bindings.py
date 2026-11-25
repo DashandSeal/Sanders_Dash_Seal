@@ -122,6 +122,18 @@ What it wires:
   MINOTAUR-denied failover records, Quality-Agent-bound return
   verification, and reconciliation — with the same operator
   verifier and audit chain.
+- TwinGate is ``TwinGateService`` on ``data/twin_gate.db``: the
+  MASTER §8 Twin-Gate Authorization Chain as a durable state
+  machine — requests bound to one agent/target/method/payload
+  hash under the IT AI Manager's commanding authority, CLEARED
+  only with both the Manager's sign-off and MINOTAUR clearance
+  recorded, execution authorized only after exact re-validation
+  with the Glass-Box receipt hash bound into the record,
+  post-execution verification, receipt preservation, and
+  revocation; MINOTAUR denials terminal (§10) and
+  integrity-class failures quarantining the requester (§11) —
+  with the same operator verifier and audit chain. The
+  prototype ``core_platform/twin_gate.py`` remains untouched.
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -146,6 +158,7 @@ from core_platform.grantwriter_service import GrantwriterPlatform
 from core_platform.home_healthcare import HomeHealthcarePlatform
 from core_platform.it_ai_manager import ITAIManager
 from core_platform.native_case_bridge import CaseNativeBridge
+from core_platform.twin_gate_service import TwinGateService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -358,6 +371,14 @@ def create_production_bindings():
         data_dir / 'it_ai_manager.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # TwinGate (RTSA Build Program): the MASTER §8 authorization
+    # chain as a durable state machine, on its own store.
+    # Sign-offs and clearances are recorded attestation
+    # references; the signers' own platforms record their acts.
+    twin_gate = TwinGateService(
+        data_dir / 'twin_gate.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -377,4 +398,5 @@ def create_production_bindings():
         vault=vault,
         pbd_sentinel=pbd_sentinel,
         it_ai_manager=it_ai_manager,
+        twin_gate=twin_gate,
     )

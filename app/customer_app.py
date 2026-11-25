@@ -40,6 +40,7 @@ from core_platform.pbd_manifest_generator import (
 from core_platform.vault import VaultDenied, VaultForbidden
 from core_platform.pbd_sentinel import PBDSentinelDenied, PBDSentinelForbidden
 from core_platform.it_ai_manager import ITAIManagerDenied, ITAIManagerForbidden
+from core_platform.twin_gate_service import TwinGateServiceDenied, TwinGateServiceForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -128,9 +129,11 @@ ITM_INCIDENT_ACTION_ROUTE = re.compile(r'^/api/it-ai-manager/incidents/([A-Za-z0
 ITM_WORK_ORDER_ROUTE = re.compile(r'^/api/it-ai-manager/work-orders/([A-Za-z0-9_-]{1,128})$')
 ITM_WORK_ORDER_OUTCOME_ROUTE = re.compile(r'^/api/it-ai-manager/work-orders/([A-Za-z0-9_-]{1,128})/outcome$')
 ITM_EVALUATION_ROUTE = re.compile(r'^/api/it-ai-manager/evaluations/([A-Za-z0-9_-]{1,128})$')
+TG_AUTH_ROUTE = re.compile(r'^/api/twin-gate/requests/([A-Za-z0-9_-]{1,128})$')
+TG_AUTH_ACTION_ROUTE = re.compile(r'^/api/twin-gate/requests/([A-Za-z0-9_-]{1,128})/(manager-signoff|minotaur-clearance|human-signoff|authorize|verify|preserve|revoke)$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -219,6 +222,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         itm_work_order_match = ITM_WORK_ORDER_ROUTE.fullmatch(path)
         itm_work_order_outcome_match = ITM_WORK_ORDER_OUTCOME_ROUTE.fullmatch(path)
         itm_evaluation_match = ITM_EVALUATION_ROUTE.fullmatch(path)
+        tg_auth_match = TG_AUTH_ROUTE.fullmatch(path)
+        tg_action_match = TG_AUTH_ACTION_ROUTE.fullmatch(path)
         is_unm_route = (path in ('/api/uncle-nickey-mao/status',
                                  '/api/uncle-nickey-mao/guardian-relay',
                                  '/api/uncle-nickey-mao/referrals',
@@ -291,6 +296,13 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         or itm_work_order_match is not None
                         or itm_work_order_outcome_match is not None
                         or itm_evaluation_match is not None)
+        is_tg_route = (path in ('/api/twin-gate/status',
+                                '/api/twin-gate/requests',
+                                '/api/twin-gate/quarantine',
+                                '/api/twin-gate/quarantine-lift',
+                                '/api/twin-gate/check-in')
+                       or tg_auth_match is not None
+                       or tg_action_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -298,7 +310,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_pbd_generator_route
                              or is_vault_route
                              or is_pbd_sentinel_route
-                             or is_itm_route)
+                             or is_itm_route
+                             or is_tg_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -329,7 +342,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/vault/status',
                                             '/api/pbd-sentinel/status',
                                             '/api/it-ai-manager/status',
-                                            '/api/it-ai-manager/agents')
+                                            '/api/it-ai-manager/agents',
+                                            '/api/twin-gate/status',
+                                            '/api/twin-gate/quarantine')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -341,7 +356,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or pbd_sentinel_finding_match is not None
                                    or itm_incident_match is not None
                                    or itm_work_order_match is not None
-                                   or itm_evaluation_match is not None) else ('POST',)
+                                   or itm_evaluation_match is not None
+                                   or tg_auth_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -874,6 +890,67 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = it_ai_manager.work_order_view(identity, role, itm_work_order_match.group(1))
                         return respond(start, '200 OK', {'work_order': record})
                     return check_in(it_ai_manager)
+                if is_tg_route:
+                    if twin_gate is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'twin_gate_unavailable'})
+                    if path == '/api/twin-gate/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': twin_gate.status()})
+                    if path == '/api/twin-gate/quarantine':
+                        return respond(start, '200 OK', {'quarantined_agents': twin_gate.quarantined_agents()})
+                    if path == '/api/twin-gate/requests':
+                        if set(data) - {'agent', 'target', 'method', 'payload_sha256', 'ttl_seconds', 'emergency'} or not {'agent', 'target', 'method', 'payload_sha256', 'ttl_seconds'} <= set(data):
+                            raise ValueError('unexpected fields')
+                        record = twin_gate.open_request(identity, data['agent'], data['target'], data['method'], data['payload_sha256'], data['ttl_seconds'], emergency=bool(data.get('emergency', False)))
+                        return respond(start, '201 Created', {'authorization': record})
+                    if tg_auth_match:
+                        role = 'OPERATOR' if is_operator() else 'COORDINATOR'
+                        record = twin_gate.authorization_view(identity, role, tg_auth_match.group(1))
+                        return respond(start, '200 OK', {'authorization': record})
+                    if tg_action_match:
+                        auth_id = tg_action_match.group(1)
+                        action = tg_action_match.group(2)
+                        if action == 'manager-signoff':
+                            if set(data) != {'signoff_ref'}:
+                                raise ValueError('unexpected fields')
+                            record = twin_gate.record_manager_signoff(identity, auth_id, data['signoff_ref'])
+                            return respond(start, '200 OK', {'authorization': record})
+                        if action == 'minotaur-clearance':
+                            if set(data) - {'clearance_ref', 'decision'} or 'clearance_ref' not in data:
+                                raise ValueError('unexpected fields')
+                            record = twin_gate.record_minotaur_clearance(identity, auth_id, data['clearance_ref'], decision=data.get('decision', 'CLEARED'))
+                            return respond(start, '200 OK', {'authorization': record})
+                        if action == 'human-signoff':
+                            if set(data) != {'signoff_ref'}:
+                                raise ValueError('unexpected fields')
+                            record = twin_gate.record_human_signoff(identity, auth_id, data['signoff_ref'])
+                            return respond(start, '200 OK', {'authorization': record})
+                        if action == 'authorize':
+                            if set(data) != {'agent', 'target', 'method', 'payload_sha256'}:
+                                raise ValueError('unexpected fields')
+                            record = twin_gate.authorize_execution(identity, auth_id, data['agent'], data['target'], data['method'], data['payload_sha256'])
+                            return respond(start, '200 OK', {'authorization': record})
+                        if action == 'verify':
+                            if set(data) != {'verification_ref', 'result'}:
+                                raise ValueError('unexpected fields')
+                            record = twin_gate.record_verification(identity, auth_id, data['verification_ref'], data['result'])
+                            return respond(start, '200 OK', {'authorization': record})
+                        if action == 'preserve':
+                            if set(data) != set():
+                                raise ValueError('unexpected fields')
+                            record = twin_gate.preserve_receipt(identity, auth_id)
+                            return respond(start, '200 OK', {'authorization': record})
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = twin_gate.revoke(identity, auth_id)
+                        return respond(start, '200 OK', {'authorization': record})
+                    if path == '/api/twin-gate/quarantine-lift':
+                        if set(data) != {'agent'}:
+                            raise ValueError('unexpected fields')
+                        record = twin_gate.lift_quarantine(identity, data['agent'])
+                        return respond(start, '200 OK', {'lifted': record})
+                    return check_in(twin_gate)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -941,6 +1018,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'it_ai_manager_forbidden'})
         except ITAIManagerDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'it_ai_manager_denied', 'detail': str(exc)})
+        except TwinGateServiceForbidden:
+            return respond(start, '403 Forbidden', {'error': 'twin_gate_forbidden'})
+        except TwinGateServiceDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'twin_gate_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
