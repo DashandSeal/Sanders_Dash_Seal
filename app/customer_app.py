@@ -33,6 +33,10 @@ from core_platform.pbd_validation import (
     PBDValidationDenied,
     PBDValidationForbidden,
 )
+from core_platform.pbd_manifest_generator import (
+    PBDGeneratorDenied,
+    PBDGeneratorForbidden,
+)
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -110,9 +114,10 @@ GW_APPLICATION_SUBMISSION_ROUTE = re.compile(r'^/api/grantwriter/applications/([
 GW_APPLICATION_DRAFT_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/draft$')
 GW_APPLICATION_COMPLIANCE_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/compliance$')
 PBD_VALIDATION_VIEW_ROUTE = re.compile(r'^/api/pbd-validation/validations/([A-Za-z0-9_-]{1,128})$')
+PBD_GENERATOR_VIEW_ROUTE = re.compile(r'^/api/pbd-manifest-generator/generations/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -190,6 +195,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         gw_draft_match = GW_APPLICATION_DRAFT_ROUTE.fullmatch(path)
         gw_compliance_match = GW_APPLICATION_COMPLIANCE_ROUTE.fullmatch(path)
         pbd_validation_view_match = PBD_VALIDATION_VIEW_ROUTE.fullmatch(path)
+        pbd_generator_view_match = PBD_GENERATOR_VIEW_ROUTE.fullmatch(path)
         is_unm_route = (path in ('/api/uncle-nickey-mao/status',
                                  '/api/uncle-nickey-mao/guardian-relay',
                                  '/api/uncle-nickey-mao/referrals',
@@ -234,10 +240,15 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/pbd-validation/scan',
                                             '/api/pbd-validation/check-in')
                                    or pbd_validation_view_match is not None)
+        is_pbd_generator_route = (path in ('/api/pbd-manifest-generator/status',
+                                           '/api/pbd-manifest-generator/generate',
+                                           '/api/pbd-manifest-generator/check-in')
+                                  or pbd_generator_view_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
-                             or is_pbd_validation_route)
+                             or is_pbd_validation_route
+                             or is_pbd_generator_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -263,13 +274,15 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/home-healthcare/status',
                                             '/api/grantwriter/status',
                                             '/api/grantwriter/portfolio',
-                                            '/api/pbd-validation/status')
+                                            '/api/pbd-validation/status',
+                                            '/api/pbd-manifest-generator/status')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
                                    or gw_stage_match is not None
                                    or gw_compliance_match is not None
-                                   or pbd_validation_view_match is not None) else ('POST',)
+                                   or pbd_validation_view_match is not None
+                                   or pbd_generator_view_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -645,6 +658,23 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = pbd_validation.validation_view(identity, role, pbd_validation_view_match.group(1))
                         return respond(start, '200 OK', {'validation': record})
                     return check_in(pbd_validation)
+                if is_pbd_generator_route:
+                    if pbd_manifest_generator is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'pbd_manifest_generator_unavailable'})
+                    if path == '/api/pbd-manifest-generator/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': pbd_manifest_generator.status()})
+                    if path == '/api/pbd-manifest-generator/generate':
+                        if set(data) - {'artifact', 'scope', 'endpoint'} or 'artifact' not in data:
+                            raise ValueError('unexpected fields')
+                        record = pbd_manifest_generator.generate(identity, data['artifact'], scope=data.get('scope', 'source-manifest'), endpoint=data.get('endpoint'))
+                        return respond(start, '201 Created', {'generation': record})
+                    if pbd_generator_view_match:
+                        role = 'OPERATOR' if is_operator() else 'COORDINATOR'
+                        record = pbd_manifest_generator.generation_view(identity, role, pbd_generator_view_match.group(1))
+                        return respond(start, '200 OK', {'generation': record})
+                    return check_in(pbd_manifest_generator)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -696,6 +726,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'pbd_validation_forbidden'})
         except PBDValidationDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'pbd_validation_denied', 'detail': str(exc)})
+        except PBDGeneratorForbidden:
+            return respond(start, '403 Forbidden', {'error': 'pbd_manifest_generator_forbidden'})
+        except PBDGeneratorDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'pbd_manifest_generator_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

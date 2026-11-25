@@ -94,6 +94,12 @@ What it wires:
   validation gate), with the same operator verifier and audit
   chain. It assesses and records; it does not itself execute or
   block other code.
+- PBDManifestGenerator is ``PBDManifestGenerator`` on
+  ``data/pbd_manifest_generator.db``, generating paired
+  ``.pbd.json`` manifests inside the deployed repository root
+  (the MASTER §14 generation standard), operator-only, with the
+  same audit chain. It never signs: generated manifests are
+  UNSIGNED_SOURCE_MANIFEST.
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -118,6 +124,7 @@ from core_platform.grantwriter_service import GrantwriterPlatform
 from core_platform.home_healthcare import HomeHealthcarePlatform
 from core_platform.native_case_bridge import CaseNativeBridge
 from core_platform.native_notary import NativeNotarySessions
+from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_validation import PBDValidationEngine
 from core_platform.provider_connections import WriteProviderClient
 from core_platform.provider_workflows import ProviderWorkflows
@@ -298,6 +305,13 @@ def create_production_bindings():
         data_dir / 'pbd_validation.db', repo_root,
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # PBDManifestGenerator (RTSA Build Program): the MASTER §14
+    # manifest generation standard over the deployed repository
+    # root, on its own store. Operator-only; never signs.
+    pbd_manifest_generator = PBDManifestGenerator(
+        data_dir / 'pbd_manifest_generator.db', repo_root,
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -313,4 +327,5 @@ def create_production_bindings():
         home_healthcare=home_healthcare,
         grantwriter=grantwriter,
         pbd_validation=pbd_validation,
+        pbd_manifest_generator=pbd_manifest_generator,
     )
