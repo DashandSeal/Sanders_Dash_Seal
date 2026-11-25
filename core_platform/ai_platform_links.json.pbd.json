@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/ai_platform_links.json",
-        "payload_hash": "c62bd8574b0c9a91cb26da920709a37b00a67d18806c91bbf7ca9d6b0a42facd",
+        "payload_hash": "57bda410420485ff79e58157529d54b7e464a1ae2835fb3ac7f274e096632b3d",
         "scope": {
             "endpoint": "local://development",
             "method": "TEST",

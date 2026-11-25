@@ -4950,3 +4950,175 @@ sanders_ai_psychiatrist_unavailable).
 Deployed-composition verification through
 create_application on the final composed tree is
 recorded in the tranche 14 entry of the build queue.
+
+## RTSA Build Program Q55 — Sanders Recon (2026-11-24)
+
+**Scope**: build the Sanders Recon design whole as its
+own platform service (canonical catalog row #63, Band
+2D), per the established tranche pattern, under the
+standards gate: Fortune 500 governs end to end, the
+MASTER architecture within it, and the Sanders Royal
+Enterprise Standard for presentation within it. Fortune
+500 judgment: the platform meets the standard within its
+honest scope limits — it is an internal operator/auditor
+record surface over governed security-intelligence
+records; no public or customer surface is designed for
+Sanders Recon in any examined source, so none is built
+and the Royal Enterprise presentation layer does not
+apply; no security internals are exposed anywhere. Scope
+limits stated plainly: he carries intelligence records
+only — he collects nothing, intercepts nothing, and
+accesses no external system; his determinations are
+records placed before human decision-makers, never acts;
+he holds subjects and reports by reference only — no
+collected material, no intercepted content, and no
+live-system state ever. Naming verification: the
+canonical catalog (row #63) and the owner's recorded
+ruling D-N4 name this platform "Sanders Recon" — the
+name was verified against those sources before building,
+per the name law recorded after tranche 8. RECORDS
+CONFLICTS, flagged and not harmonized: (1) NAME — D-N4
+rules expressly against both competing forms: "Sanders
+AI Recon" (the master grid, Set B, Set C, and this
+registry entry's prior record) and "Sanders Recon Ops"
+(Set A) are NOT the name; the built name is Sanders
+Recon, and the registry entry's name is corrected in
+place under D-N4 (its machine id, sanders_ai_recon, is
+retained — machine strings are not names). The
+recon-ops hostname (recon-ops.sandersglobal.com) stays
+as the designed address under D-N4 — name and address
+differ, the owner's call; it sits under the unowned
+parent sandersglobal.com, is recorded as the designed
+address, and nothing is served there. (2) Set C's
+purpose text ("AI reconnaissance, NRO satellite
+integration, SIGINT/HUMINT fusion, predictive
+analytics") is recorded exactly as found, as a
+design-record claim of that catalog; it is NOT the built
+scope — no source the owner has ruled adopts it, and
+this build constructs no satellite integration, no
+signals collection, no interception, and no
+external-agency integration of any kind; the built
+purpose is the grid's "Security intelligence / recon".
+(3) Nicknames attested — "ReconX" (grid), "Recon" (Set
+C), "RECON" (Set B seed persona string) — recorded as
+found; none is adopted as this platform's identity. (4)
+NAICS: three sources attest three different sets — the
+grid (541715, 541512, 541511, 541519, 561621, 541690),
+Set B (541512, 561621), and the Set A/README map under
+"Sanders Recon Ops" (621399, 541618, 561612, 523991,
+541715, 611430) — attested and unruled; no owner ruling
+assigns a set and the canonical catalog row carries
+none, so NO NAICS set is carried into his built
+identity. core_platform/agent_registry.py and
+core_platform/rtsa_registry.py remain byte-untouched.
+Sanders Recon is his own platform — not Sanders
+Intelligence (catalog #98 — a separate platform, D-N5),
+not Sanders Security (catalog #71), and not Sanders
+Security Ops (catalog #130); the security-name
+boundaries remain undrawn in the sources (D-N13 partial)
+and nothing is merged here. The purple-heart HQ seal
+variant (Sanders Home Healthcare & Caregivers exclusive,
+owner ruling 2026-11-24 23:12) is not used here.
+
+**Built**: core_platform/sanders_recon_service.py
+(SandersReconService over
+core_platform/rtsa_foundation.py; independent identity
+sanders_recon; design view carrying the designed role
+"Security intelligence / recon", its design sources, and
+the discipline INTELLIGENCE_RECORDS_ONLY; fail-closed
+operation check refusing the collection and execution
+boundary by name under that signal —
+conduct_surveillance, collect_signals_intelligence,
+intercept_communications, access_external_system,
+external_execution — and unknown operations;
+intelligence records carried as durable, receipted
+records over a subject reference, a declared
+intelligence-report reference set, and a scope
+reference, with lifecycle REQUESTED → APPROVED /
+REJECTED (the recorded human decision) →
+OUTCOME_RECORDED; the report discipline enforced in the
+record model — a record declared with no reports stands
+NO_REPORTS_SUBMITTED in every view and in the status
+tallies, and both determinations (INTELLIGENCE_CONFIRMED,
+THREAT_INDICATED) are refused on it, while INCONCLUSIVE,
+which asserts nothing, records against evidence;
+outcomes recorded only for APPROVED records and only
+against a presented evidence reference, with a closed
+outcome set; every state change writes its Glass-Box
+receipt inside the same transaction; operator-only
+check-in bound to the identity integrity digest). Route
+family /api/sanders-recon/ wired through
+app/customer_app.py (create_customer_app parameter
+sanders_recon), deploy/deployment.py (RuntimeBindings
+.sanders_recon, health route /api/sanders-recon/healthz,
+forwarding through create_application), and
+deploy/production_bindings.py (construction on his own
+store sanders_recon.db); watchdog check_http entry in
+deploy/sds_watchdog.sh; registry entry in
+core_platform/ai_platform_links.json updated in place
+(registry remains 77 entries — the entry pre-existed
+from the records layer under the machine id
+sanders_ai_recon, its name is corrected to Sanders Recon
+under D-N4, and it now carries the built platform; its
+former grid endpoint, a file claim on an unreachable
+host, is replaced by the in-process status endpoint).
+
+**Pricing/teaching audit** (examined set: canonical
+catalog row #63; Set B database_schema.sql, read
+directly — row ('Sanders AI Recon', 'RECON', 'premium',
+11, 15000, 6000000, ARRAY['541512','561621']) — and Set
+B tier_pricing_global.py, read directly — the name in
+the premium list; Set C catalog (DeployPad branch
+README), read directly — Tier 2 entry "Sanders AI Recon
+| Recon | $525,000,000/yr" with the purpose text recorded
+above; the MASTER design — the name does not appear;
+the master grid): the design carries NO price for
+Sanders Recon that may be wired — Set B's $6,000,000
+figure and Set C's $525,000,000/yr figure are BLOCKER
+FIGURES under the owner's 2026-11-24 21:31 ruling
+(unrealistic figures placed as blockers, never
+chargeable prices); both are flagged here, none is
+built, none is wired, and the two figures' conflict is
+not settled because neither is a price. The design
+carries NO teaching function for Sanders Recon — none
+built, none invented.
+
+**Verification**: scratch drive (never committed) —
+checks recorded in the tranche 14 entry of the build
+queue: identity and design view (designed role and
+discipline exact; the D-N4 name ruling and the
+non-adopted forms carried in the design note);
+constructor refuses a missing audit adapter; operation
+check (record operation RECORD_ONLY; all five collection
+and execution operations refused by name with
+INTELLIGENCE_RECORDS_ONLY; unknown operation refused);
+record lifecycle (operator-only creation; subject/scope
+references required; report set must be a list of
+non-empty references, capped; outcome refused before
+approval; outcome without evidence refused; outcome set
+closed — SURVEILLED is not an outcome; the with-reports
+record's INTELLIGENCE_CONFIRMED outcome records against
+evidence and a second outcome is refused; the
+no-reports record stands NO_REPORTS_SUBMITTED with both
+determinations refused on it while INCONCLUSIVE records;
+reject records REJECTED and approve from REJECTED is
+refused; unknown record denied; geofence refuses an
+undeclared region; status totals including
+records_no_reports_submitted and reports_declared_total;
+operator-only check-in); registry at 77 entries with the
+updated entry carrying the built platform under the
+corrected name Sanders Recon and naming the blocker
+figures as blockers; all 9 approval gates UNAPPROVED;
+WSGI through create_customer_app (signed-out 401, status
+200, collection operation 400 with
+INTELLIGENCE_RECORDS_ONLY in the detail, create refused
+for non-operator 403, create 201 standing
+NO_REPORTS_SUBMITTED, approve 200, INTELLIGENCE_CONFIRMED
+on the no-reports record refused 400 with
+NO_REPORTS_SUBMITTED in the detail, INCONCLUSIVE outcome
+200, records list 200, unexpected fields 400, wrong
+origin 403, check-in 201, unwired service 503
+sanders_recon_unavailable). Deployed-composition
+verification through create_application on the final
+composed tree is recorded in the tranche 14 entry of the
+build queue.

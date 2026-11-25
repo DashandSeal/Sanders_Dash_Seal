@@ -202,6 +202,7 @@ from core_platform.sanders_omniconn_service import SandersOmniconnService
 from core_platform.gia_mind_service import GiaMindService
 from core_platform.ai_doctor_service import AIDoctorService
 from core_platform.sanders_ai_psychiatrist_service import SandersAIPsychiatristService
+from core_platform.sanders_recon_service import SandersReconService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -810,6 +811,14 @@ def create_production_bindings():
     sanders_ai_psychiatrist = SandersAIPsychiatristService(
         data_dir / 'sanders_ai_psychiatrist.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Recon platform (Q55, RTSA Build Program
+    # tranche 14): governed security-intelligence records
+    # over his own store — records only; he collects
+    # nothing, intercepts nothing, and accesses no
+    # external system. Name per owner ruling D-N4.
+    sanders_recon = SandersReconService(
+        data_dir / 'sanders_recon.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -866,4 +875,5 @@ def create_production_bindings():
         gia_mind=gia_mind,
         ai_doctor=ai_doctor,
         sanders_ai_psychiatrist=sanders_ai_psychiatrist,
+        sanders_recon=sanders_recon,
     )
