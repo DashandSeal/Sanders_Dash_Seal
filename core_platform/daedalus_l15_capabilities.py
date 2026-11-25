@@ -15,8 +15,8 @@ occupied by Daedalus's own native core
 (``core_platform/daedalus_native_core.py``). The provider transports
 remain optional gated tools; they are not the head capability and
 are not declared here. The inventory is extended to the founder's
-20+ design set (23 capabilities: 22 with names sourced only from
-his own design records, plus the one founder-directed addition
+20+ design set (26 capabilities: 22 with names sourced only from
+his own design records, plus the four founder-directed additions
 named below) — the 2026-11-13 contract below and
 ``docs/DAEDALUS_LIVE_UPGRADE_2026-10-23.md`` /
 ``docs/DAEDALUS_RECOVERED_INVENTORY_2026-11-03.md`` — recorded per
@@ -25,11 +25,11 @@ design scope statement, never a claim of live operation: each
 capability carries its explicit observed state, and a state flips
 only on evidence (see ``observed_profile``).
 
-One capability is a founder-directed addition of 2026-11-25 rather
-than a name from the records above: ``real_time_learning``, added
-on the founder's direction of that day — "He's got to have the
-ability to actually learn in real time" — and recorded as such in
-``CAPABILITY_SOURCES``. It is performed by the persistent
+Four capabilities are founder-directed additions of 2026-11-25
+rather than names from the records above: ``real_time_learning``,
+added on the founder's direction of that day — "He's got to have
+the ability to actually learn in real time" — and recorded as such
+in ``CAPABILITY_SOURCES``. It is performed by the persistent
 learned-knowledge store and the native core's incorporation loop
 (``core_platform/daedalus_knowledge_store.py``,
 ``core_platform/daedalus_native_core.py``). It is a different
@@ -37,6 +37,23 @@ capability from ``real_time_events``: learning is the incorporation
 of taught knowledge and recorded outcomes into later reasoning,
 not real-time event handling, and the two are declared and
 observed separately.
+
+The other three additions come from the founder's protection
+direction of the same day — "He's got to be tamper proof quantum
+encryption protection protocols with the full Sanders labyrinth
+shield 🛡️ and the RTSA minotaur patoling the labyrinth shield
+itself": ``labyrinth_shield_binding``, ``minotaur_integrity_patrol``,
+and ``quantum_protection_protocols``, performed by the protection
+layer (``core_platform/daedalus_protection.py``) wired
+platform-to-platform with the Sanders Labyrinth Shield RTSA and
+the RTSA Minotaur — both full platforms with their own identities,
+neither absorbed into Daedalus. They are distinct from the
+2026-11-13 contract's ``shield_sss`` / ``shield_sssv3`` /
+``shield_gss``: those remain separately named owner-defined
+components (per the 2026-10-23 design record), no implementation
+under those names exists, and the Labyrinth Shield binding is not
+renamed into them — they stay declared and unavailable until an
+implementation under their own names exists.
 """
 from __future__ import annotations
 
@@ -94,16 +111,20 @@ CAPABILITIES = (
     "neurosymbolic_checks",
     "build_deploy_orchestration",
     "real_time_learning",
+    "labyrinth_shield_binding",
+    "minotaur_integrity_patrol",
+    "quantum_protection_protocols",
 )
 
 
-# Where each declared capability is named in the founder's own
-# design records. The first thirteen entries are the 2026-11-13
-# contract this module originally carried (the head seat under its
-# native identity per the founder's 2026-11-25 specification); the
-# remaining nine are named in the founder's Daedalus design records
-# of 2026-10-23 and 2026-11-03. No capability is declared here that
-# those records do not name.
+# Where each declared capability is named. The first thirteen
+# entries are the 2026-11-13 contract this module originally
+# carried (the head seat under its native identity per the
+# founder's 2026-11-25 specification); the next nine are named in
+# the founder's Daedalus design records of 2026-10-23 and
+# 2026-11-03; the last four are founder-directed additions of
+# 2026-11-25, recorded as such in their entries below. No
+# capability is declared here from any other source.
 CAPABILITY_SOURCES = {
     "live_native_reasoning": (
         "founder specification 2026-11-25 (L15 head seat, native "
@@ -163,6 +184,25 @@ CAPABILITY_SOURCES = {
         "the ability to actually learn in real time\"); no learning "
         "capability is named in the 2026-11-13 contract or the "
         "2026-10-23 / 2026-11-03 design records"
+    ),
+    "labyrinth_shield_binding": (
+        "founder-directed addition 2026-11-25 (\"the full Sanders "
+        "labyrinth shield\"; the Shield is a full RTSA in its own "
+        "right — founder affirmation, same day — and Daedalus is "
+        "sheltered by it platform-to-platform, never absorbing it)"
+    ),
+    "minotaur_integrity_patrol": (
+        "founder-directed addition 2026-11-25 (\"the RTSA minotaur "
+        "patoling the labyrinth shield itself\"); the Minotaur is "
+        "one RTSA (ruling D-N8) and its patrol of Daedalus and of "
+        "the Shield is wired, not absorbed"
+    ),
+    "quantum_protection_protocols": (
+        "founder-directed addition 2026-11-25 (\"tamper proof "
+        "quantum encryption protection protocols\"); performed by "
+        "the hash-based signature layer in "
+        "core_platform/daedalus_protection.py — ML-KEM key exchange "
+        "remains declared, not implemented, in that layer"
     ),
 }
 
