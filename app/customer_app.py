@@ -146,6 +146,10 @@ HH_INTAKE_TRANSITION_ROUTE = re.compile(r'^/api/home-healthcare/intakes/([A-Za-z
 HH_INTAKE_ROOM_ROUTE = re.compile(r'^/api/home-healthcare/intakes/([A-Za-z0-9_-]{1,128})/consultation-room$')
 HH_ASSIGNMENT_ROUTE = re.compile(r'^/api/home-healthcare/assignments/([A-Za-z0-9_-]{1,128})$')
 HH_ASSIGNMENT_TRANSITION_ROUTE = re.compile(r'^/api/home-healthcare/assignments/([A-Za-z0-9_-]{1,128})/transition$')
+HH_IDENTIFIER_REVOKE_ROUTE = re.compile(r'^/api/home-healthcare/identifiers/([A-Za-z0-9_-]{1,128})/revoke$')
+HH_PERSON_PAGE_ROUTE = re.compile(r'^/api/home-healthcare/persons/([A-Za-z0-9_-]{1,128})/page$')
+HH_APPOINTMENT_ROUTE = re.compile(r'^/api/home-healthcare/appointments/([A-Za-z0-9_-]{1,128})$')
+HH_APPOINTMENT_TRANSITION_ROUTE = re.compile(r'^/api/home-healthcare/appointments/([A-Za-z0-9_-]{1,128})/transition$')
 GW_APPLICATION_STAGE_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/stage$')
 GW_APPLICATION_BUDGET_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/budget-lines$')
 GW_APPLICATION_EVIDENCE_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/evidence$')
@@ -338,6 +342,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         hh_intake_room_match = HH_INTAKE_ROOM_ROUTE.fullmatch(path)
         hh_assignment_match = HH_ASSIGNMENT_ROUTE.fullmatch(path)
         hh_assignment_transition_match = HH_ASSIGNMENT_TRANSITION_ROUTE.fullmatch(path)
+        hh_identifier_revoke_match = HH_IDENTIFIER_REVOKE_ROUTE.fullmatch(path)
+        hh_person_page_match = HH_PERSON_PAGE_ROUTE.fullmatch(path)
+        hh_appointment_match = HH_APPOINTMENT_ROUTE.fullmatch(path)
+        hh_appointment_transition_match = HH_APPOINTMENT_TRANSITION_ROUTE.fullmatch(path)
         gw_stage_match = GW_APPLICATION_STAGE_ROUTE.fullmatch(path)
         gw_budget_match = GW_APPLICATION_BUDGET_ROUTE.fullmatch(path)
         gw_evidence_match = GW_APPLICATION_EVIDENCE_ROUTE.fullmatch(path)
@@ -476,12 +484,18 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         is_home_healthcare_route = (path in ('/api/home-healthcare/status',
                                              '/api/home-healthcare/intakes',
                                              '/api/home-healthcare/assignments',
+                                             '/api/home-healthcare/identifiers',
+                                             '/api/home-healthcare/appointments',
                                              '/api/home-healthcare/check-in')
                                     or hh_intake_match is not None
                                     or hh_intake_transition_match is not None
                                     or hh_intake_room_match is not None
                                     or hh_assignment_match is not None
-                                    or hh_assignment_transition_match is not None)
+                                    or hh_assignment_transition_match is not None
+                                    or hh_identifier_revoke_match is not None
+                                    or hh_person_page_match is not None
+                                    or hh_appointment_match is not None
+                                    or hh_appointment_transition_match is not None)
         is_grantwriter_route = (path in ('/api/grantwriter/status',
                                          '/api/grantwriter/opportunities',
                                          '/api/grantwriter/applications',
@@ -988,6 +1002,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
+                                   or hh_person_page_match is not None
+                                   or hh_appointment_match is not None
                                    or gw_stage_match is not None
                                    or gw_compliance_match is not None
                                    or pbd_validation_view_match is not None
@@ -1397,6 +1413,34 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = home_healthcare.transition_assignment(identity, hh_assignment_transition_match.group(1), data['target'])
                         return respond(start, '200 OK', {'assignment': record})
+                    if path == '/api/home-healthcare/identifiers':
+                        if set(data) != {'jurisdiction'}:
+                            raise ValueError('unexpected fields')
+                        record = home_healthcare.issue_person_identifier(identity, data['jurisdiction'])
+                        return respond(start, '201 Created', {'person': record})
+                    if hh_identifier_revoke_match:
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = home_healthcare.revoke_person_identifier(identity, hh_identifier_revoke_match.group(1))
+                        return respond(start, '200 OK', {'person': record})
+                    if hh_person_page_match:
+                        role = 'OPERATOR' if is_operator() else 'CLIENT'
+                        record = home_healthcare.person_page(identity, role, hh_person_page_match.group(1))
+                        return respond(start, '200 OK', {'page': record})
+                    if path == '/api/home-healthcare/appointments':
+                        if set(data) != {'person_ref', 'provider_ref', 'jurisdiction', 'starts_at', 'ends_at'}:
+                            raise ValueError('unexpected fields')
+                        result = home_healthcare.create_appointment(identity, **data)
+                        return respond(start, '201 Created', result)
+                    if hh_appointment_match:
+                        role = 'OPERATOR' if is_operator() else 'CLIENT'
+                        record = home_healthcare.appointment_view(identity, role, hh_appointment_match.group(1))
+                        return respond(start, '200 OK', {'appointment': record})
+                    if hh_appointment_transition_match:
+                        if set(data) != {'target'}:
+                            raise ValueError('unexpected fields')
+                        record = home_healthcare.transition_appointment(identity, hh_appointment_transition_match.group(1), data['target'])
+                        return respond(start, '200 OK', {'appointment': record})
                     return check_in(home_healthcare)
                 if is_grantwriter_route:
                     if grantwriter is None:

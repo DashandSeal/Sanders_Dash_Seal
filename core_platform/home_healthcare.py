@@ -38,6 +38,47 @@ NOT built here: the flagship's notary flows (they stay with Sanders
 Dash & Seal — this module must not duplicate them), any real PHI
 handling (none — references only), and billing.
 
+THE SIX-INDUSTRY CONNECTIVE LAYER (restored 2026-11-24 — owner
+design statement and go-ahead of 2026-11-24): this platform's
+ORIGINAL design — the design of the owner's first platform
+(Famous.ai, "Sanders Home Healthcare & Caregivers NAICS Code
+Integrator", created 2025-11-15) — is six human-facing industry
+workflows connected through one person: each of the six service
+lines below is one industry's workflow, deliberately chosen; the
+entry point is a doctor's appointment; and from ONE person
+identifier every industry workflow stands online on the same
+page in real time. This module restores that layer: person
+identifiers (opaque reference tokens carrying NO personal or
+health data), doctor-appointment records created under an
+identifier, an activation record set that brings all six
+workflows online together at the first appointment, and a
+unified person page computed live from the current records, so
+it reflects record changes as they happen. The six workflows
+are THIS platform's own service lines; no connection to any
+external industry system is made or claimed. The Famous.ai
+face is preserved as the recovery record outside this module;
+nothing of it is imported here, and its displayed code set —
+a mutated generation carrying 532490 and 611699 in place of
+532283 and 624120 — is NOT used: this module carries the
+anchored original six codes exactly.
+
+SEAL DESIGNATION (owner, 2026-11-24): under the dual-seal rule,
+this platform's headquarters-seal slot is designated for the
+headquarters seal bearing a purple heart — the variant of the
+corporate headquarters seal with one purple heart in a gold
+setting added at the bottom center, above "THE SANDERS
+COMPANIES" banner, all original artwork, wording and colors
+otherwise preserved — produced under the owner's instruction
+and held in the owner's files at
+~/workspace/seals/hq-seal-purple-heart.png, alongside this
+platform's company seal per the dual-seal rule. This
+purple-heart headquarters seal is EXCLUSIVE to this platform:
+it is the only RTSA platform that carries it; every other
+platform carries the standard blue-and-gold headquarters seal
+under the dual-seal rule. The plain blue-and-gold headquarters
+seal is NOT the designated seal for this platform and is not
+substituted for it.
+
 Fail-closed throughout, on the platform's established disciplines:
 
 * operator-only operations go through ``operator_verifier``; an
@@ -123,11 +164,36 @@ _BLOCKING_ASSIGNMENT_STATUSES = ('SCHEDULED', 'CONFIRMED')
 _BINDABLE_INTAKE_STATUSES = ('ACCEPTED', 'ACTIVE')
 
 _ROLE_SCOPES = {
-    'OPERATOR': {'INTAKE', 'ASSIGNMENT'},
+    'OPERATOR': {'INTAKE', 'ASSIGNMENT', 'APPOINTMENT', 'PERSON_PAGE'},
     'CAREGIVER': {'ASSIGNMENT'},
-    'CLIENT': {'INTAKE'},
-    'AUDITOR': {'INTAKE', 'ASSIGNMENT'},
+    'CLIENT': {'INTAKE', 'APPOINTMENT', 'PERSON_PAGE'},
+    'AUDITOR': {'INTAKE', 'ASSIGNMENT', 'APPOINTMENT', 'PERSON_PAGE'},
 }
+
+# -- The six-industry connective layer --------------------------------
+# One person identifier, a doctor-appointment entry point, and all
+# six industry workflows online on the same page (owner design
+# statement, 2026-11-24). Identifiers and appointments carry
+# references and workflow state only — the no-PHI construction of
+# this module is absolute: no name, diagnosis, or free-text health
+# field exists on any of these tables either.
+PERSON_IDENTIFIER_STATUSES = frozenset(('ACTIVE', 'REVOKED'))
+
+APPOINTMENT_STATUSES = frozenset((
+    'REQUESTED', 'SCHEDULED', 'COMPLETED', 'CANCELLED',
+))
+_APPOINTMENT_TRANSITIONS = {
+    'REQUESTED': frozenset(('SCHEDULED', 'CANCELLED')),
+    'SCHEDULED': frozenset(('COMPLETED', 'CANCELLED')),
+    'COMPLETED': frozenset(),
+    'CANCELLED': frozenset(),
+}
+
+# Per-workflow states on the unified person page: STANDBY before
+# the person's industries are activated, ONLINE once an appointment
+# has activated them, ENGAGED while a live (not DECLINED/CLOSED)
+# intake stands on that workflow's service line.
+WORKFLOW_STATES = frozenset(('STANDBY', 'ONLINE', 'ENGAGED'))
 
 
 class HomeHealthcareDenied(ValueError):
@@ -142,8 +208,11 @@ class HomeHealthcareForbidden(ValueError):
 
 class HomeHealthcarePlatform:
     """Sanders Home Healthcare & Caregivers RTSA core: client
-    intakes, caregiver assignments, consultation-room binding and
-    platform check-ins — references and workflow state only."""
+    intakes, caregiver assignments, consultation-room binding,
+    platform check-ins, and the six-industry connective layer
+    (person identifiers, doctor appointments, industry activation
+    and the unified person page) — references and workflow state
+    only."""
 
     def __init__(self, database, operator_verifier=None, audit=None,
                  rooms=None):
@@ -185,6 +254,35 @@ class HomeHealthcarePlatform:
                 room_id TEXT NOT NULL,
                 created_by TEXT NOT NULL,
                 created_at INTEGER NOT NULL
+            );""")
+            db.execute("""CREATE TABLE IF NOT EXISTS person_identifiers (
+                person_ref TEXT PRIMARY KEY,
+                jurisdiction TEXT NOT NULL,
+                status TEXT NOT NULL,
+                created_by TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL
+            );""")
+            db.execute("""CREATE TABLE IF NOT EXISTS person_appointments (
+                appointment_id TEXT PRIMARY KEY,
+                person_ref TEXT NOT NULL,
+                provider_ref TEXT NOT NULL,
+                jurisdiction TEXT NOT NULL,
+                starts_at INTEGER NOT NULL,
+                ends_at INTEGER NOT NULL,
+                status TEXT NOT NULL,
+                created_by TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL
+            );""")
+            db.execute("""CREATE TABLE IF NOT EXISTS industry_activations (
+                person_ref TEXT NOT NULL,
+                service_line TEXT NOT NULL,
+                appointment_id TEXT NOT NULL,
+                state TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL,
+                PRIMARY KEY (person_ref, service_line)
             );""")
             ensure_checkin_schema(db)
 
@@ -251,6 +349,32 @@ class HomeHealthcarePlatform:
             'updated_at': row['updated_at'],
         }
 
+    @staticmethod
+    def _person_view(row):
+        return {
+            'person_ref': row['person_ref'],
+            'jurisdiction': row['jurisdiction'],
+            'status': row['status'],
+            'created_by': row['created_by'],
+            'created_at': row['created_at'],
+            'updated_at': row['updated_at'],
+        }
+
+    @staticmethod
+    def _appointment_view(row):
+        return {
+            'appointment_id': row['appointment_id'],
+            'person_ref': row['person_ref'],
+            'provider_ref': row['provider_ref'],
+            'jurisdiction': row['jurisdiction'],
+            'starts_at': row['starts_at'],
+            'ends_at': row['ends_at'],
+            'status': row['status'],
+            'created_by': row['created_by'],
+            'created_at': row['created_at'],
+            'updated_at': row['updated_at'],
+        }
+
     def _intake_row(self, db, intake_id):
         return db.execute(
             "SELECT * FROM client_intakes WHERE intake_id = ?;",
@@ -260,6 +384,16 @@ class HomeHealthcarePlatform:
         return db.execute(
             "SELECT * FROM caregiver_assignments WHERE assignment_id = ?;",
             (assignment_id,)).fetchone()
+
+    def _person_row(self, db, person_ref):
+        return db.execute(
+            "SELECT * FROM person_identifiers WHERE person_ref = ?;",
+            (person_ref,)).fetchone()
+
+    def _appointment_row(self, db, appointment_id):
+        return db.execute(
+            "SELECT * FROM person_appointments WHERE appointment_id = ?;",
+            (appointment_id,)).fetchone()
 
     # -- intakes ---------------------------------------------------------
 
@@ -466,6 +600,304 @@ class HomeHealthcarePlatform:
                     'A caregiver may view only their own assignments')
             return self._assignment_view(row)
 
+    # -- six-industry connective layer ---------------------------------
+    # One identifier, a doctor-appointment entry point, and all six
+    # industry workflows online on the same page (owner design
+    # statement, 2026-11-24). The six workflows are this platform's
+    # own six service lines above — no external industry system is
+    # connected or claimed.
+
+    def issue_person_identifier(self, actor, jurisdiction):
+        """Issue ONE person identifier (operator-only): an opaque
+        reference token that carries no personal or health data and
+        keys the person's unified page. Geofence: DENY refuses;
+        STEP_UP is operator-only (the issuer is an operator by the
+        check above). The issuance is receipted in the same
+        transaction — no record, no identifier."""
+        self._check_actor(actor)
+        decision = self.geofence.evaluate(jurisdiction)
+        if decision == 'DENY':
+            raise HomeHealthcareDenied(
+                f'Jurisdiction denied: {jurisdiction!r}')
+        person_ref = 'person-' + secrets.token_urlsafe(12)
+        now = int(time.time())
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                self._require_operator(actor)
+                db.execute(
+                    "INSERT INTO person_identifiers (person_ref, "
+                    "jurisdiction, status, created_by, created_at, "
+                    "updated_at) VALUES (?, ?, 'ACTIVE', ?, ?, ?);",
+                    (person_ref, jurisdiction, actor, now, now))
+                self._record('HOME_HEALTHCARE_PERSON_IDENTIFIER_ISSUED',
+                             person_ref=person_ref, actor=actor,
+                             jurisdiction=jurisdiction)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return self._person_view(self._person_row(db, person_ref))
+
+    def revoke_person_identifier(self, actor, person_ref):
+        """Revoke a person identifier (operator-only). A revoked
+        identifier admits no new appointments and its unified page
+        refuses every role; its records remain as evidence. Only an
+        ACTIVE identifier can be revoked."""
+        self._check_actor(actor)
+        now = int(time.time())
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                self._require_operator(actor)
+                row = self._person_row(db, person_ref)
+                if row is None:
+                    raise HomeHealthcareDenied('Unknown person identifier')
+                if row['status'] != 'ACTIVE':
+                    raise HomeHealthcareDenied(
+                        'Only an ACTIVE identifier can be revoked; '
+                        f"this identifier is {row['status']}")
+                db.execute(
+                    "UPDATE person_identifiers SET status = 'REVOKED', "
+                    "updated_at = ? WHERE person_ref = ?;",
+                    (now, person_ref))
+                self._record('HOME_HEALTHCARE_PERSON_IDENTIFIER_REVOKED',
+                             person_ref=person_ref, actor=actor)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return self._person_view(self._person_row(db, person_ref))
+
+    def create_appointment(self, actor, person_ref, provider_ref,
+                           jurisdiction, starts_at, ends_at):
+        """The entry point of the original design: a doctor
+        appointment created under ONE person identifier. The actor
+        is an operator or the person themselves (actor ==
+        person_ref). The identifier must exist and be ACTIVE, the
+        window must be well-formed, and the geofence applies to the
+        appointment's jurisdiction (DENY refuses; STEP_UP is
+        operator-only). provider_ref is an opaque reference to the
+        doctor/practice — no name or health data is stored.
+
+        ACTIVATION: inside the same transaction, when this is the
+        person's first appointment, one activation row per service
+        line brings all six industry workflows ONLINE together,
+        bound to this appointment, and the activation is receipted
+        with the six anchored codes. Returns
+        {'appointment': ..., 'activation': ... or None}."""
+        self._check_actor(actor)
+        self._check_ref('person_ref', person_ref)
+        self._check_ref('provider_ref', provider_ref)
+        for label, value in (('starts_at', starts_at), ('ends_at', ends_at)):
+            if not isinstance(value, int) or isinstance(value, bool):
+                raise HomeHealthcareDenied(f'Invalid {label}')
+        if ends_at <= starts_at:
+            raise HomeHealthcareDenied('ends_at must follow starts_at')
+        decision = self.geofence.evaluate(jurisdiction)
+        if decision == 'DENY':
+            raise HomeHealthcareDenied(
+                f'Jurisdiction denied: {jurisdiction!r}')
+        if decision == 'STEP_UP' and not self._is_operator(actor):
+            raise HomeHealthcareDenied(
+                'Jurisdiction requires operator step-up: '
+                f'{jurisdiction!r}')
+        appointment_id = 'appt-' + secrets.token_urlsafe(12)
+        now = int(time.time())
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                person = self._person_row(db, person_ref)
+                if person is None:
+                    raise HomeHealthcareDenied('Unknown person identifier')
+                if person['status'] != 'ACTIVE':
+                    raise HomeHealthcareDenied(
+                        'Appointments require an ACTIVE identifier; '
+                        f"this identifier is {person['status']}")
+                if actor != person_ref and not self._is_operator(actor):
+                    raise HomeHealthcareForbidden(
+                        'Appointments are created by an operator or by '
+                        'the person under their own identifier')
+                db.execute(
+                    "INSERT INTO person_appointments (appointment_id, "
+                    "person_ref, provider_ref, jurisdiction, starts_at, "
+                    "ends_at, status, created_by, created_at, updated_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, 'REQUESTED', ?, ?, ?);",
+                    (appointment_id, person_ref, provider_ref,
+                     jurisdiction, starts_at, ends_at, actor, now, now))
+                self._record('HOME_HEALTHCARE_APPOINTMENT_CREATED',
+                             appointment_id=appointment_id, actor=actor,
+                             person_ref=person_ref,
+                             provider_ref=provider_ref,
+                             jurisdiction=jurisdiction,
+                             starts_at=starts_at, ends_at=ends_at)
+                activation = None
+                existing = db.execute(
+                    "SELECT COUNT(*) AS n FROM industry_activations "
+                    "WHERE person_ref = ?;", (person_ref,)).fetchone()
+                if existing['n'] == 0:
+                    for code in SERVICE_LINES:
+                        db.execute(
+                            "INSERT INTO industry_activations (person_ref, "
+                            "service_line, appointment_id, state, "
+                            "created_at, updated_at) VALUES (?, ?, ?, "
+                            "'ONLINE', ?, ?);",
+                            (person_ref, code, appointment_id, now, now))
+                    self._record(
+                        'HOME_HEALTHCARE_INDUSTRIES_ACTIVATED',
+                        person_ref=person_ref, actor=actor,
+                        appointment_id=appointment_id,
+                        service_lines=list(SERVICE_LINES))
+                    activation = {
+                        'person_ref': person_ref,
+                        'appointment_id': appointment_id,
+                        'activated_at': now,
+                        'service_lines': list(SERVICE_LINES),
+                    }
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return {
+                'appointment': self._appointment_view(
+                    self._appointment_row(db, appointment_id)),
+                'activation': activation,
+            }
+
+    def transition_appointment(self, actor, appointment_id, target):
+        """One checked appointment lifecycle transition
+        (operator-only, exactly as intake transitions). An invalid
+        transition refuses and changes nothing."""
+        self._check_actor(actor)
+        now = int(time.time())
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                self._require_operator(actor)
+                row = self._appointment_row(db, appointment_id)
+                if row is None:
+                    raise HomeHealthcareDenied('Unknown appointment')
+                state = row['status']
+                if target not in _APPOINTMENT_TRANSITIONS.get(
+                        state, frozenset()):
+                    raise HomeHealthcareDenied(
+                        f'Appointment transition {state} -> {target} '
+                        'is not permitted')
+                db.execute(
+                    "UPDATE person_appointments SET status = ?, "
+                    "updated_at = ? WHERE appointment_id = ?;",
+                    (target, now, appointment_id))
+                self._record('HOME_HEALTHCARE_APPOINTMENT_TRANSITION',
+                             appointment_id=appointment_id, actor=actor,
+                             from_state=state, to_state=target)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return self._appointment_view(
+                self._appointment_row(db, appointment_id))
+
+    def appointment_view(self, actor, role, appointment_id):
+        """Serve one appointment record through the AccessGuard
+        (the access receipt precedes the record). A CLIENT may view
+        only appointments under their own identifier."""
+        self.guard.access(actor, role, 'APPOINTMENT', appointment_id,
+                          purpose='appointment_view')
+        with self._connect() as db:
+            row = self._appointment_row(db, appointment_id)
+            if row is None:
+                raise HomeHealthcareDenied('Unknown appointment')
+            if role == 'CLIENT' and row['person_ref'] != actor:
+                raise HomeHealthcareForbidden(
+                    'A client may view only their own appointments')
+            return self._appointment_view(row)
+
+    @staticmethod
+    def _workflow_lines(code):
+        """The stored service_line values belonging to one workflow:
+        the courier workflow (492110) also carries intakes declared
+        under the strictly-local 492210."""
+        if code == '492110':
+            return ('492110', COURIER_LOCAL_NAICS)
+        return (code,)
+
+    def person_page(self, actor, role, person_ref):
+        """The unified page of the original design: ONE identifier,
+        every industry workflow online on the same page. Served
+        through the AccessGuard under the PERSON_PAGE category (the
+        access receipt precedes any record). A CLIENT may view only
+        their own page. A REVOKED identifier's page refuses every
+        role — revocation takes the page offline; the records
+        remain as evidence.
+
+        The page is computed LIVE from the current records at read
+        time: the identifier, its activation (if any), all its
+        appointments (newest first), and one workflow entry per
+        anchored service line — STANDBY before activation, ONLINE
+        once activated, ENGAGED while a live intake stands on that
+        line — with the line's intake records by reference. State
+        changes in the underlying records are reflected on the
+        next read: that is the real-time property this design
+        carries, and no more is claimed."""
+        self.guard.access(actor, role, 'PERSON_PAGE', person_ref,
+                          purpose='person_page')
+        with self._connect() as db:
+            person = self._person_row(db, person_ref)
+            if person is None:
+                raise HomeHealthcareDenied('Unknown person identifier')
+            if person['status'] == 'REVOKED':
+                raise HomeHealthcareForbidden(
+                    'Person identifier is revoked; its page is offline')
+            if role == 'CLIENT' and person_ref != actor:
+                raise HomeHealthcareForbidden(
+                    'A client may view only their own page')
+            activation_rows = db.execute(
+                "SELECT * FROM industry_activations WHERE person_ref = ? "
+                "ORDER BY created_at LIMIT 1;", (person_ref,)).fetchone()
+            activation = None
+            if activation_rows is not None:
+                activation = {
+                    'appointment_id': activation_rows['appointment_id'],
+                    'activated_at': activation_rows['created_at'],
+                }
+            appointments = [
+                self._appointment_view(row) for row in db.execute(
+                    "SELECT * FROM person_appointments "
+                    "WHERE person_ref = ? ORDER BY created_at DESC, "
+                    "appointment_id;", (person_ref,)).fetchall()
+            ]
+            workflows = []
+            for code, label in SERVICE_LINES.items():
+                lines = self._workflow_lines(code)
+                marks = ','.join('?' * len(lines))
+                intakes = [
+                    self._intake_view(row) for row in db.execute(
+                        f"SELECT * FROM client_intakes "
+                        f"WHERE client_ref = ? AND service_line IN "
+                        f"({marks}) ORDER BY created_at, intake_id;",
+                        (person_ref, *lines)).fetchall()
+                ]
+                if activation is None:
+                    state = 'STANDBY'
+                elif any(i['status'] not in ('DECLINED', 'CLOSED')
+                         for i in intakes):
+                    state = 'ENGAGED'
+                else:
+                    state = 'ONLINE'
+                workflows.append({
+                    'naics': code,
+                    'service_line': label,
+                    'state': state,
+                    'intakes': intakes,
+                })
+        return {
+            'person_ref': person_ref,
+            'identifier': self._person_view(person),
+            'activation': activation,
+            'appointments': appointments,
+            'workflows': workflows,
+        }
+
     # -- consultation binding (bind, don't rebuild) -----------------------
 
     def create_consultation_room(self, actor, intake_id):
@@ -540,8 +972,10 @@ class HomeHealthcarePlatform:
             return record
 
     def status(self):
-        """Platform status: identity, service lines, intake and
-        assignment counts by status, and the latest check-in."""
+        """Platform status: identity, service lines, intake,
+        assignment, identifier and appointment counts by status,
+        the number of persons whose industries stand activated,
+        and the latest check-in."""
         with self._connect() as db:
             intake_counts = {status: 0 for status in
                              sorted(INTAKE_STATUSES)}
@@ -555,6 +989,21 @@ class HomeHealthcarePlatform:
                     "SELECT status, COUNT(*) AS n FROM "
                     "caregiver_assignments GROUP BY status;").fetchall():
                 assignment_counts[row['status']] = row['n']
+            identifier_counts = {status: 0 for status in
+                                 sorted(PERSON_IDENTIFIER_STATUSES)}
+            for row in db.execute(
+                    "SELECT status, COUNT(*) AS n FROM "
+                    "person_identifiers GROUP BY status;").fetchall():
+                identifier_counts[row['status']] = row['n']
+            appointment_counts = {status: 0 for status in
+                                  sorted(APPOINTMENT_STATUSES)}
+            for row in db.execute(
+                    "SELECT status, COUNT(*) AS n FROM "
+                    "person_appointments GROUP BY status;").fetchall():
+                appointment_counts[row['status']] = row['n']
+            activations = db.execute(
+                "SELECT COUNT(DISTINCT person_ref) AS n FROM "
+                "industry_activations;").fetchone()['n']
             latest = _foundation_latest_check_in(db, IDENTITY.platform_id)
         return {
             'identity': IDENTITY.to_dict(),
@@ -563,5 +1012,8 @@ class HomeHealthcarePlatform:
             'courier_local_naics': COURIER_LOCAL_NAICS,
             'intakes_by_status': intake_counts,
             'assignments_by_status': assignment_counts,
+            'identifiers_by_status': identifier_counts,
+            'appointments_by_status': appointment_counts,
+            'industry_activations': activations,
             'latest_check_in': latest,
         }

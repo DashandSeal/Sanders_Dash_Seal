@@ -3954,3 +3954,184 @@ forensic, or containment language). Deployed-composition
 verification through create_application on the final
 composed tree is recorded in the tranche 12 entry of the
 build queue.
+
+## Sanders Home Healthcare & Caregivers — Six-Industry Connective Layer Restored (2026-11-24)
+
+Authority: the owner's design statement and go-ahead of
+2026-11-24. The owner ruled (22:54 and 23:01 MST) that his
+first platform — "Sanders Home Healthcare & Caregivers NAICS
+Code Integrator" (Famous.ai, created 2025-11-15) — IS the
+Sanders Home Healthcare & Caregivers platform, and that the
+six-industry integrator was that platform's ORIGINAL design:
+every one of the six industries is a human-facing workflow,
+deliberately chosen; the workflows connect the industries
+together; a person goes to the doctor, sets up an
+appointment, and from that ONE identifier all six industries
+are online on the same page in real time. The owner stated
+(23:04) that from this one platform the whole platform
+ecosystem was designed. Go-ahead given in chat 23:03 MST:
+"Build it — process the repo." This build RESTORES that
+connective layer into the platform's existing module
+(core_platform/home_healthcare.py, built in the
+three-originals reconstruction). It creates no separate
+platform and no separate registry identity.
+
+RECOVERED vs REBUILT, recorded separately. RECOVERED: the
+first platform's public face, captured exactly as served at
+~/workspace/first-platform-capture/ (index.html and its built
+JS/CSS bundle), preserved as the recovery record — never
+adapted, never imported, nothing from it copied into this
+build. Its displayed six codes are the MUTATED generation
+(621610, 485991, 532490, 423450, 492110, 611699) and are
+documented here as evidence of the mutation the owner
+described — they were NOT used as build input. REBUILT: the
+connective layer below, on the anchored ORIGINAL six codes
+the owner gave 2026-11-24 and that Uncle Nickey/Mao holds:
+621610, 624120, 485991, 532283, 423450, 492110.
+
+MAPPING, AS FOUND AND AS BUILT: no forcing was needed. The
+module's six service lines were already keyed 1:1 by the
+anchored codes in SERVICE_LINES (621610 Home Health Care
+Services; 624120 Personal Care Services; 485991
+Non-Emergency Medical Transportation; 532283 Durable Medical
+Equipment Rental; 423450 Medical Supplies Distribution;
+492110 Healthcare Courier Services), and
+IDENTITY.naics_codes already held exactly the anchored six.
+The strictly-local courier declaration 492210 remains
+accepted at intake and counts under the 492110 workflow.
+The mutated codes 532490 and 611699 are refused at intake
+and appear in the module only in the docstring passage
+documenting their exclusion.
+
+THE CONNECTIVE LAYER, AS BUILT (all records governed:
+Glass-Box receipt in the same transaction or the write is
+rolled back; no record, no action; geofence-gated;
+fail-closed): (1) ONE PERSON IDENTIFIER —
+issue_person_identifier (operator-only) issues an opaque
+reference token (person_identifiers table: person_ref,
+jurisdiction, status, created_by, timestamps) carrying NO
+personal or health data; revoke_person_identifier is
+operator-only and a REVOKED identifier refuses appointments
+and refuses the unified page to every role. (2) THE ENTRY
+POINT — create_appointment records a doctor-appointment
+reference (person_appointments: appointment_id, person_ref,
+provider_ref, jurisdiction, starts_at, ends_at, status,
+created_by, timestamps) under an ACTIVE identifier, by the
+operator or by the person themselves; lifecycle REQUESTED →
+SCHEDULED → COMPLETED/CANCELLED via checked transitions
+(transition_appointment, operator-only; appointment_view
+guarded, CLIENT reads only their own). (3) THE ACTIVATION —
+on a person's FIRST appointment, one industry_activations
+row per service line is written in the same transaction
+(state ONLINE, bound to that appointment) with a
+HOME_HEALTHCARE_INDUSTRIES_ACTIVATED receipt naming the six
+codes: all six industry workflows stand online together from
+that one identifier and appointment. (4) THE SAME PAGE —
+person_page(actor, role, person_ref) returns ONE unified
+view computed live at read time: the identifier, the
+activation, the person's appointments newest-first, and one
+workflow entry per anchored code in order, each STANDBY
+before activation, ONLINE once activated, ENGAGED while any
+intake under that identifier on that line is open (not
+DECLINED/CLOSED) — so the page reflects records as they
+change. Guard categories PERSON_PAGE and APPOINTMENT join
+the module's role scopes (OPERATOR and AUDITOR full; CLIENT
+own records only; CAREGIVER holds neither). HONEST SCOPE:
+the six workflows are this platform's own six service lines;
+no connection to any external industry system is made or
+claimed, and "real time" means exactly the live computation
+at read time above.
+
+NO PHI: the module's no-PHI-columns construction is
+preserved absolutely. The three new tables hold references,
+jurisdictions, timestamps and workflow state only — no name,
+diagnosis, note, address, phone, email, or any health-data
+column was added (verified by exact PRAGMA column checks in
+the build drive).
+
+SURFACES: the HH route family in app/customer_app.py gains
+POST /api/home-healthcare/identifiers,
+POST /api/home-healthcare/identifiers/{id}/revoke,
+POST /api/home-healthcare/appointments,
+GET /api/home-healthcare/appointments/{id},
+POST /api/home-healthcare/appointments/{id}/transition,
+GET /api/home-healthcare/persons/{ref}/page. Production
+bindings and deploy forwarding already carried the platform
+and the /api/home-healthcare/ prefix; the watchdog already
+checks its health route; no change was needed there.
+status() now also reports identifiers_by_status,
+appointments_by_status and the activated-person count.
+
+HISTORICAL NAMES: "NACI Industries" (the framework named in
+the repo's nginx.conf sovereign-baseline header and the
+platform roster) and "Six Industry" (canonical catalog row
+142, resting on the sanderssixindustry.com registration) are
+recorded as ASSOCIATED HISTORICAL NAMES of this design —
+unmerged, unreplaced, and nothing was built under either
+name. The registry entry for sanders_home_healthcare was
+EXTENDED in place (description records this restoration,
+the historical names, and the seal designation below); the
+registry count is unchanged at 77 entries, because this
+build extends an existing platform identity.
+
+SEAL DESIGNATION (owner, 2026-11-24 23:07–23:12 MST): under
+the dual-seal rule, this platform's headquarters-seal slot
+is designated for the headquarters seal bearing a purple
+heart — the variant of the corporate headquarters seal with
+one purple heart in a gold setting added at the bottom
+center, above "THE SANDERS COMPANIES" banner, all original
+artwork, wording and colors otherwise preserved — produced
+under the owner's instruction and held in the owner's files
+at ~/workspace/seals/hq-seal-purple-heart.png, alongside this
+platform's company seal. This purple-heart headquarters seal
+is EXCLUSIVE to this platform: it is the only RTSA platform
+that carries it; every other platform carries the standard
+blue-and-gold headquarters seal under the dual-seal rule.
+The plain blue-and-gold seal is not substituted for it. This
+build embeds and deploys no seal image; the designation and
+the asset path are the record.
+
+PRICING AND TEACHING AUDIT (examined: canonical catalog;
+Set B database_schema.sql and tier_pricing_global.py; Set C
+catalog; MASTER; the owner's decisions file): the canonical
+catalog row for Sanders Home Healthcare carries NO price
+and NO teaching function. Set B seeds the platform at the
+professional tier with the figure 4,000,000 — the owner
+ruled 2026-11-24 21:31 that the design-set figures are
+BLOCKER FIGURES placed as blockers, not real prices; it is
+flagged here as such and was NOT wired. Set B's NAICS pair
+for the platform (621610, 623110) was NOT imported. Set C
+carries no entry under this platform's name (its "Sanders
+Healthcare" is a different platform, canonical catalog row
+132, and was not carried). MASTER carries no mention of the
+platform. The Famous face displays a band of
+$7,999–$19,999/month, recorded here as the platform's own
+published figure AS DISPLAYED on its recovered face —
+distinct from design-set and blocker figures. No chargeable
+price is wired by this build, and no teaching function is
+designed for this platform in any examined source; none was
+invented.
+
+VERIFICATION (scratch drives, never committed): the build
+drive passes 75/75 (mapping exactness and mutated-code
+refusal; no-PHI schema; issuance/revocation discipline;
+appointment entry rules incl. STEP_UP and denied
+jurisdictions; first-appointment six-industry activation
+rows and receipt; unified-page states STANDBY/ONLINE/ENGAGED
+incl. the 492210-under-492110 rule and close-returns-ONLINE;
+appointment lifecycle and view ownership; broken-audit
+rollback committing nothing; WSGI family end-to-end incl.
+401/403/405/503 and wrong-origin cases). The pre-existing
+Home Healthcare drive passes 82/82 unchanged.
+Deployed-composition verification through
+create_production_bindings() + create_application on the
+final composed tree: 176/176 probes (41 platform families —
+health 200 and family status 401 signed-out on both the
+loopback and canonical hosts — plus the six new connective
+surfaces answering 401 signed-out on both hosts, never
+404/503/421). Full regression on the final composed tree:
+2395/2418 checks across 43 drives plus this build's drives;
+the 23 misses are the known stale registry-count assertions
+in drives written when the registry was smaller (each
+asserts an older count; the registry is 77). The 9 approval
+gates remain UNAPPROVED; nothing in this build opens a gate.
