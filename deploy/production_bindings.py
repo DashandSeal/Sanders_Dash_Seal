@@ -177,6 +177,7 @@ from core_platform.fraud_rtsa_service import FraudRtsaService
 from core_platform.operations_rtsa_service import OperationsRtsaService
 from core_platform.uptime_agent_service import UptimeAgentService
 from core_platform.application_agent_service import ApplicationAgentService
+from core_platform.database_agent_service import DatabaseAgentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -607,6 +608,19 @@ def create_production_bindings():
         data_dir / 'application_agent.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Database Agent (RTSA Build Program): the third agent of
+    # the MASTER §7 IT AI agent matrix built as its own
+    # platform — governed database-health assessment records
+    # under the agent design's INTERFACE_ONLY discipline
+    # (databases and checks by reference only; an assessment
+    # with no checks stands NO_CHECKS_SUBMITTED and no
+    # determination can be recorded on it; it repairs nothing,
+    # restores nothing, opens no database, and executes
+    # nothing), on its own store.
+    database_agent = DatabaseAgentService(
+        data_dir / 'database_agent.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -645,4 +659,5 @@ def create_production_bindings():
         operations_rtsa=operations_rtsa,
         uptime_agent=uptime_agent,
         application_agent=application_agent,
+        database_agent=database_agent,
     )
