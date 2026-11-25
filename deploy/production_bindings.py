@@ -224,6 +224,7 @@ from core_platform.sanders_steward_sentinel_service import SandersStewardSentine
 from core_platform.sanders_patriot_saint_service import SandersPatriotSaintService
 from core_platform.sanders_freedom_revolution_service import SandersFreedomRevolutionService
 from core_platform.sanders_strategy_hub_service import SandersStrategyHubService
+from core_platform.sanders_global_freedom_service import SandersGlobalFreedomService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1009,6 +1010,16 @@ def create_production_bindings():
     sanders_strategy_hub = SandersStrategyHubService(
         data_dir / 'sanders_strategy_hub.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Global Freedom platform (Q77,
+    # RTSA Build Program tranche 21): governed
+    # global-operations records over its own
+    # store — it conducts no operations,
+    # operates across no border, and directs
+    # no partners itself. Distinct from Sanders
+    # Freedom Revolution (catalog 86).
+    sanders_global_freedom = SandersGlobalFreedomService(
+        data_dir / 'sanders_global_freedom.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1087,4 +1098,5 @@ def create_production_bindings():
         sanders_patriot_saint=sanders_patriot_saint,
         sanders_freedom_revolution=sanders_freedom_revolution,
         sanders_strategy_hub=sanders_strategy_hub,
+        sanders_global_freedom=sanders_global_freedom,
     )

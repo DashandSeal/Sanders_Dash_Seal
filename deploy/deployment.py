@@ -114,6 +114,7 @@ class RuntimeBindings:
     sanders_patriot_saint: object = None
     sanders_freedom_revolution: object = None
     sanders_strategy_hub: object = None
+    sanders_global_freedom: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -495,7 +496,8 @@ def create_application(bindings=None):
             sanders_steward_sentinel=getattr(bindings, 'sanders_steward_sentinel', None),
             sanders_patriot_saint=getattr(bindings, 'sanders_patriot_saint', None),
             sanders_freedom_revolution=getattr(bindings, 'sanders_freedom_revolution', None),
-            sanders_strategy_hub=getattr(bindings, 'sanders_strategy_hub', None)
+            sanders_strategy_hub=getattr(bindings, 'sanders_strategy_hub', None),
+            sanders_global_freedom=getattr(bindings, 'sanders_global_freedom', None)
         )
     else:
         verifier = _denied
@@ -875,7 +877,8 @@ def create_application(bindings=None):
                     '/api/sanders-steward-sentinel/healthz',
                     '/api/sanders-patriot-saint/healthz',
                     '/api/sanders-freedom-revolution/healthz',
-                    '/api/sanders-strategy-hub/healthz'):
+                    '/api/sanders-strategy-hub/healthz',
+                    '/api/sanders-global-freedom/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -953,6 +956,7 @@ def create_application(bindings=None):
                 '/api/sanders-patriot-saint/healthz': ('sanders_patriot_saint', 'sanders_patriot_saint', 'sanders_patriot_saint_unavailable'),
                 '/api/sanders-freedom-revolution/healthz': ('sanders_freedom_revolution', 'sanders_freedom_revolution', 'sanders_freedom_revolution_unavailable'),
                 '/api/sanders-strategy-hub/healthz': ('sanders_strategy_hub', 'sanders_strategy_hub', 'sanders_strategy_hub_unavailable'),
+                '/api/sanders-global-freedom/healthz': ('sanders_global_freedom', 'sanders_global_freedom', 'sanders_global_freedom_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -1129,7 +1133,9 @@ def create_application(bindings=None):
                 or path == '/api/sanders-freedom-revolution'
                 or path.startswith('/api/sanders-freedom-revolution/')
                 or path == '/api/sanders-strategy-hub'
-                or path.startswith('/api/sanders-strategy-hub/'))
+                or path.startswith('/api/sanders-strategy-hub/')
+                or path == '/api/sanders-global-freedom'
+                or path.startswith('/api/sanders-global-freedom/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/sanders_global_freedom_service.py",
+        "payload_hash": "f16842ff5d1282cbfe0b20824adf00d65a9a6d1586dc99f52f1fa58cac43715d",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
