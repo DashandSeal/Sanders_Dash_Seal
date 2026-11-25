@@ -172,6 +172,7 @@ from core_platform.cerberus_service import CerberusService
 from core_platform.chorus_service import ChorusService
 from core_platform.cobol_synthetic_ai_service import CobolSyntheticAiService
 from core_platform.juggernaut_service import JuggernautService
+from core_platform.bozly_service import BozlyService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -534,6 +535,24 @@ def create_production_bindings():
     juggernaut = JuggernautService(
         data_dir / 'juggernaut.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Bozly (Bozly Full-Operation Build): the corporate CFO and
+    # integrity witness on the live path — machine-event receipts,
+    # officer action-integrity receipts through the recovered
+    # BozlyAuthGate against owner-configured officer public keys,
+    # and claim integrity through the recovered claim engine,
+    # on its own store. Its claim assessments run against the
+    # production Bozly ledger — the same database the verified
+    # Stripe-event recorder writes (wsgi.py: BOZLY_DB_PATH or
+    # data/bozly_ledger.db) — so align the environment the claim
+    # module reads, the same way the Grantwriter base store is
+    # aligned above. Bozly witnesses; it moves no money.
+    bozly_ledger_db = Path(
+        os.environ.get('BOZLY_DB_PATH')
+        or str(data_dir / 'bozly_ledger.db'))
+    os.environ['BOZLY_DB_PATH'] = str(bozly_ledger_db)
+    bozly = BozlyService(
+        data_dir / 'bozly.db', ledger_db_path=bozly_ledger_db,
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -568,4 +587,5 @@ def create_production_bindings():
         chorus=chorus,
         cobol_synthetic_ai=cobol_synthetic_ai,
         juggernaut=juggernaut,
+        bozly=bozly,
     )

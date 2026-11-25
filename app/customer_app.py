@@ -54,6 +54,7 @@ from core_platform.cerberus_service import CerberusDenied, CerberusForbidden
 from core_platform.chorus_service import ChorusDenied, ChorusForbidden
 from core_platform.cobol_synthetic_ai_service import CobolDenied, CobolForbidden
 from core_platform.juggernaut_service import JuggernautDenied, JuggernautForbidden
+from core_platform.bozly_service import BozlyDenied, BozlyForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -188,7 +189,12 @@ JUG_VERIFICATION_ACTION_ROUTE = re.compile(r'^/api/juggernaut/verifications/([A-
 JUG_VERIFICATION_VERDICT_ROUTE = re.compile(r'^/api/juggernaut/verifications/([A-Za-z0-9_-]{1,128})/verdict$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None):
+
+BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z0-9_-]{1,128})$')
+BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
+
+
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -315,6 +321,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         jug_verification_match = JUG_VERIFICATION_ROUTE.fullmatch(path)
         jug_verification_action_match = JUG_VERIFICATION_ACTION_ROUTE.fullmatch(path)
         jug_verification_verdict_match = JUG_VERIFICATION_VERDICT_ROUTE.fullmatch(path)
+        bozly_machine_event_match = BOZLY_MACHINE_EVENT_ROUTE.fullmatch(path)
+        bozly_officer_receipt_match = BOZLY_OFFICER_RECEIPT_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -525,6 +533,15 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         or jug_verification_match is not None
                         or jug_verification_action_match is not None
                         or jug_verification_verdict_match is not None)
+        is_bozly_route = (path in ('/api/bozly-cfo/status',
+                                   '/api/bozly-cfo/officer-keys',
+                                   '/api/bozly-cfo/machine-events',
+                                   '/api/bozly-cfo/officer-actions',
+                                   '/api/bozly-cfo/claims',
+                                   '/api/bozly-cfo/claims/assess',
+                                   '/api/bozly-cfo/check-in')
+                          or bozly_machine_event_match is not None
+                          or bozly_officer_receipt_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -546,7 +563,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_cerb_route
                              or is_chorus_route
                              or is_cobol_route
-                             or is_jug_route)
+                             or is_jug_route
+                             or is_bozly_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -624,7 +642,12 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/cobol-synthetic-ai/contract',
                                             '/api/juggernaut/status',
                                             '/api/juggernaut/verifications',
-                                            '/api/juggernaut/contract')
+                                            '/api/juggernaut/contract',
+                                            '/api/bozly-cfo/status',
+                                            '/api/bozly-cfo/officer-keys',
+                                            '/api/bozly-cfo/machine-events',
+                                            '/api/bozly-cfo/officer-actions',
+                                            '/api/bozly-cfo/claims')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -654,7 +677,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or cerb_assessment_match is not None
                                    or chorus_composition_match is not None
                                    or cobol_assessment_match is not None
-                                   or jug_verification_match is not None) else ('POST',)
+                                   or jug_verification_match is not None
+                                   or bozly_machine_event_match is not None
+                                   or bozly_officer_receipt_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -686,6 +711,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/cobol-synthetic-ai/assessments':
             allowed = ('GET', 'POST')
         if path == '/api/juggernaut/verifications':
+            allowed = ('GET', 'POST')
+        if path == '/api/bozly-cfo/machine-events':
+            allowed = ('GET', 'POST')
+        if path == '/api/bozly-cfo/officer-actions':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -1825,6 +1854,44 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = juggernaut.verification_view(identity, jug_role, jug_verification_match.group(1))
                         return respond(start, '200 OK', {'verification': record})
                     return check_in(juggernaut)
+                if is_bozly_route:
+                    if bozly is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'bozly_unavailable'})
+                    bozly_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/bozly-cfo/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': bozly.status()})
+                    if path == '/api/bozly-cfo/officer-keys':
+                        return respond(start, '200 OK', {'officer_keys': bozly.officer_keys_view(identity, bozly_role)})
+                    if path == '/api/bozly-cfo/machine-events':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'machine_events': bozly.machine_events_list(identity, bozly_role)})
+                        if set(data) != {'event_ref', 'source_platform', 'event_type', 'entity_id', 'summary', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = bozly.record_machine_event(identity, data['source_platform'], data['event_type'], data['entity_id'], data['summary'], data['evidence_ref'], data['event_ref'])
+                        return respond(start, '201 Created', {'machine_event': record})
+                    if bozly_machine_event_match:
+                        record = bozly.machine_event_view(identity, bozly_role, bozly_machine_event_match.group(1))
+                        return respond(start, '200 OK', {'machine_event': record})
+                    if path == '/api/bozly-cfo/officer-actions':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'officer_receipts': bozly.officer_receipts_list(identity, bozly_role)})
+                        if set(data) != {'action', 'details', 'signatures'}:
+                            raise ValueError('unexpected fields')
+                        record = bozly.verify_officer_action(identity, data['action'], data['details'], data['signatures'])
+                        return respond(start, '201 Created', {'officer_receipt': record})
+                    if bozly_officer_receipt_match:
+                        record = bozly.officer_receipt_view(identity, bozly_role, bozly_officer_receipt_match.group(1))
+                        return respond(start, '200 OK', {'officer_receipt': record})
+                    if path == '/api/bozly-cfo/claims/assess':
+                        if set(data) != {'entity_id', 'record_type', 'record_id', 'claimed_field', 'claimed_value'}:
+                            raise ValueError('unexpected fields')
+                        record = bozly.assess_claim(identity, data['entity_id'], data['record_type'], data['record_id'], data['claimed_field'], data['claimed_value'])
+                        return respond(start, '200 OK', {'claim_assessment': record})
+                    if path == '/api/bozly-cfo/claims':
+                        return respond(start, '200 OK', {'claims': bozly.claims_list(identity, bozly_role)})
+                    return check_in(bozly)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -1948,6 +2015,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'juggernaut_forbidden'})
         except JuggernautDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'juggernaut_denied', 'detail': str(exc)})
+        except BozlyForbidden:
+            return respond(start, '403 Forbidden', {'error': 'bozly_forbidden'})
+        except BozlyDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'bozly_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
