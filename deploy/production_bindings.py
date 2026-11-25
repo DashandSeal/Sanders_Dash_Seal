@@ -239,6 +239,7 @@ from core_platform.sanders_supply_chain_service import SandersSupplyChainService
 from core_platform.sanders_logical_framework_service import SandersLogicalFrameworkService
 from core_platform.sanders_infrastructure_service import SandersInfrastructureService
 from core_platform.sanders_technology_service import SandersTechnologyService
+from core_platform.sanders_cloud_services_service import SandersCloudServicesService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1163,6 +1164,16 @@ def create_production_bindings():
     sanders_technology = SandersTechnologyService(
         data_dir / 'sanders_technology.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Cloud Services platform (Q92,
+    # RTSA Build Program tranche 26): governed
+    # cloud-services records over its own store
+    # — it provisions no cloud, deploys to no
+    # cloud, and migrates no workload itself.
+    # Core Law 10: Oracle Always Free remains
+    # the permanent home.
+    sanders_cloud_services = SandersCloudServicesService(
+        data_dir / 'sanders_cloud_services.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1256,4 +1267,5 @@ def create_production_bindings():
         sanders_logical_framework=sanders_logical_framework,
         sanders_infrastructure=sanders_infrastructure,
         sanders_technology=sanders_technology,
+        sanders_cloud_services=sanders_cloud_services,
     )
