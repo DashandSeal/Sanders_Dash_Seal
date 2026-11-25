@@ -115,6 +115,7 @@ from core_platform.sanders_infrastructure_service import SandersInfrastructureDe
 from core_platform.sanders_technology_service import SandersTechnologyDenied, SandersTechnologyForbidden
 from core_platform.sanders_cloud_services_service import SandersCloudServicesDenied, SandersCloudServicesForbidden
 from core_platform.showtime_service import ShowtimeDenied, ShowtimeForbidden
+from core_platform.sanders_marketing_service import SandersMarketingDenied, SandersMarketingForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -438,6 +439,9 @@ SANDERS_CLOUD_SERVICES_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-cloud-s
 SHOWTIME_RECORD_ROUTE = re.compile(r'^/api/showtime/records/([A-Za-z0-9_-]{1,128})$')
 SHOWTIME_RECORD_ACTION_ROUTE = re.compile(r'^/api/showtime/records/([A-Za-z0-9_-]{1,128})/action$')
 SHOWTIME_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/showtime/records/([A-Za-z0-9_-]{1,128})/outcome$')
+SANDERS_MARKETING_RECORD_ROUTE = re.compile(r'^/api/sanders-marketing/records/([A-Za-z0-9_-]{1,128})$')
+SANDERS_MARKETING_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-marketing/records/([A-Za-z0-9_-]{1,128})/action$')
+SANDERS_MARKETING_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-marketing/records/([A-Za-z0-9_-]{1,128})/outcome$')
 BABY_GIRL_CUSTODY_ROUTE = re.compile(r'^/api/baby-girl/custody/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
@@ -446,7 +450,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None, sanders_sports=None, sanders_wellness=None, sanders_steward_sentinel=None, sanders_patriot_saint=None, sanders_freedom_revolution=None, sanders_strategy_hub=None, sanders_global_freedom=None, sanders_coordinator=None, sanders_intelligence=None, sanders_ai_research=None, sanders_research=None, sanders_communications=None, sanders_banking_hub=None, sanders_legal_services=None, sanders_strategy_intel=None, sanders_analytics=None, sanders_innovation_lab=None, sanders_supply_chain=None, sanders_logical_framework=None, sanders_infrastructure=None, sanders_technology=None, sanders_cloud_services=None, showtime=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None, sanders_sports=None, sanders_wellness=None, sanders_steward_sentinel=None, sanders_patriot_saint=None, sanders_freedom_revolution=None, sanders_strategy_hub=None, sanders_global_freedom=None, sanders_coordinator=None, sanders_intelligence=None, sanders_ai_research=None, sanders_research=None, sanders_communications=None, sanders_banking_hub=None, sanders_legal_services=None, sanders_strategy_intel=None, sanders_analytics=None, sanders_innovation_lab=None, sanders_supply_chain=None, sanders_logical_framework=None, sanders_infrastructure=None, sanders_technology=None, sanders_cloud_services=None, showtime=None, sanders_marketing=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -763,6 +767,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         showtime_record_match = SHOWTIME_RECORD_ROUTE.fullmatch(path)
         showtime_record_action_match = SHOWTIME_RECORD_ACTION_ROUTE.fullmatch(path)
         showtime_record_outcome_match = SHOWTIME_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        sanders_marketing_record_match = SANDERS_MARKETING_RECORD_ROUTE.fullmatch(path)
+        sanders_marketing_record_action_match = SANDERS_MARKETING_RECORD_ACTION_ROUTE.fullmatch(path)
+        sanders_marketing_record_outcome_match = SANDERS_MARKETING_RECORD_OUTCOME_ROUTE.fullmatch(path)
         baby_girl_custody_match = BABY_GIRL_CUSTODY_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
@@ -1476,6 +1483,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or showtime_record_match is not None
                                   or showtime_record_action_match is not None
                                   or showtime_record_outcome_match is not None)
+        is_sanders_marketing_route = (path in ('/api/sanders-marketing/status',
+                                               '/api/sanders-marketing/records',
+                                               '/api/sanders-marketing/design',
+                                               '/api/sanders-marketing/operation-check',
+                                               '/api/sanders-marketing/check-in')
+                                  or sanders_marketing_record_match is not None
+                                  or sanders_marketing_record_action_match is not None
+                                  or sanders_marketing_record_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -1558,7 +1573,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_sanders_infrastructure_route
                              or is_technology_route
                              or is_cloud_services_route
-                             or is_showtime_route)
+                             or is_showtime_route
+                             or is_sanders_marketing_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -1822,7 +1838,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/sanders-cloud-services/design',
                                             '/api/showtime/status',
                                             '/api/showtime/records',
-                                            '/api/showtime/design')
+                                            '/api/showtime/design',
+                                            '/api/sanders-marketing/status',
+                                            '/api/sanders-marketing/records',
+                                            '/api/sanders-marketing/design')
                                    or unm_referral_match is not None
                                    or unm_subject_referrals_match is not None
                                    or unm_person_activation_match is not None
@@ -1919,7 +1938,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or sanders_infrastructure_record_match is not None
                                    or technology_record_match is not None
                                    or cloud_services_record_match is not None
-                                   or showtime_record_match is not None) else ('POST',)
+                                   or showtime_record_match is not None
+                                   or sanders_marketing_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -2075,6 +2095,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-cloud-services/records':
             allowed = ('GET', 'POST')
         if path == '/api/showtime/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-marketing/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/custody':
             allowed = ('GET', 'POST')
@@ -5475,6 +5497,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = showtime.record_view(identity, showtime_role, showtime_record_match.group(1))
                         return respond(start, '200 OK', {'record': record})
                     return check_in(showtime)
+                if is_sanders_marketing_route:
+                    if sanders_marketing is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'sanders_marketing_unavailable'})
+                    sanders_marketing_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/sanders-marketing/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': sanders_marketing.status()})
+                    if path == '/api/sanders-marketing/design':
+                        return respond(start, '200 OK', {'design': sanders_marketing.design_view()})
+                    if path == '/api/sanders-marketing/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_marketing.operation_check(identity, sanders_marketing_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/sanders-marketing/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': sanders_marketing.records_list(identity, sanders_marketing_role)})
+                        if set(data) != {'subject_ref', 'campaign_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_marketing.create_record(identity, data['subject_ref'], data['campaign_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if sanders_marketing_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_marketing.record_action(identity, sanders_marketing_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if sanders_marketing_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_marketing.record_outcome(identity, sanders_marketing_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if sanders_marketing_record_match:
+                        record = sanders_marketing.record_view(identity, sanders_marketing_role, sanders_marketing_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(sanders_marketing)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -5842,6 +5900,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'showtime_forbidden'})
         except ShowtimeDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'showtime_denied', 'detail': str(exc)})
+        except SandersMarketingForbidden:
+            return respond(start, '403 Forbidden', {'error': 'sanders_marketing_forbidden'})
+        except SandersMarketingDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'sanders_marketing_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

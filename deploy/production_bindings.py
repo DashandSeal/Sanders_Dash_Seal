@@ -241,6 +241,7 @@ from core_platform.sanders_infrastructure_service import SandersInfrastructureSe
 from core_platform.sanders_technology_service import SandersTechnologyService
 from core_platform.sanders_cloud_services_service import SandersCloudServicesService
 from core_platform.showtime_service import ShowtimeService
+from core_platform.sanders_marketing_service import SandersMarketingService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1185,6 +1186,14 @@ def create_production_bindings():
     showtime = ShowtimeService(
         data_dir / 'showtime.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Marketing platform (Q94, RTSA
+    # Build Program tranche 27): governed
+    # marketing records over its own store
+    # — it launches no campaign, purchases no
+    # advertising, and publishes nothing itself.
+    sanders_marketing = SandersMarketingService(
+        data_dir / 'sanders_marketing.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1280,4 +1289,5 @@ def create_production_bindings():
         sanders_technology=sanders_technology,
         sanders_cloud_services=sanders_cloud_services,
         showtime=showtime,
+        sanders_marketing=sanders_marketing,
     )
