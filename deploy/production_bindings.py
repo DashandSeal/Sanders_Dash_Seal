@@ -237,6 +237,7 @@ from core_platform.sanders_analytics_service import SandersAnalyticsService
 from core_platform.sanders_innovation_lab_service import SandersInnovationLabService
 from core_platform.sanders_supply_chain_service import SandersSupplyChainService
 from core_platform.sanders_logical_framework_service import SandersLogicalFrameworkService
+from core_platform.sanders_infrastructure_service import SandersInfrastructureService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1143,6 +1144,16 @@ def create_production_bindings():
     sanders_logical_framework = SandersLogicalFrameworkService(
         data_dir / 'sanders_logical_framework.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Infrastructure platform (Q90,
+    # RTSA Build Program tranche 26): governed
+    # infrastructure-operations records over its
+    # own store — it operates no infrastructure,
+    # provisions no capacity, and repairs nothing
+    # itself. Distinct from the Infrastructure
+    # Agent (catalog #46).
+    sanders_infrastructure = SandersInfrastructureService(
+        data_dir / 'sanders_infrastructure.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1234,4 +1245,5 @@ def create_production_bindings():
         sanders_innovation_lab=sanders_innovation_lab,
         sanders_supply_chain=sanders_supply_chain,
         sanders_logical_framework=sanders_logical_framework,
+        sanders_infrastructure=sanders_infrastructure,
     )
