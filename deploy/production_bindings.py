@@ -245,6 +245,7 @@ from core_platform.showtime_service import ShowtimeService
 from core_platform.sanders_marketing_service import SandersMarketingService
 from core_platform.sanders_sales_service import SandersSalesService
 from core_platform.sanders_customer_support_service import SandersCustomerSupportService
+from core_platform.sanders_human_resources_service import SandersHumanResourcesService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1226,6 +1227,14 @@ def create_production_bindings():
     sanders_customer_support = SandersCustomerSupportService(
         data_dir / 'sanders_customer_support.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Human Resources platform (Q97,
+    # RTSA Build Program tranche 28): governed
+    # human resources records over its own store
+    # — it hires no candidate, terminates no
+    # employee, and runs no payroll itself.
+    sanders_human_resources = SandersHumanResourcesService(
+        data_dir / 'sanders_human_resources.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1324,4 +1333,5 @@ def create_production_bindings():
         sanders_marketing=sanders_marketing,
         sanders_sales=sanders_sales,
         sanders_customer_support=sanders_customer_support,
+        sanders_human_resources=sanders_human_resources,
     )
