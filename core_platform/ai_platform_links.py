@@ -271,49 +271,64 @@ def _check_daedalus(entry: dict, env: Mapping[str, str],
         return PlatformStatus(pid, "BROKEN", missing=[err],
                               detail="Daedalus engine module does not import.",
                               checks=checks)
-    missing = [v for v in entry["env_vars"] if not _env_present(env, v)]
-    checks["key_present"] = _env_present(env, "ANTHROPIC_API_KEY")
-    checks["model_present"] = _env_present(env, "DAEDALUS_CLAUDE_MODEL")
-    if missing:
+    # Native reasoning core (founder rulings, 2026-11-25): Daedalus's
+    # live reasoning is his own deterministic core, computed locally
+    # from the platform registry. No provider key or model is
+    # required, and none is demanded here; the provider transports
+    # remain optional gated tools, never the core.
+    core_imported, core_err = _try_import("core_platform.daedalus_native_core")
+    checks["native_core_importable"] = core_imported
+    if not core_imported:
         return PlatformStatus(
-            pid, "MISSING_KEY", missing=missing,
-            detail="Live Claude reasoning needs an Anthropic key and a model "
-                   "id; the local engine chain imports but cannot reason.",
+            pid, "NOT_IMPLEMENTED",
+            missing=["native reasoning core module "
+                     "(core_platform/daedalus_native_core.py)"],
+            detail="The native reasoning core module is absent, so "
+                   "Daedalus has no reasoning core of his own wired. "
+                   "Import error: " + core_err,
+            checks=checks)
+    try:
+        from .daedalus_native_core import DaedalusNativeCore
+
+        core = DaedalusNativeCore()
+        first = core.synthesize("How many platforms are in the registry?")
+        second = core.synthesize("How many platforms are in the registry?")
+        checks["native_core_deterministic"] = bool(
+            first.strip() and first == second
+        )
+        checks["registry_platforms"] = core.platform_count
+        checks["reasoning_core"] = core.declaration()["core"]
+    except Exception as exc:
+        return PlatformStatus(
+            pid, "BROKEN",
+            missing=[f"native core check failed: {exc}"],
+            detail="Native core module imports but does not compute.",
+            checks=checks)
+    if not checks["native_core_deterministic"]:
+        return PlatformStatus(
+            pid, "BROKEN",
+            missing=["native core output is not deterministic"],
+            detail="The native reasoning core produced inconsistent "
+                   "output for an identical registry question.",
             checks=checks)
     if not _approved(env, entry.get("approval_env")):
         return PlatformStatus(
             pid, "MISSING_APPROVAL",
             missing=[f"owner approval ({entry.get('approval_env')}=yes)"],
-            detail="Key and model are present, but live (paid) Claude use "
-                   "needs explicit owner approval.",
+            detail="Native reasoning core is wired and verified "
+                   "locally; live Daedalus use requires the owner's "
+                   "approval flag. No external provider key is "
+                   "required.",
             checks=checks)
-    # Key + model + approval: build settings and a stdlib transport object.
-    # This constructs local objects only; no network call is made, so live
-    # account validity is NOT verified.
-    try:
-        from .daedalus_config import DaedalusSettings
-        from .daedalus_claude_transport import build_transport
-
-        settings = DaedalusSettings.from_env(env)
-        if not settings.is_live_reasoning_configured:
-            return PlatformStatus(
-                pid, "MISSING_KEY", missing=["ANTHROPIC_API_KEY",
-                                             "DAEDALUS_CLAUDE_MODEL"],
-                detail="Settings report live reasoning not configured.",
-                checks=checks)
-        build_transport(settings=settings, backend="stdlib")
-    except Exception as exc:
-        return PlatformStatus(pid, "BROKEN",
-                              missing=[f"transport build failed: {exc}"],
-                              detail="Key/model present but local transport "
-                                     "wiring does not build.",
-                              checks=checks)
-    checks["transport_builds"] = True
     auto = [_SQLITE_PROBE] if _sqlite_round_trip() else []
     return PlatformStatus(
-        pid, "LINKED", detail="Key and model present, owner approval "
-        "recorded, stdlib Claude transport builds locally. No live call "
-        "was made; live account validity is not verified.",
+        pid, "LINKED",
+        detail="Native deterministic reasoning core wired (logic "
+               "level L15+): planning, registry synthesis, and source "
+               "generation are computed locally from the platform "
+               "registry, and the owner approval flag is recorded. "
+               "No external provider is required or called; provider "
+               "transports remain optional gated tools, not the core.",
         checks=checks, auto_connected=auto)
 
 
