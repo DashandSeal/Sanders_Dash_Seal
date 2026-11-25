@@ -2696,3 +2696,125 @@ deployment_agent (69), and infrastructure_agent (70)
 drives, each correct at its own landing and superseded
 by the composed registry at 71 entries; no other
 failures.
+
+## RTSA Build Program Q42 — Performance Agent (2026-11-24)
+
+**Scope**: build the Performance Agent design whole as
+its own platform service (canonical catalog row #48, Band
+2C), per the established tranche pattern, under the
+standards gate: Fortune 500 governs end to end, the
+MASTER architecture within it, and the Sanders Royal
+Enterprise Standard for presentation within it. Fortune
+500 judgment: the platform meets the standard within its
+honest scope limits — it is an internal operator/auditor
+record surface over governed performance records; no
+public or customer surface exists for it by design, so
+the Royal Enterprise presentation layer does not apply,
+and no security internals are exposed anywhere. Scope
+limits stated plainly: the agent design is INTERFACE_ONLY
+with external execution disabled, and the build claims no
+execution — the catalog's designed role "performance
+monitoring/remediation" is carried as governed records;
+the platform remediates nothing, tunes nothing, scales
+nothing, takes no live measurement, and holds subjects
+and measurements by reference only — no metric values, no
+telemetry, and no live-system state ever. The Performance
+Agent is distinct from the IT AI Manager (Q5) that
+commands its design, from the Observability Agent (Q44),
+and from the read-only PerformanceAgent observer entry in
+core_platform/operational_runtime.py — never merged, and
+this platform reads, wraps, or replaces neither the
+observer nor any other component.
+core_platform/agent_registry.py and
+core_platform/rtsa_registry.py remain byte-untouched.
+Naming verification: the queue's Band 2C table, the
+canonical catalog (row #48), the MASTER §7 matrix, and
+core_platform/agent_registry.py all name this platform
+"Performance Agent" — the name was verified against those
+sources before building, per the name law recorded after
+tranche 8.
+
+**Built**: core_platform/performance_agent_service.py
+(PerformanceAgentService over
+core_platform/rtsa_foundation.py; independent identity
+performance_agent; design view of the agent descriptor in
+core_platform/agent_registry.py — commanding authority
+IT_AI_Manager_v15.0, implementation_status INTERFACE_ONLY,
+external_execution_enabled False, designed role
+"Performance monitoring/remediation"; fail-closed
+operation check refusing the design's execution boundary
+by name with the design's own signal
+AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED —
+remediate_performance, tune_performance, scale_resources,
+external_execution — and unknown operations; performance
+records carried as durable, receipted records over a
+subject reference, a declared measurement reference set,
+and a scope reference, with lifecycle REQUESTED →
+APPROVED / REJECTED (the recorded human decision) →
+OUTCOME_RECORDED; the evidence discipline enforced in the
+record model — a record declared with no measurements
+stands NO_MEASUREMENTS_SUBMITTED in every view and in the
+status tallies, and both determinations
+(PERFORMANCE_WITHIN_TARGET, PERFORMANCE_DEGRADED) are
+refused on it, while INCONCLUSIVE, which asserts nothing,
+records against evidence; outcomes recorded only for
+APPROVED records and only against a presented evidence
+reference, with a closed outcome set; every state change
+writes its Glass-Box receipt inside the same transaction;
+operator-only check-in bound to the identity integrity
+digest). Route family /api/performance-agent/ wired
+through app/customer_app.py (create_customer_app
+parameter performance_agent), deploy/deployment.py
+(RuntimeBindings.performance_agent, health route
+/api/performance-agent/healthz, forwarding through
+create_application), and deploy/production_bindings.py
+(construction on its own store performance_agent.db);
+watchdog check_http entry in deploy/sds_watchdog.sh;
+registry entry in core_platform/ai_platform_links.json
+(registry now 72).
+
+**Pricing/teaching audit** (examined set: canonical
+catalog row #48; Set B database_schema.sql +
+tier_pricing_global.py, read directly — the name appears
+in neither; Set C catalog — no priced or teaching row;
+the MASTER §7 matrix; the agent descriptor in
+core_platform/agent_registry.py): the design carries NO
+price for the Performance Agent — none built, none
+invented, no blocker figure attaches to this name. The
+design carries NO teaching function for the Performance
+Agent — none built, none invented.
+
+**Verification**: scratch drive (never committed) —
+47/47 checks: identity and design view (descriptor
+fields exact); constructor refuses a missing audit
+adapter; operation check (record operation RECORD_ONLY;
+all four execution operations refused by name with the
+design signal; unknown operation refused); record
+lifecycle (operator-only creation; subject/scope
+references required; measurement set must be a list of
+non-empty references, capped; outcome refused before
+approval; outcome without evidence refused; outcome set
+closed; the with-measurements record's
+PERFORMANCE_WITHIN_TARGET outcome records against
+evidence and a second outcome is refused; the
+no-measurements record stands NO_MEASUREMENTS_SUBMITTED
+with both determinations refused on it while INCONCLUSIVE
+records; reject records REJECTED and approve from
+REJECTED is refused; unknown record denied; geofence
+refuses an undeclared region; status totals including
+records_no_measurements_submitted and
+measurements_declared_total; operator-only check-in);
+registry at 72 entries; all 9 approval gates UNAPPROVED;
+WSGI through create_customer_app (signed-out 401, status
+200, execution operation 400 with
+AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED in the detail,
+create refused for non-operator 403, create 201 standing
+NO_MEASUREMENTS_SUBMITTED, approve 200,
+PERFORMANCE_WITHIN_TARGET on the no-measurement record
+refused 400 with NO_MEASUREMENTS_SUBMITTED in the detail,
+INCONCLUSIVE outcome 200, records list 200, unexpected
+fields 400, wrong origin 403, check-in 201, unwired
+service 503 performance_agent_unavailable).
+Deployed-composition verification through
+create_application on the final composed tree is recorded
+in the tranche 10 entry of the build queue.

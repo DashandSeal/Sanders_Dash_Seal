@@ -181,6 +181,7 @@ from core_platform.database_agent_service import DatabaseAgentService
 from core_platform.deployment_agent_service import DeploymentAgentService
 from core_platform.infrastructure_agent_service import InfrastructureAgentService
 from core_platform.integration_agent_service import IntegrationAgentService
+from core_platform.performance_agent_service import PerformanceAgentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -670,6 +671,19 @@ def create_production_bindings():
         data_dir / 'integration_agent.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Performance Agent (RTSA Build Program): the seventh
+    # agent of the MASTER §7 IT AI agent matrix built as its
+    # own platform — governed performance records under the
+    # agent design's INTERFACE_ONLY discipline (subjects and
+    # measurements by reference only; a record with no
+    # measurements stands NO_MEASUREMENTS_SUBMITTED and no
+    # determination can be recorded on it; it remediates
+    # nothing, tunes nothing, scales nothing, takes no live
+    # measurement, and executes nothing), on its own store.
+    performance_agent = PerformanceAgentService(
+        data_dir / 'performance_agent.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -712,4 +726,5 @@ def create_production_bindings():
         deployment_agent=deployment_agent,
         infrastructure_agent=infrastructure_agent,
         integration_agent=integration_agent,
+        performance_agent=performance_agent,
     )
