@@ -59,6 +59,7 @@
 #   sharpshooter                           system  http://127.0.0.1:8000/api/sharpshooter/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   labyrinth-shield                       system  http://127.0.0.1:8000/api/labyrinth-shield/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   minotaur                               system  http://127.0.0.1:8000/api/minotaur/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   glass-box-audit                        system  http://127.0.0.1:8000/api/glass-box-audit/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   money-factory-legal.service            system  http://127.0.0.1:8668/health (Money Factory /health)
 #   sanders-corporations-secretary.service user    http://127.0.0.1:8791/api/health (app/main.py @app.get("/api/health"))
 #   sanders-twostep.service                user    http://127.0.0.1:9400/healthz (sanders_twostep_v2.py)
@@ -342,6 +343,58 @@ note_cert_result() {
   fi
 }
 
+# Record an evidence-integrity outcome. Mirrors note_cert_result:
+# this NEVER restarts or repairs anything — a broken, gapped, or
+# diverged evidence chain is escalated once per incident
+# (evidence-escalated stamp) and stays visible in the journal until
+# a check passes again. Evidence is never repaired by automation.
+note_evidence_result() {
+  local ok="$1" detail="$2"
+  local cf ef count
+  cf="$(counter_file "evidence-integrity")"
+  ef="$STATE_DIR/evidence-escalated"
+  if [ "$ok" = "1" ]; then
+    if [ "$(read_counter "evidence-integrity")" != "0" ] || [ -f "$ef" ]; then
+      log_msg "evidence-integrity: recovered — $detail"
+    fi
+    printf '0' > "$cf" 2>/dev/null || true
+    rm -f "$ef" 2>/dev/null || true
+    return 0
+  fi
+  count="$(read_counter "evidence-integrity")"
+  count=$(( count + 1 ))
+  printf '%s' "$count" > "$cf" 2>/dev/null || true
+  log_msg "evidence-integrity: check FAILED ($count/$FAIL_LIMIT) — $detail"
+  if [ "$count" -ge "$FAIL_LIMIT" ] && [ ! -f "$ef" ]; then
+    printf '%s' "$(date +%s)" > "$ef" 2>/dev/null || true
+    log_msg "evidence-integrity: ESCALATED — an evidence-integrity failure needs the owner (the watchdog detects and escalates only; it never repairs evidence): $detail"
+  fi
+}
+
+# Independent evidence-integrity detection between the Glass-Box
+# Audit platform's own verification runs (strengthening design,
+# Priority 4): the read-only verifier recomputes both evidence
+# chains, their sequence contiguity, the prefix property against
+# the last anchor, anchor freshness, and drill currency.
+EVIDENCE_VERIFY="/opt/Sanders_Dash_Seal/deploy/sds_evidence_verify.py"
+EVIDENCE_DATA_DIR="/opt/Sanders_Dash_Seal/data"
+check_evidence_integrity() {
+  local py out rc
+  py="/opt/Sanders_Dash_Seal/venv/bin/python"
+  [ -x "$py" ] || py="python3"
+  if [ ! -f "$EVIDENCE_VERIFY" ]; then
+    note_evidence_result 0 "evidence verifier missing ($EVIDENCE_VERIFY)"
+    return 0
+  fi
+  out="$("$py" "$EVIDENCE_VERIFY" "$EVIDENCE_DATA_DIR" 2>&1)"
+  rc=$?
+  if [ "$rc" = "0" ]; then
+    note_evidence_result 1 "$out"
+  else
+    note_evidence_result 0 "$out"
+  fi
+}
+
 check_cert_coverage() {
   local served certnames missing="" n
   served="$(cert_served_names)"
@@ -456,12 +509,14 @@ main() {
   check_http "sharpshooter" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/sharpshooter/healthz"
   check_http "labyrinth-shield" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/labyrinth-shield/healthz"
   check_http "minotaur" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/minotaur/healthz"
+  check_http "glass-box-audit" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/glass-box-audit/healthz"
   check_http "money-factory-legal" "money-factory-legal.service" "system" "http://127.0.0.1:8668/health"
   check_http "secretary" "sanders-corporations-secretary.service" "user" "http://127.0.0.1:8791/api/health"
   check_http "twostep" "sanders-twostep.service" "user" "http://127.0.0.1:9400/healthz"
   check_http "judge" "sanders-judge.service" "user" "http://127.0.0.1:9405/healthz"
   check_nginx
   check_cert_coverage
+  check_evidence_integrity
   check_public_face
 
   exit 0

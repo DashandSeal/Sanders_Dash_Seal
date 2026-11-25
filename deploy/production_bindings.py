@@ -162,6 +162,7 @@ from core_platform.twin_gate_service import TwinGateService
 from core_platform.sharpshooter_service import SharpshooterService
 from core_platform.labyrinth_shield_service import LabyrinthShieldService
 from core_platform.minotaur_service import MinotaurService
+from core_platform.glass_box_audit_service import GlassBoxAuditService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -411,6 +412,23 @@ def create_production_bindings():
         Path(__file__).resolve().parent.parent,
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Glass-Box Audit (RTSA Build Program): the designed
+    # strengthening of the GlassBoxAudit substrate — completeness
+    # verification over the audit chain (data/audit.db) and the
+    # native notary journal (data/native_notary.db), anchor
+    # bundles, witness records, the evidence key registry,
+    # snapshot manifests, and restore-drill records, on its own
+    # store. The evidence stores are opened read-only; the
+    # irreversible retention lock (design decision D4) is not
+    # applied and no signing key is provisioned.
+    glass_box_audit = GlassBoxAuditService(
+        data_dir / 'glass_box_audit.db',
+        data_dir / 'audit.db',
+        data_dir / 'native_notary.db',
+        (data_dir / 'audit.db', data_dir / 'native_notary.db',
+         data_dir / 'glass_box_audit.db'),
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -434,4 +452,5 @@ def create_production_bindings():
         sharpshooter=sharpshooter,
         labyrinth_shield=labyrinth_shield,
         minotaur=minotaur,
+        glass_box_audit=glass_box_audit,
     )

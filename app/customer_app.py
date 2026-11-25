@@ -44,6 +44,7 @@ from core_platform.twin_gate_service import TwinGateServiceDenied, TwinGateServi
 from core_platform.sharpshooter_service import SharpshooterDenied, SharpshooterForbidden
 from core_platform.labyrinth_shield_service import LabyrinthShieldDenied, LabyrinthShieldForbidden
 from core_platform.minotaur_service import MinotaurDenied, MinotaurForbidden
+from core_platform.glass_box_audit_service import GlassBoxAuditPlatformDenied, GlassBoxAuditPlatformForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -145,9 +146,15 @@ LS_ISOLATION_RELEASE_ROUTE = re.compile(r'^/api/labyrinth-shield/isolations/([A-
 MN_ANOMALY_ROUTE = re.compile(r'^/api/minotaur/anomalies/([A-Za-z0-9_-]{1,128})$')
 MN_ANOMALY_ACTION_ROUTE = re.compile(r'^/api/minotaur/anomalies/([A-Za-z0-9_-]{1,128})/action$')
 MN_CLEARANCE_ROUTE = re.compile(r'^/api/minotaur/clearances/([A-Za-z0-9_-]{1,128})$')
+GBA_ANCHOR_ROUTE = re.compile(r'^/api/glass-box-audit/anchors/([A-Za-z0-9_-]{1,128})$')
+GBA_ANCHOR_WITNESS_ROUTE = re.compile(r'^/api/glass-box-audit/anchors/([A-Za-z0-9_-]{1,128})/witness$')
+GBA_ANCHOR_VERIFY_ROUTE = re.compile(r'^/api/glass-box-audit/anchors/([A-Za-z0-9_-]{1,128})/verify-signature$')
+GBA_VERIFICATION_ROUTE = re.compile(r'^/api/glass-box-audit/verifications/([A-Za-z0-9_-]{1,128})$')
+GBA_INCIDENT_ROUTE = re.compile(r'^/api/glass-box-audit/incidents/([A-Za-z0-9_-]{1,128})$')
+GBA_INCIDENT_ACTION_ROUTE = re.compile(r'^/api/glass-box-audit/incidents/([A-Za-z0-9_-]{1,128})/action$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -243,6 +250,12 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         mn_anomaly_match = MN_ANOMALY_ROUTE.fullmatch(path)
         mn_anomaly_action_match = MN_ANOMALY_ACTION_ROUTE.fullmatch(path)
         mn_clearance_match = MN_CLEARANCE_ROUTE.fullmatch(path)
+        gba_anchor_match = GBA_ANCHOR_ROUTE.fullmatch(path)
+        gba_anchor_witness_match = GBA_ANCHOR_WITNESS_ROUTE.fullmatch(path)
+        gba_anchor_verify_match = GBA_ANCHOR_VERIFY_ROUTE.fullmatch(path)
+        gba_verification_match = GBA_VERIFICATION_ROUTE.fullmatch(path)
+        gba_incident_match = GBA_INCIDENT_ROUTE.fullmatch(path)
+        gba_incident_action_match = GBA_INCIDENT_ACTION_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -360,6 +373,27 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                        or mn_anomaly_match is not None
                        or mn_anomaly_action_match is not None
                        or mn_clearance_match is not None)
+        is_gba_route = (path in ('/api/glass-box-audit/status',
+                                 '/api/glass-box-audit/anchors',
+                                 '/api/glass-box-audit/anchors/produce',
+                                 '/api/glass-box-audit/registry/verify-signature',
+                                 '/api/glass-box-audit/keys',
+                                 '/api/glass-box-audit/keys/register',
+                                 '/api/glass-box-audit/keys/action',
+                                 '/api/glass-box-audit/verify',
+                                 '/api/glass-box-audit/verifications',
+                                 '/api/glass-box-audit/incidents',
+                                 '/api/glass-box-audit/snapshots',
+                                 '/api/glass-box-audit/snapshots/produce',
+                                 '/api/glass-box-audit/drills',
+                                 '/api/glass-box-audit/drills/record',
+                                 '/api/glass-box-audit/check-in')
+                        or gba_anchor_match is not None
+                        or gba_anchor_witness_match is not None
+                        or gba_anchor_verify_match is not None
+                        or gba_verification_match is not None
+                        or gba_incident_match is not None
+                        or gba_incident_action_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -371,7 +405,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_tg_route
                              or is_ss_route
                              or is_ls_route
-                             or is_mn_route)
+                             or is_mn_route
+                             or is_gba_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -415,7 +450,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/labyrinth-shield/integrity',
                                             '/api/minotaur/status',
                                             '/api/minotaur/targets',
-                                            '/api/minotaur/anomalies')
+                                            '/api/minotaur/anomalies',
+                                            '/api/glass-box-audit/status',
+                                            '/api/glass-box-audit/anchors',
+                                            '/api/glass-box-audit/verifications',
+                                            '/api/glass-box-audit/incidents',
+                                            '/api/glass-box-audit/snapshots',
+                                            '/api/glass-box-audit/drills',
+                                            '/api/glass-box-audit/keys')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -433,7 +475,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or ss_remediation_match is not None
                                    or ls_evaluation_match is not None
                                    or mn_anomaly_match is not None
-                                   or mn_clearance_match is not None) else ('POST',)
+                                   or mn_clearance_match is not None
+                                   or gba_anchor_match is not None
+                                   or gba_verification_match is not None
+                                   or gba_incident_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -445,6 +490,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             allowed = ('GET', 'POST')
         if path == '/api/labyrinth-shield/blocklist':
             allowed = ('GET', 'POST')
+        if path in ('/api/glass-box-audit/anchors/produce',
+                    '/api/glass-box-audit/snapshots/produce'):
+            allowed = ('POST',)
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
 
@@ -1179,6 +1227,86 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = minotaur.clearance_view(identity, mn_role, mn_clearance_match.group(1))
                         return respond(start, '200 OK', {'clearance': record})
                     return check_in(minotaur)
+                if is_gba_route:
+                    if glass_box_audit is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'glass_box_audit_unavailable'})
+                    gba_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/glass-box-audit/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': glass_box_audit.status()})
+                    if path == '/api/glass-box-audit/anchors/produce':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = glass_box_audit.produce_anchor(identity)
+                        return respond(start, '201 Created', {'anchor': record})
+                    if path == '/api/glass-box-audit/anchors':
+                        return respond(start, '200 OK', {'anchors': glass_box_audit.anchors_list(identity, gba_role)})
+                    if gba_anchor_witness_match:
+                        if set(data) != {'witness_kind', 'reference'}:
+                            raise ValueError('unexpected fields')
+                        record = glass_box_audit.record_witness(identity, gba_anchor_witness_match.group(1), data['witness_kind'], data['reference'])
+                        return respond(start, '201 Created', {'witness': record})
+                    if gba_anchor_verify_match:
+                        if set(data) != {'signature', 'public_key_hex'}:
+                            raise ValueError('unexpected fields')
+                        record = glass_box_audit.verify_anchor_signature(identity, gba_role, gba_anchor_verify_match.group(1), data['signature'], data['public_key_hex'])
+                        return respond(start, '200 OK', {'verification': record})
+                    if gba_anchor_match:
+                        record = glass_box_audit.anchor_view(identity, gba_role, gba_anchor_match.group(1))
+                        return respond(start, '200 OK', {'anchor': record})
+                    if path == '/api/glass-box-audit/registry/verify-signature':
+                        if set(data) != {'signature', 'public_key_hex'}:
+                            raise ValueError('unexpected fields')
+                        record = glass_box_audit.verify_registry_signature(identity, gba_role, data['signature'], data['public_key_hex'])
+                        return respond(start, '200 OK', {'verification': record})
+                    if path == '/api/glass-box-audit/keys/register':
+                        if not {'key_class', 'holder_role', 'purpose'} <= set(data) <= {'key_class', 'holder_role', 'purpose', 'public_key_hex', 'predecessor_key_id'}:
+                            raise ValueError('unexpected fields')
+                        record = glass_box_audit.register_key(identity, data['key_class'], data['holder_role'], data['purpose'], public_key_hex=data.get('public_key_hex'), predecessor_key_id=data.get('predecessor_key_id'))
+                        return respond(start, '201 Created', {'key': record})
+                    if path == '/api/glass-box-audit/keys/action':
+                        if set(data) != {'key_id', 'action'}:
+                            raise ValueError('unexpected fields')
+                        record = glass_box_audit.key_action(identity, data['key_id'], data['action'])
+                        return respond(start, '200 OK', {'key': record})
+                    if path == '/api/glass-box-audit/keys':
+                        return respond(start, '200 OK', {'keys': glass_box_audit.keys_list(identity, gba_role)})
+                    if path == '/api/glass-box-audit/verify':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = glass_box_audit.run_verification(identity)
+                        return respond(start, '201 Created', {'verification': record})
+                    if path == '/api/glass-box-audit/verifications':
+                        return respond(start, '200 OK', {'verifications': glass_box_audit.verifications_list(identity, gba_role)})
+                    if gba_verification_match:
+                        record = glass_box_audit.verification_view(identity, gba_role, gba_verification_match.group(1))
+                        return respond(start, '200 OK', {'verification': record})
+                    if path == '/api/glass-box-audit/incidents':
+                        return respond(start, '200 OK', {'incidents': glass_box_audit.incidents_list(identity, gba_role)})
+                    if gba_incident_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = glass_box_audit.incident_action(identity, gba_incident_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'incident': record})
+                    if gba_incident_match:
+                        record = glass_box_audit.incident_view(identity, gba_role, gba_incident_match.group(1))
+                        return respond(start, '200 OK', {'incident': record})
+                    if path == '/api/glass-box-audit/snapshots/produce':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = glass_box_audit.produce_snapshot_manifest(identity)
+                        return respond(start, '201 Created', {'snapshot': record})
+                    if path == '/api/glass-box-audit/snapshots':
+                        return respond(start, '200 OK', {'snapshots': glass_box_audit.snapshots_list(identity, gba_role)})
+                    if path == '/api/glass-box-audit/drills/record':
+                        if set(data) != {'snapshot_id', 'glassbox_head_match', 'journal_head_match', 'counts_match'}:
+                            raise ValueError('unexpected fields')
+                        record = glass_box_audit.record_restore_drill(identity, data['snapshot_id'], data['glassbox_head_match'], data['journal_head_match'], data['counts_match'])
+                        return respond(start, '201 Created', {'drill': record})
+                    if path == '/api/glass-box-audit/drills':
+                        return respond(start, '200 OK', {'drills': glass_box_audit.drills_list(identity, gba_role)})
+                    return check_in(glass_box_audit)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -1262,6 +1390,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'minotaur_forbidden'})
         except MinotaurDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'minotaur_denied', 'detail': str(exc)})
+        except GlassBoxAuditPlatformForbidden:
+            return respond(start, '403 Forbidden', {'error': 'glass_box_audit_forbidden'})
+        except GlassBoxAuditPlatformDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'glass_box_audit_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

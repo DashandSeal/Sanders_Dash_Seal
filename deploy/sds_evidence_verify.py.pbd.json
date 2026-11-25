@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "deploy/sds_evidence_verify.py",
+        "payload_hash": "ea67e5bcc52a6c54504d32cf90fa05050ad14a91ec69b5a0981011a272dfeeff",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
