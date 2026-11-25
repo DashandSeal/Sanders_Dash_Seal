@@ -53,6 +53,7 @@ class RuntimeBindings:
     grantwriter: object = None
     pbd_validation: object = None
     pbd_manifest_generator: object = None
+    vault: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -373,7 +374,8 @@ def create_application(bindings=None):
             home_healthcare=getattr(bindings, 'home_healthcare', None),
             grantwriter=getattr(bindings, 'grantwriter', None),
             pbd_validation=getattr(bindings, 'pbd_validation', None),
-            pbd_manifest_generator=getattr(bindings, 'pbd_manifest_generator', None)
+            pbd_manifest_generator=getattr(bindings, 'pbd_manifest_generator', None),
+            vault=getattr(bindings, 'vault', None)
         )
     else:
         verifier = _denied
@@ -692,7 +694,8 @@ def create_application(bindings=None):
         if path in ('/api/uncle-nickey-mao/healthz', '/api/carehive-os/healthz',
                     '/api/home-healthcare/healthz', '/api/grantwriter/healthz',
                     '/api/pbd-validation/healthz',
-                    '/api/pbd-manifest-generator/healthz'):
+                    '/api/pbd-manifest-generator/healthz',
+                    '/api/vault/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -709,6 +712,7 @@ def create_application(bindings=None):
                 '/api/grantwriter/healthz': ('grantwriter', 'grantwriter', 'grantwriter_unavailable'),
                 '/api/pbd-validation/healthz': ('pbd_validation', 'pbd_validation', 'pbd_validation_unavailable'),
                 '/api/pbd-manifest-generator/healthz': ('pbd_manifest_generator', 'pbd_manifest_generator', 'pbd_manifest_generator_unavailable'),
+                '/api/vault/healthz': ('vault', 'vault', 'vault_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -763,7 +767,9 @@ def create_application(bindings=None):
                 or path == '/api/pbd-validation'
                 or path.startswith('/api/pbd-validation/')
                 or path == '/api/pbd-manifest-generator'
-                or path.startswith('/api/pbd-manifest-generator/'))
+                or path.startswith('/api/pbd-manifest-generator/')
+                or path == '/api/vault'
+                or path.startswith('/api/vault/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

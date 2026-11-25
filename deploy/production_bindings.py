@@ -100,6 +100,11 @@ What it wires:
   (the MASTER §14 generation standard), operator-only, with the
   same audit chain. It never signs: generated manifests are
   UNSIGNED_SOURCE_MANIFEST.
+- Vault is ``Vault`` on ``data/vault.db``: the MASTER §9/§20
+  execution-lease lifecycle (issuance, expiration, revocation,
+  destruction of temporary authority), operator-issued with the
+  same audit chain. Only lease-token hashes are stored; the token
+  itself is served once, at issuance.
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -134,6 +139,7 @@ from core_platform.stripe_connection import StripeConnection
 from core_platform.stripe_payments import PaymentDenied, PaymentLedger
 from core_platform.uncle_nickey_mao import UncleNickeyMaoBridge
 from core_platform.upgrade_sidecar import CORE_LAWS
+from core_platform.vault import Vault
 from deploy.deployment import ALIAS_HOSTS, ORIGIN, RuntimeBindings
 
 
@@ -312,6 +318,12 @@ def create_production_bindings():
         data_dir / 'pbd_manifest_generator.db', repo_root,
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Vault (RTSA Build Program): the MASTER §9/§20 execution
+    # lease lifecycle, on its own store.
+    vault = Vault(
+        data_dir / 'vault.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -328,4 +340,5 @@ def create_production_bindings():
         grantwriter=grantwriter,
         pbd_validation=pbd_validation,
         pbd_manifest_generator=pbd_manifest_generator,
+        vault=vault,
     )

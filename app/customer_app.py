@@ -37,6 +37,7 @@ from core_platform.pbd_manifest_generator import (
     PBDGeneratorDenied,
     PBDGeneratorForbidden,
 )
+from core_platform.vault import VaultDenied, VaultForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -115,9 +116,12 @@ GW_APPLICATION_DRAFT_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-
 GW_APPLICATION_COMPLIANCE_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/compliance$')
 PBD_VALIDATION_VIEW_ROUTE = re.compile(r'^/api/pbd-validation/validations/([A-Za-z0-9_-]{1,128})$')
 PBD_GENERATOR_VIEW_ROUTE = re.compile(r'^/api/pbd-manifest-generator/generations/([A-Za-z0-9_-]{1,128})$')
+VAULT_LEASE_ROUTE = re.compile(r'^/api/vault/leases/([A-Za-z0-9_-]{1,128})$')
+VAULT_LEASE_REVOKE_ROUTE = re.compile(r'^/api/vault/leases/([A-Za-z0-9_-]{1,128})/revoke$')
+VAULT_LEASE_BURN_ROUTE = re.compile(r'^/api/vault/leases/([A-Za-z0-9_-]{1,128})/burn$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -196,6 +200,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         gw_compliance_match = GW_APPLICATION_COMPLIANCE_ROUTE.fullmatch(path)
         pbd_validation_view_match = PBD_VALIDATION_VIEW_ROUTE.fullmatch(path)
         pbd_generator_view_match = PBD_GENERATOR_VIEW_ROUTE.fullmatch(path)
+        vault_lease_match = VAULT_LEASE_ROUTE.fullmatch(path)
+        vault_lease_revoke_match = VAULT_LEASE_REVOKE_ROUTE.fullmatch(path)
+        vault_lease_burn_match = VAULT_LEASE_BURN_ROUTE.fullmatch(path)
         is_unm_route = (path in ('/api/uncle-nickey-mao/status',
                                  '/api/uncle-nickey-mao/guardian-relay',
                                  '/api/uncle-nickey-mao/referrals',
@@ -244,11 +251,21 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                            '/api/pbd-manifest-generator/generate',
                                            '/api/pbd-manifest-generator/check-in')
                                   or pbd_generator_view_match is not None)
+        is_vault_route = (path in ('/api/vault/status',
+                                   '/api/vault/leases',
+                                   '/api/vault/verify',
+                                   '/api/vault/consume',
+                                   '/api/vault/sweep',
+                                   '/api/vault/check-in')
+                          or vault_lease_match is not None
+                          or vault_lease_revoke_match is not None
+                          or vault_lease_burn_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
                              or is_pbd_validation_route
-                             or is_pbd_generator_route)
+                             or is_pbd_generator_route
+                             or is_vault_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -275,14 +292,16 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/grantwriter/status',
                                             '/api/grantwriter/portfolio',
                                             '/api/pbd-validation/status',
-                                            '/api/pbd-manifest-generator/status')
+                                            '/api/pbd-manifest-generator/status',
+                                            '/api/vault/status')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
                                    or gw_stage_match is not None
                                    or gw_compliance_match is not None
                                    or pbd_validation_view_match is not None
-                                   or pbd_generator_view_match is not None) else ('POST',)
+                                   or pbd_generator_view_match is not None
+                                   or vault_lease_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -675,6 +694,48 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = pbd_manifest_generator.generation_view(identity, role, pbd_generator_view_match.group(1))
                         return respond(start, '200 OK', {'generation': record})
                     return check_in(pbd_manifest_generator)
+                if is_vault_route:
+                    if vault is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'vault_unavailable'})
+                    if path == '/api/vault/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': vault.status()})
+                    if path == '/api/vault/leases':
+                        if set(data) - {'requesting_agent', 'target_endpoint', 'allowed_verbs', 'ttl_seconds', 'max_executions', 'authorization_metadata'} or not {'requesting_agent', 'target_endpoint', 'allowed_verbs', 'ttl_seconds'} <= set(data):
+                            raise ValueError('unexpected fields')
+                        record = vault.issue_lease(identity, **data)
+                        return respond(start, '201 Created', {'lease': record})
+                    if path == '/api/vault/verify':
+                        if set(data) - {'token', 'endpoint', 'verb'} or 'token' not in data:
+                            raise ValueError('unexpected fields')
+                        result = vault.verify_token(data['token'], endpoint=data.get('endpoint'), verb=data.get('verb'))
+                        return respond(start, '200 OK', {'verification': result})
+                    if path == '/api/vault/consume':
+                        if set(data) != {'token', 'endpoint', 'verb'}:
+                            raise ValueError('unexpected fields')
+                        record = vault.consume_execution(identity, data['token'], data['endpoint'], data['verb'])
+                        return respond(start, '200 OK', {'lease': record})
+                    if path == '/api/vault/sweep':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        result = vault.sweep_expired(identity)
+                        return respond(start, '200 OK', {'sweep': result})
+                    if vault_lease_match:
+                        role = 'OPERATOR' if is_operator() else 'COORDINATOR'
+                        record = vault.lease_view(identity, role, vault_lease_match.group(1))
+                        return respond(start, '200 OK', {'lease': record})
+                    if vault_lease_revoke_match:
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = vault.revoke_lease(identity, vault_lease_revoke_match.group(1))
+                        return respond(start, '200 OK', {'lease': record})
+                    if vault_lease_burn_match:
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = vault.burn_lease(identity, vault_lease_burn_match.group(1))
+                        return respond(start, '200 OK', {'lease': record})
+                    return check_in(vault)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -730,6 +791,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'pbd_manifest_generator_forbidden'})
         except PBDGeneratorDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'pbd_manifest_generator_denied', 'detail': str(exc)})
+        except VaultForbidden:
+            return respond(start, '403 Forbidden', {'error': 'vault_forbidden'})
+        except VaultDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'vault_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

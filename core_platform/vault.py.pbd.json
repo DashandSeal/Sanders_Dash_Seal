@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/vault.py",
+        "payload_hash": "a14e8e455ac68c7d894874db10627a5b1778a2ed486b0cdd1eb586cf018a2062",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
