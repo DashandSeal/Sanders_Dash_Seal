@@ -231,6 +231,7 @@ from core_platform.sanders_ai_research_service import SandersAIResearchService
 from core_platform.sanders_research_service import SandersResearchService
 from core_platform.sanders_communications_service import SandersCommunicationsService
 from core_platform.sanders_banking_hub_service import SandersBankingHubService
+from core_platform.sanders_legal_services_service import SandersLegalServicesService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1082,6 +1083,16 @@ def create_production_bindings():
     sanders_banking_hub = SandersBankingHubService(
         data_dir / 'sanders_banking_hub.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Legal Services platform (Q84,
+    # RTSA Build Program tranche 24): governed
+    # legal-services records over its own
+    # store — it provides no legal advice,
+    # represents no client, and files no
+    # court action itself. Separate from
+    # Sanders Legal Helpers (catalog #66).
+    sanders_legal_services = SandersLegalServicesService(
+        data_dir / 'sanders_legal_services.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1167,4 +1178,5 @@ def create_production_bindings():
         sanders_research=sanders_research,
         sanders_communications=sanders_communications,
         sanders_banking_hub=sanders_banking_hub,
+        sanders_legal_services=sanders_legal_services,
     )
