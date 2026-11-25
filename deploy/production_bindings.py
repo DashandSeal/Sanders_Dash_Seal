@@ -204,6 +204,7 @@ from core_platform.ai_doctor_service import AIDoctorService
 from core_platform.sanders_ai_psychiatrist_service import SandersAIPsychiatristService
 from core_platform.sanders_recon_service import SandersReconService
 from core_platform.sanders_senior_living_service import SandersSeniorLivingService
+from core_platform.sanders_legal_helpers_service import SandersLegalHelpersService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -828,6 +829,14 @@ def create_production_bindings():
     sanders_senior_living = SandersSeniorLivingService(
         data_dir / 'sanders_senior_living.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Legal Helpers platform (Q57, RTSA Build
+    # Program tranche 15): governed legal-support records
+    # over its own store — the platform, distinct from
+    # Sanders Legal Helpers LLC; it renders no legal advice,
+    # represents no client, and practices no law.
+    sanders_legal_helpers = SandersLegalHelpersService(
+        data_dir / 'sanders_legal_helpers.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -886,4 +895,5 @@ def create_production_bindings():
         sanders_ai_psychiatrist=sanders_ai_psychiatrist,
         sanders_recon=sanders_recon,
         sanders_senior_living=sanders_senior_living,
+        sanders_legal_helpers=sanders_legal_helpers,
     )

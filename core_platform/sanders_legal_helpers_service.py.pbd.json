@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/sanders_legal_helpers_service.py",
+        "payload_hash": "8ac3fe021f239382d6b77d28558d6b7f91f3e347b424e013edba9b5e62a69d11",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
