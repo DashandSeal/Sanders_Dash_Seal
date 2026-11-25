@@ -184,6 +184,7 @@ from core_platform.integration_agent_service import IntegrationAgentService
 from core_platform.performance_agent_service import PerformanceAgentService
 from core_platform.backup_recovery_agent_service import BackupRecoveryAgentService
 from core_platform.observability_agent_service import ObservabilityAgentService
+from core_platform.quality_agent_service import QualityAgentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -701,6 +702,14 @@ def create_production_bindings():
     observability_agent = ObservabilityAgentService(
         data_dir / 'observability_agent.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Quality Agent platform (Q45, RTSA Build Program
+    # tranche 11): governed verification records over its
+    # own store, built under its design's INTERFACE_ONLY
+    # discipline — it runs no functional test, verifies no
+    # live system, and modifies no state.
+    quality_agent = QualityAgentService(
+        data_dir / 'quality_agent.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -747,4 +756,5 @@ def create_production_bindings():
         performance_agent=performance_agent,
         backup_recovery_agent=backup_recovery_agent,
         observability_agent=observability_agent,
+        quality_agent=quality_agent,
     )

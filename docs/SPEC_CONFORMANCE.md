@@ -3060,3 +3060,135 @@ observability_agent_unavailable). Deployed-composition
 verification through create_application on the final
 composed tree is recorded in the tranche 10 entry of the
 build queue.
+
+## RTSA Build Program Q45 — Quality Agent (2026-11-24)
+
+**Scope**: build the Quality Agent design whole as
+its own platform service (canonical catalog row #51, Band
+2C), per the established tranche pattern, under the
+standards gate: Fortune 500 governs end to end, the MASTER
+architecture within it, and the Sanders Royal Enterprise
+Standard for presentation within it. Fortune 500 judgment:
+the platform meets the standard within its honest scope
+limits — it is an internal operator/auditor record surface
+over governed verification records; no public or customer
+surface exists for it by design, so the Royal Enterprise
+presentation layer does not apply, and no security
+internals are exposed anywhere. Scope limits stated
+plainly: the agent design is INTERFACE_ONLY with external
+execution disabled, and the build claims no execution —
+the catalog's designed role "INDEPENDENT functional
+verification — Twin-Gate step 4" is carried as governed
+records; the platform runs no functional test, verifies
+no live system, modifies no state, and holds subjects and
+verification evidence by reference only — no verification
+payloads, no test harnesses, and no live-system state
+ever. The catalog records against this row that no
+independent verifier exists anywhere in the repo for the
+live approval gates; this build does not claim that
+office — it is the governed record platform for
+verification determinations, not a live verifier of any
+gate or system. The Quality Agent is distinct from the
+IT AI Manager (Q5) that commands its design, from
+Glass-Box Audit (Q10 — the immutable provenance and
+execution record; MASTER §20 keeps the two separate),
+from JUGGERNAUT (Q33 — the Band 2B role contract's
+execution-integrity verification records), and from the
+read-only QualityAgent observer entry in
+core_platform/operational_runtime.py — never merged, and
+this platform reads, wraps, or replaces neither the
+observer nor any other component.
+core_platform/agent_registry.py and
+core_platform/rtsa_registry.py remain byte-untouched.
+Naming verification: the queue's Band 2C table, the
+canonical catalog (row #51), the MASTER §7 matrix, and
+core_platform/agent_registry.py all name this platform
+"Quality Agent" — the name was verified against those
+sources before building, per the name law recorded
+after tranche 8.
+
+**Built**: core_platform/quality_agent_service.py
+(QualityAgentService over
+core_platform/rtsa_foundation.py; independent identity
+quality_agent; design view of the agent descriptor
+in core_platform/agent_registry.py — commanding authority
+IT_AI_Manager_v15.0, implementation_status INTERFACE_ONLY,
+external_execution_enabled False, designed role
+"Independent functional verification"; fail-closed
+operation check refusing the design's execution boundary
+by name with the design's own signal
+AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED —
+execute_verification, verify_live_system,
+modify_verified_state, external_execution — and unknown
+operations; verification records carried as durable,
+receipted records over a subject reference, a declared
+verification-evidence reference set, and a scope
+reference, with lifecycle REQUESTED → APPROVED /
+REJECTED (the recorded human decision) →
+OUTCOME_RECORDED; the evidence discipline enforced in the
+record model — a record declared with no verification
+evidence stands NO_EVIDENCE_SUBMITTED in every view and
+in the status tallies, and both determinations
+(VERIFICATION_PASSED, VERIFICATION_FAILED) are refused on
+it, while INCONCLUSIVE, which asserts nothing, records
+against evidence; outcomes recorded only for APPROVED
+records and only against a presented evidence reference,
+with a closed outcome set; every state change writes its
+Glass-Box receipt inside the same transaction;
+operator-only check-in bound to the identity integrity
+digest). Route family /api/quality-agent/ wired through
+app/customer_app.py (create_customer_app parameter
+quality_agent), deploy/deployment.py
+(RuntimeBindings.quality_agent, health route
+/api/quality-agent/healthz, forwarding through
+create_application), and deploy/production_bindings.py
+(construction on its own store quality_agent.db);
+watchdog check_http entry in deploy/sds_watchdog.sh;
+registry entry in core_platform/ai_platform_links.json
+(registry now 75).
+
+**Pricing/teaching audit** (examined set: canonical
+catalog row #51; Set B database_schema.sql +
+tier_pricing_global.py, read directly — the name appears
+in neither; Set C catalog, read directly — the name does
+not appear; the MASTER §7 matrix, §8 step 4, and §20;
+the agent descriptor in
+core_platform/agent_registry.py): the design carries NO
+price for the Quality Agent — none built, none
+invented, no blocker figure attaches to this name. The
+design carries NO teaching function for the Quality
+Agent — none built, none invented.
+
+**Verification**: scratch drive (never committed) —
+47/47 checks: identity and design view (descriptor fields
+exact); constructor refuses a missing audit adapter;
+operation check (record operation RECORD_ONLY; all four
+execution operations refused by name with the design
+signal; unknown operation refused); record lifecycle
+(operator-only creation; subject/scope references
+required; evidence set must be a list of non-empty
+references, capped; outcome refused before approval;
+outcome without evidence refused; outcome set closed —
+ALL_CLEAR is not an outcome; the with-evidence record's
+VERIFICATION_FAILED outcome records against evidence
+and a second outcome is refused; the no-evidence record
+stands NO_EVIDENCE_SUBMITTED with both determinations
+refused on it while INCONCLUSIVE records; reject records
+REJECTED and approve from REJECTED is refused; unknown
+record denied; geofence refuses an undeclared region;
+status totals including records_no_evidence_submitted
+and verification_declared_total; operator-only
+check-in); registry at 75 entries; all 9 approval gates
+UNAPPROVED; WSGI through create_customer_app (signed-out
+401, status 200, execution operation 400 with
+AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED in the detail,
+create refused for non-operator 403, create 201 standing
+NO_EVIDENCE_SUBMITTED, approve 200, VERIFICATION_PASSED
+on the no-evidence record refused 400 with
+NO_EVIDENCE_SUBMITTED in the detail, INCONCLUSIVE
+outcome 200, records list 200, unexpected fields 400,
+wrong origin 403, check-in 201, unwired service 503
+quality_agent_unavailable). Deployed-composition
+verification through create_application on the final
+composed tree is recorded in the tranche 11 entry of
+the build queue.
