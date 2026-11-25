@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/FOUNDER_RULINGS_BLOODLINE_PROTECTION_2026-11-25.md",
+    "payload_hash": "dc6d104416255a660c9421f34d124159597f10f9fd3a21ad216eff4b3a9f9c9b",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}

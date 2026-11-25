@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/PERMANENT_BLOODLINE_PROTECTION_DIRECTIVE.md",
+    "payload_hash": "9b7775631a9248167e30b5f71c950bb9bc387f97b47a0054d038ce6dac7d20bd",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
