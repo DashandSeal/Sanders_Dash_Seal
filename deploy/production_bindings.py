@@ -179,6 +179,7 @@ from core_platform.uptime_agent_service import UptimeAgentService
 from core_platform.application_agent_service import ApplicationAgentService
 from core_platform.database_agent_service import DatabaseAgentService
 from core_platform.deployment_agent_service import DeploymentAgentService
+from core_platform.infrastructure_agent_service import InfrastructureAgentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -639,6 +640,19 @@ def create_production_bindings():
         data_dir / 'deployment_agent.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Infrastructure Agent (RTSA Build Program): the fifth
+    # agent of the MASTER §7 IT AI agent matrix built as its
+    # own platform — governed infrastructure-health assessment
+    # records under the agent design's INTERFACE_ONLY
+    # discipline (infrastructure and checks by reference only;
+    # an assessment with no checks stands NO_CHECKS_SUBMITTED
+    # and no determination can be recorded on it; it restores
+    # nothing, repairs nothing, provisions nothing, and
+    # executes nothing), on its own store.
+    infrastructure_agent = InfrastructureAgentService(
+        data_dir / 'infrastructure_agent.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -679,4 +693,5 @@ def create_production_bindings():
         application_agent=application_agent,
         database_agent=database_agent,
         deployment_agent=deployment_agent,
+        infrastructure_agent=infrastructure_agent,
     )
