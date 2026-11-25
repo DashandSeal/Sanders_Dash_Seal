@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/ai_doctor_service.py",
-        "payload_hash": "6bc93319d65130b758b5f70e045fc38fb4ba50295eaf1b6f739041d46ef2b934",
+        "payload_hash": "216c0be8e9127d047cd4ce5648d3325c4786bfc44733c9ce22c84484a8b69c1d",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

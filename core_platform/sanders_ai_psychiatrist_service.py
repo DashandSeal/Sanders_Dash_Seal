@@ -205,11 +205,12 @@ class SandersAIPsychiatristService:
     under the AI-to-AI-only discipline."""
 
     def __init__(self, database_path, *, operator_verifier, audit,
-                 clock=time.time):
+                 clock=time.time, enforcement=None):
         if audit is None or not callable(getattr(audit, 'preserve', None)):
             raise SandersAIPsychiatristDenied(
                 'Sanders AI Psychiatrist requires a working'
                 ' Glass-Box audit adapter')
+        self._enforcement = enforcement
         self._path = Path(database_path)
         self._path.parent.mkdir(parents=True, exist_ok=True)
         self.operator_verifier = operator_verifier
@@ -584,6 +585,8 @@ class SandersAIPsychiatristService:
                         'NO_FINDINGS_SUBMITTED: a record'
                         ' declared with no findings cannot be'
                         f' determined {outcome}')
+                self._enforce_outcome(record_id, row['subject_ref'],
+                                      outcome, evidence_ref.strip())
                 receipt_id = self._record(
                     'SANDERS_AI_PSYCHIATRIST_OUTCOME_RECORDED',
                     actor=actor, record_id=record_id,
@@ -607,6 +610,28 @@ class SandersAIPsychiatristService:
                 ' WHERE record_id = ?',
                 (record_id,)).fetchone()
         return self._record_view(updated)
+
+    def _enforce_outcome(self, record_id, subject_ref, outcome,
+                         evidence_ref):
+        """Constitutional Execution Stack gate (AI Medical fix
+        build): when the enforcement layer is attached, the
+        outcome is evaluated by the stack's policy kernel BEFORE
+        it is committed. A refusal — a policy violation, or the
+        layer's named NOT_PROVISIONED / ATTESTATION_FAILED state —
+        refuses the outcome inside this transaction; nothing is
+        recorded. With no layer attached (direct construction, as
+        in the Q54 drives), the service behaves exactly as built.
+        """
+        if self._enforcement is None:
+            return None
+        from .ai_medical.enforcement import EnforcementRefused
+        try:
+            return self._enforcement.evaluate_outcome(
+                platform='sanders_ai_psychiatrist',
+                record_id=record_id, subject_ref=subject_ref,
+                outcome=outcome, evidence_ref=evidence_ref)
+        except EnforcementRefused as exc:
+            raise SandersAIPsychiatristDenied(str(exc)) from exc
 
     # -- status / check-in ----------------------------------------------
 
@@ -641,6 +666,10 @@ class SandersAIPsychiatristService:
         return {
             'identity': IDENTITY.to_dict(),
             'design': self.design_view(),
+            'ai_medical_enforcement': (
+                self._enforcement.status()
+                if self._enforcement is not None
+                else {'state': 'NOT_ATTACHED'}),
             'records_total': sum(by_status.values()),
             'records_by_status': by_status,
             'records_by_outcome': by_outcome,
