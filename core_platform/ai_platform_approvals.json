@@ -1,81 +1,81 @@
 {
+  "version": 1,
+  "owner": "Roosevelt Sanders",
   "created": "2026-11-13",
+  "updated_at": "2026-11-25T21:46:00Z",
+  "note": "Initial state: every gate UNAPPROVED. No verifier has returned True for any gate. A gate flips to APPROVED only on an explicit owner approval for that specific gate, or a real verifier returning True.",
   "gates": {
-    "ai_role_workers": {
-      "approved_at": null,
-      "approved_by": null,
-      "method": null,
-      "note": null,
+    "release_verifier_pr2_checkout": {
       "status": "UNAPPROVED",
-      "verifier": null
-    },
-    "anthropic_live_model": {
-      "approved_at": null,
       "approved_by": null,
-      "method": null,
-      "note": null,
-      "status": "UNAPPROVED",
-      "verifier": null
-    },
-    "daedalus_live": {
       "approved_at": null,
-      "approved_by": null,
       "method": null,
-      "note": null,
-      "status": "UNAPPROVED",
-      "verifier": null
+      "verifier": null,
+      "note": null
     },
     "gateway_workflow_fix": {
-      "approved_at": null,
-      "approved_by": null,
-      "method": null,
-      "note": null,
       "status": "UNAPPROVED",
-      "verifier": null
-    },
-    "grantwriter_purpose": {
-      "approved_at": null,
       "approved_by": null,
-      "method": null,
-      "note": null,
-      "status": "UNAPPROVED",
-      "verifier": null
-    },
-    "release_verifier_pr2_checkout": {
       "approved_at": null,
-      "approved_by": null,
       "method": null,
-      "note": null,
-      "status": "UNAPPROVED",
-      "verifier": null
-    },
-    "ron_notarial": {
-      "approved_at": null,
-      "approved_by": null,
-      "method": null,
-      "note": null,
-      "status": "UNAPPROVED",
-      "verifier": null
+      "verifier": null,
+      "note": null
     },
     "stripe_live_keys": {
-      "approved_at": null,
-      "approved_by": null,
-      "method": null,
-      "note": null,
       "status": "UNAPPROVED",
-      "verifier": null
+      "approved_by": null,
+      "approved_at": null,
+      "method": null,
+      "verifier": null,
+      "note": null
+    },
+    "anthropic_live_model": {
+      "status": "UNAPPROVED",
+      "approved_by": null,
+      "approved_at": null,
+      "method": null,
+      "verifier": null,
+      "note": null
+    },
+    "grantwriter_purpose": {
+      "status": "UNAPPROVED",
+      "approved_by": null,
+      "approved_at": null,
+      "method": null,
+      "verifier": null,
+      "note": null
+    },
+    "ron_notarial": {
+      "status": "UNAPPROVED",
+      "approved_by": null,
+      "approved_at": null,
+      "method": null,
+      "verifier": null,
+      "note": null
     },
     "voice_video_provider": {
-      "approved_at": null,
-      "approved_by": null,
-      "method": null,
-      "note": null,
       "status": "UNAPPROVED",
-      "verifier": null
+      "approved_by": null,
+      "approved_at": null,
+      "method": null,
+      "verifier": null,
+      "note": null
+    },
+    "daedalus_live": {
+      "status": "APPROVED",
+      "approved_by": "Roosevelt Sanders",
+      "approved_at": "2026-11-25T21:46:00Z",
+      "method": "owner_approval",
+      "verifier": null,
+      "note": "Owner approval given 2026-11-25 (chat): \"yes daedalus should be active\""
+    },
+    "ai_role_workers": {
+      "status": "UNAPPROVED",
+      "approved_by": null,
+      "approved_at": null,
+      "method": null,
+      "verifier": null,
+      "note": null
     }
-  },
-  "note": "Initial state: every gate UNAPPROVED. No verifier has returned True for any gate. A gate flips to APPROVED only on an explicit owner approval for that specific gate, or a real verifier returning True. Free resources first: use each platform's free tier / free resources before any paid service.",
-  "owner": "Roosevelt Sanders",
-  "updated_at": null,
-  "version": 1
+  }
 }
