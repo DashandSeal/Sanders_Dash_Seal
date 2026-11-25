@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/daedalus_native_core.py",
+        "payload_hash": "a270b0b59bfe4131ed1bf32e16c791cc41a596f63f979f53785e7197544bb0eb",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
