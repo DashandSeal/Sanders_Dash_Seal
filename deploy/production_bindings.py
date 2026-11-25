@@ -249,6 +249,7 @@ from core_platform.sanders_human_resources_service import SandersHumanResourcesS
 from core_platform.sanders_security_ops_service import SandersSecurityOpsService
 from core_platform.sanders_global_relations_service import SandersGlobalRelationsService
 from core_platform.sanders_healthcare_service import SandersHealthcareService
+from core_platform.the_godfather_service import TheGodfatherService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1263,6 +1264,14 @@ def create_production_bindings():
     sanders_healthcare = SandersHealthcareService(
         data_dir / 'sanders_healthcare.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # The Godfather platform (Q101, RTSA Build
+    # Program tranche 29): governed matter
+    # records over its own store — it provides
+    # no protection, transacts no business, and
+    # issues no directive itself.
+    the_godfather = TheGodfatherService(
+        data_dir / 'the_godfather.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1365,4 +1374,5 @@ def create_production_bindings():
         sanders_security_ops=sanders_security_ops,
         sanders_global_relations=sanders_global_relations,
         sanders_healthcare=sanders_healthcare,
+        the_godfather=the_godfather,
     )
