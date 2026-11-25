@@ -211,6 +211,7 @@ from core_platform.sanders_retail_service import SandersRetailService
 from core_platform.sanders_logistics_service import SandersLogisticsService
 from core_platform.sanders_security_service import SandersSecurityService
 from core_platform.sanders_real_estate_service import SandersRealEstateService
+from core_platform.sanders_energy_service import SandersEnergyService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -887,6 +888,13 @@ def create_production_bindings():
     sanders_real_estate = SandersRealEstateService(
         data_dir / 'sanders_real_estate.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Energy platform (Q64, RTSA Build Program
+    # tranche 17): governed energy records over its own
+    # store — it supplies no energy, operates no
+    # grid, and dispatches no power itself.
+    sanders_energy = SandersEnergyService(
+        data_dir / 'sanders_energy.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -952,4 +960,5 @@ def create_production_bindings():
         sanders_logistics=sanders_logistics,
         sanders_security=sanders_security,
         sanders_real_estate=sanders_real_estate,
+        sanders_energy=sanders_energy,
     )
