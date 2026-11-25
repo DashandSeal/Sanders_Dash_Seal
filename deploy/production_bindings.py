@@ -186,6 +186,7 @@ from core_platform.backup_recovery_agent_service import BackupRecoveryAgentServi
 from core_platform.observability_agent_service import ObservabilityAgentService
 from core_platform.quality_agent_service import QualityAgentService
 from core_platform.configuration_agent_service import ConfigurationAgentService
+from core_platform.it_support_agent_service import ITSupportAgentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -719,6 +720,14 @@ def create_production_bindings():
     configuration_agent = ConfigurationAgentService(
         data_dir / 'configuration_agent.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # IT Support Agent platform (Q47, RTSA Build Program
+    # tranche 11): governed support records over its own
+    # store, built under its design's INTERFACE_ONLY
+    # discipline — it resolves no case itself, contacts no
+    # requester, and accesses no remote system.
+    it_support_agent = ITSupportAgentService(
+        data_dir / 'it_support_agent.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -767,4 +776,5 @@ def create_production_bindings():
         observability_agent=observability_agent,
         quality_agent=quality_agent,
         configuration_agent=configuration_agent,
+        it_support_agent=it_support_agent,
     )
