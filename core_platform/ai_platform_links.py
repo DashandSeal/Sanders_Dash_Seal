@@ -311,6 +311,54 @@ def _check_daedalus(entry: dict, env: Mapping[str, str],
             detail="The native reasoning core produced inconsistent "
                    "output for an identical registry question.",
             checks=checks)
+    # Real-time learning store (founder direction, 2026-11-25): the
+    # learned-knowledge store must be present, initialize, and
+    # round-trip a learned record. Verified against a throwaway
+    # store in a temp directory — a check never writes the
+    # production store. The approval-flag semantics below are
+    # unchanged: the flag still gates live use, not learning.
+    store_imported, store_err = _try_import(
+        "core_platform.daedalus_knowledge_store")
+    checks["learning_store_importable"] = store_imported
+    if not store_imported:
+        return PlatformStatus(
+            pid, "NOT_IMPLEMENTED",
+            missing=["learned-knowledge store module "
+                     "(core_platform/daedalus_knowledge_store.py)"],
+            detail="The real-time learning store module is absent, "
+                   "so Daedalus has no persistent learned-knowledge "
+                   "store wired. Import error: " + store_err,
+            checks=checks)
+    try:
+        import tempfile
+        from pathlib import Path
+
+        from .daedalus_knowledge_store import DaedalusKnowledgeStore
+
+        with tempfile.TemporaryDirectory() as tmp:
+            probe_store = DaedalusKnowledgeStore(Path(tmp) / "check.db")
+            probe_record = probe_store.learn_relationship(
+                "board-checker", "references", "board-probe",
+                source="board-checker",
+            )
+            checks["learning_store_round_trip"] = any(
+                row["record_id"] == probe_record["record_id"]
+                for row in probe_store.relationships()
+            )
+    except Exception as exc:
+        return PlatformStatus(
+            pid, "BROKEN",
+            missing=[f"learning store check failed: {exc}"],
+            detail="Learned-knowledge store module imports but does "
+                   "not initialize or round-trip a learned record.",
+            checks=checks)
+    if not checks["learning_store_round_trip"]:
+        return PlatformStatus(
+            pid, "BROKEN",
+            missing=["learning store round-trip failed"],
+            detail="The learned-knowledge store initialized but a "
+                   "learned record did not round-trip.",
+            checks=checks)
     if not _approved(env, entry.get("approval_env")):
         return PlatformStatus(
             pid, "MISSING_APPROVAL",
