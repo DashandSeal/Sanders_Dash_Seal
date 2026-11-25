@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/pbd_sentinel.py",
+        "payload_hash": "7315253f85093bb6971ea17ca40a440f9a28b285337de9d3269be029b9bb9ae9",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -105,6 +105,14 @@ What it wires:
   destruction of temporary authority), operator-issued with the
   same audit chain. Only lease-token hashes are stored; the token
   itself is served once, at issuance.
+- Global PBD Sentinel is ``PBDSentinel`` on
+  ``data/pbd_sentinel.db``, scanning the deployed repository root
+  in cycles (the MASTER §15 continuous deployed-state integrity
+  monitoring): an accepted-state baseline per governed artifact,
+  forensic findings driven through the Detect → Compare →
+  Isolate → Alert → Preserve → Verify → Release or Rebuild
+  chain, with the same operator verifier and audit chain. It
+  records containment state; it does not move files.
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -130,6 +138,7 @@ from core_platform.home_healthcare import HomeHealthcarePlatform
 from core_platform.native_case_bridge import CaseNativeBridge
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
+from core_platform.pbd_sentinel import PBDSentinel
 from core_platform.pbd_validation import PBDValidationEngine
 from core_platform.provider_connections import WriteProviderClient
 from core_platform.provider_workflows import ProviderWorkflows
@@ -324,6 +333,13 @@ def create_production_bindings():
         data_dir / 'vault.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Global PBD Sentinel (RTSA Build Program): the MASTER §15
+    # continuous deployed-state integrity monitoring over the
+    # deployed repository root, on its own store.
+    pbd_sentinel = PBDSentinel(
+        data_dir / 'pbd_sentinel.db', repo_root,
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -341,4 +357,5 @@ def create_production_bindings():
         pbd_validation=pbd_validation,
         pbd_manifest_generator=pbd_manifest_generator,
         vault=vault,
+        pbd_sentinel=pbd_sentinel,
     )

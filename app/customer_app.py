@@ -38,6 +38,7 @@ from core_platform.pbd_manifest_generator import (
     PBDGeneratorForbidden,
 )
 from core_platform.vault import VaultDenied, VaultForbidden
+from core_platform.pbd_sentinel import PBDSentinelDenied, PBDSentinelForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -119,9 +120,11 @@ PBD_GENERATOR_VIEW_ROUTE = re.compile(r'^/api/pbd-manifest-generator/generations
 VAULT_LEASE_ROUTE = re.compile(r'^/api/vault/leases/([A-Za-z0-9_-]{1,128})$')
 VAULT_LEASE_REVOKE_ROUTE = re.compile(r'^/api/vault/leases/([A-Za-z0-9_-]{1,128})/revoke$')
 VAULT_LEASE_BURN_ROUTE = re.compile(r'^/api/vault/leases/([A-Za-z0-9_-]{1,128})/burn$')
+PBD_SENTINEL_FINDING_ROUTE = re.compile(r'^/api/pbd-sentinel/findings/([A-Za-z0-9_-]{1,128})$')
+PBD_SENTINEL_FINDING_ACTION_ROUTE = re.compile(r'^/api/pbd-sentinel/findings/([A-Za-z0-9_-]{1,128})/(isolate|alert|preserve|verify|release|rebuild)$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -203,6 +206,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         vault_lease_match = VAULT_LEASE_ROUTE.fullmatch(path)
         vault_lease_revoke_match = VAULT_LEASE_REVOKE_ROUTE.fullmatch(path)
         vault_lease_burn_match = VAULT_LEASE_BURN_ROUTE.fullmatch(path)
+        pbd_sentinel_finding_match = PBD_SENTINEL_FINDING_ROUTE.fullmatch(path)
+        pbd_sentinel_action_match = PBD_SENTINEL_FINDING_ACTION_ROUTE.fullmatch(path)
         is_unm_route = (path in ('/api/uncle-nickey-mao/status',
                                  '/api/uncle-nickey-mao/guardian-relay',
                                  '/api/uncle-nickey-mao/referrals',
@@ -260,12 +265,18 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                           or vault_lease_match is not None
                           or vault_lease_revoke_match is not None
                           or vault_lease_burn_match is not None)
+        is_pbd_sentinel_route = (path in ('/api/pbd-sentinel/status',
+                                          '/api/pbd-sentinel/scan',
+                                          '/api/pbd-sentinel/check-in')
+                                 or pbd_sentinel_finding_match is not None
+                                 or pbd_sentinel_action_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
                              or is_pbd_validation_route
                              or is_pbd_generator_route
-                             or is_vault_route)
+                             or is_vault_route
+                             or is_pbd_sentinel_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -293,7 +304,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/grantwriter/portfolio',
                                             '/api/pbd-validation/status',
                                             '/api/pbd-manifest-generator/status',
-                                            '/api/vault/status')
+                                            '/api/vault/status',
+                                            '/api/pbd-sentinel/status')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -301,7 +313,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or gw_compliance_match is not None
                                    or pbd_validation_view_match is not None
                                    or pbd_generator_view_match is not None
-                                   or vault_lease_match is not None) else ('POST',)
+                                   or vault_lease_match is not None
+                                   or pbd_sentinel_finding_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -736,6 +749,35 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = vault.burn_lease(identity, vault_lease_burn_match.group(1))
                         return respond(start, '200 OK', {'lease': record})
                     return check_in(vault)
+                if is_pbd_sentinel_route:
+                    if pbd_sentinel is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'pbd_sentinel_unavailable'})
+                    if path == '/api/pbd-sentinel/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': pbd_sentinel.status()})
+                    if path == '/api/pbd-sentinel/scan':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = pbd_sentinel.run_scan(identity)
+                        return respond(start, '201 Created', {'scan': record})
+                    if pbd_sentinel_finding_match:
+                        role = 'OPERATOR' if is_operator() else 'COORDINATOR'
+                        record = pbd_sentinel.finding_view(identity, role, pbd_sentinel_finding_match.group(1))
+                        return respond(start, '200 OK', {'finding': record})
+                    if pbd_sentinel_action_match:
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        action = pbd_sentinel_action_match.group(2)
+                        handler = {'isolate': pbd_sentinel.isolate,
+                                   'alert': pbd_sentinel.alert,
+                                   'preserve': pbd_sentinel.preserve,
+                                   'verify': pbd_sentinel.verify,
+                                   'release': pbd_sentinel.release,
+                                   'rebuild': pbd_sentinel.mark_rebuild}[action]
+                        record = handler(identity, pbd_sentinel_action_match.group(1))
+                        return respond(start, '200 OK', {'finding': record})
+                    return check_in(pbd_sentinel)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -795,6 +837,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'vault_forbidden'})
         except VaultDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'vault_denied', 'detail': str(exc)})
+        except PBDSentinelForbidden:
+            return respond(start, '403 Forbidden', {'error': 'pbd_sentinel_forbidden'})
+        except PBDSentinelDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'pbd_sentinel_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
