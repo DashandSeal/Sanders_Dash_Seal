@@ -10,11 +10,13 @@
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="/landing">
-    <img class="brand-seal" src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc., corporate headquarters">
-    <span>Sanders Dash &amp; Seal<small>Sanders Legal Helpers LLC</small></span>
+  <a class="brand" href="/landing" aria-label="Sanders Dash &amp; Seal — Sanders Legal Helpers LLC — home">
+    <span class="seal-lockup">
+      <img class="seal-medallion seal-medallion-hq" src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc., corporate headquarters">
+      <img class="seal-medallion" src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC">
+    </span>
   </a>
-  <button id="menuToggle" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">☰</button>
+  <button id="menuToggle" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span></button>
   <nav id="nav" aria-label="Main navigation">
     <a href="#services">Services</a>
     <a href="#about">About</a>
@@ -25,7 +27,9 @@
 </header>
 <main>
   <section class="banner-hero">
-    <img src="/assets/dash-seal-banner.png" alt="Sanders Dash &amp; Seal — Sanders Legal Helpers LLC — Premium Notary &amp; Document Solutions. From the Road to Remote, We Seal the Deal. The Sanders Way!" loading="eager">
+    <div class="banner-frame plaque">
+      <img src="/assets/dash-seal-banner.png" alt="Sanders Dash &amp; Seal — Sanders Legal Helpers LLC — Premium Notary &amp; Document Solutions. From the Road to Remote, We Seal the Deal. The Sanders Way!" loading="eager">
+    </div>
   </section>
   <section class="hero">
     <div class="hero-copy">
@@ -42,6 +46,10 @@
       <img src="/assets/sds-founder.png" alt="Portrait of Roosevelt Sanders, founder" loading="eager">
       <p><strong>Roosevelt Sanders</strong><span>Founder · Sanders Legal Helpers LLC</span></p>
     </div>
+  </section>
+  <section class="global-register plaque" aria-label="Global By Design">
+    <p class="eyebrow">GLOBAL BY DESIGN</p>
+    <p class="global-line">Sanders Dash &amp; Seal is <span>Global By Design</span>: one Imperial Jade standard of mobile and remote document service, built for the world and delivered personally — from the road to remote.</p>
   </section>
   <section class="section" id="services">
     <p class="eyebrow">OUR SERVICES</p>
@@ -133,6 +141,7 @@
     <span class="footer-tagline">Our family will take great care of your family</span>
     <span>From the Road to Remote, We Seal the Deal.</span>
     <span class="footer-closing">The Sanders Way!</span>
+    <span class="footer-global">Global By Design</span>
   </div>
 </footer>
 </body>

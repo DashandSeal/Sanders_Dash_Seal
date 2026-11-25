@@ -1,17 +1,780 @@
-:root{color-scheme:dark;--gold:#e8c879;--ink:#061c18;--cream:#f7f0df}*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 15% 5%,#1a6a50 0,transparent 43%),radial-gradient(ellipse at 92% 48%,#18523e 0,transparent 38%),linear-gradient(135deg,#06251c,#073a2b 48%,#041b17);color:var(--cream);font:16px/1.6 Georgia,serif}body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.16;background:repeating-linear-gradient(119deg,transparent 0 95px,#c0d5ba 97px,transparent 100px,transparent 180px,#9cbba7 182px,transparent 185px);mix-blend-mode:screen}a{color:inherit;text-decoration:none}.topbar{position:relative;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:2rem;padding:18px clamp(20px,5vw,90px);border-bottom:1px solid #bfa15b55;background:#031c16dc}.brand{display:flex;align-items:center;gap:16px;color:var(--gold);font-size:1.2rem;font-weight:bold;letter-spacing:.04em}.brand small{display:block;color:#e8e3d3;font:11px Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase}.seal{display:grid;place-items:center;width:60px;height:60px;border:3px double var(--gold);border-radius:50%;font-size:1.05rem;box-shadow:0 0 16px #c6a45966}nav{display:flex;gap:2rem;font:600 13px Arial,sans-serif;text-transform:uppercase;letter-spacing:.09em}nav a:hover{color:var(--gold)}#menuToggle{display:none;background:none;color:var(--gold);border:1px solid var(--gold);padding:8px 12px;font-size:20px}.hero{position:relative;display:grid;grid-template-columns:1.2fr 1fr;align-items:center;gap:5vw;max-width:1440px;margin:auto;min-height:620px;padding:70px 6vw}.eyebrow{color:var(--gold);font:700 12px Arial,sans-serif;letter-spacing:.24em;text-transform:uppercase}h1{font-size:clamp(2.7rem,5.2vw,5.7rem);line-height:1.13;margin:22px 0;color:#fff8e5;text-shadow:0 2px 22px #0008}h1 em{color:var(--gold);font-style:normal}h2{font-size:clamp(2rem,3vw,3.1rem);line-height:1.2;color:var(--gold)}h3{color:#f8dfa1;font-size:1.25rem}.hero-copy>p:not(.eyebrow),.section>p{max-width:640px;font-size:1.1rem}.fine{font:12px/1.6 Arial,sans-serif;opacity:.82;margin-top:26px}.actions{display:flex;flex-wrap:wrap;gap:16px;margin-top:30px}.button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:13px 24px;background:linear-gradient(120deg,#b68a38,#f3d993,#b68a38);border:1px solid #f9e2a7;color:#16231a;font:700 13px Arial,sans-serif;letter-spacing:.06em;box-shadow:0 8px 30px #0006}.button.secondary{background:#0c3d30aa;color:var(--gold)}.portrait{border:2px solid #d5b86d;padding:12px;background:#04231b;box-shadow:0 0 0 8px #bca45d25,0 28px 70px #0008;text-align:center}.portrait img{display:block;width:100%;height:min(54vw,510px);min-height:310px;object-fit:cover;object-position:center top;background:#16382c}.portrait p{margin:12px 0 4px;color:var(--gold)}.portrait span{display:block;color:#e9e0cc;font:11px Arial,sans-serif;text-transform:uppercase;letter-spacing:.13em}.section{position:relative;padding:80px max(6vw,22px);border-top:1px solid #e8c87933}.section>h2,.section>.eyebrow{text-align:center}.section>p{margin:15px auto 40px;text-align:center}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;max-width:1320px;margin:40px auto 0}.cards article{background:linear-gradient(150deg,#164b38e8,#082b23f0);border:1px solid #d3b76b8c;padding:28px;min-height:210px;box-shadow:0 14px 28px #0004}.price{font-size:1.55rem;font-weight:bold;color:var(--gold)}.about,.cta{text-align:center}.cta .actions{justify-content:center}footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:15px;padding:28px 6vw;border-top:1px solid #bca45d70;background:#031a15;color:#e8c879;font:12px Arial,sans-serif}@media(max-width:850px){.hero{grid-template-columns:1fr;padding:48px 6vw}.portrait{max-width:480px;margin:auto}.portrait img{height:440px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}#menuToggle{display:block}nav{display:none;position:absolute;top:100%;left:0;right:0;background:#05271f;padding:24px;flex-direction:column}nav.open{display:flex}}@media(max-width:560px){.cards{grid-template-columns:1fr}.brand{font-size:1rem}.seal{width:46px;height:46px}.section{padding:55px 20px}.portrait img{height:350px}}
-.valor{text-align:center;background:linear-gradient(180deg,#05261e,#031a15);border-block:1px solid #c4a55b55}.valor-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:24px;max-width:1200px;margin:28px auto 0}.valor-gallery figure{margin:0;padding:10px;border:1px solid var(--gold);background:#031b16;box-shadow:0 14px 35px #0005}.valor-gallery img{display:block;width:100%;height:auto;object-fit:contain}.valor-gallery figcaption{padding:12px;color:var(--gold);font-style:italic}
+/* =========================================================================
+ * Sanders Dash & Seal — flagship storefront stylesheet (web/jade-landing.html)
+ * Property of: Sanders Legal Helpers LLC | Developed by: Roosevelt Sanders
+ * Tagline: "Our family will take great care of your family" — The Sanders Way!
+ *
+ * Presentation rebuild of 2026-11-24 under the Sanders Royal Enterprise
+ * Standard: marble AND jade throughout, sculpted dimensional surfaces,
+ * a serif-display / sans-body type system, elegant transitions, and the
+ * Global By Design register. The face is Imperial Jade and Gold (the
+ * owner's banner is the design authority); Royal Blue and Gray, the
+ * corporate colors, appear in the chrome/footer register only.
+ *
+ * Discipline: every color on this surface is a token defined in :root
+ * below — no hex or rgba literal appears anywhere else in this file.
+ * The marble is crafted in CSS alone: layered soft mineral clouds and
+ * irregular vein gradients over a deep Imperial Jade base. No images,
+ * no webfonts, no external assets of any kind.
+ * ========================================================================= */
 
-/* --- Relaunch additions (2026-11-23): the owner's banner as hero, the
-   corporate seal in the topbar, and the four companies' seals with the
-   corporate tagline and closing in the footer. --- */
-.brand-seal{height:60px;width:auto;max-width:40vw;object-fit:contain;background:#fff;border-radius:6px;padding:4px;box-shadow:0 0 16px #c6a45966}
-.banner-hero{position:relative;padding:26px 6vw 4px;max-width:1440px;margin:auto}
-.banner-hero img{display:block;width:100%;height:auto;border:2px solid #d5b86d;box-shadow:0 0 0 8px #bca45d25,0 28px 70px #0008}
-.seal-strip{display:flex;flex-wrap:wrap;justify-content:center;gap:26px;width:100%;margin-bottom:20px}
-.seal-strip figure{margin:0;width:132px;text-align:center}
-.seal-strip img{width:132px;height:104px;object-fit:contain;background:#fff;border-radius:8px;padding:6px}
-.seal-strip figcaption{margin-top:8px;color:#e8c879;font:600 11px Arial,sans-serif;letter-spacing:.06em;text-transform:uppercase;line-height:1.45}
-.footer-lines{display:flex;justify-content:space-between;flex-wrap:wrap;gap:15px;width:100%}
-.footer-tagline{font-style:italic}
-.footer-closing{font-weight:bold;color:#f8dfa1}
-@media(max-width:560px){.brand-seal{height:46px}.banner-hero{padding:16px 4vw 0}}
+:root {
+    color-scheme: dark;
+
+    /* Imperial Jade scale — one disciplined green, light to abyss. */
+    --sds-jade-300: #1a6a50;
+    --sds-jade-400: #18523e;
+    --sds-jade-500: #164b38;
+    --sds-jade-600: #0c3d30;
+    --sds-jade-700: #073a2b;
+    --sds-jade-800: #06251c;
+    --sds-jade-850: #05271f;
+    --sds-jade-900: #041b17;
+    --sds-jade-950: #03130f;
+    --sds-jade-bar: #031c16;
+
+    /* Gold scale — the banner's gold, bright highlight to deep bronze. */
+    --sds-gold-200: #fff3d6;
+    --sds-gold-300: #f8dfa1;
+    --sds-gold-400: #f3d993;
+    --sds-gold: #e8c879;
+    --sds-gold-600: #c6a459;
+    --sds-gold-700: #b68a38;
+    --sds-gold-800: #8a6524;
+
+    /* Cream and ink. */
+    --sds-cream: #f7f0df;
+    --sds-cream-bright: #fff8e5;
+    --sds-cream-dim: #d9e4da;
+    --sds-ink: #16231a;
+
+    /* Corporate register — Royal Blue and Gray (chrome/footer only). */
+    --sds-royal: #2c4f9e;
+    --sds-royal-deep: #0d2149;
+    --sds-gray-300: #c9ced4;
+    --sds-gray-500: #8b939e;
+
+    /* Type system — serif display, system sans body. One voice with the
+       portal (web/booking.css carries the identical stacks). */
+    --sds-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --sds-serif: Georgia, "Times New Roman", serif;
+
+    /* Shadows — layered depth, never a single flat drop. */
+    --sds-shadow-card: 0 14px 28px rgba(0, 0, 0, 0.28), 0 30px 60px rgba(0, 0, 0, 0.30);
+    --sds-shadow-card-hover: 0 20px 36px rgba(0, 0, 0, 0.34), 0 42px 84px rgba(0, 0, 0, 0.38);
+    --sds-shadow-plaque: 0 18px 40px rgba(0, 0, 0, 0.42), 0 40px 90px rgba(0, 0, 0, 0.35);
+    --sds-shadow-button: 0 8px 30px rgba(0, 0, 0, 0.38);
+    --sds-shadow-button-hover: 0 14px 36px rgba(0, 0, 0, 0.45);
+    --sds-glow-gold: 0 0 16px rgba(198, 164, 89, 0.40);
+
+    /* Motion — elegant, 180–260ms, one easing curve. */
+    --sds-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+    /* The gold sheen gradient shared by every primary button. */
+    --sds-gold-sheen: linear-gradient(120deg, var(--sds-gold-700), var(--sds-gold-400), var(--sds-gold-700));
+
+    /* CSS-crafted Imperial Jade marble for the page field: soft mineral
+       clouds over the deep jade base. */
+    --sds-marble-body:
+        radial-gradient(ellipse 62% 42% at 12% 0%, color-mix(in srgb, var(--sds-jade-300) 34%, transparent), transparent 70%),
+        radial-gradient(ellipse 46% 36% at 88% 34%, color-mix(in srgb, var(--sds-jade-400) 30%, transparent), transparent 70%),
+        radial-gradient(ellipse 72% 52% at 55% 108%, color-mix(in srgb, var(--sds-royal-deep) 38%, transparent), transparent 72%),
+        linear-gradient(140deg, var(--sds-jade-800), var(--sds-jade-700) 46%, var(--sds-jade-900));
+
+    /* A lighter jade marble for raised panels, cards and plaques. */
+    --sds-marble-panel:
+        radial-gradient(ellipse 85% 62% at 16% 0%, color-mix(in srgb, var(--sds-jade-300) 24%, transparent), transparent 62%),
+        radial-gradient(ellipse 60% 55% at 96% 100%, color-mix(in srgb, var(--sds-jade-900) 55%, transparent), transparent 70%),
+        linear-gradient(155deg, var(--sds-jade-500), var(--sds-jade-800));
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    background: var(--sds-marble-body);
+    background-attachment: fixed;
+    color: var(--sds-cream);
+    font-family: var(--sds-font-stack);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* Marble veining — irregular, branching-weight veins at varied angles
+   and intervals (never a uniform pinstripe), laid over the field. */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(117deg,
+            transparent 0 132px,
+            color-mix(in srgb, var(--sds-cream) 5%, transparent) 133px,
+            transparent 136px,
+            transparent 261px,
+            color-mix(in srgb, var(--sds-gold) 4%, transparent) 263px,
+            transparent 267px,
+            transparent 389px,
+            color-mix(in srgb, var(--sds-cream) 3%, transparent) 390px,
+            transparent 392px),
+        repeating-linear-gradient(63deg,
+            transparent 0 187px,
+            color-mix(in srgb, var(--sds-cream) 4%, transparent) 189px,
+            transparent 192px,
+            transparent 341px,
+            color-mix(in srgb, var(--sds-gold) 3%, transparent) 343px,
+            transparent 346px),
+        radial-gradient(ellipse 34% 22% at 78% 12%, color-mix(in srgb, var(--sds-cream) 4%, transparent), transparent 70%),
+        radial-gradient(ellipse 28% 30% at 8% 76%, color-mix(in srgb, var(--sds-gold) 5%, transparent), transparent 70%);
+}
+
+/* A second, softer vein pass so the stone reads at more than one depth. */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(158deg,
+            transparent 0 218px,
+            color-mix(in srgb, var(--sds-cream) 3%, transparent) 221px,
+            color-mix(in srgb, var(--sds-cream) 1%, transparent) 228px,
+            transparent 234px,
+            transparent 457px,
+            color-mix(in srgb, var(--sds-gold) 3%, transparent) 460px,
+            transparent 464px);
+}
+
+a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--sds-gold); color: var(--sds-ink); }
+
+:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--sds-gold-300) 85%, transparent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ---- Sculpted plaque — the shared carved-surface treatment -------------
+   Layered depth: outer shadow, inset top highlight catching the light,
+   an inset gold ring, and a carved inner fall-off at the base. The
+   double-rule frame (::after) systematizes the portrait's original
+   double-frame gesture across the banner, plaques and panels. */
+
+.plaque {
+    position: relative;
+    background: var(--sds-marble-panel);
+    border: 1px solid color-mix(in srgb, var(--sds-gold-700) 78%, transparent);
+    border-radius: 18px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 22%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--sds-gold) 14%, transparent),
+        inset 0 -22px 34px color-mix(in srgb, var(--sds-jade-950) 55%, transparent),
+        var(--sds-shadow-plaque);
+}
+
+.plaque::after {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid color-mix(in srgb, var(--sds-gold) 42%, transparent);
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+/* ---- Topbar — navigation and the dual-seal lockup, nothing repeated ----
+   The banner carries the name; the bar carries the seals and the way
+   through. Royal Blue enters the chrome as a single hairline register. */
+
+.topbar {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 14px clamp(20px, 5vw, 90px);
+    background: linear-gradient(180deg, var(--sds-jade-850), var(--sds-jade-bar));
+    border-bottom: 1px solid color-mix(in srgb, var(--sds-gold-700) 62%, transparent);
+    box-shadow:
+        inset 0 -1px 0 color-mix(in srgb, var(--sds-royal) 50%, transparent),
+        0 12px 30px color-mix(in srgb, var(--sds-jade-950) 55%, transparent);
+}
+
+.brand { display: inline-flex; border-radius: 999px; }
+
+/* The dual-seal lockup: headquarters and the associated company, paired
+   on one sculpted plaque — the dual-seal rule, mounted, not pasted. */
+.seal-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 9px 18px 9px 12px;
+    background: var(--sds-marble-panel);
+    border: 1px solid color-mix(in srgb, var(--sds-gold-700) 78%, transparent);
+    border-radius: 999px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 22%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--sds-gold) 14%, transparent),
+        inset 0 -10px 18px color-mix(in srgb, var(--sds-jade-950) 50%, transparent),
+        0 10px 24px color-mix(in srgb, var(--sds-jade-950) 55%, transparent);
+    transition: border-color 0.22s var(--sds-ease), box-shadow 0.22s var(--sds-ease);
+}
+
+.brand:hover .seal-lockup, .brand:focus-visible .seal-lockup {
+    border-color: var(--sds-gold);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 22%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--sds-gold) 20%, transparent),
+        inset 0 -10px 18px color-mix(in srgb, var(--sds-jade-950) 50%, transparent),
+        var(--sds-glow-gold),
+        0 10px 24px color-mix(in srgb, var(--sds-jade-950) 55%, transparent);
+}
+
+/* A seal mounted as a medallion: the artwork untouched, clipped to its
+   own circle and ringed in gold on a deep-jade mount. */
+.seal-medallion {
+    display: block;
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--sds-gold);
+    background: var(--sds-jade-900);
+    box-shadow:
+        0 0 0 3px var(--sds-jade-900),
+        0 0 0 4px color-mix(in srgb, var(--sds-gold-700) 75%, transparent),
+        0 6px 16px color-mix(in srgb, var(--sds-jade-950) 60%, transparent);
+}
+
+.seal-medallion-hq { width: 62px; height: 62px; }
+
+nav {
+    display: flex;
+    gap: 2rem;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+nav a {
+    position: relative;
+    padding: 4px 0;
+    transition: color 0.2s var(--sds-ease);
+}
+
+nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--sds-gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.24s var(--sds-ease);
+}
+
+nav a:hover { color: var(--sds-gold-300); }
+nav a:hover::after { transform: scaleX(1); }
+
+#menuToggle {
+    display: none;
+    padding: 10px 12px;
+    background: var(--sds-marble-panel);
+    border: 1px solid color-mix(in srgb, var(--sds-gold-700) 78%, transparent);
+    border-radius: 10px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 20%, transparent),
+        0 6px 16px color-mix(in srgb, var(--sds-jade-950) 50%, transparent);
+    cursor: pointer;
+    transition: border-color 0.2s var(--sds-ease);
+}
+
+#menuToggle:hover { border-color: var(--sds-gold); }
+
+#menuToggle .menu-bar {
+    display: block;
+    width: 20px;
+    height: 2px;
+    margin: 4px auto;
+    background: var(--sds-gold);
+    border-radius: 2px;
+}
+
+/* ---- The banner — the owner's artwork, in a carved plaque frame ------- */
+
+.banner-hero {
+    position: relative;
+    z-index: 1;
+    max-width: 1440px;
+    margin: 26px auto 0;
+    padding: 0 clamp(20px, 6vw, 86px);
+}
+
+.banner-frame { padding: 14px; }
+
+.banner-frame img {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+}
+
+/* ---- Hero --------------------------------------------------------------- */
+
+.hero {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    align-items: center;
+    gap: 5vw;
+    max-width: 1440px;
+    margin: auto;
+    min-height: 620px;
+    padding: 70px 6vw;
+}
+
+.eyebrow {
+    color: var(--sds-gold);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+}
+
+h1, h2, h3 { font-family: var(--sds-serif); }
+
+h1 {
+    font-size: clamp(2.7rem, 5.2vw, 5.7rem);
+    line-height: 1.13;
+    margin: 22px 0;
+    color: var(--sds-cream-bright);
+    text-shadow: 0 2px 22px color-mix(in srgb, var(--sds-jade-950) 65%, transparent);
+}
+
+h1 em { color: var(--sds-gold); font-style: normal; }
+
+h2 {
+    font-size: clamp(2rem, 3vw, 3.1rem);
+    line-height: 1.2;
+    color: var(--sds-gold);
+    margin: 0 0 8px;
+}
+
+h3 { color: var(--sds-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
+
+.hero-copy > p:not(.eyebrow), .section > p {
+    max-width: 640px;
+    font-size: 1.08rem;
+    color: var(--sds-cream);
+}
+
+.fine {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--sds-cream-dim);
+    margin-top: 26px;
+}
+
+.actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 30px; }
+
+/* Buttons — gold sheen, a lift on hover, a sweep of light, a press. */
+.button {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 13px 24px;
+    background: var(--sds-gold-sheen);
+    border: 1px solid var(--sds-gold-300);
+    border-radius: 10px;
+    color: var(--sds-ink);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-gold-200) 65%, transparent),
+        var(--sds-shadow-button);
+    transition: transform 0.22s var(--sds-ease), box-shadow 0.22s var(--sds-ease);
+}
+
+.button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -80%;
+    width: 55%;
+    background: linear-gradient(115deg, transparent, color-mix(in srgb, var(--sds-gold-200) 55%, transparent), transparent);
+    transform: skewX(-18deg);
+    transition: left 0.26s var(--sds-ease);
+    pointer-events: none;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-gold-200) 65%, transparent),
+        var(--sds-shadow-button-hover);
+}
+
+.button:hover::after { left: 130%; }
+.button:active { transform: translateY(0); }
+
+.button.secondary {
+    background: var(--sds-marble-panel);
+    border-color: color-mix(in srgb, var(--sds-gold-700) 78%, transparent);
+    color: var(--sds-gold);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 18%, transparent),
+        var(--sds-shadow-button);
+}
+
+.button.secondary:hover { border-color: var(--sds-gold); color: var(--sds-gold-300); }
+
+/* The founder portrait — the original double frame, systematized. */
+.portrait {
+    padding: 12px;
+    background: var(--sds-marble-panel);
+    border: 1px solid color-mix(in srgb, var(--sds-gold-700) 78%, transparent);
+    border-radius: 16px;
+    box-shadow:
+        0 0 0 6px color-mix(in srgb, var(--sds-jade-900) 88%, transparent),
+        0 0 0 7px color-mix(in srgb, var(--sds-gold-700) 70%, transparent),
+        0 0 0 13px color-mix(in srgb, var(--sds-jade-900) 55%, transparent),
+        0 0 0 14px color-mix(in srgb, var(--sds-gold) 38%, transparent),
+        var(--sds-shadow-plaque);
+    text-align: center;
+}
+
+.portrait img {
+    display: block;
+    width: 100%;
+    height: min(54vw, 510px);
+    min-height: 310px;
+    object-fit: cover;
+    object-position: center top;
+    border-radius: 8px;
+    background: var(--sds-jade-600);
+}
+
+.portrait p { margin: 12px 0 4px; color: var(--sds-gold); font-family: var(--sds-serif); font-size: 1.05rem; }
+
+.portrait span {
+    display: block;
+    color: var(--sds-cream-dim);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+}
+
+/* ---- Global By Design — the permanent register ------------------------- */
+
+.global-register {
+    position: relative;
+    z-index: 1;
+    max-width: 1080px;
+    margin: 6px auto 0;
+    width: calc(100% - 12vw);
+    padding: 30px 34px 26px;
+    text-align: center;
+}
+
+.global-register .eyebrow { margin: 0; }
+
+.global-line {
+    margin: 12px auto 4px;
+    max-width: 720px;
+    font-size: 1.08rem;
+    color: var(--sds-cream);
+    position: relative;
+    z-index: 1;
+}
+
+.global-line span {
+    font-family: var(--sds-serif);
+    font-style: italic;
+    color: var(--sds-gold-300);
+}
+
+/* ---- Sections ------------------------------------------------------------ */
+
+.section {
+    position: relative;
+    z-index: 1;
+    padding: 80px max(6vw, 22px);
+    border-top: 1px solid color-mix(in srgb, var(--sds-gold) 20%, transparent);
+}
+
+.section > h2, .section > .eyebrow { text-align: center; }
+
+/* A gold double rule beneath every section heading — the ornament the
+   hierarchy stands on, in place of size and color alone. */
+.section > h2::after {
+    content: "";
+    display: block;
+    width: 88px;
+    margin: 16px auto 0;
+    border-top: 1px solid var(--sds-gold);
+    box-shadow: 0 4px 0 -1px color-mix(in srgb, var(--sds-gold) 55%, transparent);
+}
+
+.section > p { margin: 15px auto 40px; text-align: center; }
+
+/* Service cards — sculpted marble plaques that rise to the hand. */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    max-width: 1320px;
+    margin: 40px auto 0;
+}
+
+.cards article {
+    position: relative;
+    overflow: hidden;
+    min-height: 210px;
+    padding: 30px 28px;
+    background: var(--sds-marble-panel);
+    border: 1px solid color-mix(in srgb, var(--sds-gold) 42%, transparent);
+    border-radius: 16px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 20%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--sds-gold) 10%, transparent),
+        inset 0 -18px 28px color-mix(in srgb, var(--sds-jade-950) 45%, transparent),
+        var(--sds-shadow-card);
+    transition: transform 0.24s var(--sds-ease), box-shadow 0.24s var(--sds-ease), border-color 0.24s var(--sds-ease);
+}
+
+/* One soft vein of light across each card's stone. */
+.cards article::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(112deg, transparent 40%, color-mix(in srgb, var(--sds-cream) 5%, transparent) 50%, transparent 60%);
+    pointer-events: none;
+}
+
+.cards article:hover {
+    transform: translateY(-5px);
+    border-color: var(--sds-gold);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 24%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--sds-gold) 16%, transparent),
+        inset 0 -18px 28px color-mix(in srgb, var(--sds-jade-950) 45%, transparent),
+        var(--sds-shadow-card-hover);
+}
+
+.cards article p { position: relative; margin: 0 0 8px; color: var(--sds-cream); }
+
+.price {
+    font-family: var(--sds-serif);
+    font-size: 1.55rem;
+    font-weight: bold;
+    color: var(--sds-gold);
+}
+
+.about, .cta { text-align: center; }
+.about > p, .cta > p { margin-left: auto; margin-right: auto; }
+
+.cta .actions { justify-content: center; }
+
+/* ---- Wall of Valor -------------------------------------------------------- */
+
+.valor {
+    text-align: center;
+    background:
+        radial-gradient(ellipse 70% 60% at 50% 0%, color-mix(in srgb, var(--sds-jade-300) 16%, transparent), transparent 70%),
+        linear-gradient(180deg, var(--sds-jade-850), var(--sds-jade-900));
+    border-block: 1px solid color-mix(in srgb, var(--sds-gold-600) 40%, transparent);
+}
+
+.valor-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr));
+    gap: 24px;
+    max-width: 1200px;
+    margin: 28px auto 0;
+}
+
+.valor-gallery figure {
+    margin: 0;
+    padding: 10px;
+    background: var(--sds-marble-panel);
+    border: 1px solid color-mix(in srgb, var(--sds-gold) 55%, transparent);
+    border-radius: 14px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 18%, transparent),
+        var(--sds-shadow-card);
+}
+
+.valor-gallery img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.valor-gallery figcaption {
+    padding: 12px;
+    color: var(--sds-gold);
+    font-family: var(--sds-serif);
+    font-style: italic;
+}
+
+/* ---- Footer — the corporate register: Royal Blue and Gray on jade ------ */
+
+footer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 34px 6vw 30px;
+    background: linear-gradient(165deg, var(--sds-jade-bar) 55%, var(--sds-royal-deep));
+    border-top: 2px solid color-mix(in srgb, var(--sds-gold-700) 80%, transparent);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sds-gray-300) 22%, transparent);
+    color: var(--sds-gold);
+    font-size: 12.5px;
+}
+
+/* The four companies' seals — medallion mounts, reframed as one system. */
+.seal-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    margin-bottom: 22px;
+}
+
+.seal-strip figure { margin: 0; width: 132px; text-align: center; }
+
+.seal-strip img {
+    width: 118px;
+    height: 118px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--sds-gold);
+    background: var(--sds-jade-900);
+    box-shadow:
+        0 0 0 4px var(--sds-jade-900),
+        0 0 0 5px color-mix(in srgb, var(--sds-gold-700) 70%, transparent),
+        0 10px 22px color-mix(in srgb, var(--sds-jade-950) 60%, transparent);
+    transition: transform 0.24s var(--sds-ease), box-shadow 0.24s var(--sds-ease);
+}
+
+.seal-strip figure:hover img {
+    transform: translateY(-3px);
+    box-shadow:
+        0 0 0 4px var(--sds-jade-900),
+        0 0 0 5px var(--sds-gold),
+        var(--sds-glow-gold),
+        0 14px 26px color-mix(in srgb, var(--sds-jade-950) 60%, transparent);
+}
+
+.seal-strip figcaption {
+    margin-top: 10px;
+    color: var(--sds-gold);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.45;
+}
+
+.footer-lines {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    width: 100%;
+    color: var(--sds-gray-300);
+}
+
+.footer-tagline {
+    font-family: var(--sds-serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--sds-cream);
+}
+
+.footer-closing {
+    font-family: var(--sds-serif);
+    font-weight: bold;
+    font-size: 1.02rem;
+    letter-spacing: 0.04em;
+    color: var(--sds-gold-300);
+}
+
+.footer-global {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--sds-gold);
+}
+
+/* ---- Responsive ------------------------------------------------------------ */
+
+@media (max-width: 850px) {
+    .hero { grid-template-columns: 1fr; padding: 48px 6vw; min-height: 0; }
+    .portrait { max-width: 480px; margin: auto; }
+    .portrait img { height: 440px; }
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #menuToggle { display: block; }
+    nav {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        flex-direction: column;
+        gap: 1.1rem;
+        padding: 24px;
+        background: var(--sds-marble-panel);
+        border-bottom: 1px solid color-mix(in srgb, var(--sds-gold-700) 62%, transparent);
+        box-shadow: 0 24px 40px color-mix(in srgb, var(--sds-jade-950) 60%, transparent);
+    }
+    nav.open { display: flex; }
+    nav a::after { display: none; }
+}
+
+@media (max-width: 560px) {
+    .cards { grid-template-columns: 1fr; }
+    .section { padding: 55px 20px; }
+    .portrait img { height: 350px; }
+    .seal-medallion { width: 46px; height: 46px; }
+    .seal-medallion-hq { width: 50px; height: 50px; }
+    .seal-lockup { gap: 10px; padding: 7px 13px 7px 9px; }
+    .banner-hero { margin-top: 16px; padding: 0 4vw; }
+    .banner-frame { padding: 9px; }
+    .global-register { width: calc(100% - 8vw); padding: 24px 20px 20px; }
+    .seal-strip { gap: 20px; }
+    .seal-strip figure { width: 118px; }
+    .seal-strip img { width: 104px; height: 104px; }
+}
+
+/* ---- Reduced motion — the guard the portal already carries ------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; animation: none !important; }
+    .cards article:hover, .button:hover, .seal-strip figure:hover img { transform: none; }
+}
