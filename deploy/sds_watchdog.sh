@@ -111,6 +111,7 @@
 #   sanders-wellness                       system  http://127.0.0.1:8000/api/sanders-wellness/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   sanders-steward-sentinel               system  http://127.0.0.1:8000/api/sanders-steward-sentinel/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   sanders-patriot-saint                  system  http://127.0.0.1:8000/api/sanders-patriot-saint/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   sanders-freedom-revolution             system  http://127.0.0.1:8000/api/sanders-freedom-revolution/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   money-factory-legal.service            system  http://127.0.0.1:8668/health (Money Factory /health)
 #   sanders-corporations-secretary.service user    http://127.0.0.1:8791/api/health (app/main.py @app.get("/api/health"))
 #   sanders-twostep.service                user    http://127.0.0.1:9400/healthz (sanders_twostep_v2.py)
@@ -612,6 +613,7 @@ main() {
   check_http "sanders-wellness" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/sanders-wellness/healthz"
   check_http "sanders-steward-sentinel" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/sanders-steward-sentinel/healthz"
   check_http "sanders-patriot-saint" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/sanders-patriot-saint/healthz"
+  check_http "sanders-freedom-revolution" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/sanders-freedom-revolution/healthz"
   check_http "money-factory-legal" "money-factory-legal.service" "system" "http://127.0.0.1:8668/health"
   check_http "secretary" "sanders-corporations-secretary.service" "user" "http://127.0.0.1:8791/api/health"
   check_http "twostep" "sanders-twostep.service" "user" "http://127.0.0.1:9400/healthz"

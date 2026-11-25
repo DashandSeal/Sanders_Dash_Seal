@@ -222,6 +222,7 @@ from core_platform.sanders_sports_service import SandersSportsService
 from core_platform.sanders_wellness_service import SandersWellnessService
 from core_platform.sanders_steward_sentinel_service import SandersStewardSentinelService
 from core_platform.sanders_patriot_saint_service import SandersPatriotSaintService
+from core_platform.sanders_freedom_revolution_service import SandersFreedomRevolutionService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -989,6 +990,15 @@ def create_production_bindings():
     sanders_patriot_saint = SandersPatriotSaintService(
         data_dir / 'sanders_patriot_saint.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Freedom Revolution platform (Q75,
+    # RTSA Build Program tranche 21): governed
+    # democracy-framework records over its own
+    # store — it integrates no agency, supports
+    # no regime change, and enforces no rights
+    # itself. Persona Uncle Freedom (owner-ruled).
+    sanders_freedom_revolution = SandersFreedomRevolutionService(
+        data_dir / 'sanders_freedom_revolution.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1065,4 +1075,5 @@ def create_production_bindings():
         sanders_wellness=sanders_wellness,
         sanders_steward_sentinel=sanders_steward_sentinel,
         sanders_patriot_saint=sanders_patriot_saint,
+        sanders_freedom_revolution=sanders_freedom_revolution,
     )
