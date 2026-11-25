@@ -62,6 +62,23 @@ a mutated generation carrying 532490 and 611699 in place of
 532283 and 624120 — is NOT used: this module carries the
 anchored original six codes exactly.
 
+THE UNCLE NICKEY / MAO CONNECTION (owner-approved 2026-11-24):
+the connective layer interoperates BY REFERENCE ONLY with this
+platform's sibling, Uncle Nickey / Mao — the bridge that holds
+the same six industries under its own identity. The platforms
+remain two platforms (separate identities, separate stores,
+separate receipts; connection is not merger). When the bridge
+is bound (see ``bind_bridge``), this platform's unified person
+page also shows the bridge's referral state for the person's
+identifier, read through the bridge's own service surface; and
+this platform serves the bridge a receipted activation-state
+surface (``activation_state``) so bridge referrals open against
+live activations. Every cross-platform event is receipted on
+BOTH sides or fails closed. Unbound, the person page is exactly
+the page this module has always served; the activation-state
+surface is this platform's own record — the bridge is its
+designed reader, not its owner.
+
 SEAL DESIGNATION (owner, 2026-11-24): under the dual-seal rule,
 this platform's headquarters-seal slot is designated for the
 headquarters seal bearing a purple heart — the variant of the
@@ -215,7 +232,7 @@ class HomeHealthcarePlatform:
     only."""
 
     def __init__(self, database, operator_verifier=None, audit=None,
-                 rooms=None):
+                 rooms=None, bridge=None):
         if audit is None or not callable(getattr(audit, 'preserve', None)):
             raise HomeHealthcareDenied(
                 'A Glass-Box audit adapter is required: no record, no action')
@@ -224,6 +241,7 @@ class HomeHealthcarePlatform:
         self.operator_verifier = operator_verifier
         self.audit = audit
         self.rooms = rooms
+        self.bridge = bridge
         self.identity = IDENTITY
         self.geofence = GeofencePolicy(IDENTITY)
         self.guard = AccessGuard(audit, IDENTITY.platform_id, _ROLE_SCOPES)
@@ -319,6 +337,19 @@ class HomeHealthcarePlatform:
 
     def _record(self, stage, **fields):
         self.audit.preserve({'stage': stage, **fields})
+
+    def bind_bridge(self, bridge):
+        """Bind the sibling Uncle Nickey / Mao bridge's service
+        surface for by-reference interoperation. The peer is
+        duck-typed: it must expose ``referrals_for_subject``.
+        Binding wires no shared store and merges nothing — each
+        platform keeps its own database and its own receipts."""
+        if bridge is None or not callable(
+                getattr(bridge, 'referrals_for_subject', None)):
+            raise HomeHealthcareDenied(
+                'A bridge surface exposing referrals_for_subject is '
+                'required to bind')
+        self.bridge = bridge
 
     # -- presentation --------------------------------------------------
 
@@ -838,7 +869,15 @@ class HomeHealthcarePlatform:
         line — with the line's intake records by reference. State
         changes in the underlying records are reflected on the
         next read: that is the real-time property this design
-        carries, and no more is claimed."""
+        carries, and no more is claimed.
+
+        When the Uncle Nickey / Mao bridge is bound, the page also
+        carries ``bridge_referrals``: the bridge's referral state
+        for this identifier, read live through the bridge's own
+        service surface (receipted on the bridge's chain) and
+        receipted here on this platform's chain — a cross-platform
+        read evidenced on both sides, or the page fails closed.
+        Unbound, the page carries no bridge section."""
         self.guard.access(actor, role, 'PERSON_PAGE', person_ref,
                           purpose='person_page')
         with self._connect() as db:
@@ -890,11 +929,94 @@ class HomeHealthcarePlatform:
                     'state': state,
                     'intakes': intakes,
                 })
-        return {
+        page = {
             'person_ref': person_ref,
             'identifier': self._person_view(person),
             'activation': activation,
             'appointments': appointments,
+            'workflows': workflows,
+        }
+        if self.bridge is not None:
+            # The bridge's referral state for this identifier, read
+            # through the bridge's own service surface (receipted
+            # on the bridge's chain) and receipted here on this
+            # platform's chain: a cross-platform read is evidenced
+            # on both sides or the page fails closed.
+            try:
+                bridge_referrals = self.bridge.referrals_for_subject(
+                    actor, role, person_ref)
+            except Exception as exc:
+                raise HomeHealthcareDenied(
+                    'Bridge referral state could not be read: '
+                    f'{exc}') from exc
+            self._record('HOME_HEALTHCARE_BRIDGE_REFERRALS_READ',
+                         person_ref=person_ref, actor=actor,
+                         referral_count=len(bridge_referrals))
+            page['bridge_referrals'] = bridge_referrals
+        return page
+
+    def activation_state(self, person_ref, reader_platform,
+                         reader_actor):
+        """The cross-platform state surface Uncle Nickey / Mao
+        reads: one identifier's activation state — the identifier
+        status, the activation binding (if any), and one workflow
+        state per anchored service line (STANDBY / ONLINE /
+        ENGAGED), computed live from this platform's own records
+        exactly as the person page computes them, but WITHOUT the
+        page's record detail (no appointments, no intakes —
+        minimum necessary for the bridge's referral lifecycle).
+
+        This is a state surface for the peer platform, not a
+        person-facing page: a REVOKED identifier's state is
+        reported as REVOKED (the bridge refuses referrals against
+        it); the person page's own revocation refusal stands on
+        the page surface and is unchanged. The read is receipted
+        on this platform's chain, naming the reading platform and
+        actor, BEFORE the state is served — if the receipt cannot
+        be written, the read does not happen."""
+        self._check_ref('person_ref', person_ref)
+        with self._connect() as db:
+            person = self._person_row(db, person_ref)
+            if person is None:
+                raise HomeHealthcareDenied('Unknown person identifier')
+            activation_row = db.execute(
+                "SELECT * FROM industry_activations WHERE person_ref = ? "
+                "ORDER BY created_at LIMIT 1;", (person_ref,)).fetchone()
+            activation = None
+            if activation_row is not None:
+                activation = {
+                    'appointment_id': activation_row['appointment_id'],
+                    'activated_at': activation_row['created_at'],
+                }
+            workflows = []
+            for code, label in SERVICE_LINES.items():
+                lines = self._workflow_lines(code)
+                marks = ','.join('?' * len(lines))
+                live = db.execute(
+                    f"SELECT COUNT(*) AS n FROM client_intakes "
+                    f"WHERE client_ref = ? AND service_line IN ({marks}) "
+                    f"AND status NOT IN ('DECLINED', 'CLOSED');",
+                    (person_ref, *lines)).fetchone()['n']
+                if activation is None:
+                    state = 'STANDBY'
+                elif live:
+                    state = 'ENGAGED'
+                else:
+                    state = 'ONLINE'
+                workflows.append({
+                    'naics': code,
+                    'service_line': label,
+                    'state': state,
+                })
+        self._record('HOME_HEALTHCARE_ACTIVATION_STATE_READ',
+                     person_ref=person_ref,
+                     reader_platform=reader_platform,
+                     reader_actor=reader_actor,
+                     identifier_status=person['status'])
+        return {
+            'person_ref': person_ref,
+            'identifier_status': person['status'],
+            'activation': activation,
             'workflows': workflows,
         }
 
@@ -1015,5 +1137,6 @@ class HomeHealthcarePlatform:
             'identifiers_by_status': identifier_counts,
             'appointments_by_status': appointment_counts,
             'industry_activations': activations,
+            'bridge_bound': self.bridge is not None,
             'latest_check_in': latest,
         }

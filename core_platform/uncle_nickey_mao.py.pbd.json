@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/uncle_nickey_mao.py",
-        "payload_hash": "4df9d732784537abd16445607b202de6aab574d44f82cbcc422a23ce2fc8a6d2",
+        "payload_hash": "d235b043d3e2666d77db7847853d92efe41f6b2fab8b15fb6a3d081279ff138d",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

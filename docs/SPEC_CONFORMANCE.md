@@ -4637,3 +4637,122 @@ check-in 201, unwired service 503
 ai_doctor_unavailable). Deployed-composition verification
 through create_application on the final composed tree is
 recorded in the tranche 13 entry of the build queue.
+
+## Uncle Nickey / Mao <-> Sanders Home Healthcare & Caregivers — Bridge Connection (2026-11-24)
+
+FOLLOW-ON INTEGRATION BUILD (owner-approved 2026-11-24
+23:20 MST: connecting Uncle Nickey / Mao's six-industry
+bridge into the Sanders Home Healthcare & Caregivers
+connective layer; built on the six-industry build's head
+fcd902e and re-applied onto tranche 13's head 5ce064f
+before landing). The two platforms remain two platforms: separate
+identities, separate modules, separate route families,
+separate stores, separate registry entries — connection is
+not merger, and neither platform's record model changed (no
+new tables, no new columns, no PHI anywhere: the connection
+moves opaque references and workflow state only).
+
+WHAT WAS CONNECTED, by reference only, through each
+platform's own service surface (no shared tables, no
+cross-module database access; each platform keeps its own
+Glass-Box receipts, and every cross-platform event is
+receipted on BOTH sides or fails closed):
+
+1. Bridge referrals against Home Healthcare person
+   identifiers. UncleNickeyMaoBridge.create_person_referral
+   opens a referral whose subject_ref is the person's opaque
+   person-… token. Before anything is written on the bridge,
+   the identifier's activation state is read through Home
+   Healthcare's own surface (receipted on Home Healthcare's
+   chain): the identifier must exist, stand ACTIVE, and have
+   its industries activated, with both the from- and
+   to-industry workflows ONLINE or ENGAGED — the referral
+   lifecycle works against live activations or not at all.
+   The referral is then created under the bridge's own
+   disciplines (the anchored industry codes — the mutated
+   532490 / 611699 are refused, as both modules already
+   refuse them; the strictly-local 492210 works against the
+   492110 workflow; the geofence: ALLOW admits any actor,
+   STEP_UP is operator-only, DENY refuses), with both the
+   referral receipt and the person-referral receipt inside
+   the transaction. HTTP: POST
+   /api/uncle-nickey-mao/person-referrals.
+
+2. The Home Healthcare person page shows bridge referral
+   state. HomeHealthcarePlatform.person_page, when the bridge
+   is bound, also carries bridge_referrals — every referral
+   the bridge holds for that identifier, read live through
+   the bridge's own surface
+   (UncleNickeyMaoBridge.referrals_for_subject, receipted on
+   the bridge's chain under its REFERRAL access guard, or by
+   the subject themselves) and receipted on Home
+   Healthcare's chain before the page is served; a bridge
+   read failure fails the page closed. Unbound, the page is
+   exactly the page the six-industry build landed, with no
+   bridge section.
+
+3. The bridge reads Home Healthcare activation state.
+   HomeHealthcarePlatform.activation_state is the receipted
+   cross-platform state surface: identifier status, the
+   activation binding, and one workflow state per anchored
+   code (STANDBY / ONLINE / ENGAGED), computed live from
+   Home Healthcare's own records exactly as the person page
+   computes them, without the page's record detail (minimum
+   necessary). It reports a REVOKED identifier's status as
+   REVOKED — the person page's own revocation refusal stands
+   unchanged on the page surface. The bridge serves it via
+   person_activation_state (its own access guard under the
+   STATUS category, or the person themselves; receipted on
+   the bridge's chain). HTTP: GET
+   /api/uncle-nickey-mao/persons/{person_ref}/activation and
+   GET /api/uncle-nickey-mao/subjects/{subject_ref}/referrals.
+
+WIRING: production bindings construct both platforms as
+before and then bind each to the other
+(uncle_nickey_mao.bind_home_healthcare(home_healthcare);
+home_healthcare.bind_bridge(uncle_nickey_mao)) — each bind
+validates the peer's surface and fails closed at wiring
+time. deploy/deployment.py already forwards both route
+prefixes, so no forwarding change was needed; the watchdog
+already checks both platforms' health routes. Both
+platforms' status() now report the binding
+(home_healthcare_bound / bridge_bound). The allowed-methods
+three-point pattern is applied to the new routes (static
+route tuple + GET record-match clauses for the two new GET
+surfaces; the POST collection takes the platform default).
+The registry count is unchanged at 77 entries; both
+platforms' existing registry records carry the connection
+in their descriptions, updated in place.
+
+VERIFICATION (scratch drives, never committed): the build
+drive passes 57/57 (binding discipline incl. unbound
+refusals and non-peer rejection; activation-state reads
+receipted on both chains, with self/operator/auditor access
+and outsider refusal; person-referral creation against live
+activations incl. STEP_UP and denied jurisdictions, the
+492210-under-492110 rule, and mutated-code refusal;
+referrals-for-subject and the person page's bridge section;
+revocation refusing new referrals while the state surface
+reports REVOKED; broken-audit failure on either side
+committing nothing on the other; unchanged store schemas;
+WSGI family end-to-end incl. 401/405/503 cases).
+Deployed-composition verification through
+create_production_bindings() + create_application on the
+final composed tree: 194/194 probes (44 platform families —
+health 200 and family status 401 signed-out on both the
+loopback and canonical hosts — plus the six Home Healthcare
+connective surfaces and the three new bridge-link surfaces
+answering 401 signed-out on both hosts, never 404/503/421).
+Full regression on the final composed tree: 2590/2613
+checks across the 47 counting drives (plus the surface
+drive passing by exit), the pre-existing Uncle Nickey / Mao
+drive passing 77/77, the Home Healthcare drive 82/82, the
+six-industry drive 75/75, the Home Healthcare regression
+drive 82/82, the Sanders Omniconn drive 48/48, the Gia
+Mind drive 48/48 and the AI Doctor drive 58/58 (tranche
+13 landed mid-build; the composed tree carries all
+three) unchanged; the 23 misses are the known stale
+registry-count assertions in drives written when the
+registry was smaller (each asserts an older count; the
+registry is 77). The 9 approval gates remain UNAPPROVED;
+nothing in this build opens a gate.

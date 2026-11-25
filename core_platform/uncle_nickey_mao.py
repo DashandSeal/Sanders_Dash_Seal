@@ -45,6 +45,27 @@ health records and no PHI — no clinical content, no patient data,
 nothing but the reference string, the two industry codes, the
 declared jurisdiction, and the referral's workflow state.
 
+THE HOME HEALTHCARE CONNECTION (owner-approved 2026-11-24):
+this bridge interoperates BY REFERENCE ONLY with its sibling
+platform, Sanders Home Healthcare & Caregivers — the platforms
+remain two platforms (separate identities, separate stores,
+separate receipts; connection is not merger). When the Home
+Healthcare platform is bound (see ``bind_home_healthcare``), the
+bridge can: open a referral against a Home Healthcare person
+identifier (the opaque ``person-…`` token as ``subject_ref`` —
+never personal or health data), having first read the
+identifier's activation state through Home Healthcare's own
+service surface; serve every referral held for one subject
+reference (the surface the Home Healthcare person page reads);
+and read a person's six-workflow activation state so the
+referral lifecycle works against live activations. Every
+cross-platform event is receipted on BOTH sides or fails
+closed: Home Healthcare receipts its state reads on its own
+chain, this bridge receipts its side on its own chain, and a
+failure on either side refuses the operation. Unbound, the
+person-referral and activation-state surfaces refuse; the
+bridge's own referral workflow is unaffected.
+
 Fail-closed throughout, on the platform's established disciplines
 (mirroring core_platform.rooms):
 
@@ -169,7 +190,8 @@ class UncleNickeyMaoBridge:
     HIPAA-by-design record-access guard, and Glass-Box receipts for
     every mutation and every granted record access."""
 
-    def __init__(self, database, operator_verifier=None, audit=None):
+    def __init__(self, database, operator_verifier=None, audit=None,
+                 home_healthcare=None):
         if audit is None or not callable(getattr(audit, 'preserve', None)):
             raise BridgeDenied(
                 'A Glass-Box audit adapter is required: '
@@ -178,6 +200,7 @@ class UncleNickeyMaoBridge:
         Path(database).parent.mkdir(parents=True, exist_ok=True)
         self.operator_verifier = operator_verifier
         self.audit = audit
+        self.home_healthcare = home_healthcare
         self.identity = IDENTITY
         self.geofence = GeofencePolicy(IDENTITY)
         self.guard = AccessGuard(audit, 'uncle_nickey_mao', {
@@ -374,6 +397,190 @@ class UncleNickeyMaoBridge:
                 raise BridgeDenied('Unknown referral')
             return self._referral_view(row)
 
+    # -- the Home Healthcare connection (by reference only) -----------
+
+    def bind_home_healthcare(self, home_healthcare):
+        """Bind the sibling Home Healthcare platform's service
+        surface for by-reference interoperation. The peer is
+        duck-typed: it must expose ``activation_state``. Binding
+        wires no shared store and merges nothing — each platform
+        keeps its own database and its own receipts."""
+        if home_healthcare is None or not callable(
+                getattr(home_healthcare, 'activation_state', None)):
+            raise BridgeDenied(
+                'A home healthcare surface exposing activation_state '
+                'is required to bind')
+        self.home_healthcare = home_healthcare
+
+    def _home_healthcare_peer(self):
+        peer = self.home_healthcare
+        if peer is None:
+            raise BridgeDenied(
+                'Home Healthcare platform is not bound to this bridge')
+        return peer
+
+    def _read_activation_state(self, person_ref, actor):
+        """Read a person's activation state through Home
+        Healthcare's own service surface. Home Healthcare receipts
+        the read on its own chain; any refusal or failure there
+        fails this read closed."""
+        peer = self._home_healthcare_peer()
+        try:
+            return peer.activation_state(
+                person_ref, reader_platform='uncle_nickey_mao',
+                reader_actor=actor)
+        except Exception as exc:
+            raise BridgeDenied(
+                'Home Healthcare did not answer the activation-state '
+                f'read: {exc}') from exc
+
+    def create_person_referral(self, actor, person_ref, from_industry,
+                               to_industry, jurisdiction):
+        """Open a referral against a Home Healthcare person
+        identifier: the referral's ``subject_ref`` is the person's
+        opaque ``person-…`` token — a reference only; neither
+        platform stores personal or health data for it.
+
+        Before anything is written here, the identifier's
+        activation state is read through Home Healthcare's own
+        surface (receipted on Home Healthcare's chain): the
+        identifier must exist, stand ACTIVE, and have its
+        industries activated, with both the from- and to-industry
+        workflows ONLINE or ENGAGED — the referral lifecycle works
+        against live activations or not at all. The referral is
+        then created under this bridge's own disciplines (the
+        anchored industry codes; the geofence: 'ALLOW' admits any
+        actor, 'STEP_UP' is operator-only, 'DENY' refuses), with
+        both receipts inside the transaction."""
+        self._check_actor(actor)
+        if not isinstance(person_ref, str) or not person_ref.strip():
+            raise BridgeDenied('A non-empty person_ref is required')
+        if from_industry not in VALID_INDUSTRY_CODES:
+            raise BridgeDenied(
+                f'Unknown from_industry: {from_industry!r}')
+        if to_industry not in VALID_INDUSTRY_CODES:
+            raise BridgeDenied(f'Unknown to_industry: {to_industry!r}')
+        if from_industry == to_industry:
+            raise BridgeDenied(
+                'from_industry and to_industry must be different')
+        state = self._read_activation_state(person_ref, actor)
+        if state['identifier_status'] != 'ACTIVE':
+            raise BridgeDenied(
+                'Person referrals require an ACTIVE identifier; this '
+                f"identifier is {state['identifier_status']}")
+        if state['activation'] is None:
+            raise BridgeDenied(
+                'Person referrals require activated industries; this '
+                'identifier has no activation yet')
+        workflow_states = {w['naics']: w['state']
+                           for w in state['workflows']}
+        for code in (from_industry, to_industry):
+            # The courier workflow also stands under its
+            # strictly-local declaration 492210.
+            key = '492110' if code == '492210' else code
+            if workflow_states.get(key) not in ('ONLINE', 'ENGAGED'):
+                raise BridgeDenied(
+                    f'Industry workflow {code} is not online for this '
+                    'identifier')
+        verdict = self.geofence.evaluate(jurisdiction)
+        if verdict == 'DENY':
+            raise BridgeDenied(
+                f'Jurisdiction denied: {jurisdiction!r}')
+        if verdict == 'STEP_UP' and not self._is_operator(actor):
+            raise BridgeForbidden(
+                'Jurisdiction requires operator step-up verification')
+        referral_id = 'ref-' + secrets.token_urlsafe(12)
+        now = int(time.time())
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                db.execute(
+                    "INSERT INTO bridge_referrals (referral_id, "
+                    "from_industry, to_industry, subject_ref, "
+                    "jurisdiction, status, created_by, created_at, "
+                    "updated_at) VALUES (?, ?, ?, ?, ?, 'OPEN', ?, ?, ?);",
+                    (referral_id, from_industry, to_industry, person_ref,
+                     jurisdiction, actor, now, now))
+                self._record('UNCLE_NICKEY_REFERRAL_CREATED',
+                             referral_id=referral_id, actor=actor,
+                             from_industry=from_industry,
+                             to_industry=to_industry,
+                             jurisdiction=jurisdiction)
+                self._record('UNCLE_NICKEY_PERSON_REFERRAL_CREATED',
+                             referral_id=referral_id, actor=actor,
+                             person_ref=person_ref,
+                             activation_appointment_id=(
+                                 state['activation']['appointment_id']))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return self._referral_view(
+                self._referral_row(db, referral_id))
+
+    def referrals_for_subject(self, actor, role, subject_ref):
+        """Serve every referral held for one subject reference,
+        oldest first. This is the surface the Home Healthcare
+        person page reads: the person's bridge referral state for
+        the same six codes. Access discipline mirrors the
+        platforms' ownership rules: the subject themselves (actor
+        == subject_ref) reads their own referrals; any other
+        reader goes through this bridge's access guard under the
+        REFERRAL category (OPERATOR / COORDINATOR / AUDITOR).
+        Every granted read is receipted BEFORE the records are
+        served — on this bridge's chain; the reading platform
+        receipts its own side on its own chain."""
+        self._check_actor(actor)
+        if not isinstance(subject_ref, str) or not subject_ref.strip():
+            raise BridgeDenied('A non-empty subject_ref is required')
+        if actor == subject_ref:
+            self._record('UNCLE_NICKEY_SUBJECT_REFERRALS_READ',
+                         actor=actor, subject_ref=subject_ref,
+                         access='subject')
+        else:
+            try:
+                self.guard.access(actor, role, 'REFERRAL', subject_ref,
+                                  purpose='subject referrals')
+            except FoundationForbidden as exc:
+                raise BridgeForbidden(str(exc)) from exc
+            except FoundationDenied as exc:
+                raise BridgeDenied(str(exc)) from exc
+        with self._connect() as db:
+            rows = db.execute(
+                "SELECT * FROM bridge_referrals WHERE subject_ref = ? "
+                "ORDER BY created_at, referral_id;",
+                (subject_ref,)).fetchall()
+        return [self._referral_view(row) for row in rows]
+
+    def person_activation_state(self, actor, role, person_ref):
+        """Read one person's six-workflow activation state from
+        Home Healthcare, through its own service surface, so this
+        bridge's referral lifecycle works against live
+        activations. The state is Home Healthcare's record, served
+        by Home Healthcare and receipted on its chain; this bridge
+        receipts the read on its own chain before serving it — a
+        failure on either side fails the read closed. Access: the
+        person themselves (actor == person_ref), or a reader the
+        guard authorizes under the STATUS category (OPERATOR /
+        AUDITOR)."""
+        self._check_actor(actor)
+        if not isinstance(person_ref, str) or not person_ref.strip():
+            raise BridgeDenied('A non-empty person_ref is required')
+        if actor != person_ref:
+            try:
+                self.guard.access(actor, role, 'STATUS', person_ref,
+                                  purpose='person activation state')
+            except FoundationForbidden as exc:
+                raise BridgeForbidden(str(exc)) from exc
+            except FoundationDenied as exc:
+                raise BridgeDenied(str(exc)) from exc
+        state = self._read_activation_state(person_ref, actor)
+        self._record('UNCLE_NICKEY_ACTIVATION_STATE_READ',
+                     actor=actor, person_ref=person_ref,
+                     identifier_status=state['identifier_status'],
+                     activated=state['activation'] is not None)
+        return state
+
     # -- check-in ------------------------------------------------------
 
     def record_check_in(self, actor, deployment_location,
@@ -430,4 +637,5 @@ class UncleNickeyMaoBridge:
             'referral_counts': counts,
             'latest_check_in': latest,
             'guardian_record_source': GUARDIAN_RECORD['source'],
+            'home_healthcare_bound': self.home_healthcare is not None,
         }

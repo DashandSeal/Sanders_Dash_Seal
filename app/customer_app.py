@@ -138,6 +138,8 @@ ROOM_CONSENT_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/consent$')
 ROOM_RECORDING_ROUTE = re.compile(r'^/api/rooms/([A-Za-z0-9_-]{1,128})/recording$')
 UNM_REFERRAL_ROUTE = re.compile(r'^/api/uncle-nickey-mao/referrals/([A-Za-z0-9_-]{1,128})$')
 UNM_REFERRAL_TRANSITION_ROUTE = re.compile(r'^/api/uncle-nickey-mao/referrals/([A-Za-z0-9_-]{1,128})/transition$')
+UNM_SUBJECT_REFERRALS_ROUTE = re.compile(r'^/api/uncle-nickey-mao/subjects/([A-Za-z0-9_-]{1,128})/referrals$')
+UNM_PERSON_ACTIVATION_ROUTE = re.compile(r'^/api/uncle-nickey-mao/persons/([A-Za-z0-9_-]{1,128})/activation$')
 CH_SUBJECT_ROUTE = re.compile(r'^/api/carehive-os/subjects/([A-Za-z0-9_-]{1,128})$')
 CH_SUBJECT_CLAIM_ROUTE = re.compile(r'^/api/carehive-os/subjects/([A-Za-z0-9_-]{1,128})/claim$')
 CH_SUBJECT_EVIDENCE_ROUTE = re.compile(r'^/api/carehive-os/subjects/([A-Za-z0-9_-]{1,128})/evidence$')
@@ -343,6 +345,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         room_recording_match = ROOM_RECORDING_ROUTE.fullmatch(path)
         unm_referral_match = UNM_REFERRAL_ROUTE.fullmatch(path)
         unm_referral_transition_match = UNM_REFERRAL_TRANSITION_ROUTE.fullmatch(path)
+        unm_subject_referrals_match = UNM_SUBJECT_REFERRALS_ROUTE.fullmatch(path)
+        unm_person_activation_match = UNM_PERSON_ACTIVATION_ROUTE.fullmatch(path)
         ch_subject_match = CH_SUBJECT_ROUTE.fullmatch(path)
         ch_subject_claim_match = CH_SUBJECT_CLAIM_ROUTE.fullmatch(path)
         ch_subject_evidence_match = CH_SUBJECT_EVIDENCE_ROUTE.fullmatch(path)
@@ -487,9 +491,12 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         is_unm_route = (path in ('/api/uncle-nickey-mao/status',
                                  '/api/uncle-nickey-mao/guardian-relay',
                                  '/api/uncle-nickey-mao/referrals',
+                                 '/api/uncle-nickey-mao/person-referrals',
                                  '/api/uncle-nickey-mao/check-in')
                         or unm_referral_match is not None
-                        or unm_referral_transition_match is not None)
+                        or unm_referral_transition_match is not None
+                        or unm_subject_referrals_match is not None
+                        or unm_person_activation_match is not None)
         is_carehive_route = (path in ('/api/carehive-os/status',
                                       '/api/carehive-os/subjects',
                                       '/api/carehive-os/cycles',
@@ -1057,6 +1064,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/ai-doctor/records',
                                             '/api/ai-doctor/design')
                                    or unm_referral_match is not None
+                                   or unm_subject_referrals_match is not None
+                                   or unm_person_activation_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
                                    or hh_person_page_match is not None
@@ -1378,6 +1387,19 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = uncle_nickey_mao.create_referral(identity, **data)
                         return respond(start, '201 Created', {'referral': record})
+                    if path == '/api/uncle-nickey-mao/person-referrals':
+                        if set(data) != {'person_ref', 'from_industry', 'to_industry', 'jurisdiction'}:
+                            raise ValueError('unexpected fields')
+                        record = uncle_nickey_mao.create_person_referral(identity, **data)
+                        return respond(start, '201 Created', {'referral': record})
+                    if unm_subject_referrals_match:
+                        role = 'OPERATOR' if is_operator() else 'COORDINATOR'
+                        records = uncle_nickey_mao.referrals_for_subject(identity, role, unm_subject_referrals_match.group(1))
+                        return respond(start, '200 OK', {'referrals': records})
+                    if unm_person_activation_match:
+                        role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                        record = uncle_nickey_mao.person_activation_state(identity, role, unm_person_activation_match.group(1))
+                        return respond(start, '200 OK', {'activation_state': record})
                     if unm_referral_match:
                         role = 'OPERATOR' if is_operator() else 'COORDINATOR'
                         record = uncle_nickey_mao.referral_view(identity, role, unm_referral_match.group(1))

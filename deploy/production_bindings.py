@@ -65,7 +65,12 @@ What it wires:
   ``data/uncle_nickey_mao.db``, bound to the session auth's operator
   verifier and the same audit chain: referrals routing opaque
   references between the six bridged healthcare industries behind a
-  jurisdiction geofence and a HIPAA-by-design access guard.
+  jurisdiction geofence and a HIPAA-by-design access guard. It is
+  also bound to the Home Healthcare platform below (by-reference
+  interoperation, owner-approved 2026-11-24): referrals open
+  against Home Healthcare person identifiers against live
+  activations, and the bridge serves referral state by subject
+  reference — each platform keeps its own store and receipts.
 - CareHive OS is ``CareHiveSidecar`` on ``data/carehive_os.db``,
   bound to the same operator verifier and audit chain: supervised
   subjects, hash-chained evidence, postconditions, supervision
@@ -76,7 +81,10 @@ What it wires:
   verifier, audit chain and the ``RoomService`` above (consultation
   rooms bind through it; the rooms service is not rebuilt):
   client intakes, caregiver assignments and consultation-room links
-  across the six healthcare service lines.
+  across the six healthcare service lines. It is also bound to the
+  Uncle Nickey / Mao bridge above: the unified person page shows
+  the bridge's referral state for an identifier, and the platform
+  serves the bridge a receipted activation-state surface.
 - Grantwriter is ``GrantwriterPlatform`` on
   ``data/grantwriter_service.db``, bound to the existing Grantwriter
   base store (constructed by ``app/grantwriter_mother.py``'s
@@ -358,6 +366,13 @@ def create_production_bindings():
     home_healthcare = HomeHealthcarePlatform(
         data_dir / 'home_healthcare.db', auth.operator_verifier, audit,
         rooms=rooms)
+
+    # The Uncle Nickey / Mao <-> Home Healthcare connection
+    # (owner-approved 2026-11-24): by-reference interoperation
+    # between the two sibling platforms — each binds the other's
+    # service surface; neither shares a store and nothing merges.
+    uncle_nickey_mao.bind_home_healthcare(home_healthcare)
+    home_healthcare.bind_bridge(uncle_nickey_mao)
 
     # Grantwriter's base store comes from the existing data layer's
     # own database() factory, which reads the SANDERS_GRANTWRITER_DB
