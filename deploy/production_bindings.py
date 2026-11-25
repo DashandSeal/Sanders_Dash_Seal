@@ -242,6 +242,7 @@ from core_platform.sanders_technology_service import SandersTechnologyService
 from core_platform.sanders_cloud_services_service import SandersCloudServicesService
 from core_platform.showtime_service import ShowtimeService
 from core_platform.sanders_marketing_service import SandersMarketingService
+from core_platform.sanders_sales_service import SandersSalesService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1194,6 +1195,16 @@ def create_production_bindings():
     sanders_marketing = SandersMarketingService(
         data_dir / 'sanders_marketing.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Sales platform (Q95, RTSA
+    # Build Program tranche 27): governed
+    # sales records over its own store — it
+    # closes no sale, processes no order, and
+    # charges no customer itself; payments
+    # remain the flagship's central Stripe
+    # connection.
+    sanders_sales = SandersSalesService(
+        data_dir / 'sanders_sales.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1290,4 +1301,5 @@ def create_production_bindings():
         sanders_cloud_services=sanders_cloud_services,
         showtime=showtime,
         sanders_marketing=sanders_marketing,
+        sanders_sales=sanders_sales,
     )
