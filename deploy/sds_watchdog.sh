@@ -119,6 +119,7 @@
 #   sanders-ai-research                    system  http://127.0.0.1:8000/api/sanders-ai-research/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   sanders-research                       system  http://127.0.0.1:8000/api/sanders-research/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   sanders-communications                 system  http://127.0.0.1:8000/api/sanders-communications/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   sanders-banking-hub                    system  http://127.0.0.1:8000/api/sanders-banking-hub/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   money-factory-legal.service            system  http://127.0.0.1:8668/health (Money Factory /health)
 #   sanders-corporations-secretary.service user    http://127.0.0.1:8791/api/health (app/main.py @app.get("/api/health"))
 #   sanders-twostep.service                user    http://127.0.0.1:9400/healthz (sanders_twostep_v2.py)
@@ -628,6 +629,7 @@ main() {
   check_http "sanders-ai-research" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/sanders-ai-research/healthz"
   check_http "sanders-research" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/sanders-research/healthz"
   check_http "sanders-communications" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/sanders-communications/healthz"
+  check_http "sanders-banking-hub" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/sanders-banking-hub/healthz"
   check_http "money-factory-legal" "money-factory-legal.service" "system" "http://127.0.0.1:8668/health"
   check_http "secretary" "sanders-corporations-secretary.service" "user" "http://127.0.0.1:8791/api/health"
   check_http "twostep" "sanders-twostep.service" "user" "http://127.0.0.1:9400/healthz"

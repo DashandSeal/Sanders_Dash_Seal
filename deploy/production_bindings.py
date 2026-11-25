@@ -230,6 +230,7 @@ from core_platform.sanders_intelligence_service import SandersIntelligenceServic
 from core_platform.sanders_ai_research_service import SandersAIResearchService
 from core_platform.sanders_research_service import SandersResearchService
 from core_platform.sanders_communications_service import SandersCommunicationsService
+from core_platform.sanders_banking_hub_service import SandersBankingHubService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1073,6 +1074,14 @@ def create_production_bindings():
     sanders_communications = SandersCommunicationsService(
         data_dir / 'sanders_communications.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Banking Hub platform (Q83,
+    # RTSA Build Program tranche 23): governed
+    # banking-operations records over its own
+    # store — it opens no account, moves no
+    # funds, and disburses no grants itself.
+    sanders_banking_hub = SandersBankingHubService(
+        data_dir / 'sanders_banking_hub.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1157,4 +1166,5 @@ def create_production_bindings():
         sanders_ai_research=sanders_ai_research,
         sanders_research=sanders_research,
         sanders_communications=sanders_communications,
+        sanders_banking_hub=sanders_banking_hub,
     )
