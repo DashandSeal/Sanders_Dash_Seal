@@ -55,6 +55,7 @@ class RuntimeBindings:
     pbd_manifest_generator: object = None
     vault: object = None
     pbd_sentinel: object = None
+    it_ai_manager: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -377,7 +378,8 @@ def create_application(bindings=None):
             pbd_validation=getattr(bindings, 'pbd_validation', None),
             pbd_manifest_generator=getattr(bindings, 'pbd_manifest_generator', None),
             vault=getattr(bindings, 'vault', None),
-            pbd_sentinel=getattr(bindings, 'pbd_sentinel', None)
+            pbd_sentinel=getattr(bindings, 'pbd_sentinel', None),
+            it_ai_manager=getattr(bindings, 'it_ai_manager', None)
         )
     else:
         verifier = _denied
@@ -698,7 +700,8 @@ def create_application(bindings=None):
                     '/api/pbd-validation/healthz',
                     '/api/pbd-manifest-generator/healthz',
                     '/api/vault/healthz',
-                    '/api/pbd-sentinel/healthz'):
+                    '/api/pbd-sentinel/healthz',
+                    '/api/it-ai-manager/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -717,6 +720,7 @@ def create_application(bindings=None):
                 '/api/pbd-manifest-generator/healthz': ('pbd_manifest_generator', 'pbd_manifest_generator', 'pbd_manifest_generator_unavailable'),
                 '/api/vault/healthz': ('vault', 'vault', 'vault_unavailable'),
                 '/api/pbd-sentinel/healthz': ('pbd_sentinel', 'pbd_sentinel', 'pbd_sentinel_unavailable'),
+                '/api/it-ai-manager/healthz': ('it_ai_manager', 'it_ai_manager', 'it_ai_manager_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -775,7 +779,9 @@ def create_application(bindings=None):
                 or path == '/api/vault'
                 or path.startswith('/api/vault/')
                 or path == '/api/pbd-sentinel'
-                or path.startswith('/api/pbd-sentinel/'))
+                or path.startswith('/api/pbd-sentinel/')
+                or path == '/api/it-ai-manager'
+                or path.startswith('/api/it-ai-manager/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

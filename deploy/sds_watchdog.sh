@@ -54,6 +54,7 @@
 #   pbd-manifest-generator                 system  http://127.0.0.1:8000/api/pbd-manifest-generator/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   vault                                  system  http://127.0.0.1:8000/api/vault/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   pbd-sentinel                           system  http://127.0.0.1:8000/api/pbd-sentinel/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   it-ai-manager                          system  http://127.0.0.1:8000/api/it-ai-manager/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   money-factory-legal.service            system  http://127.0.0.1:8668/health (Money Factory /health)
 #   sanders-corporations-secretary.service user    http://127.0.0.1:8791/api/health (app/main.py @app.get("/api/health"))
 #   sanders-twostep.service                user    http://127.0.0.1:9400/healthz (sanders_twostep_v2.py)
@@ -446,6 +447,7 @@ main() {
   check_http "pbd-manifest-generator" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/pbd-manifest-generator/healthz"
   check_http "vault" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/vault/healthz"
   check_http "pbd-sentinel" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/pbd-sentinel/healthz"
+  check_http "it-ai-manager" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/it-ai-manager/healthz"
   check_http "money-factory-legal" "money-factory-legal.service" "system" "http://127.0.0.1:8668/health"
   check_http "secretary" "sanders-corporations-secretary.service" "user" "http://127.0.0.1:8791/api/health"
   check_http "twostep" "sanders-twostep.service" "user" "http://127.0.0.1:9400/healthz"

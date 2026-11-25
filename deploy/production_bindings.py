@@ -113,6 +113,15 @@ What it wires:
   Isolate → Alert → Preserve → Verify → Release or Rebuild
   chain, with the same operator verifier and audit chain. It
   records containment state; it does not move files.
+- IT AI Manager is ``ITAIManager`` on ``data/it_ai_manager.db``:
+  the MASTER §6/§7 operational authority and repair coordination
+  platform — incident lifecycle, diagnosis records, Twin-Gate
+  step-1 necessity evaluations, work orders bound to the 12
+  registered IT agent designs (INTERFACE_ONLY; outcomes are
+  reported records, never claimed executions), rollback and
+  MINOTAUR-denied failover records, Quality-Agent-bound return
+  verification, and reconciliation — with the same operator
+  verifier and audit chain.
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -135,6 +144,7 @@ from core_platform.cases import CaseRegistry
 from core_platform.glass_box_audit import GlassBoxAudit
 from core_platform.grantwriter_service import GrantwriterPlatform
 from core_platform.home_healthcare import HomeHealthcarePlatform
+from core_platform.it_ai_manager import ITAIManager
 from core_platform.native_case_bridge import CaseNativeBridge
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
@@ -340,6 +350,14 @@ def create_production_bindings():
         data_dir / 'pbd_sentinel.db', repo_root,
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # IT AI Manager (RTSA Build Program): the MASTER §6/§7
+    # operational authority and repair coordination platform, on
+    # its own store. It binds the 12 agent designs from
+    # core_platform.agent_registry; it executes nothing itself.
+    it_ai_manager = ITAIManager(
+        data_dir / 'it_ai_manager.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -358,4 +376,5 @@ def create_production_bindings():
         pbd_manifest_generator=pbd_manifest_generator,
         vault=vault,
         pbd_sentinel=pbd_sentinel,
+        it_ai_manager=it_ai_manager,
     )
