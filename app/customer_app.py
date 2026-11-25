@@ -65,6 +65,7 @@ from core_platform.infrastructure_agent_service import InfrastructureAgentDenied
 from core_platform.integration_agent_service import IntegrationAgentDenied, IntegrationAgentForbidden
 from core_platform.performance_agent_service import PerformanceAgentDenied, PerformanceAgentForbidden
 from core_platform.backup_recovery_agent_service import BackupRecoveryAgentDenied, BackupRecoveryAgentForbidden
+from core_platform.observability_agent_service import ObservabilityAgentDenied, ObservabilityAgentForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -229,6 +230,9 @@ PERFORMANCE_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/performance-agent/records/
 BACKUP_RECORD_ROUTE = re.compile(r'^/api/backup-recovery-agent/records/([A-Za-z0-9_-]{1,128})$')
 BACKUP_RECORD_ACTION_ROUTE = re.compile(r'^/api/backup-recovery-agent/records/([A-Za-z0-9_-]{1,128})/action$')
 BACKUP_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/backup-recovery-agent/records/([A-Za-z0-9_-]{1,128})/outcome$')
+OBSERVABILITY_RECORD_ROUTE = re.compile(r'^/api/observability-agent/records/([A-Za-z0-9_-]{1,128})$')
+OBSERVABILITY_RECORD_ACTION_ROUTE = re.compile(r'^/api/observability-agent/records/([A-Za-z0-9_-]{1,128})/action$')
+OBSERVABILITY_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/observability-agent/records/([A-Za-z0-9_-]{1,128})/outcome$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
 
@@ -236,7 +240,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -397,6 +401,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         backup_record_match = BACKUP_RECORD_ROUTE.fullmatch(path)
         backup_record_action_match = BACKUP_RECORD_ACTION_ROUTE.fullmatch(path)
         backup_record_outcome_match = BACKUP_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        observability_record_match = OBSERVABILITY_RECORD_ROUTE.fullmatch(path)
+        observability_record_action_match = OBSERVABILITY_RECORD_ACTION_ROUTE.fullmatch(path)
+        observability_record_outcome_match = OBSERVABILITY_RECORD_OUTCOME_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -698,6 +705,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                            or backup_record_match is not None
                            or backup_record_action_match is not None
                            or backup_record_outcome_match is not None)
+        is_observability_route = (path in ('/api/observability-agent/status',
+                                           '/api/observability-agent/records',
+                                           '/api/observability-agent/design',
+                                           '/api/observability-agent/operation-check',
+                                           '/api/observability-agent/check-in')
+                                  or observability_record_match is not None
+                                  or observability_record_action_match is not None
+                                  or observability_record_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -730,7 +745,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_infrastructure_route
                              or is_integration_route
                              or is_performance_route
-                             or is_backup_route)
+                             or is_backup_route
+                             or is_observability_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -843,7 +859,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/performance-agent/design',
                                             '/api/backup-recovery-agent/status',
                                             '/api/backup-recovery-agent/records',
-                                            '/api/backup-recovery-agent/design')
+                                            '/api/backup-recovery-agent/design',
+                                            '/api/observability-agent/status',
+                                            '/api/observability-agent/records',
+                                            '/api/observability-agent/design')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -885,7 +904,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or infra_assessment_match is not None
                                    or integration_record_match is not None
                                    or performance_record_match is not None
-                                   or backup_record_match is not None) else ('POST',)
+                                   or backup_record_match is not None
+                                   or observability_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -941,6 +961,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/performance-agent/records':
             allowed = ('GET', 'POST')
         if path == '/api/backup-recovery-agent/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/observability-agent/records':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -2488,6 +2510,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = backup_recovery_agent.record_view(identity, backup_role, backup_record_match.group(1))
                         return respond(start, '200 OK', {'record': record})
                     return check_in(backup_recovery_agent)
+                if is_observability_route:
+                    if observability_agent is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'observability_agent_unavailable'})
+                    observability_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/observability-agent/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': observability_agent.status()})
+                    if path == '/api/observability-agent/design':
+                        return respond(start, '200 OK', {'design': observability_agent.design_view()})
+                    if path == '/api/observability-agent/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = observability_agent.operation_check(identity, observability_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/observability-agent/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': observability_agent.records_list(identity, observability_role)})
+                        if set(data) != {'subject_ref', 'telemetry_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = observability_agent.create_record(identity, data['subject_ref'], data['telemetry_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if observability_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = observability_agent.record_action(identity, observability_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if observability_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = observability_agent.record_outcome(identity, observability_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if observability_record_match:
+                        record = observability_agent.record_view(identity, observability_role, observability_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(observability_agent)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -2655,6 +2713,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'backup_recovery_agent_forbidden'})
         except BackupRecoveryAgentDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'backup_recovery_agent_denied', 'detail': str(exc)})
+        except ObservabilityAgentForbidden:
+            return respond(start, '403 Forbidden', {'error': 'observability_agent_forbidden'})
+        except ObservabilityAgentDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'observability_agent_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

@@ -81,6 +81,7 @@ class RuntimeBindings:
     integration_agent: object = None
     performance_agent: object = None
     backup_recovery_agent: object = None
+    observability_agent: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -429,7 +430,8 @@ def create_application(bindings=None):
             infrastructure_agent=getattr(bindings, 'infrastructure_agent', None),
             integration_agent=getattr(bindings, 'integration_agent', None),
             performance_agent=getattr(bindings, 'performance_agent', None),
-            backup_recovery_agent=getattr(bindings, 'backup_recovery_agent', None)
+            backup_recovery_agent=getattr(bindings, 'backup_recovery_agent', None),
+            observability_agent=getattr(bindings, 'observability_agent', None)
         )
     else:
         verifier = _denied
@@ -776,7 +778,8 @@ def create_application(bindings=None):
                     '/api/infrastructure-agent/healthz',
                     '/api/integration-agent/healthz',
                     '/api/performance-agent/healthz',
-                    '/api/backup-recovery-agent/healthz'):
+                    '/api/backup-recovery-agent/healthz',
+                    '/api/observability-agent/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -821,6 +824,7 @@ def create_application(bindings=None):
                 '/api/integration-agent/healthz': ('integration_agent', 'integration_agent', 'integration_agent_unavailable'),
                 '/api/performance-agent/healthz': ('performance_agent', 'performance_agent', 'performance_agent_unavailable'),
                 '/api/backup-recovery-agent/healthz': ('backup_recovery_agent', 'backup_recovery_agent', 'backup_recovery_agent_unavailable'),
+                '/api/observability-agent/healthz': ('observability_agent', 'observability_agent', 'observability_agent_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -931,7 +935,9 @@ def create_application(bindings=None):
                 or path == '/api/performance-agent'
                 or path.startswith('/api/performance-agent/')
                 or path == '/api/backup-recovery-agent'
-                or path.startswith('/api/backup-recovery-agent/'))
+                or path.startswith('/api/backup-recovery-agent/')
+                or path == '/api/observability-agent'
+                or path.startswith('/api/observability-agent/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

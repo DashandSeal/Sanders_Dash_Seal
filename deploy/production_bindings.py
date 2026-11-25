@@ -183,6 +183,7 @@ from core_platform.infrastructure_agent_service import InfrastructureAgentServic
 from core_platform.integration_agent_service import IntegrationAgentService
 from core_platform.performance_agent_service import PerformanceAgentService
 from core_platform.backup_recovery_agent_service import BackupRecoveryAgentService
+from core_platform.observability_agent_service import ObservabilityAgentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -692,6 +693,14 @@ def create_production_bindings():
     backup_recovery_agent = BackupRecoveryAgentService(
         data_dir / 'backup_recovery_agent.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Observability Agent platform (Q44, RTSA Build Program
+    # tranche 10): governed observation records over its own
+    # store, built under its design's INTERFACE_ONLY
+    # discipline — it collects no telemetry, queries no live
+    # system, and observes nothing live.
+    observability_agent = ObservabilityAgentService(
+        data_dir / 'observability_agent.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -737,4 +746,5 @@ def create_production_bindings():
         integration_agent=integration_agent,
         performance_agent=performance_agent,
         backup_recovery_agent=backup_recovery_agent,
+        observability_agent=observability_agent,
     )
