@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/uptime_agent_service.py",
+        "payload_hash": "3cab58c1c16258b6f60eb9063f2a265a3013d6e4f61deb60175a916a227e9561",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

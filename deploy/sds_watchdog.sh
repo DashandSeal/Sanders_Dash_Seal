@@ -72,6 +72,7 @@
 #   bozly                                  system  http://127.0.0.1:8000/api/bozly/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   fraud-rtsa                             system  http://127.0.0.1:8000/api/fraud-rtsa/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   operations-rtsa                        system  http://127.0.0.1:8000/api/operations-rtsa/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   uptime-agent                           system  http://127.0.0.1:8000/api/uptime-agent/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   money-factory-legal.service            system  http://127.0.0.1:8668/health (Money Factory /health)
 #   sanders-corporations-secretary.service user    http://127.0.0.1:8791/api/health (app/main.py @app.get("/api/health"))
 #   sanders-twostep.service                user    http://127.0.0.1:9400/healthz (sanders_twostep_v2.py)
@@ -534,6 +535,7 @@ main() {
   check_http "bozly" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/bozly/healthz"
   check_http "fraud-rtsa" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/fraud-rtsa/healthz"
   check_http "operations-rtsa" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/operations-rtsa/healthz"
+  check_http "uptime-agent" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/uptime-agent/healthz"
   check_http "money-factory-legal" "money-factory-legal.service" "system" "http://127.0.0.1:8668/health"
   check_http "secretary" "sanders-corporations-secretary.service" "user" "http://127.0.0.1:8791/api/health"
   check_http "twostep" "sanders-twostep.service" "user" "http://127.0.0.1:9400/healthz"

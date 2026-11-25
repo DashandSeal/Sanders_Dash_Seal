@@ -73,6 +73,7 @@ class RuntimeBindings:
     bozly: object = None
     fraud_rtsa: object = None
     operations_rtsa: object = None
+    uptime_agent: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -413,7 +414,8 @@ def create_application(bindings=None):
             juggernaut=getattr(bindings, 'juggernaut', None),
             bozly=getattr(bindings, 'bozly', None),
             fraud_rtsa=getattr(bindings, 'fraud_rtsa', None),
-            operations_rtsa=getattr(bindings, 'operations_rtsa', None)
+            operations_rtsa=getattr(bindings, 'operations_rtsa', None),
+            uptime_agent=getattr(bindings, 'uptime_agent', None)
         )
     else:
         verifier = _denied
@@ -752,7 +754,8 @@ def create_application(bindings=None):
                     '/api/juggernaut/healthz',
                     '/api/bozly/healthz',
                     '/api/fraud-rtsa/healthz',
-                    '/api/operations-rtsa/healthz'):
+                    '/api/operations-rtsa/healthz',
+                    '/api/uptime-agent/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -789,6 +792,7 @@ def create_application(bindings=None):
                 '/api/bozly/healthz': ('bozly', 'bozly', 'bozly_unavailable'),
                 '/api/fraud-rtsa/healthz': ('fraud_rtsa', 'fraud_rtsa', 'fraud_rtsa_unavailable'),
                 '/api/operations-rtsa/healthz': ('operations_rtsa', 'operations_rtsa', 'operations_rtsa_unavailable'),
+                '/api/uptime-agent/healthz': ('uptime_agent', 'uptime_agent', 'uptime_agent_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -883,7 +887,9 @@ def create_application(bindings=None):
                 or path == '/api/fraud-rtsa'
                 or path.startswith('/api/fraud-rtsa/')
                 or path == '/api/operations-rtsa'
-                or path.startswith('/api/operations-rtsa/'))
+                or path.startswith('/api/operations-rtsa/')
+                or path == '/api/uptime-agent'
+                or path.startswith('/api/uptime-agent/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

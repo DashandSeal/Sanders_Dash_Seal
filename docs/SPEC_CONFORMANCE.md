@@ -1929,3 +1929,110 @@ operations_rtsa_unavailable). Deployed-composition
 verification through create_application runs on the final
 composed tree for this tranche and covers every built
 platform's route family.
+
+## RTSA Build Program Q36 — Uptime Agent (2026-11-24)
+
+**Scope**: build the Uptime Agent design whole as its own
+platform service (canonical catalog row #42, Band 2C — this
+landing opens Band 2C, the 12 IT AI agents), per the
+established tranche pattern, under the standards gate:
+Fortune 500 governs end to end, the MASTER architecture
+within it, and the Sanders Royal Enterprise Standard for
+presentation within it. Fortune 500 judgment: the platform
+meets the standard within its honest scope limits — it is
+an internal operator/auditor record surface over governed
+uptime records; no public or customer surface exists for it
+by design, so the Royal Enterprise presentation layer does
+not apply, and no security internals are exposed anywhere.
+Scope limits stated plainly: the agent design is
+INTERFACE_ONLY with external execution disabled, and the
+build claims no execution — the platform probes no service,
+restarts nothing, dispatches no response, and holds
+services and observations by reference only. The Uptime
+Agent is distinct from the IT AI Manager (Q5) that commands
+its design, from the read-only UptimeAgent observer in
+core_platform/operational_runtime.py, and from the
+watchdog's live checks in deploy/sds_watchdog.sh (which the
+catalog records as covering the uptime function live) — the
+three are never merged, and this platform reads, wraps, or
+replaces neither component. core_platform/agent_registry.py
+and core_platform/rtsa_registry.py remain byte-untouched.
+
+**Built**: core_platform/uptime_agent_service.py
+(UptimeAgentService over core_platform/rtsa_foundation.py;
+independent identity uptime_agent; design view of the
+agent descriptor in core_platform/agent_registry.py —
+commanding authority IT_AI_Manager_v15.0,
+implementation_status INTERFACE_ONLY,
+external_execution_enabled False, designed role "Keep
+services up; first responder in the incident flow";
+fail-closed operation check refusing the design's execution
+boundary by name with the design's own signal
+AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED — probe_service,
+restart_service, dispatch_response, external_execution —
+and unknown operations; uptime records carried as durable,
+receipted records over a service reference, a declared
+observation reference set, and a scope reference, with
+lifecycle REQUESTED → APPROVED / REJECTED (the recorded
+human decision) → OUTCOME_RECORDED; the evidence discipline
+enforced in the record model — a record declared with no
+observations stands NO_OBSERVATIONS_SUBMITTED in every view
+and in the status tallies and both determinations
+(UPTIME_CONFIRMED / OUTAGE_CONFIRMED) are refused on it,
+while INCONCLUSIVE records against evidence; outcomes
+recorded only for APPROVED records and only against a
+presented evidence reference, with a closed outcome set; a
+recorded OUTAGE_CONFIRMED outcome is the first-response
+record in the incident flow, consumed by reference — it
+dispatches no response; every state change writes its
+Glass-Box receipt inside the same transaction;
+operator-only check-in bound to the identity integrity
+digest). Route family /api/uptime-agent/ wired through
+app/customer_app.py (create_customer_app parameter
+uptime_agent), deploy/deployment.py
+(RuntimeBindings.uptime_agent, health route
+/api/uptime-agent/healthz, forwarding through
+create_application), and deploy/production_bindings.py
+(construction on its own store uptime_agent.db); watchdog
+check_http entry in deploy/sds_watchdog.sh; registry entry
+in core_platform/ai_platform_links.json (registry now 66).
+
+**Pricing/teaching audit** (examined set: canonical catalog
+row #42; Set B database_schema.sql + tier_pricing_global.py;
+Set C catalog; the MASTER §7 matrix; the agent descriptor
+in core_platform/agent_registry.py): the design carries NO
+price for the Uptime Agent — none built, none invented, no
+blocker figure attaches to this name. The design carries
+NO teaching function for the Uptime Agent — none built,
+none invented.
+
+**Verification**: scratch drive (never committed) — checks:
+identity and design view (descriptor fields exact);
+constructor refuses a missing audit adapter; operation
+check (record operation RECORD_ONLY; all four execution
+operations refused by name with the design signal; unknown
+operation refused); record lifecycle (operator-only
+creation; service/scope references required; observation
+set must be a list of non-empty references, capped; outcome
+refused before approval; outcome without evidence refused;
+outcome set closed; a no-observation record stands
+NO_OBSERVATIONS_SUBMITTED and both determinations are
+refused on it while an INCONCLUSIVE outcome records
+against evidence; reject terminal; unknown record denied;
+geofence refuses an undeclared region); status tallies
+including records_no_observations_submitted and
+observations_declared_total; operator-only check-in;
+registry at 66 entries; all 9 approval gates UNAPPROVED;
+WSGI through create_customer_app (signed-out 401, status
+200, execution operation 400 with
+AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED in the detail, create
+refused for non-operator 403, create 201 with an empty
+observation set standing NO_OBSERVATIONS_SUBMITTED,
+approve 200, UPTIME_CONFIRMED on the no-observation record
+refused 400 with NO_OBSERVATIONS_SUBMITTED in the detail,
+outcome 200, records list 200, unexpected fields 400,
+wrong origin 403, check-in 201, unwired service 503
+uptime_agent_unavailable). Deployed-composition
+verification through create_application runs on the final
+composed tree for this tranche and covers every built
+platform's route family.

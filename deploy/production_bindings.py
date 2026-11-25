@@ -175,6 +175,7 @@ from core_platform.juggernaut_service import JuggernautService
 from core_platform.bozly_service import BozlyService
 from core_platform.fraud_rtsa_service import FraudRtsaService
 from core_platform.operations_rtsa_service import OperationsRtsaService
+from core_platform.uptime_agent_service import UptimeAgentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -580,6 +581,18 @@ def create_production_bindings():
         data_dir / 'operations_rtsa.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Uptime Agent (RTSA Build Program): the first agent of the
+    # MASTER §7 IT AI agent matrix built as its own platform —
+    # governed uptime records under the agent design's
+    # INTERFACE_ONLY discipline (services and observations by
+    # reference only; a record with no observations stands
+    # NO_OBSERVATIONS_SUBMITTED and no determination can be
+    # recorded on it; it probes nothing, restarts nothing, and
+    # executes nothing), on its own store.
+    uptime_agent = UptimeAgentService(
+        data_dir / 'uptime_agent.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -616,4 +629,5 @@ def create_production_bindings():
         bozly=bozly,
         fraud_rtsa=fraud_rtsa,
         operations_rtsa=operations_rtsa,
+        uptime_agent=uptime_agent,
     )
