@@ -217,6 +217,7 @@ from core_platform.sanders_agriculture_service import SandersAgricultureService
 from core_platform.sanders_manufacturing_service import SandersManufacturingService
 from core_platform.sanders_consulting_service import SandersConsultingService
 from core_platform.sanders_hospitality_service import SandersHospitalityService
+from core_platform.sanders_entertainment_service import SandersEntertainmentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -940,6 +941,15 @@ def create_production_bindings():
     sanders_hospitality = SandersHospitalityService(
         data_dir / 'sanders_hospitality.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Entertainment platform (Q70, RTSA Build
+    # Program tranche 19): governed entertainment
+    # records over its own store — it produces
+    # no content, broadcasts nothing, and
+    # distributes nothing itself. Distinct from
+    # Showtime (D-N10).
+    sanders_entertainment = SandersEntertainmentService(
+        data_dir / 'sanders_entertainment.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1011,4 +1021,5 @@ def create_production_bindings():
         sanders_manufacturing=sanders_manufacturing,
         sanders_consulting=sanders_consulting,
         sanders_hospitality=sanders_hospitality,
+        sanders_entertainment=sanders_entertainment,
     )

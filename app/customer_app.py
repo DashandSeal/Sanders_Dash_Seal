@@ -91,6 +91,7 @@ from core_platform.sanders_agriculture_service import SandersAgricultureDenied, 
 from core_platform.sanders_manufacturing_service import SandersManufacturingDenied, SandersManufacturingForbidden
 from core_platform.sanders_consulting_service import SandersConsultingDenied, SandersConsultingForbidden
 from core_platform.sanders_hospitality_service import SandersHospitalityDenied, SandersHospitalityForbidden
+from core_platform.sanders_entertainment_service import SandersEntertainmentDenied, SandersEntertainmentForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -342,6 +343,9 @@ SANDERS_CONSULTING_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-consulting/
 SANDERS_HOSPITALITY_RECORD_ROUTE = re.compile(r'^/api/sanders-hospitality/records/([A-Za-z0-9_-]{1,128})$')
 SANDERS_HOSPITALITY_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-hospitality/records/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_HOSPITALITY_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-hospitality/records/([A-Za-z0-9_-]{1,128})/outcome$')
+SANDERS_ENTERTAINMENT_RECORD_ROUTE = re.compile(r'^/api/sanders-entertainment/records/([A-Za-z0-9_-]{1,128})$')
+SANDERS_ENTERTAINMENT_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-entertainment/records/([A-Za-z0-9_-]{1,128})/action$')
+SANDERS_ENTERTAINMENT_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-entertainment/records/([A-Za-z0-9_-]{1,128})/outcome$')
 BABY_GIRL_CUSTODY_ROUTE = re.compile(r'^/api/baby-girl/custody/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
@@ -350,7 +354,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -595,6 +599,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         hospitality_record_match = SANDERS_HOSPITALITY_RECORD_ROUTE.fullmatch(path)
         hospitality_record_action_match = SANDERS_HOSPITALITY_RECORD_ACTION_ROUTE.fullmatch(path)
         hospitality_record_outcome_match = SANDERS_HOSPITALITY_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        entertainment_record_match = SANDERS_ENTERTAINMENT_RECORD_ROUTE.fullmatch(path)
+        entertainment_record_action_match = SANDERS_ENTERTAINMENT_RECORD_ACTION_ROUTE.fullmatch(path)
+        entertainment_record_outcome_match = SANDERS_ENTERTAINMENT_RECORD_OUTCOME_ROUTE.fullmatch(path)
         baby_girl_custody_match = BABY_GIRL_CUSTODY_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
@@ -1116,6 +1123,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or hospitality_record_match is not None
                                   or hospitality_record_action_match is not None
                                   or hospitality_record_outcome_match is not None)
+        is_entertainment_route = (path in ('/api/sanders-entertainment/status',
+                                           '/api/sanders-entertainment/records',
+                                           '/api/sanders-entertainment/design',
+                                           '/api/sanders-entertainment/operation-check',
+                                           '/api/sanders-entertainment/check-in')
+                                  or entertainment_record_match is not None
+                                  or entertainment_record_action_match is not None
+                                  or entertainment_record_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -1174,7 +1189,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_agriculture_route
                              or is_manufacturing_route
                              or is_consulting_route
-                             or is_hospitality_route)
+                             or is_hospitality_route
+                             or is_entertainment_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -1366,7 +1382,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/sanders-consulting/design',
                                             '/api/sanders-hospitality/status',
                                             '/api/sanders-hospitality/records',
-                                            '/api/sanders-hospitality/design')
+                                            '/api/sanders-hospitality/design',
+                                            '/api/sanders-entertainment/status',
+                                            '/api/sanders-entertainment/records',
+                                            '/api/sanders-entertainment/design')
                                    or unm_referral_match is not None
                                    or unm_subject_referrals_match is not None
                                    or unm_person_activation_match is not None
@@ -1439,7 +1458,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or agriculture_record_match is not None
                                    or manufacturing_record_match is not None
                                    or consulting_record_match is not None
-                                   or hospitality_record_match is not None) else ('POST',)
+                                   or hospitality_record_match is not None
+                                   or entertainment_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -1547,6 +1567,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-consulting/records':
             allowed = ('GET', 'POST')
         if path == '/api/sanders-hospitality/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-entertainment/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/custody':
             allowed = ('GET', 'POST')
@@ -4083,6 +4105,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = sanders_hospitality.record_view(identity, hospitality_role, hospitality_record_match.group(1))
                         return respond(start, '200 OK', {'record': record})
                     return check_in(sanders_hospitality)
+                if is_entertainment_route:
+                    if sanders_entertainment is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'sanders_entertainment_unavailable'})
+                    entertainment_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/sanders-entertainment/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': sanders_entertainment.status()})
+                    if path == '/api/sanders-entertainment/design':
+                        return respond(start, '200 OK', {'design': sanders_entertainment.design_view()})
+                    if path == '/api/sanders-entertainment/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_entertainment.operation_check(identity, entertainment_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/sanders-entertainment/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': sanders_entertainment.records_list(identity, entertainment_role)})
+                        if set(data) != {'subject_ref', 'program_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_entertainment.create_record(identity, data['subject_ref'], data['program_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if entertainment_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_entertainment.record_action(identity, entertainment_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if entertainment_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_entertainment.record_outcome(identity, entertainment_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if entertainment_record_match:
+                        record = sanders_entertainment.record_view(identity, entertainment_role, entertainment_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(sanders_entertainment)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -4354,6 +4412,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'sanders_hospitality_forbidden'})
         except SandersHospitalityDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'sanders_hospitality_denied', 'detail': str(exc)})
+        except SandersEntertainmentForbidden:
+            return respond(start, '403 Forbidden', {'error': 'sanders_entertainment_forbidden'})
+        except SandersEntertainmentDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'sanders_entertainment_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
