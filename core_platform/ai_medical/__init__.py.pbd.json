@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/ai_medical/__init__.py",
+        "payload_hash": "8fd55c25e5ec5bdea39c80b96439c92f011722d7d3360f4fde5097f05bed2a2b",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
