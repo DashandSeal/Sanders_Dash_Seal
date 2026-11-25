@@ -80,6 +80,7 @@ class RuntimeBindings:
     infrastructure_agent: object = None
     integration_agent: object = None
     performance_agent: object = None
+    backup_recovery_agent: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -427,7 +428,8 @@ def create_application(bindings=None):
             deployment_agent=getattr(bindings, 'deployment_agent', None),
             infrastructure_agent=getattr(bindings, 'infrastructure_agent', None),
             integration_agent=getattr(bindings, 'integration_agent', None),
-            performance_agent=getattr(bindings, 'performance_agent', None)
+            performance_agent=getattr(bindings, 'performance_agent', None),
+            backup_recovery_agent=getattr(bindings, 'backup_recovery_agent', None)
         )
     else:
         verifier = _denied
@@ -773,7 +775,8 @@ def create_application(bindings=None):
                     '/api/deployment-agent/healthz',
                     '/api/infrastructure-agent/healthz',
                     '/api/integration-agent/healthz',
-                    '/api/performance-agent/healthz'):
+                    '/api/performance-agent/healthz',
+                    '/api/backup-recovery-agent/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -817,6 +820,7 @@ def create_application(bindings=None):
                 '/api/infrastructure-agent/healthz': ('infrastructure_agent', 'infrastructure_agent', 'infrastructure_agent_unavailable'),
                 '/api/integration-agent/healthz': ('integration_agent', 'integration_agent', 'integration_agent_unavailable'),
                 '/api/performance-agent/healthz': ('performance_agent', 'performance_agent', 'performance_agent_unavailable'),
+                '/api/backup-recovery-agent/healthz': ('backup_recovery_agent', 'backup_recovery_agent', 'backup_recovery_agent_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -925,7 +929,9 @@ def create_application(bindings=None):
                 or path == '/api/integration-agent'
                 or path.startswith('/api/integration-agent/')
                 or path == '/api/performance-agent'
-                or path.startswith('/api/performance-agent/'))
+                or path.startswith('/api/performance-agent/')
+                or path == '/api/backup-recovery-agent'
+                or path.startswith('/api/backup-recovery-agent/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

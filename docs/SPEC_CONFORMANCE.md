@@ -2818,3 +2818,125 @@ service 503 performance_agent_unavailable).
 Deployed-composition verification through
 create_application on the final composed tree is recorded
 in the tranche 10 entry of the build queue.
+
+## RTSA Build Program Q43 — Backup & Recovery Agent (2026-11-24)
+
+**Scope**: build the Backup & Recovery Agent design whole
+as its own platform service (canonical catalog row #49,
+Band 2C), per the established tranche pattern, under the
+standards gate: Fortune 500 governs end to end, the MASTER
+architecture within it, and the Sanders Royal Enterprise
+Standard for presentation within it. Fortune 500 judgment:
+the platform meets the standard within its honest scope
+limits — it is an internal operator/auditor record surface
+over governed backup records; no public or customer
+surface exists for it by design, so the Royal Enterprise
+presentation layer does not apply, and no security
+internals are exposed anywhere. Scope limits stated
+plainly: the agent design is INTERFACE_ONLY with external
+execution disabled, and the build claims no execution —
+the catalog's designed role "Backups and recovery" is
+carried as governed records; the platform runs no backup,
+restores nothing, deletes nothing, and holds data sources
+and backup artifacts by reference only — no backup
+contents, no credentials, and no live-system state ever.
+The catalog's own note for this row — ledger backups exist
+as deploy tooling — stands: those backups
+(deploy/bind_free_resources.py: the private backup-bucket
+binding and the sanders-ledger-backup timer) are separate
+pre-existing components, as is the read-only
+BackupRecoveryAgent observer entry in
+core_platform/operational_runtime.py; this platform reads,
+wraps, or replaces neither. The Backup & Recovery Agent is
+distinct from the IT AI Manager (Q5) that commands its
+design and from the Database Agent (Q38) — never merged.
+core_platform/agent_registry.py and
+core_platform/rtsa_registry.py remain byte-untouched.
+Naming verification: the queue's Band 2C table, the
+canonical catalog (row #49), the MASTER §7 matrix, and
+core_platform/agent_registry.py all name this platform
+"Backup & Recovery Agent" — the name was verified against
+those sources before building, per the name law recorded
+after tranche 8.
+
+**Built**: core_platform/backup_recovery_agent_service.py
+(BackupRecoveryAgentService over
+core_platform/rtsa_foundation.py; independent identity
+backup_recovery_agent; design view of the agent descriptor
+in core_platform/agent_registry.py — commanding authority
+IT_AI_Manager_v15.0, implementation_status INTERFACE_ONLY,
+external_execution_enabled False, designed role "Backups
+and recovery"; fail-closed operation check refusing the
+design's execution boundary by name with the design's own
+signal AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED — run_backup,
+restore_backup, delete_backup, external_execution — and
+unknown operations; backup records carried as durable,
+receipted records over a data-source reference, a declared
+backup-artifact reference set, and a scope reference, with
+lifecycle REQUESTED → APPROVED / REJECTED (the recorded
+human decision) → OUTCOME_RECORDED; the evidence
+discipline enforced in the record model — a record
+declared with no artifacts stands NO_ARTIFACTS_SUBMITTED
+in every view and in the status tallies, and both
+determinations (BACKUP_VERIFIED, BACKUP_FAILED) are
+refused on it, while INCONCLUSIVE, which asserts nothing,
+records against evidence; outcomes recorded only for
+APPROVED records and only against a presented evidence
+reference, with a closed outcome set; every state change
+writes its Glass-Box receipt inside the same transaction;
+operator-only check-in bound to the identity integrity
+digest). Route family /api/backup-recovery-agent/ wired
+through app/customer_app.py (create_customer_app parameter
+backup_recovery_agent), deploy/deployment.py
+(RuntimeBindings.backup_recovery_agent, health route
+/api/backup-recovery-agent/healthz, forwarding through
+create_application), and deploy/production_bindings.py
+(construction on its own store
+backup_recovery_agent.db); watchdog check_http entry in
+deploy/sds_watchdog.sh; registry entry in
+core_platform/ai_platform_links.json (registry now 73).
+
+**Pricing/teaching audit** (examined set: canonical
+catalog row #49; Set B database_schema.sql +
+tier_pricing_global.py, read directly — the name appears
+in neither; Set C catalog — no priced or teaching row;
+the MASTER §7 matrix; the agent descriptor in
+core_platform/agent_registry.py): the design carries NO
+price for the Backup & Recovery Agent — none built, none
+invented, no blocker figure attaches to this name. The
+design carries NO teaching function for the Backup &
+Recovery Agent — none built, none invented.
+
+**Verification**: scratch drive (never committed) —
+47/47 checks: identity and design view (descriptor fields
+exact); constructor refuses a missing audit adapter;
+operation check (record operation RECORD_ONLY; all four
+execution operations refused by name with the design
+signal; unknown operation refused); record lifecycle
+(operator-only creation; source/scope references required;
+artifact set must be a list of non-empty references,
+capped; outcome refused before approval; outcome without
+evidence refused; outcome set closed — RESTORED is not an
+outcome; the with-artifacts record's BACKUP_VERIFIED
+outcome records against evidence and a second outcome is
+refused; the no-artifacts record stands
+NO_ARTIFACTS_SUBMITTED with both determinations refused on
+it while INCONCLUSIVE records; reject records REJECTED
+and approve from REJECTED is refused; unknown record
+denied; geofence refuses an undeclared region; status
+totals including records_no_artifacts_submitted and
+artifacts_declared_total; operator-only check-in);
+registry at 73 entries; all 9 approval gates UNAPPROVED;
+WSGI through create_customer_app (signed-out 401, status
+200, execution operation 400 with
+AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED in the detail, create
+refused for non-operator 403, create 201 standing
+NO_ARTIFACTS_SUBMITTED, approve 200, BACKUP_VERIFIED on
+the no-artifact record refused 400 with
+NO_ARTIFACTS_SUBMITTED in the detail, INCONCLUSIVE outcome
+200, records list 200, unexpected fields 400, wrong origin
+403, check-in 201, unwired service 503
+backup_recovery_agent_unavailable). Deployed-composition
+verification through create_application on the final
+composed tree is recorded in the tranche 10 entry of the
+build queue.

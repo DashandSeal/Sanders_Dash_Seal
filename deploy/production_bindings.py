@@ -182,6 +182,7 @@ from core_platform.deployment_agent_service import DeploymentAgentService
 from core_platform.infrastructure_agent_service import InfrastructureAgentService
 from core_platform.integration_agent_service import IntegrationAgentService
 from core_platform.performance_agent_service import PerformanceAgentService
+from core_platform.backup_recovery_agent_service import BackupRecoveryAgentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -683,6 +684,14 @@ def create_production_bindings():
     performance_agent = PerformanceAgentService(
         data_dir / 'performance_agent.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Backup & Recovery Agent platform (Q43, RTSA Build
+    # Program tranche 10): governed backup records over its
+    # own store, built under its design's INTERFACE_ONLY
+    # discipline — it runs no backup, restores nothing, and
+    # executes nothing.
+    backup_recovery_agent = BackupRecoveryAgentService(
+        data_dir / 'backup_recovery_agent.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -727,4 +736,5 @@ def create_production_bindings():
         infrastructure_agent=infrastructure_agent,
         integration_agent=integration_agent,
         performance_agent=performance_agent,
+        backup_recovery_agent=backup_recovery_agent,
     )
