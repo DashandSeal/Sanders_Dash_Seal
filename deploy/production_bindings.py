@@ -203,6 +203,7 @@ from core_platform.gia_mind_service import GiaMindService
 from core_platform.ai_doctor_service import AIDoctorService
 from core_platform.sanders_ai_psychiatrist_service import SandersAIPsychiatristService
 from core_platform.sanders_recon_service import SandersReconService
+from core_platform.sanders_senior_living_service import SandersSeniorLivingService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -819,6 +820,14 @@ def create_production_bindings():
     sanders_recon = SandersReconService(
         data_dir / 'sanders_recon.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Senior Living platform (Q56, RTSA Build
+    # Program tranche 14): governed care-coordination
+    # records over its own store — the platform, distinct
+    # from Sanders Senior Living LLC; it operates no
+    # residence and provides no care itself.
+    sanders_senior_living = SandersSeniorLivingService(
+        data_dir / 'sanders_senior_living.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -876,4 +885,5 @@ def create_production_bindings():
         ai_doctor=ai_doctor,
         sanders_ai_psychiatrist=sanders_ai_psychiatrist,
         sanders_recon=sanders_recon,
+        sanders_senior_living=sanders_senior_living,
     )

@@ -93,6 +93,7 @@ class RuntimeBindings:
     ai_doctor: object = None
     sanders_ai_psychiatrist: object = None
     sanders_recon: object = None
+    sanders_senior_living: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -453,7 +454,8 @@ def create_application(bindings=None):
             gia_mind=getattr(bindings, 'gia_mind', None),
             ai_doctor=getattr(bindings, 'ai_doctor', None),
             sanders_ai_psychiatrist=getattr(bindings, 'sanders_ai_psychiatrist', None),
-            sanders_recon=getattr(bindings, 'sanders_recon', None)
+            sanders_recon=getattr(bindings, 'sanders_recon', None),
+            sanders_senior_living=getattr(bindings, 'sanders_senior_living', None)
         )
     else:
         verifier = _denied
@@ -812,7 +814,8 @@ def create_application(bindings=None):
                     '/api/gia-mind/healthz',
                     '/api/ai-doctor/healthz',
                     '/api/ai-psychiatrist/healthz',
-                    '/api/sanders-recon/healthz'):
+                    '/api/sanders-recon/healthz',
+                    '/api/sanders-senior-living/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -869,6 +872,7 @@ def create_application(bindings=None):
                 '/api/ai-doctor/healthz': ('ai_doctor', 'ai_doctor', 'ai_doctor_unavailable'),
                 '/api/ai-psychiatrist/healthz': ('sanders_ai_psychiatrist', 'sanders_ai_psychiatrist', 'sanders_ai_psychiatrist_unavailable'),
                 '/api/sanders-recon/healthz': ('sanders_recon', 'sanders_recon', 'sanders_recon_unavailable'),
+                '/api/sanders-senior-living/healthz': ('sanders_senior_living', 'sanders_senior_living', 'sanders_senior_living_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -1003,7 +1007,9 @@ def create_application(bindings=None):
                 or path == '/api/ai-psychiatrist'
                 or path.startswith('/api/ai-psychiatrist/')
                 or path == '/api/sanders-recon'
-                or path.startswith('/api/sanders-recon/'))
+                or path.startswith('/api/sanders-recon/')
+                or path == '/api/sanders-senior-living'
+                or path.startswith('/api/sanders-senior-living/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')
