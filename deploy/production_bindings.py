@@ -229,6 +229,7 @@ from core_platform.sanders_coordinator_service import SandersCoordinatorService
 from core_platform.sanders_intelligence_service import SandersIntelligenceService
 from core_platform.sanders_ai_research_service import SandersAIResearchService
 from core_platform.sanders_research_service import SandersResearchService
+from core_platform.sanders_communications_service import SandersCommunicationsService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1063,6 +1064,15 @@ def create_production_bindings():
     sanders_research = SandersResearchService(
         data_dir / 'sanders_research.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Communications platform (Q82,
+    # RTSA Build Program tranche 23): governed
+    # communications records over its own
+    # store — it transmits no message,
+    # operates no network, and encrypts no
+    # traffic itself.
+    sanders_communications = SandersCommunicationsService(
+        data_dir / 'sanders_communications.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1146,4 +1156,5 @@ def create_production_bindings():
         sanders_intelligence=sanders_intelligence,
         sanders_ai_research=sanders_ai_research,
         sanders_research=sanders_research,
+        sanders_communications=sanders_communications,
     )
