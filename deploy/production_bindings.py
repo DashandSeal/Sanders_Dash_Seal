@@ -159,6 +159,7 @@ from core_platform.home_healthcare import HomeHealthcarePlatform
 from core_platform.it_ai_manager import ITAIManager
 from core_platform.native_case_bridge import CaseNativeBridge
 from core_platform.twin_gate_service import TwinGateService
+from core_platform.sharpshooter_service import SharpshooterService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -379,6 +380,15 @@ def create_production_bindings():
         data_dir / 'twin_gate.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Sharpshooter (RTSA Build Program): the production build-out
+    # of the sharpshooter/ foundation — durable event store,
+    # provider adapter registry with environment credential
+    # acquisition, and the API service, on its own store. Its
+    # diagnoser is the recovered sharpshooter.core.diagnose.
+    sharpshooter = SharpshooterService(
+        data_dir / 'sharpshooter.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -399,4 +409,5 @@ def create_production_bindings():
         pbd_sentinel=pbd_sentinel,
         it_ai_manager=it_ai_manager,
         twin_gate=twin_gate,
+        sharpshooter=sharpshooter,
     )

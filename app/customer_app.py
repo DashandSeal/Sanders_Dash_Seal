@@ -41,6 +41,7 @@ from core_platform.vault import VaultDenied, VaultForbidden
 from core_platform.pbd_sentinel import PBDSentinelDenied, PBDSentinelForbidden
 from core_platform.it_ai_manager import ITAIManagerDenied, ITAIManagerForbidden
 from core_platform.twin_gate_service import TwinGateServiceDenied, TwinGateServiceForbidden
+from core_platform.sharpshooter_service import SharpshooterDenied, SharpshooterForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -131,9 +132,13 @@ ITM_WORK_ORDER_OUTCOME_ROUTE = re.compile(r'^/api/it-ai-manager/work-orders/([A-
 ITM_EVALUATION_ROUTE = re.compile(r'^/api/it-ai-manager/evaluations/([A-Za-z0-9_-]{1,128})$')
 TG_AUTH_ROUTE = re.compile(r'^/api/twin-gate/requests/([A-Za-z0-9_-]{1,128})$')
 TG_AUTH_ACTION_ROUTE = re.compile(r'^/api/twin-gate/requests/([A-Za-z0-9_-]{1,128})/(manager-signoff|minotaur-clearance|human-signoff|authorize|verify|preserve|revoke)$')
+SS_INCIDENT_ROUTE = re.compile(r'^/api/sharpshooter/incidents/([A-Za-z0-9_-]{1,128})$')
+SS_INCIDENT_PLAN_ROUTE = re.compile(r'^/api/sharpshooter/incidents/([A-Za-z0-9_-]{1,128})/plan$')
+SS_REMEDIATION_ROUTE = re.compile(r'^/api/sharpshooter/remediations/([A-Za-z0-9_-]{1,128})$')
+SS_REMEDIATION_ACTION_ROUTE = re.compile(r'^/api/sharpshooter/remediations/([A-Za-z0-9_-]{1,128})/(execute|rollback)$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -224,6 +229,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         itm_evaluation_match = ITM_EVALUATION_ROUTE.fullmatch(path)
         tg_auth_match = TG_AUTH_ROUTE.fullmatch(path)
         tg_action_match = TG_AUTH_ACTION_ROUTE.fullmatch(path)
+        ss_incident_match = SS_INCIDENT_ROUTE.fullmatch(path)
+        ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
+        ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
+        ss_remediation_action_match = SS_REMEDIATION_ACTION_ROUTE.fullmatch(path)
         is_unm_route = (path in ('/api/uncle-nickey-mao/status',
                                  '/api/uncle-nickey-mao/guardian-relay',
                                  '/api/uncle-nickey-mao/referrals',
@@ -303,6 +312,19 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                 '/api/twin-gate/check-in')
                        or tg_auth_match is not None
                        or tg_action_match is not None)
+        is_ss_route = (path in ('/api/sharpshooter/status',
+                                '/api/sharpshooter/adapters',
+                                '/api/sharpshooter/adapters/register',
+                                '/api/sharpshooter/adapters/refresh',
+                                '/api/sharpshooter/diagnose',
+                                '/api/sharpshooter/cert-inventory',
+                                '/api/sharpshooter/jobs',
+                                '/api/sharpshooter/jobs/process',
+                                '/api/sharpshooter/check-in')
+                       or ss_incident_match is not None
+                       or ss_incident_plan_match is not None
+                       or ss_remediation_match is not None
+                       or ss_remediation_action_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -311,7 +333,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_vault_route
                              or is_pbd_sentinel_route
                              or is_itm_route
-                             or is_tg_route)
+                             or is_tg_route
+                             or is_ss_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -344,7 +367,11 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/it-ai-manager/status',
                                             '/api/it-ai-manager/agents',
                                             '/api/twin-gate/status',
-                                            '/api/twin-gate/quarantine')
+                                            '/api/twin-gate/quarantine',
+                                            '/api/sharpshooter/status',
+                                            '/api/sharpshooter/adapters',
+                                            '/api/sharpshooter/cert-inventory',
+                                            '/api/sharpshooter/jobs')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -357,7 +384,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or itm_incident_match is not None
                                    or itm_work_order_match is not None
                                    or itm_evaluation_match is not None
-                                   or tg_auth_match is not None) else ('POST',)
+                                   or tg_auth_match is not None
+                                   or ss_incident_match is not None
+                                   or ss_remediation_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -365,6 +394,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             allowed = ('GET', 'POST') if path == '/api/appointments' or provider_match or native_match else (
                 ('POST',) if operator_match or case_match else ('GET',)
             )
+        if path == '/api/sharpshooter/jobs':
+            allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
 
@@ -951,6 +982,66 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = twin_gate.lift_quarantine(identity, data['agent'])
                         return respond(start, '200 OK', {'lifted': record})
                     return check_in(twin_gate)
+                if is_ss_route:
+                    if sharpshooter is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'sharpshooter_unavailable'})
+                    if path == '/api/sharpshooter/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': sharpshooter.status()})
+                    if path == '/api/sharpshooter/adapters':
+                        return respond(start, '200 OK', {'adapters': sharpshooter.adapters()})
+                    if path == '/api/sharpshooter/adapters/register':
+                        if set(data) != {'name', 'capabilities', 'credential_env'}:
+                            raise ValueError('unexpected fields')
+                        record = sharpshooter.register_provider_adapter(identity, data['name'], data['capabilities'], data['credential_env'])
+                        return respond(start, '201 Created', {'adapter': record})
+                    if path == '/api/sharpshooter/adapters/refresh':
+                        if set(data) != {'adapter'}:
+                            raise ValueError('unexpected fields')
+                        record = sharpshooter.refresh_adapter_credential(identity, data['adapter'])
+                        return respond(start, '200 OK', {'adapter': record})
+                    if path == '/api/sharpshooter/diagnose':
+                        if set(data) != {'hostname'}:
+                            raise ValueError('unexpected fields')
+                        record = sharpshooter.diagnose(identity, data['hostname'])
+                        return respond(start, '201 Created', {'incident': record})
+                    if path == '/api/sharpshooter/cert-inventory':
+                        return respond(start, '200 OK', {'cert_inventory': sharpshooter.cert_inventory()})
+                    if path == '/api/sharpshooter/jobs':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'jobs': sharpshooter.jobs()})
+                        if set(data) != {'hostname'}:
+                            raise ValueError('unexpected fields')
+                        record = sharpshooter.enqueue_job(identity, data['hostname'])
+                        return respond(start, '201 Created', {'job': record})
+                    if path == '/api/sharpshooter/jobs/process':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = sharpshooter.process_next_job(identity)
+                        return respond(start, '200 OK', {'job': record})
+                    if ss_incident_plan_match:
+                        if set(data) != {'operation', 'adapter'}:
+                            raise ValueError('unexpected fields')
+                        record = sharpshooter.plan_remediation(identity, ss_incident_plan_match.group(1), data['operation'], data['adapter'])
+                        return respond(start, '201 Created', {'remediation': record})
+                    if ss_incident_match:
+                        role = 'OPERATOR' if is_operator() else 'COORDINATOR'
+                        record = sharpshooter.incident_view(identity, role, ss_incident_match.group(1))
+                        return respond(start, '200 OK', {'incident': record})
+                    if ss_remediation_action_match:
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        if ss_remediation_action_match.group(2) == 'execute':
+                            record = sharpshooter.execute_remediation(identity, ss_remediation_action_match.group(1))
+                        else:
+                            record = sharpshooter.rollback_remediation(identity, ss_remediation_action_match.group(1))
+                        return respond(start, '200 OK', {'remediation': record})
+                    if ss_remediation_match:
+                        role = 'OPERATOR' if is_operator() else 'COORDINATOR'
+                        record = sharpshooter.remediation_view(identity, role, ss_remediation_match.group(1))
+                        return respond(start, '200 OK', {'remediation': record})
+                    return check_in(sharpshooter)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -1022,6 +1113,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'twin_gate_forbidden'})
         except TwinGateServiceDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'twin_gate_denied', 'detail': str(exc)})
+        except SharpshooterForbidden:
+            return respond(start, '403 Forbidden', {'error': 'sharpshooter_forbidden'})
+        except SharpshooterDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'sharpshooter_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

@@ -57,6 +57,7 @@ class RuntimeBindings:
     pbd_sentinel: object = None
     it_ai_manager: object = None
     twin_gate: object = None
+    sharpshooter: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -381,7 +382,8 @@ def create_application(bindings=None):
             vault=getattr(bindings, 'vault', None),
             pbd_sentinel=getattr(bindings, 'pbd_sentinel', None),
             it_ai_manager=getattr(bindings, 'it_ai_manager', None),
-            twin_gate=getattr(bindings, 'twin_gate', None)
+            twin_gate=getattr(bindings, 'twin_gate', None),
+            sharpshooter=getattr(bindings, 'sharpshooter', None)
         )
     else:
         verifier = _denied
@@ -704,7 +706,8 @@ def create_application(bindings=None):
                     '/api/vault/healthz',
                     '/api/pbd-sentinel/healthz',
                     '/api/it-ai-manager/healthz',
-                    '/api/twin-gate/healthz'):
+                    '/api/twin-gate/healthz',
+                    '/api/sharpshooter/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -725,6 +728,7 @@ def create_application(bindings=None):
                 '/api/pbd-sentinel/healthz': ('pbd_sentinel', 'pbd_sentinel', 'pbd_sentinel_unavailable'),
                 '/api/it-ai-manager/healthz': ('it_ai_manager', 'it_ai_manager', 'it_ai_manager_unavailable'),
                 '/api/twin-gate/healthz': ('twin_gate', 'twin_gate', 'twin_gate_unavailable'),
+                '/api/sharpshooter/healthz': ('sharpshooter', 'sharpshooter', 'sharpshooter_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -787,7 +791,9 @@ def create_application(bindings=None):
                 or path == '/api/it-ai-manager'
                 or path.startswith('/api/it-ai-manager/')
                 or path == '/api/twin-gate'
-                or path.startswith('/api/twin-gate/'))
+                or path.startswith('/api/twin-gate/')
+                or path == '/api/sharpshooter'
+                or path.startswith('/api/sharpshooter/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')
