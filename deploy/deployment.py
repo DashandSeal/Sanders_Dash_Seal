@@ -61,6 +61,7 @@ class RuntimeBindings:
     labyrinth_shield: object = None
     minotaur: object = None
     glass_box_audit: object = None
+    architect: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -389,7 +390,8 @@ def create_application(bindings=None):
             sharpshooter=getattr(bindings, 'sharpshooter', None),
             labyrinth_shield=getattr(bindings, 'labyrinth_shield', None),
             minotaur=getattr(bindings, 'minotaur', None),
-            glass_box_audit=getattr(bindings, 'glass_box_audit', None)
+            glass_box_audit=getattr(bindings, 'glass_box_audit', None),
+            architect=getattr(bindings, 'architect', None)
         )
     else:
         verifier = _denied
@@ -716,7 +718,8 @@ def create_application(bindings=None):
                     '/api/sharpshooter/healthz',
                     '/api/labyrinth-shield/healthz',
                     '/api/minotaur/healthz',
-                    '/api/glass-box-audit/healthz'):
+                    '/api/glass-box-audit/healthz',
+                    '/api/architect/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -741,6 +744,7 @@ def create_application(bindings=None):
                 '/api/labyrinth-shield/healthz': ('labyrinth_shield', 'sanders_labyrinth_shield', 'labyrinth_shield_unavailable'),
                 '/api/minotaur/healthz': ('minotaur', 'minotaur_sentinel', 'minotaur_unavailable'),
                 '/api/glass-box-audit/healthz': ('glass_box_audit', 'glass_box_audit', 'glass_box_audit_unavailable'),
+                '/api/architect/healthz': ('architect', 'architect', 'architect_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -811,7 +815,9 @@ def create_application(bindings=None):
                 or path == '/api/minotaur'
                 or path.startswith('/api/minotaur/')
                 or path == '/api/glass-box-audit'
-                or path.startswith('/api/glass-box-audit/'))
+                or path.startswith('/api/glass-box-audit/')
+                or path == '/api/architect'
+                or path.startswith('/api/architect/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

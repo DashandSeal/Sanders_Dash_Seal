@@ -60,6 +60,7 @@
 #   labyrinth-shield                       system  http://127.0.0.1:8000/api/labyrinth-shield/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   minotaur                               system  http://127.0.0.1:8000/api/minotaur/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   glass-box-audit                        system  http://127.0.0.1:8000/api/glass-box-audit/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   architect                              system  http://127.0.0.1:8000/api/architect/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   money-factory-legal.service            system  http://127.0.0.1:8668/health (Money Factory /health)
 #   sanders-corporations-secretary.service user    http://127.0.0.1:8791/api/health (app/main.py @app.get("/api/health"))
 #   sanders-twostep.service                user    http://127.0.0.1:9400/healthz (sanders_twostep_v2.py)
@@ -510,6 +511,7 @@ main() {
   check_http "labyrinth-shield" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/labyrinth-shield/healthz"
   check_http "minotaur" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/minotaur/healthz"
   check_http "glass-box-audit" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/glass-box-audit/healthz"
+  check_http "architect" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/architect/healthz"
   check_http "money-factory-legal" "money-factory-legal.service" "system" "http://127.0.0.1:8668/health"
   check_http "secretary" "sanders-corporations-secretary.service" "user" "http://127.0.0.1:8791/api/health"
   check_http "twostep" "sanders-twostep.service" "user" "http://127.0.0.1:9400/healthz"

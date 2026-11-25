@@ -163,6 +163,7 @@ from core_platform.sharpshooter_service import SharpshooterService
 from core_platform.labyrinth_shield_service import LabyrinthShieldService
 from core_platform.minotaur_service import MinotaurService
 from core_platform.glass_box_audit_service import GlassBoxAuditService
+from core_platform.architect_service import ArchitectService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -429,6 +430,16 @@ def create_production_bindings():
          data_dir / 'glass_box_audit.db'),
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # ARCHITECT (RTSA Build Program): the architecture/design role
+    # contract built as its own platform — governed design records,
+    # reviews, and recorded human decisions under the contract's
+    # discipline (prohibited operations refused by name; the
+    # contract stays SPECIFIED and enabled: False), on its own
+    # store.
+    architect = ArchitectService(
+        data_dir / 'architect.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -453,4 +464,5 @@ def create_production_bindings():
         labyrinth_shield=labyrinth_shield,
         minotaur=minotaur,
         glass_box_audit=glass_box_audit,
+        architect=architect,
     )
