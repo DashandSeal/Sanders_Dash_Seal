@@ -220,6 +220,7 @@ from core_platform.sanders_hospitality_service import SandersHospitalityService
 from core_platform.sanders_entertainment_service import SandersEntertainmentService
 from core_platform.sanders_sports_service import SandersSportsService
 from core_platform.sanders_wellness_service import SandersWellnessService
+from core_platform.sanders_steward_sentinel_service import SandersStewardSentinelService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -969,6 +970,15 @@ def create_production_bindings():
     sanders_wellness = SandersWellnessService(
         data_dir / 'sanders_wellness.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Steward Sentinel platform (Q73,
+    # RTSA Build Program tranche 20): governed
+    # platform-defense records over its own
+    # store — it integrates no agency, runs no
+    # counterintelligence, and enforces no defense
+    # itself. No persona (D-N15 unruled).
+    sanders_steward_sentinel = SandersStewardSentinelService(
+        data_dir / 'sanders_steward_sentinel.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1043,4 +1053,5 @@ def create_production_bindings():
         sanders_entertainment=sanders_entertainment,
         sanders_sports=sanders_sports,
         sanders_wellness=sanders_wellness,
+        sanders_steward_sentinel=sanders_steward_sentinel,
     )
