@@ -238,6 +238,7 @@ from core_platform.sanders_innovation_lab_service import SandersInnovationLabSer
 from core_platform.sanders_supply_chain_service import SandersSupplyChainService
 from core_platform.sanders_logical_framework_service import SandersLogicalFrameworkService
 from core_platform.sanders_infrastructure_service import SandersInfrastructureService
+from core_platform.sanders_technology_service import SandersTechnologyService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1154,6 +1155,14 @@ def create_production_bindings():
     sanders_infrastructure = SandersInfrastructureService(
         data_dir / 'sanders_infrastructure.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Technology platform (Q91, RTSA
+    # Build Program tranche 26): governed
+    # technology records over its own store
+    # — it develops no software, deploys no
+    # software, and runs no pipeline itself.
+    sanders_technology = SandersTechnologyService(
+        data_dir / 'sanders_technology.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1246,4 +1255,5 @@ def create_production_bindings():
         sanders_supply_chain=sanders_supply_chain,
         sanders_logical_framework=sanders_logical_framework,
         sanders_infrastructure=sanders_infrastructure,
+        sanders_technology=sanders_technology,
     )

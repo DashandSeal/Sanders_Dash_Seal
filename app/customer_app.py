@@ -112,6 +112,7 @@ from core_platform.sanders_innovation_lab_service import SandersInnovationLabDen
 from core_platform.sanders_supply_chain_service import SandersSupplyChainDenied, SandersSupplyChainForbidden
 from core_platform.sanders_logical_framework_service import SandersLogicalFrameworkDenied, SandersLogicalFrameworkForbidden
 from core_platform.sanders_infrastructure_service import SandersInfrastructureDenied, SandersInfrastructureForbidden
+from core_platform.sanders_technology_service import SandersTechnologyDenied, SandersTechnologyForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -426,6 +427,9 @@ SANDERS_LOGICAL_FRAMEWORK_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-logi
 SANDERS_INFRASTRUCTURE_RECORD_ROUTE = re.compile(r'^/api/sanders-infrastructure/records/([A-Za-z0-9_-]{1,128})$')
 SANDERS_INFRASTRUCTURE_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-infrastructure/records/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_INFRASTRUCTURE_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-infrastructure/records/([A-Za-z0-9_-]{1,128})/outcome$')
+SANDERS_TECHNOLOGY_RECORD_ROUTE = re.compile(r'^/api/sanders-technology/records/([A-Za-z0-9_-]{1,128})$')
+SANDERS_TECHNOLOGY_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-technology/records/([A-Za-z0-9_-]{1,128})/action$')
+SANDERS_TECHNOLOGY_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-technology/records/([A-Za-z0-9_-]{1,128})/outcome$')
 BABY_GIRL_CUSTODY_ROUTE = re.compile(r'^/api/baby-girl/custody/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
@@ -434,7 +438,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None, sanders_sports=None, sanders_wellness=None, sanders_steward_sentinel=None, sanders_patriot_saint=None, sanders_freedom_revolution=None, sanders_strategy_hub=None, sanders_global_freedom=None, sanders_coordinator=None, sanders_intelligence=None, sanders_ai_research=None, sanders_research=None, sanders_communications=None, sanders_banking_hub=None, sanders_legal_services=None, sanders_strategy_intel=None, sanders_analytics=None, sanders_innovation_lab=None, sanders_supply_chain=None, sanders_logical_framework=None, sanders_infrastructure=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None, sanders_sports=None, sanders_wellness=None, sanders_steward_sentinel=None, sanders_patriot_saint=None, sanders_freedom_revolution=None, sanders_strategy_hub=None, sanders_global_freedom=None, sanders_coordinator=None, sanders_intelligence=None, sanders_ai_research=None, sanders_research=None, sanders_communications=None, sanders_banking_hub=None, sanders_legal_services=None, sanders_strategy_intel=None, sanders_analytics=None, sanders_innovation_lab=None, sanders_supply_chain=None, sanders_logical_framework=None, sanders_infrastructure=None, sanders_technology=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -742,6 +746,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         sanders_infrastructure_record_match = SANDERS_INFRASTRUCTURE_RECORD_ROUTE.fullmatch(path)
         sanders_infrastructure_record_action_match = SANDERS_INFRASTRUCTURE_RECORD_ACTION_ROUTE.fullmatch(path)
         sanders_infrastructure_record_outcome_match = SANDERS_INFRASTRUCTURE_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        technology_record_match = SANDERS_TECHNOLOGY_RECORD_ROUTE.fullmatch(path)
+        technology_record_action_match = SANDERS_TECHNOLOGY_RECORD_ACTION_ROUTE.fullmatch(path)
+        technology_record_outcome_match = SANDERS_TECHNOLOGY_RECORD_OUTCOME_ROUTE.fullmatch(path)
         baby_girl_custody_match = BABY_GIRL_CUSTODY_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
@@ -1431,6 +1438,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or sanders_infrastructure_record_match is not None
                                   or sanders_infrastructure_record_action_match is not None
                                   or sanders_infrastructure_record_outcome_match is not None)
+        is_technology_route = (path in ('/api/sanders-technology/status',
+                                        '/api/sanders-technology/records',
+                                        '/api/sanders-technology/design',
+                                        '/api/sanders-technology/operation-check',
+                                        '/api/sanders-technology/check-in')
+                                  or technology_record_match is not None
+                                  or technology_record_action_match is not None
+                                  or technology_record_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -1510,7 +1525,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_innovation_lab_route
                              or is_supply_chain_route
                              or is_logical_framework_route
-                             or is_sanders_infrastructure_route)
+                             or is_sanders_infrastructure_route
+                             or is_technology_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -1765,7 +1781,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/sanders-logical-framework/design',
                                             '/api/sanders-infrastructure/status',
                                             '/api/sanders-infrastructure/records',
-                                            '/api/sanders-infrastructure/design')
+                                            '/api/sanders-infrastructure/design',
+                                            '/api/sanders-technology/status',
+                                            '/api/sanders-technology/records',
+                                            '/api/sanders-technology/design')
                                    or unm_referral_match is not None
                                    or unm_subject_referrals_match is not None
                                    or unm_person_activation_match is not None
@@ -1859,7 +1878,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or innovation_lab_record_match is not None
                                    or supply_chain_record_match is not None
                                    or logical_framework_record_match is not None
-                                   or sanders_infrastructure_record_match is not None) else ('POST',)
+                                   or sanders_infrastructure_record_match is not None
+                                   or technology_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -2009,6 +2029,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-logical-framework/records':
             allowed = ('GET', 'POST')
         if path == '/api/sanders-infrastructure/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-technology/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/custody':
             allowed = ('GET', 'POST')
@@ -5301,6 +5323,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = sanders_infrastructure.record_view(identity, sanders_infrastructure_role, sanders_infrastructure_record_match.group(1))
                         return respond(start, '200 OK', {'record': record})
                     return check_in(sanders_infrastructure)
+                if is_technology_route:
+                    if sanders_technology is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'sanders_technology_unavailable'})
+                    technology_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/sanders-technology/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': sanders_technology.status()})
+                    if path == '/api/sanders-technology/design':
+                        return respond(start, '200 OK', {'design': sanders_technology.design_view()})
+                    if path == '/api/sanders-technology/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_technology.operation_check(identity, technology_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/sanders-technology/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': sanders_technology.records_list(identity, technology_role)})
+                        if set(data) != {'subject_ref', 'tool_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_technology.create_record(identity, data['subject_ref'], data['tool_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if technology_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_technology.record_action(identity, technology_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if technology_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_technology.record_outcome(identity, technology_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if technology_record_match:
+                        record = sanders_technology.record_view(identity, technology_role, technology_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(sanders_technology)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -5656,6 +5714,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'sanders_infrastructure_forbidden'})
         except SandersInfrastructureDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'sanders_infrastructure_denied', 'detail': str(exc)})
+        except SandersTechnologyForbidden:
+            return respond(start, '403 Forbidden', {'error': 'sanders_technology_forbidden'})
+        except SandersTechnologyDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'sanders_technology_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
