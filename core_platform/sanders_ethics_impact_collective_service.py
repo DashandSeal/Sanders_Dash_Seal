@@ -118,6 +118,102 @@ company. Name presentation: "Sanders Ethics
 seal variant was not used (Sanders Home
 Healthcare & Caregivers exclusive).
 
+ADOPTED PUBLIC BRAND — the owner's adoption
+(2026-11-25 09:19 MST, "I'm good with
+everything"): the platform's public brand is
+"Sanders Ethics & Impact"; the network arm
+(the vetted consultants, certified
+professionals, and member organizations of
+the Professional Standards & Networks and
+Specialized Services pillars) is branded
+"The Collective". The formal name is
+unchanged: Sanders Ethics & Impact
+Collective.
+
+ADOPTED PRICING — the owner's adoption
+(2026-11-25 09:19 MST): the market-researched
+recommended prices (seic pricing research,
+2026-11-25) are adopted as this platform's
+price record, added alongside the designed
+business model above — the designed figures
+stay recorded as designed and are not
+replaced. Adopted: consulting ladder $250
+standard / $350 senior / $500 principal per
+hour; project band $25K–$500K kept, every
+engagement scoped in a written SOW; retainers
+restructured — Advisory $5,000/month,
+Governance $12,500/month, Embedded Enterprise
+$25,000/month ($50,000/month reserved for
+multi-program enterprise delivery);
+subscriptions with defined inclusions — Basic
+$299/month, Professional $999/month,
+Enterprise $4,999/month; certification split —
+examination $595, full program $2,950 member
+/ $3,950 non-member; training $75/user/year
+platform, $2,500/participant live cohort;
+memberships split — Individual $499/year,
+Professional with CE bundle $999/year,
+Organizational $2,500–$7,500/year, continuing
+education $99/course non-member. First
+service (AI Ethics Audit & Governance for
+Healthcare Organizations): Focused Audit
+$35,000 fixed, Standard Audit $75,000 fixed,
+Enterprise Audit & Governance Program
+$150,000 fixed, deep/regulatory from
+$150,000 scoped, ongoing Governance retainer
+$12,500/month, Embedded Enterprise
+$25,000/month, advisory overflow $350/hour
+senior and $500/hour principal. Pillar
+services adopted: ethics compliance audit
+$15,000 standard / $35,000 multi-site;
+whistleblower program design $12,500;
+governance policy development $350/hour or
+$10,000 per policy suite; AI ethics audit
+$35,000 per system standard / $75,000 deep;
+AI governance assessment $25,000, enterprise
+governance program $150,000; ESG reporting
+readiness $50,000, full strategy $150,000,
+reporting retainer $10,000/month; DEI audit
+and plan $25,000; environmental consulting
+$250/hour senior; environmental justice
+assessment $50,000; GHG inventory $25,000;
+IRB consulting $300/hour, setup/readiness
+from $25,000; bioethics consulting $400/hour
+principal / $300/hour standard; social impact
+evaluation $15,000, outcomes framework
+$4,000. Grant administration adopted as flat
+monthly $500–$5,000 by portfolio with
+per-report $1,250; fiscal sponsorship 9%
+(Model C-style) / 12% (Model A-style) of funds
+actually held and administered — the designed
+5–10% stands only as that sponsorship fee;
+percentage compensation for grant writing or
+securing an award is barred and is not an
+adopted price. Adopted prices are the
+platform's price record; nothing is wired as
+a charge by this record.
+
+INTAKE CHANNEL — defined as it honestly
+exists (2026-11-25): the client-facing intake
+channel is (a) this platform's own route
+family (/api/sanders-ethics-impact-collective/)
+carrying governed engagement records under
+SEIC_RECORDS_ONLY — operator-facing records,
+not a public sales surface — reached through
+(b) the flagship Sanders Dash & Seal public
+site's contact and appointment path
+(sandersdashandseal.com, /appointments), the
+public path that exists today: a prospective
+client reaches the owner there and the
+engagement is then recorded here. A dedicated
+public SEIC intake page does not exist; it
+would require an owner-approved design pass
+under the Sanders Royal Enterprise Standard
+and a defined hand-off into these records,
+and none was built. Until it exists, no
+engagement is marketed against a channel that
+does not exist.
+
 No designed hostname is recorded for this
 platform in any examined source — the
 document names none — so none is recorded and
@@ -259,6 +355,66 @@ OUTCOMES = ('SEIC_POSITION_CONFIRMED', 'ENGAGEMENT_ACTION_REQUIRED',
 DETERMINATIONS = ('SEIC_POSITION_CONFIRMED', 'ENGAGEMENT_ACTION_REQUIRED')
 MAX_REFS = 100
 
+# Adopted public brand (owner adoption 2026-11-25 09:19 MST): the
+# public brand is "Sanders Ethics & Impact"; the network arm is "The
+# Collective"; the formal name (IDENTITY.name) is unchanged.
+PUBLIC_BRAND = 'Sanders Ethics & Impact'
+NETWORK_ARM = 'The Collective'
+
+# Adopted pricing (owner adoption 2026-11-25 09:19 MST): the
+# market-researched recommended prices are the platform's price
+# record, added alongside the designed business model recorded in
+# the module docstring — the designed figures stay recorded as
+# designed and are not replaced. Nothing here is wired as a charge.
+ADOPTED_PRICING = {
+    'adopted_on': '2026-11-25',
+    'basis': 'SEIC market pricing research 2026-11-25 (sourced market evidence), adopted by the owner 2026-11-25 09:19 MST',
+    'consulting_ladder_usd_per_hour': {'standard': 250, 'senior': 350, 'principal': 500},
+    'project_band_usd': {'min': 25000, 'max': 500000, 'note': 'every engagement scoped in a written SOW'},
+    'retainers_usd_per_month': {'advisory': 5000, 'governance': 12500, 'embedded_enterprise': 25000, 'multi_program_enterprise_reserved': 50000},
+    'subscriptions_usd_per_month': {'basic': 299, 'professional': 999, 'enterprise': 4999, 'note': 'price points as designed; inclusions defined in the adopted pricing record'},
+    'certification_usd': {'examination': 595, 'full_program_member': 2950, 'full_program_non_member': 3950},
+    'training': {'platform_usd_per_user_per_year': 75, 'live_cohort_usd_per_participant': 2500},
+    'memberships_usd_per_year': {'individual': 499, 'professional_with_ce': 999, 'organizational_min': 2500, 'organizational_max': 7500, 'continuing_education_usd_per_course_non_member': 99},
+    'first_service_ai_ethics_audit_governance_healthcare': {
+        'focused_audit_usd': 35000, 'standard_audit_usd': 75000,
+        'enterprise_program_usd': 150000, 'deep_regulatory_from_usd': 150000,
+        'governance_retainer_usd_per_month': 12500,
+        'embedded_enterprise_usd_per_month': 25000,
+        'advisory_usd_per_hour': {'senior': 350, 'principal': 500}},
+    'pillar_services_usd': {
+        'ethics_compliance_audit': {'standard': 15000, 'multi_site': 35000},
+        'whistleblower_program_design': 12500,
+        'governance_policy_development': {'per_hour': 350, 'per_policy_suite': 10000},
+        'ai_ethics_audit': {'per_system_standard': 35000, 'deep': 75000},
+        'ai_governance': {'assessment': 25000, 'enterprise_program': 150000},
+        'esg': {'reporting_readiness': 50000, 'full_strategy': 150000, 'reporting_retainer_per_month': 10000},
+        'dei_audit_and_plan': 25000,
+        'environmental_consulting_senior_per_hour': 250,
+        'environmental_justice_assessment': 50000,
+        'ghg_inventory': 25000,
+        'irb_consulting': {'per_hour': 300, 'setup_readiness_from': 25000},
+        'bioethics_consulting_per_hour': {'principal': 400, 'standard': 300},
+        'social_impact_evaluation': {'standard': 15000, 'outcomes_framework': 4000}},
+    'grant_administration': {
+        'flat_monthly_usd': {'min': 500, 'max': 5000, 'basis': 'by portfolio size'},
+        'per_report_usd': 1250,
+        'fiscal_sponsorship_percent_of_funds_held': {'model_c_style': 9, 'model_a_style': 12},
+        'percentage_compensation_for_grant_writing_or_securing': 'BARRED — not an adopted price'},
+}
+
+# Intake channel, defined as it honestly exists (2026-11-25): the
+# platform's route family carries governed engagement records
+# (operator-facing, records only); the public path that exists today
+# is the flagship's contact/appointment path. A dedicated public
+# SEIC intake page does not exist and was not built.
+INTAKE_CHANNEL = {
+    'engagement_records': '/api/sanders-ethics-impact-collective/ (governed engagement records under SEIC_RECORDS_ONLY; operator-facing)',
+    'public_path_today': 'sandersdashandseal.com contact and appointment path (/appointments) — the flagship Sanders Dash & Seal public site',
+    'dedicated_public_seic_intake_page': 'NOT BUILT — requires an owner-approved design pass under the Sanders Royal Enterprise Standard and a defined hand-off into the engagement records',
+    'interim_rule': 'no engagement is marketed against a channel that does not exist; intake is by direct introduction or appointment through the flagship path',
+}
+
 
 class SandersEthicsImpactCollectiveDenied(Exception):
     """The requested Sanders Ethics & Impact Collective operation is not
@@ -370,8 +526,12 @@ class SandersEthicsImpactCollectiveService:
             'designed_role': DESIGNED_ROLE,
             'design_sources': ['owner directive 2026-11-25 09:05 MST — the eight NAICS codes, selected by the owner (541110, 541618, 541620, 813910, 813920, 541990, 541611, 813219)', 'owner-supplied architecture document 2026-11-25 09:06 MST (Sanders Ethics & Impact Collective (SEIC) — five pillars, target markets, revenue streams, ecosystem connections) — the platform’s design record', 'design brief assembled from the owner’s supplied documents (ethics-platform-design-brief-2026-11-25): the cautions on 541110, 813910/813920, and 541620 were delivered before the directive; the owner kept all three — his ruling stands', 'no entry for this platform exists in the canonical catalog, Set A, Set B, Set C, or the MASTER — it is an owner-directed addition beyond the 140, recorded as such'],
             'discipline': DISCIPLINE,
+            'public_brand': PUBLIC_BRAND,
+            'network_arm': NETWORK_ARM,
+            'adopted_pricing': ADOPTED_PRICING,
+            'intake_channel': INTAKE_CHANNEL,
             'record_operations': list(RECORD_OPERATIONS),
-            'note': 'Sanders Ethics & Impact Collective (SEIC) is the ethics, governance, and social impact platform — an owner-directed addition beyond the 140 repo-evidenced platforms (code-set directive 2026-11-25 09:05; architecture supplied by the owner 2026-11-25 09:06): it carries governed engagement records over ethics, governance, and social-impact engagements and program matters and declared engagement sets presented by reference only. Its designed purpose is the architecture document’s five pillars — Legal & Compliance Framework (ethics compliance audits, regulatory guidance, whistleblower protection programs, governance policy development); Strategic Consulting (corporate governance transformation, ESG strategy, DEI program implementation, ethics training and certification); Environmental & Sustainability (environmental justice assessments, climate ethics consulting, sustainability compliance, green healthcare initiatives); Professional Standards & Networks (industry ethics standards, professional certification programs, peer accountability, continuing education); Specialized Services & Impact Funding (ethics auditing, IRB consulting, grant funding for ethics initiatives, social impact measurement) — recorded exactly as designed; the designed services are recorded as the platform’s offerings and no operational capability is claimed. The platform practices no law, gives no legal advice, administers no grant, disburses no funds, issues no certification, and enrolls no member: practice_law, provide_legal_advice, administer_grant, disburse_funds, issue_certification, enroll_member, and external_execution are refused by name under SEIC_RECORDS_ONLY, and determinations are records for human operators, never operations. A record declared with no engagements stands NO_ENGAGEMENTS_SUBMITTED and no determination can be recorded on it. NAICS — the owner’s selection, recorded exactly: 541110, 541618, 541620, 813910, 813920, 541990, 541611, 813219. The document’s Sanders Healthcare Foundation relationship is recorded as design text only — the Foundation is NOT one of the four verified companies; the platform is not registered under it and no Foundation entity is created. BRANDING (owner direction 2026-11-25): SEIC is a headquarters-scope platform — ethics and governance is a corporate-headquarters function, like Bozly and Secretary; its associated company for the dual-seal lockup is S & G Security Inc. (Corporate Headquarters itself), so the lockup carries the headquarters seal in both positions per the watchdog/Grantwriter precedent; it sits under Sanders Corporate Headquarters in the Universal Corporate Integration structure, attached to all four companies with S & G Security Inc. as its associated company; name presentation: Sanders Ethics & Impact Collective. No designed hostname is recorded for this platform in any examined source, and no nickname or persona is designed for it. The platform holds references and workflow state only — no legal work product, no client files, no grant funds, no member records content, no credentials. No public web surface is specified in the design document, so none was built and no security internals are exposed. SEIC is distinct from Sanders Legal Helpers, Sanders Legal Services (catalog 116), Sanders Consulting (catalog 77), and Grantwriter — identities are never merged.',
+            'note': 'Sanders Ethics & Impact Collective (SEIC) is the ethics, governance, and social impact platform — an owner-directed addition beyond the 140 repo-evidenced platforms (code-set directive 2026-11-25 09:05; architecture supplied by the owner 2026-11-25 09:06): it carries governed engagement records over ethics, governance, and social-impact engagements and program matters and declared engagement sets presented by reference only. Its designed purpose is the architecture document’s five pillars — Legal & Compliance Framework (ethics compliance audits, regulatory guidance, whistleblower protection programs, governance policy development); Strategic Consulting (corporate governance transformation, ESG strategy, DEI program implementation, ethics training and certification); Environmental & Sustainability (environmental justice assessments, climate ethics consulting, sustainability compliance, green healthcare initiatives); Professional Standards & Networks (industry ethics standards, professional certification programs, peer accountability, continuing education); Specialized Services & Impact Funding (ethics auditing, IRB consulting, grant funding for ethics initiatives, social impact measurement) — recorded exactly as designed; the designed services are recorded as the platform’s offerings and no operational capability is claimed. The platform practices no law, gives no legal advice, administers no grant, disburses no funds, issues no certification, and enrolls no member: practice_law, provide_legal_advice, administer_grant, disburse_funds, issue_certification, enroll_member, and external_execution are refused by name under SEIC_RECORDS_ONLY, and determinations are records for human operators, never operations. A record declared with no engagements stands NO_ENGAGEMENTS_SUBMITTED and no determination can be recorded on it. NAICS — the owner’s selection, recorded exactly: 541110, 541618, 541620, 813910, 813920, 541990, 541611, 813219. The document’s Sanders Healthcare Foundation relationship is recorded as design text only — the Foundation is NOT one of the four verified companies; the platform is not registered under it and no Foundation entity is created. BRANDING (owner direction 2026-11-25): SEIC is a headquarters-scope platform — ethics and governance is a corporate-headquarters function, like Bozly and Secretary; its associated company for the dual-seal lockup is S & G Security Inc. (Corporate Headquarters itself), so the lockup carries the headquarters seal in both positions per the watchdog/Grantwriter precedent; it sits under Sanders Corporate Headquarters in the Universal Corporate Integration structure, attached to all four companies with S & G Security Inc. as its associated company; name presentation: Sanders Ethics & Impact Collective. No designed hostname is recorded for this platform in any examined source, and no nickname or persona is designed for it. The platform holds references and workflow state only — no legal work product, no client files, no grant funds, no member records content, no credentials. No public web surface is specified in the design document, so none was built and no security internals are exposed. SEIC is distinct from Sanders Legal Helpers, Sanders Legal Services (catalog 116), Sanders Consulting (catalog 77), and Grantwriter — identities are never merged. ADOPTED PUBLIC BRAND (owner adoption 2026-11-25 09:19 MST): the public brand is Sanders Ethics & Impact; the network arm is The Collective; the formal name is unchanged. ADOPTED PRICING (owner adoption 2026-11-25 09:19 MST): the market-researched recommended prices of the 2026-11-25 SEIC pricing research are adopted as this platform’s price record, added alongside the designed business model — the designed figures stay recorded as designed and are not replaced; the full adopted price record is carried in the platform’s ADOPTED_PRICING. First service adopted prices: Focused Audit $35,000 fixed, Standard Audit $75,000 fixed, Enterprise Audit & Governance Program $150,000 fixed, ongoing Governance retainer $12,500/month. Percentage compensation for grant writing or securing an award is barred and is not an adopted price. Adopted prices are a price record only; nothing is wired as a charge. INTAKE CHANNEL (defined 2026-11-25 as it honestly exists): engagement records are carried on this platform’s route family (operator-facing, records only); the public path that exists today is the flagship Sanders Dash & Seal site’s contact and appointment path (sandersdashandseal.com, /appointments); a dedicated public SEIC intake page does not exist and was not built — it requires an owner-approved design pass under the Sanders Royal Enterprise Standard.',
         }
 
 

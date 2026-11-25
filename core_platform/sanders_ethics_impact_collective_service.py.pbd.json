@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/sanders_ethics_impact_collective_service.py",
-        "payload_hash": "e127ee0115942339d90d8790af89be1390773997f6983daef89f091215579775",
+        "payload_hash": "1c1e64ef1309d87191477d6f01034eeba9e69e41618a6154399c49b58053d08a",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
