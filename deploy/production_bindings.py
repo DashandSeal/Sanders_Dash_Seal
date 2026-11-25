@@ -213,6 +213,7 @@ from core_platform.sanders_security_service import SandersSecurityService
 from core_platform.sanders_real_estate_service import SandersRealEstateService
 from core_platform.sanders_energy_service import SandersEnergyService
 from core_platform.sanders_transportation_service import SandersTransportationService
+from core_platform.sanders_agriculture_service import SandersAgricultureService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -904,6 +905,14 @@ def create_production_bindings():
     sanders_transportation = SandersTransportationService(
         data_dir / 'sanders_transportation.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Agriculture platform (Q66, RTSA Build
+    # Program tranche 18): governed agriculture
+    # records over its own store — it grows no
+    # crops, raises no livestock, and processes
+    # no food itself.
+    sanders_agriculture = SandersAgricultureService(
+        data_dir / 'sanders_agriculture.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -971,4 +980,5 @@ def create_production_bindings():
         sanders_real_estate=sanders_real_estate,
         sanders_energy=sanders_energy,
         sanders_transportation=sanders_transportation,
+        sanders_agriculture=sanders_agriculture,
     )
