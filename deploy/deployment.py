@@ -69,6 +69,7 @@ class RuntimeBindings:
     cerberus: object = None
     chorus: object = None
     cobol_synthetic_ai: object = None
+    juggernaut: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -405,7 +406,8 @@ def create_application(bindings=None):
             labyrinth=getattr(bindings, 'labyrinth', None),
             cerberus=getattr(bindings, 'cerberus', None),
             chorus=getattr(bindings, 'chorus', None),
-            cobol_synthetic_ai=getattr(bindings, 'cobol_synthetic_ai', None)
+            cobol_synthetic_ai=getattr(bindings, 'cobol_synthetic_ai', None),
+            juggernaut=getattr(bindings, 'juggernaut', None)
         )
     else:
         verifier = _denied
@@ -740,7 +742,8 @@ def create_application(bindings=None):
                     '/api/labyrinth/healthz',
                     '/api/cerberus/healthz',
                     '/api/chorus/healthz',
-                    '/api/cobol-synthetic-ai/healthz'):
+                    '/api/cobol-synthetic-ai/healthz',
+                    '/api/juggernaut/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -773,6 +776,7 @@ def create_application(bindings=None):
                 '/api/cerberus/healthz': ('cerberus', 'cerberus', 'cerberus_unavailable'),
                 '/api/chorus/healthz': ('chorus', 'chorus', 'chorus_unavailable'),
                 '/api/cobol-synthetic-ai/healthz': ('cobol_synthetic_ai', 'cobol_synthetic_ai', 'cobol_synthetic_ai_unavailable'),
+                '/api/juggernaut/healthz': ('juggernaut', 'juggernaut', 'juggernaut_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -847,7 +851,21 @@ def create_application(bindings=None):
                 or path == '/api/architect'
                 or path.startswith('/api/architect/')
                 or path == '/api/archimedes-43'
-                or path.startswith('/api/archimedes-43/'))
+                or path.startswith('/api/archimedes-43/')
+                or path == '/api/promethean'
+                or path.startswith('/api/promethean/')
+                or path == '/api/hydra-q'
+                or path.startswith('/api/hydra-q/')
+                or path == '/api/labyrinth'
+                or path.startswith('/api/labyrinth/')
+                or path == '/api/cerberus'
+                or path.startswith('/api/cerberus/')
+                or path == '/api/chorus'
+                or path.startswith('/api/chorus/')
+                or path == '/api/cobol-synthetic-ai'
+                or path.startswith('/api/cobol-synthetic-ai/')
+                or path == '/api/juggernaut'
+                or path.startswith('/api/juggernaut/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

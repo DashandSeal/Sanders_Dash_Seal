@@ -171,6 +171,7 @@ from core_platform.labyrinth_service import LabyrinthService
 from core_platform.cerberus_service import CerberusService
 from core_platform.chorus_service import ChorusService
 from core_platform.cobol_synthetic_ai_service import CobolSyntheticAiService
+from core_platform.juggernaut_service import JuggernautService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -520,6 +521,20 @@ def create_production_bindings():
         data_dir / 'cobol_synthetic_ai.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # JUGGERNAUT (RTSA Build Program): the execution integrity
+    # and verification role contract built as its own platform —
+    # governed execution-integrity verification records under
+    # the contract's discipline (it performs no execution of
+    # any kind; an execution presented without its receipt
+    # digest stands EXECUTION_RECEIPT_MISSING, and a presented
+    # digest still leaves receipt signature verification
+    # required), on its own store. JUGGERNAUT is its own
+    # platform — not Hades, not MICHAEL ANGELO — and carries no
+    # NAICS codes (owner ruling, 2026-11-24).
+    juggernaut = JuggernautService(
+        data_dir / 'juggernaut.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -552,4 +567,5 @@ def create_production_bindings():
         cerberus=cerberus,
         chorus=chorus,
         cobol_synthetic_ai=cobol_synthetic_ai,
+        juggernaut=juggernaut,
     )
