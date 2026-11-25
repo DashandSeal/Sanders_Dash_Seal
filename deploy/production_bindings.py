@@ -216,6 +216,7 @@ from core_platform.sanders_transportation_service import SandersTransportationSe
 from core_platform.sanders_agriculture_service import SandersAgricultureService
 from core_platform.sanders_manufacturing_service import SandersManufacturingService
 from core_platform.sanders_consulting_service import SandersConsultingService
+from core_platform.sanders_hospitality_service import SandersHospitalityService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -931,6 +932,14 @@ def create_production_bindings():
     sanders_consulting = SandersConsultingService(
         data_dir / 'sanders_consulting.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Hospitality platform (Q69, RTSA Build
+    # Program tranche 19): governed hospitality
+    # records over its own store — it books no
+    # stay, hosts no guest, and operates no
+    # property itself.
+    sanders_hospitality = SandersHospitalityService(
+        data_dir / 'sanders_hospitality.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1001,4 +1010,5 @@ def create_production_bindings():
         sanders_agriculture=sanders_agriculture,
         sanders_manufacturing=sanders_manufacturing,
         sanders_consulting=sanders_consulting,
+        sanders_hospitality=sanders_hospitality,
     )

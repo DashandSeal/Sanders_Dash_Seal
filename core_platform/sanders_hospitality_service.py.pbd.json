@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/sanders_hospitality_service.py",
+        "payload_hash": "f005bb39d8294c4ce7dbf5f81d865daadc2af5e04344adbd7c01e25f4feb4557",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
