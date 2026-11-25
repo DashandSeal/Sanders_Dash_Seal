@@ -248,6 +248,7 @@ from core_platform.sanders_customer_support_service import SandersCustomerSuppor
 from core_platform.sanders_human_resources_service import SandersHumanResourcesService
 from core_platform.sanders_security_ops_service import SandersSecurityOpsService
 from core_platform.sanders_global_relations_service import SandersGlobalRelationsService
+from core_platform.sanders_healthcare_service import SandersHealthcareService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1254,6 +1255,14 @@ def create_production_bindings():
     sanders_global_relations = SandersGlobalRelationsService(
         data_dir / 'sanders_global_relations.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Healthcare platform (Q100, RTSA
+    # Build Program tranche 29): governed
+    # healthcare management records over its own
+    # store — it treats no patient, accesses no
+    # patient record, and holds no PHI at all.
+    sanders_healthcare = SandersHealthcareService(
+        data_dir / 'sanders_healthcare.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1355,4 +1364,5 @@ def create_production_bindings():
         sanders_human_resources=sanders_human_resources,
         sanders_security_ops=sanders_security_ops,
         sanders_global_relations=sanders_global_relations,
+        sanders_healthcare=sanders_healthcare,
     )
