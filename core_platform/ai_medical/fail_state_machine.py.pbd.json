@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/ai_medical/fail_state_machine.py",
+        "payload_hash": "150975d83b61fe24236dda10cc4393d0c4a4964f15ca8486d23fa5059383cac1",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/ai_medical/cross_validator.py",
+        "payload_hash": "cb48151b514b7390bfd1c96c0cf257f2014541924f76c37c0aaf3d60e09b0600",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

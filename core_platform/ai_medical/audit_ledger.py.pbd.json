@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/ai_medical/audit_ledger.py",
+        "payload_hash": "ec8115787c829bc35db2e2f6e2f6b67d58755bbe7689688b0350fefd33051b71",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
