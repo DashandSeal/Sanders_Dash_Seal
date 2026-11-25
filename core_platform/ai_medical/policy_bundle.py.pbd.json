@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/ai_medical/policy_bundle.py",
+        "payload_hash": "b33e35cb37af6b78d7670232d6b9bef3d814eb2cc51621d4f0b4c4ea067b307a",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
