@@ -89,6 +89,7 @@ class RuntimeBindings:
     lil_mama: object = None
     baby_girl: object = None
     sanders_omniconn: object = None
+    gia_mind: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -445,7 +446,8 @@ def create_application(bindings=None):
             sanders_sentinel=getattr(bindings, 'sanders_sentinel', None),
             lil_mama=getattr(bindings, 'lil_mama', None),
             baby_girl=getattr(bindings, 'baby_girl', None),
-            sanders_omniconn=getattr(bindings, 'sanders_omniconn', None)
+            sanders_omniconn=getattr(bindings, 'sanders_omniconn', None),
+            gia_mind=getattr(bindings, 'gia_mind', None)
         )
     else:
         verifier = _denied
@@ -800,7 +802,8 @@ def create_application(bindings=None):
                     '/api/sanders-sentinel/healthz',
                     '/api/lil-mama/healthz',
                     '/api/baby-girl/healthz',
-                    '/api/sanders-omniconn/healthz'):
+                    '/api/sanders-omniconn/healthz',
+                    '/api/gia-mind/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -853,6 +856,7 @@ def create_application(bindings=None):
                 '/api/lil-mama/healthz': ('lil_mama', 'lil_mama', 'lil_mama_unavailable'),
                 '/api/baby-girl/healthz': ('baby_girl', 'baby_girl', 'baby_girl_unavailable'),
                 '/api/sanders-omniconn/healthz': ('sanders_omniconn', 'sanders_omniconn', 'sanders_omniconn_unavailable'),
+                '/api/gia-mind/healthz': ('gia_mind', 'gia_mind', 'gia_mind_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -979,7 +983,9 @@ def create_application(bindings=None):
                 or path == '/api/baby-girl'
                 or path.startswith('/api/baby-girl/')
                 or path == '/api/sanders-omniconn'
-                or path.startswith('/api/sanders-omniconn/'))
+                or path.startswith('/api/sanders-omniconn/')
+                or path == '/api/gia-mind'
+                or path.startswith('/api/gia-mind/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

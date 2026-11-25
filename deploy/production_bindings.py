@@ -191,6 +191,7 @@ from core_platform.sanders_sentinel_service import SandersSentinelService
 from core_platform.lil_mama_service import LilMamaService
 from core_platform.baby_girl_service import BabyGirlService
 from core_platform.sanders_omniconn_service import SandersOmniconnService
+from core_platform.gia_mind_service import GiaMindService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -767,6 +768,14 @@ def create_production_bindings():
     sanders_omniconn = SandersOmniconnService(
         data_dir / 'sanders_omniconn.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Gia Mind platform (Q52, RTSA Build Program tranche
+    # 13): governed ethics and system-balance review
+    # records over her own store — she reviews and
+    # records only; she overrides no decision and
+    # rebalances no live system. No persona (D-N2 unruled).
+    gia_mind = GiaMindService(
+        data_dir / 'gia_mind.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -820,4 +829,5 @@ def create_production_bindings():
         lil_mama=lil_mama,
         baby_girl=baby_girl,
         sanders_omniconn=sanders_omniconn,
+        gia_mind=gia_mind,
     )
