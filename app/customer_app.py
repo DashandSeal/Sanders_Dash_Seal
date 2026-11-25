@@ -48,6 +48,7 @@ from core_platform.glass_box_audit_service import GlassBoxAuditPlatformDenied, G
 from core_platform.architect_service import ArchitectDenied, ArchitectForbidden
 from core_platform.archimedes_service import ArchimedesDenied, ArchimedesForbidden
 from core_platform.promethean_service import PrometheanDenied, PrometheanForbidden
+from core_platform.hydra_q_service import HydraQDenied, HydraQForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -163,9 +164,11 @@ A43_JOB_OUTCOME_ROUTE = re.compile(r'^/api/archimedes-43/jobs/([A-Za-z0-9_-]{1,1
 PROM_EVAL_ROUTE = re.compile(r'^/api/promethean/evaluations/([A-Za-z0-9_-]{1,128})$')
 PROM_EVAL_ACTION_ROUTE = re.compile(r'^/api/promethean/evaluations/([A-Za-z0-9_-]{1,128})/action$')
 PROM_EVAL_FINDINGS_ROUTE = re.compile(r'^/api/promethean/evaluations/([A-Za-z0-9_-]{1,128})/findings$')
+HYDRA_ASSET_ROUTE = re.compile(r'^/api/hydra-q/assets/([A-Za-z0-9_-]{1,128})$')
+HYDRA_ASSET_ASSESS_ROUTE = re.compile(r'^/api/hydra-q/assets/([A-Za-z0-9_-]{1,128})/assess$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -275,6 +278,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         prom_eval_match = PROM_EVAL_ROUTE.fullmatch(path)
         prom_eval_action_match = PROM_EVAL_ACTION_ROUTE.fullmatch(path)
         prom_eval_findings_match = PROM_EVAL_FINDINGS_ROUTE.fullmatch(path)
+        hydra_asset_match = HYDRA_ASSET_ROUTE.fullmatch(path)
+        hydra_asset_assess_match = HYDRA_ASSET_ASSESS_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -437,6 +442,13 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                          or prom_eval_match is not None
                          or prom_eval_action_match is not None
                          or prom_eval_findings_match is not None)
+        is_hydraq_route = (path in ('/api/hydra-q/status',
+                                    '/api/hydra-q/assets',
+                                    '/api/hydra-q/contract',
+                                    '/api/hydra-q/operation-check',
+                                    '/api/hydra-q/check-in')
+                           or hydra_asset_match is not None
+                           or hydra_asset_assess_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -452,7 +464,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_gba_route
                              or is_arc_route
                              or is_a43_route
-                             or is_prom_route)
+                             or is_prom_route
+                             or is_hydraq_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -512,7 +525,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/archimedes-43/contract',
                                             '/api/promethean/status',
                                             '/api/promethean/evaluations',
-                                            '/api/promethean/contract')
+                                            '/api/promethean/contract',
+                                            '/api/hydra-q/status',
+                                            '/api/hydra-q/assets',
+                                            '/api/hydra-q/contract')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -536,7 +552,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or gba_incident_match is not None
                                    or arc_design_match is not None
                                    or a43_job_match is not None
-                                   or prom_eval_match is not None) else ('POST',)
+                                   or prom_eval_match is not None
+                                   or hydra_asset_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -556,6 +573,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/archimedes-43/jobs':
             allowed = ('GET', 'POST')
         if path == '/api/promethean/evaluations':
+            allowed = ('GET', 'POST')
+        if path == '/api/hydra-q/assets':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -1479,6 +1498,37 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = promethean.evaluation_view(identity, prom_role, prom_eval_match.group(1))
                         return respond(start, '200 OK', {'evaluation': record})
                     return check_in(promethean)
+                if is_hydraq_route:
+                    if hydra_q is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'hydra_q_unavailable'})
+                    hydra_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/hydra-q/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': hydra_q.status()})
+                    if path == '/api/hydra-q/contract':
+                        return respond(start, '200 OK', {'contract': hydra_q.contract_view()})
+                    if path == '/api/hydra-q/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = hydra_q.operation_check(identity, hydra_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/hydra-q/assets':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'assets': hydra_q.assets_list(identity, hydra_role)})
+                        if set(data) != {'asset_ref', 'algorithm'}:
+                            raise ValueError('unexpected fields')
+                        record = hydra_q.register_asset(identity, data['asset_ref'], data['algorithm'])
+                        return respond(start, '201 Created', {'asset': record})
+                    if hydra_asset_assess_match:
+                        if set(data) != {'determination', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = hydra_q.record_assessment(identity, hydra_asset_assess_match.group(1), data['determination'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'asset': record})
+                    if hydra_asset_match:
+                        record = hydra_q.asset_view(identity, hydra_role, hydra_asset_match.group(1))
+                        return respond(start, '200 OK', {'asset': record})
+                    return check_in(hydra_q)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -1578,6 +1628,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'promethean_forbidden'})
         except PrometheanDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'promethean_denied', 'detail': str(exc)})
+        except HydraQForbidden:
+            return respond(start, '403 Forbidden', {'error': 'hydra_q_forbidden'})
+        except HydraQDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'hydra_q_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

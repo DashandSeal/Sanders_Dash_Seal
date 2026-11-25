@@ -166,6 +166,7 @@ from core_platform.glass_box_audit_service import GlassBoxAuditService
 from core_platform.architect_service import ArchitectService
 from core_platform.archimedes_service import ArchimedesService
 from core_platform.promethean_service import PrometheanService
+from core_platform.hydra_q_service import HydraQService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -462,6 +463,17 @@ def create_production_bindings():
         data_dir / 'promethean.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # HYDRA-Q (RTSA Build Program): the quantum-resistant
+    # cryptographic security role contract built as its own
+    # platform — the post-quantum readiness register (assets by
+    # reference, family classification, evidence-bound migration
+    # determinations) under the contract's discipline (it holds
+    # no key material and performs no cryptography), on its own
+    # store.
+    hydra_q = HydraQService(
+        data_dir / 'hydra_q.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -489,4 +501,5 @@ def create_production_bindings():
         architect=architect,
         archimedes=archimedes,
         promethean=promethean,
+        hydra_q=hydra_q,
     )
