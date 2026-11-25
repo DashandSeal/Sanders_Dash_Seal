@@ -1,0 +1,68 @@
+name: Diagnose Stripe live state on Oracle instance (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read-only Stripe live-state diagnosis on the instance
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            echo "=== PHASE1 DIAG START ==="
+            cd /opt/Sanders_Dash_Seal || { echo "CHECKOUT_MISSING"; exit 1; }
+            OUT=$(sudo /opt/Sanders_Dash_Seal/venv/bin/python deploy/refresh_provider_secrets.py 2>/tmp/sds_refresh_err.txt)
+            RC=$?
+            case "$OUT" in
+              PROVIDER_SECRET_*) echo "REFRESH_STATUS=$OUT" ;;
+              *) if grep -q "PROVIDER_SECRET_REFRESH_FAILED" /tmp/sds_refresh_err.txt; then echo "REFRESH_STATUS=PROVIDER_SECRET_REFRESH_FAILED"; else echo "REFRESH_STATUS=UNEXPECTED rc=$RC"; fi ;;
+            esac
+            sudo /opt/Sanders_Dash_Seal/venv/bin/python - <<'PYEOF'
+            import json, re
+            from pathlib import Path
+
+            def key_class(v):
+                if not isinstance(v, str) or not v.strip():
+                    return "absent"
+                v = v.strip().strip('"').strip("'")
+                for p in ("sk_live_", "sk_test_", "rk_live_", "rk_test_"):
+                    if v.startswith(p):
+                        return p
+                return "other"
+
+            rp = Path("/etc/sanders-dash-seal/runtime/runtime.json")
+            if not rp.exists():
+                print("RUNTIME_JSON=absent")
+            else:
+                try:
+                    data = json.loads(rp.read_text())
+                    print("RUNTIME_FIELDS=" + ",".join(sorted(data.keys())))
+                    print("RUNTIME_STRIPE_API_KEY=" + key_class(data.get("stripe_api_key")))
+                    lm = data.get("stripe_livemode", "absent")
+                    if isinstance(lm, bool):
+                        lm = "true" if lm else "false"
+                    print("RUNTIME_STRIPE_LIVEMODE=" + str(lm))
+                    ws = data.get("stripe_webhook_secret")
+                    print("RUNTIME_WEBHOOK_SECRET_PRESENT=" + ("yes" if isinstance(ws, str) and ws.strip() else "no"))
+                except Exception as e:
+                    print("RUNTIME_JSON=unreadable:" + type(e).__name__)
+
+            ep = Path("/etc/sanders-dash-seal/environment")
+            if not ep.exists():
+                print("ENV_FILE=absent")
+            else:
+                vals = {}
+                for line in ep.read_text().splitlines():
+                    m = re.match(r"\s*(STRIPE_LIVEMODE|STRIPE_LIVE_VERIFIED|STRIPE_SECRET_KEY)\s*=\s*(.*?)\s*$", line)
+                    if m:
+                        vals[m.group(1)] = m.group(2)
+                print("ENV_STRIPE_LIVEMODE=" + vals.get("STRIPE_LIVEMODE", "absent"))
+                print("ENV_STRIPE_LIVE_VERIFIED=" + vals.get("STRIPE_LIVE_VERIFIED", "absent"))
+                print("ENV_STRIPE_SECRET_KEY=" + key_class(vals.get("STRIPE_SECRET_KEY")))
+            print("DIAG_DONE")
+            PYEOF
+            echo "=== PHASE1 DIAG END ==="
