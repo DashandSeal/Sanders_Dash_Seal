@@ -62,6 +62,7 @@ from core_platform.application_agent_service import ApplicationAgentDenied, Appl
 from core_platform.database_agent_service import DatabaseAgentDenied, DatabaseAgentForbidden
 from core_platform.deployment_agent_service import DeploymentAgentDenied, DeploymentAgentForbidden
 from core_platform.infrastructure_agent_service import InfrastructureAgentDenied, InfrastructureAgentForbidden
+from core_platform.integration_agent_service import IntegrationAgentDenied, IntegrationAgentForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -217,6 +218,9 @@ DEPLOYMENT_RECORD_FAILOVER_STEP_ROUTE = re.compile(r'^/api/deployment-agent/reco
 INFRASTRUCTURE_ASSESSMENT_ROUTE = re.compile(r'^/api/infrastructure-agent/assessments/([A-Za-z0-9_-]{1,128})$')
 INFRASTRUCTURE_ASSESSMENT_ACTION_ROUTE = re.compile(r'^/api/infrastructure-agent/assessments/([A-Za-z0-9_-]{1,128})/action$')
 INFRASTRUCTURE_ASSESSMENT_OUTCOME_ROUTE = re.compile(r'^/api/infrastructure-agent/assessments/([A-Za-z0-9_-]{1,128})/outcome$')
+INTEGRATION_RECORD_ROUTE = re.compile(r'^/api/integration-agent/records/([A-Za-z0-9_-]{1,128})$')
+INTEGRATION_RECORD_ACTION_ROUTE = re.compile(r'^/api/integration-agent/records/([A-Za-z0-9_-]{1,128})/action$')
+INTEGRATION_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/integration-agent/records/([A-Za-z0-9_-]{1,128})/outcome$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
 
@@ -224,7 +228,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -376,6 +380,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         infra_assessment_match = INFRASTRUCTURE_ASSESSMENT_ROUTE.fullmatch(path)
         infra_assessment_action_match = INFRASTRUCTURE_ASSESSMENT_ACTION_ROUTE.fullmatch(path)
         infra_assessment_outcome_match = INFRASTRUCTURE_ASSESSMENT_OUTCOME_ROUTE.fullmatch(path)
+        integration_record_match = INTEGRATION_RECORD_ROUTE.fullmatch(path)
+        integration_record_action_match = INTEGRATION_RECORD_ACTION_ROUTE.fullmatch(path)
+        integration_record_outcome_match = INTEGRATION_RECORD_OUTCOME_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -653,6 +660,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or infra_assessment_match is not None
                                    or infra_assessment_action_match is not None
                                    or infra_assessment_outcome_match is not None)
+        is_integration_route = (path in ('/api/integration-agent/status',
+                                         '/api/integration-agent/records',
+                                         '/api/integration-agent/design',
+                                         '/api/integration-agent/operation-check',
+                                         '/api/integration-agent/check-in')
+                                or integration_record_match is not None
+                                or integration_record_action_match is not None
+                                or integration_record_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -682,7 +697,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_application_route
                              or is_database_route
                              or is_deployment_route
-                             or is_infrastructure_route)
+                             or is_infrastructure_route
+                             or is_integration_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -786,7 +802,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/deployment-agent/design',
                                             '/api/infrastructure-agent/status',
                                             '/api/infrastructure-agent/assessments',
-                                            '/api/infrastructure-agent/design')
+                                            '/api/infrastructure-agent/design',
+                                            '/api/integration-agent/status',
+                                            '/api/integration-agent/records',
+                                            '/api/integration-agent/design')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -825,7 +844,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or app_assessment_match is not None
                                    or db_assessment_match is not None
                                    or deployment_record_match is not None
-                                   or infra_assessment_match is not None) else ('POST',)
+                                   or infra_assessment_match is not None
+                                   or integration_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -875,6 +895,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/deployment-agent/records':
             allowed = ('GET', 'POST')
         if path == '/api/infrastructure-agent/assessments':
+            allowed = ('GET', 'POST')
+        if path == '/api/integration-agent/records':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -2314,6 +2336,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = infrastructure_agent.assessment_view(identity, infra_role, infra_assessment_match.group(1))
                         return respond(start, '200 OK', {'assessment': record})
                     return check_in(infrastructure_agent)
+                if is_integration_route:
+                    if integration_agent is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'integration_agent_unavailable'})
+                    integration_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/integration-agent/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': integration_agent.status()})
+                    if path == '/api/integration-agent/design':
+                        return respond(start, '200 OK', {'design': integration_agent.design_view()})
+                    if path == '/api/integration-agent/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = integration_agent.operation_check(identity, integration_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/integration-agent/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': integration_agent.records_list(identity, integration_role)})
+                        if not {'integration_ref', 'operation_refs', 'scope_ref'} <= set(data) <= {'integration_ref', 'operation_refs', 'scope_ref', 'vault_lease_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = integration_agent.create_record(identity, data['integration_ref'], data['operation_refs'], data['scope_ref'], vault_lease_ref=data.get('vault_lease_ref'))
+                        return respond(start, '201 Created', {'record': record})
+                    if integration_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = integration_agent.record_action(identity, integration_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if integration_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = integration_agent.record_outcome(identity, integration_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if integration_record_match:
+                        record = integration_agent.record_view(identity, integration_role, integration_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(integration_agent)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -2469,6 +2527,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'infrastructure_agent_forbidden'})
         except InfrastructureAgentDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'infrastructure_agent_denied', 'detail': str(exc)})
+        except IntegrationAgentForbidden:
+            return respond(start, '403 Forbidden', {'error': 'integration_agent_forbidden'})
+        except IntegrationAgentDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'integration_agent_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

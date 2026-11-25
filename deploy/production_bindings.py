@@ -180,6 +180,7 @@ from core_platform.application_agent_service import ApplicationAgentService
 from core_platform.database_agent_service import DatabaseAgentService
 from core_platform.deployment_agent_service import DeploymentAgentService
 from core_platform.infrastructure_agent_service import InfrastructureAgentService
+from core_platform.integration_agent_service import IntegrationAgentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -653,6 +654,22 @@ def create_production_bindings():
         data_dir / 'infrastructure_agent.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Integration Agent (RTSA Build Program): the sixth agent
+    # of the MASTER §7 IT AI agent matrix built as its own
+    # platform — governed integration records under the agent
+    # design's INTERFACE_ONLY discipline (integrations and
+    # bounded operations by reference only; a record with no
+    # operations stands NO_OPERATIONS_SUBMITTED and a record
+    # with no Vault lease reference stands NO_LEASE_BOUND,
+    # and the bounded-execution determination is refused on
+    # both; the lease binding is to the Q3 Vault by reference
+    # only — this platform never issues, verifies, or
+    # consumes a lease; it executes nothing externally and
+    # calls no external system), on its own store.
+    integration_agent = IntegrationAgentService(
+        data_dir / 'integration_agent.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -694,4 +711,5 @@ def create_production_bindings():
         database_agent=database_agent,
         deployment_agent=deployment_agent,
         infrastructure_agent=infrastructure_agent,
+        integration_agent=integration_agent,
     )

@@ -2539,3 +2539,160 @@ infrastructure_agent_unavailable). Deployed-composition
 verification through create_application runs on the
 final composed tree for this tranche (see the Q41
 entry).
+
+
+## RTSA Build Program Q41 — Integration Agent (2026-11-24)
+
+**Scope**: build the Integration Agent design whole as
+its own platform service (canonical catalog row #47, Band
+2C), per the established tranche pattern, under the
+standards gate: Fortune 500 governs end to end, the
+MASTER architecture within it, and the Sanders Royal
+Enterprise Standard for presentation within it. Fortune
+500 judgment: the platform meets the standard within its
+honest scope limits — it is an internal operator/auditor
+record surface over governed integration records; no
+public or customer surface exists for it by design, so
+the Royal Enterprise presentation layer does not apply,
+and no security internals are exposed anywhere. Scope
+limits stated plainly: the agent design is INTERFACE_ONLY
+with external execution disabled, and the build claims no
+execution — the catalog's designed role "bounded external
+execution under token leases" is carried as governed
+records; the platform executes nothing externally, calls
+no external system, and holds integrations, operations,
+and lease references by reference only — no endpoint, no
+credential, no payload, and no lease token ever. Its
+designed binding to the Vault (Q3) is by reference: the
+lease identifier is recorded exactly as presented, and
+this platform never issues, verifies, consumes, revokes,
+or burns a lease — the Vault remains the lease lifecycle
+platform, kept separate per MASTER §20. A recorded
+BOUNDED_EXECUTION_RECORDED outcome attests a reported
+bounded execution evidenced by reference; it is not a
+live external execution performed by this platform. The
+Integration Agent is distinct from the IT AI Manager
+(Q5) that commands its design, from the Vault (Q3) whose
+leases it references, and from the read-only
+IntegrationAgent observer entry in
+core_platform/operational_runtime.py — never merged, and
+this platform reads, wraps, or replaces neither the
+observer, the Vault, nor any other component.
+core_platform/agent_registry.py and
+core_platform/rtsa_registry.py remain byte-untouched.
+Naming verification: the queue's Band 2C table, the
+canonical catalog (row #47), the MASTER §7 matrix, and
+core_platform/agent_registry.py all name this platform
+"Integration Agent" — the name was verified against those
+sources before building, per the name law recorded after
+tranche 8.
+
+**Built**: core_platform/integration_agent_service.py
+(IntegrationAgentService over
+core_platform/rtsa_foundation.py; independent identity
+integration_agent; design view of the agent descriptor in
+core_platform/agent_registry.py — commanding authority
+IT_AI_Manager_v15.0, implementation_status INTERFACE_ONLY,
+external_execution_enabled False, designed role "Bounded
+external execution under token leases", lease binding
+named as core_platform.vault by reference only;
+fail-closed operation check refusing the design's
+execution boundary by name with the design's own signal
+AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED — execute_external,
+call_external_system, issue_lease, consume_lease,
+external_execution — and unknown operations; integration
+records carried as durable, receipted records over an
+integration reference, a declared bounded-operation
+reference set, an optional Vault lease reference, and a
+scope reference, with lifecycle REQUESTED → APPROVED /
+REJECTED (the recorded human decision) →
+OUTCOME_RECORDED; the evidence and lease disciplines
+enforced in the record model — a record declared with no
+operations stands NO_OPERATIONS_SUBMITTED in every view
+and in the status tallies, a record carrying no Vault
+lease reference stands NO_LEASE_BOUND, and the bounded
+determination (BOUNDED_EXECUTION_RECORDED) is refused on
+both, while EXECUTION_NOT_EXECUTED and INCONCLUSIVE,
+which assert no execution, record against evidence;
+outcomes recorded only for APPROVED records and only
+against a presented evidence reference, with a closed
+outcome set; an empty lease reference, when presented,
+is refused; every state change writes its Glass-Box
+receipt inside the same transaction; operator-only
+check-in bound to the identity integrity digest). Route
+family /api/integration-agent/ wired through
+app/customer_app.py (create_customer_app parameter
+integration_agent; the create route accepts the optional
+vault_lease_ref field), deploy/deployment.py
+(RuntimeBindings.integration_agent, health route
+/api/integration-agent/healthz, forwarding through
+create_application), and deploy/production_bindings.py
+(construction on its own store integration_agent.db);
+watchdog check_http entry in deploy/sds_watchdog.sh;
+registry entry in core_platform/ai_platform_links.json
+(registry now 71).
+
+**Pricing/teaching audit** (examined set: canonical
+catalog row #47; Set B database_schema.sql +
+tier_pricing_global.py; Set C catalog; the MASTER §7
+matrix and §8/§9 lease design; the agent descriptor in
+core_platform/agent_registry.py): the design carries NO
+price for the Integration Agent — none built, none
+invented, no blocker figure attaches to this name. The
+design carries NO teaching function for the Integration
+Agent — none built, none invented.
+
+**Verification**: scratch drive (never committed) —
+checks: identity and design view (descriptor fields
+exact, the Vault lease binding named); constructor
+refuses a missing audit adapter; operation check (record
+operation RECORD_ONLY; all five execution operations —
+including issue_lease and consume_lease — refused by
+name with the design signal; unknown operation refused);
+record lifecycle (operator-only creation; integration/
+scope references required; operation set must be a list
+of non-empty references, capped; an empty lease
+reference refused; outcome refused before approval;
+outcome without evidence refused; outcome set closed;
+the lease-bound record's BOUNDED_EXECUTION_RECORDED
+determination records against evidence and a second
+outcome is refused; a no-lease record stands
+NO_LEASE_BOUND and the bounded determination is refused
+on it while EXECUTION_NOT_EXECUTED records against
+evidence; a no-operation record stands
+NO_OPERATIONS_SUBMITTED and the bounded determination is
+refused on it while INCONCLUSIVE records against
+evidence; reject terminal; unknown record denied;
+geofence refuses an undeclared region); status tallies
+including records_no_operations_submitted,
+operations_declared_total, records_lease_bound, and
+records_no_lease_bound; operator-only check-in; registry
+at 71 entries; all 9 approval gates UNAPPROVED; WSGI
+through create_customer_app (signed-out 401, status 200,
+execution operation 400 with
+AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED in the detail,
+create refused for non-operator 403, create 201
+lease-bound, approve 200, bounded outcome 200, create
+201 standing NO_LEASE_BOUND, bounded outcome on the
+no-lease record refused 400 with NO_LEASE_BOUND in the
+detail, records list 200, unexpected fields 400, wrong
+origin 403, check-in 201, unwired service 503
+integration_agent_unavailable). Deployed-composition
+verification through create_application on the final
+composed tree for this tranche: 128/128 probes across 32
+platform families (health route 200 and route-family
+forwarding 401 signed-out, never 404/503/421, on both
+loopback and canonical hosts), covering every built
+platform including this tranche's three agents.
+Full composed regression for tranche 9 across all 27
+scratch drives: 1436/1453 — the 17 failures are exactly
+the stale registry-count assertions in the glass_box_audit
+(54), architect (55), archimedes (56), promethean (57),
+hydra_q (58), labyrinth (59), cerberus (60), chorus (61),
+cobol (62), juggernaut (63), fraud_rtsa (64),
+operations_rtsa (65), uptime_agent (66),
+application_agent (67), database_agent (68),
+deployment_agent (69), and infrastructure_agent (70)
+drives, each correct at its own landing and superseded
+by the composed registry at 71 entries; no other
+failures.
