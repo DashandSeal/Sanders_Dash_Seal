@@ -168,6 +168,7 @@ from core_platform.archimedes_service import ArchimedesService
 from core_platform.promethean_service import PrometheanService
 from core_platform.hydra_q_service import HydraQService
 from core_platform.labyrinth_service import LabyrinthService
+from core_platform.cerberus_service import CerberusService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -486,6 +487,17 @@ def create_production_bindings():
         data_dir / 'labyrinth.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # CERBERUS (RTSA Build Program): the evidence, provenance,
+    # and audit role contract built as its own platform —
+    # governed evidence-chain assessment and determination
+    # records over chains presented by reference, under the
+    # contract's discipline (it opens no store, recomputes no
+    # chain, and anchors nothing), on its own store. Separate
+    # from Glass-Box Audit per MASTER section 20 — never merged.
+    cerberus = CerberusService(
+        data_dir / 'cerberus.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -515,4 +527,5 @@ def create_production_bindings():
         promethean=promethean,
         hydra_q=hydra_q,
         labyrinth=labyrinth,
+        cerberus=cerberus,
     )

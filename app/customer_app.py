@@ -50,6 +50,7 @@ from core_platform.archimedes_service import ArchimedesDenied, ArchimedesForbidd
 from core_platform.promethean_service import PrometheanDenied, PrometheanForbidden
 from core_platform.hydra_q_service import HydraQDenied, HydraQForbidden
 from core_platform.labyrinth_service import LabyrinthDenied, LabyrinthForbidden
+from core_platform.cerberus_service import CerberusDenied, CerberusForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -170,9 +171,12 @@ HYDRA_ASSET_ASSESS_ROUTE = re.compile(r'^/api/hydra-q/assets/([A-Za-z0-9_-]{1,12
 LAB_ANALYSIS_ROUTE = re.compile(r'^/api/labyrinth/analyses/([A-Za-z0-9_-]{1,128})$')
 LAB_ANALYSIS_ACTION_ROUTE = re.compile(r'^/api/labyrinth/analyses/([A-Za-z0-9_-]{1,128})/action$')
 LAB_ANALYSIS_RESULT_ROUTE = re.compile(r'^/api/labyrinth/analyses/([A-Za-z0-9_-]{1,128})/result$')
+CERB_ASSESSMENT_ROUTE = re.compile(r'^/api/cerberus/assessments/([A-Za-z0-9_-]{1,128})$')
+CERB_ASSESSMENT_ACTION_ROUTE = re.compile(r'^/api/cerberus/assessments/([A-Za-z0-9_-]{1,128})/action$')
+CERB_ASSESSMENT_DETERMINATION_ROUTE = re.compile(r'^/api/cerberus/assessments/([A-Za-z0-9_-]{1,128})/determination$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -287,6 +291,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         lab_analysis_match = LAB_ANALYSIS_ROUTE.fullmatch(path)
         lab_analysis_action_match = LAB_ANALYSIS_ACTION_ROUTE.fullmatch(path)
         lab_analysis_result_match = LAB_ANALYSIS_RESULT_ROUTE.fullmatch(path)
+        cerb_assessment_match = CERB_ASSESSMENT_ROUTE.fullmatch(path)
+        cerb_assessment_action_match = CERB_ASSESSMENT_ACTION_ROUTE.fullmatch(path)
+        cerb_assessment_determination_match = CERB_ASSESSMENT_DETERMINATION_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -464,6 +471,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         or lab_analysis_match is not None
                         or lab_analysis_action_match is not None
                         or lab_analysis_result_match is not None)
+        is_cerb_route = (path in ('/api/cerberus/status',
+                                  '/api/cerberus/assessments',
+                                  '/api/cerberus/contract',
+                                  '/api/cerberus/operation-check',
+                                  '/api/cerberus/check-in')
+                         or cerb_assessment_match is not None
+                         or cerb_assessment_action_match is not None
+                         or cerb_assessment_determination_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -481,7 +496,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_a43_route
                              or is_prom_route
                              or is_hydraq_route
-                             or is_lab_route)
+                             or is_lab_route
+                             or is_cerb_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -547,7 +563,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/hydra-q/contract',
                                             '/api/labyrinth/status',
                                             '/api/labyrinth/analyses',
-                                            '/api/labyrinth/contract')
+                                            '/api/labyrinth/contract',
+                                            '/api/cerberus/status',
+                                            '/api/cerberus/assessments',
+                                            '/api/cerberus/contract')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -573,7 +592,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or a43_job_match is not None
                                    or prom_eval_match is not None
                                    or hydra_asset_match is not None
-                                   or lab_analysis_match is not None) else ('POST',)
+                                   or lab_analysis_match is not None
+                                   or cerb_assessment_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -597,6 +617,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/hydra-q/assets':
             allowed = ('GET', 'POST')
         if path == '/api/labyrinth/analyses':
+            allowed = ('GET', 'POST')
+        if path == '/api/cerberus/assessments':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -1587,6 +1609,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = labyrinth.analysis_view(identity, lab_role, lab_analysis_match.group(1))
                         return respond(start, '200 OK', {'analysis': record})
                     return check_in(labyrinth)
+                if is_cerb_route:
+                    if cerberus is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'cerberus_unavailable'})
+                    cerb_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/cerberus/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': cerberus.status()})
+                    if path == '/api/cerberus/contract':
+                        return respond(start, '200 OK', {'contract': cerberus.contract_view()})
+                    if path == '/api/cerberus/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = cerberus.operation_check(identity, cerb_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/cerberus/assessments':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'assessments': cerberus.assessments_list(identity, cerb_role)})
+                        if set(data) != {'subject_ref', 'chain_ref', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = cerberus.create_assessment(identity, data['subject_ref'], data['chain_ref'], data['scope_ref'])
+                        return respond(start, '201 Created', {'assessment': record})
+                    if cerb_assessment_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = cerberus.assessment_action(identity, cerb_assessment_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'assessment': record})
+                    if cerb_assessment_determination_match:
+                        if not set(data) <= {'verdict', 'verification_evidence_ref', 'anchor_ref'} or not {'verdict', 'verification_evidence_ref'} <= set(data):
+                            raise ValueError('unexpected fields')
+                        record = cerberus.record_determination(identity, cerb_assessment_determination_match.group(1), data['verdict'], data['verification_evidence_ref'], data.get('anchor_ref'))
+                        return respond(start, '200 OK', {'assessment': record})
+                    if cerb_assessment_match:
+                        record = cerberus.assessment_view(identity, cerb_role, cerb_assessment_match.group(1))
+                        return respond(start, '200 OK', {'assessment': record})
+                    return check_in(cerberus)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -1694,6 +1752,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'labyrinth_forbidden'})
         except LabyrinthDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'labyrinth_denied', 'detail': str(exc)})
+        except CerberusForbidden:
+            return respond(start, '403 Forbidden', {'error': 'cerberus_forbidden'})
+        except CerberusDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'cerberus_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

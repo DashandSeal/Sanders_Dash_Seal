@@ -66,6 +66,7 @@ class RuntimeBindings:
     promethean: object = None
     hydra_q: object = None
     labyrinth: object = None
+    cerberus: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -396,7 +397,11 @@ def create_application(bindings=None):
             minotaur=getattr(bindings, 'minotaur', None),
             glass_box_audit=getattr(bindings, 'glass_box_audit', None),
             architect=getattr(bindings, 'architect', None),
-            archimedes=getattr(bindings, 'archimedes', None)
+            archimedes=getattr(bindings, 'archimedes', None),
+            promethean=getattr(bindings, 'promethean', None),
+            hydra_q=getattr(bindings, 'hydra_q', None),
+            labyrinth=getattr(bindings, 'labyrinth', None),
+            cerberus=getattr(bindings, 'cerberus', None)
         )
     else:
         verifier = _denied
@@ -728,7 +733,8 @@ def create_application(bindings=None):
                     '/api/archimedes-43/healthz',
                     '/api/promethean/healthz',
                     '/api/hydra-q/healthz',
-                    '/api/labyrinth/healthz'):
+                    '/api/labyrinth/healthz',
+                    '/api/cerberus/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -758,6 +764,7 @@ def create_application(bindings=None):
                 '/api/promethean/healthz': ('promethean', 'promethean', 'promethean_unavailable'),
                 '/api/hydra-q/healthz': ('hydra_q', 'hydra_q', 'hydra_q_unavailable'),
                 '/api/labyrinth/healthz': ('labyrinth', 'labyrinth', 'labyrinth_unavailable'),
+                '/api/cerberus/healthz': ('cerberus', 'cerberus', 'cerberus_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:

@@ -65,6 +65,7 @@
 #   promethean                             system  http://127.0.0.1:8000/api/promethean/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   hydra-q                                system  http://127.0.0.1:8000/api/hydra-q/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   labyrinth                              system  http://127.0.0.1:8000/api/labyrinth/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   cerberus                               system  http://127.0.0.1:8000/api/cerberus/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   money-factory-legal.service            system  http://127.0.0.1:8668/health (Money Factory /health)
 #   sanders-corporations-secretary.service user    http://127.0.0.1:8791/api/health (app/main.py @app.get("/api/health"))
 #   sanders-twostep.service                user    http://127.0.0.1:9400/healthz (sanders_twostep_v2.py)
@@ -520,6 +521,7 @@ main() {
   check_http "promethean" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/promethean/healthz"
   check_http "hydra-q" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/hydra-q/healthz"
   check_http "labyrinth" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/labyrinth/healthz"
+  check_http "cerberus" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/cerberus/healthz"
   check_http "money-factory-legal" "money-factory-legal.service" "system" "http://127.0.0.1:8668/health"
   check_http "secretary" "sanders-corporations-secretary.service" "user" "http://127.0.0.1:8791/api/health"
   check_http "twostep" "sanders-twostep.service" "user" "http://127.0.0.1:9400/healthz"
