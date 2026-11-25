@@ -63,6 +63,7 @@ class RuntimeBindings:
     glass_box_audit: object = None
     architect: object = None
     archimedes: object = None
+    promethean: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -722,7 +723,8 @@ def create_application(bindings=None):
                     '/api/minotaur/healthz',
                     '/api/glass-box-audit/healthz',
                     '/api/architect/healthz',
-                    '/api/archimedes-43/healthz'):
+                    '/api/archimedes-43/healthz',
+                    '/api/promethean/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -749,6 +751,7 @@ def create_application(bindings=None):
                 '/api/glass-box-audit/healthz': ('glass_box_audit', 'glass_box_audit', 'glass_box_audit_unavailable'),
                 '/api/architect/healthz': ('architect', 'architect', 'architect_unavailable'),
                 '/api/archimedes-43/healthz': ('archimedes', 'archimedes_43', 'archimedes_unavailable'),
+                '/api/promethean/healthz': ('promethean', 'promethean', 'promethean_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:

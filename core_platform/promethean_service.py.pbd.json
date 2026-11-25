@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/promethean_service.py",
+        "payload_hash": "9047b1e3987caf496b3eca18a1bdce4f33daa74dd54f7fa780cbb34345beb527",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

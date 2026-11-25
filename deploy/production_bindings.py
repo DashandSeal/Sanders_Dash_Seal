@@ -165,6 +165,7 @@ from core_platform.minotaur_service import MinotaurService
 from core_platform.glass_box_audit_service import GlassBoxAuditService
 from core_platform.architect_service import ArchitectService
 from core_platform.archimedes_service import ArchimedesService
+from core_platform.promethean_service import PrometheanService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -451,6 +452,16 @@ def create_production_bindings():
         data_dir / 'archimedes_43.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # PROMETHEAN (RTSA Build Program): the adversarial-reasoning
+    # and red-team role contract built as its own platform —
+    # governed evaluation records and evidence-bound findings
+    # under the contract's discipline (it performs no attack,
+    # probe, or execution; production deployment is prohibited
+    # by its own contract), on its own store.
+    promethean = PrometheanService(
+        data_dir / 'promethean.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -477,4 +488,5 @@ def create_production_bindings():
         glass_box_audit=glass_box_audit,
         architect=architect,
         archimedes=archimedes,
+        promethean=promethean,
     )
