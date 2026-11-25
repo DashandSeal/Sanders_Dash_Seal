@@ -68,6 +68,7 @@ class RuntimeBindings:
     labyrinth: object = None
     cerberus: object = None
     chorus: object = None
+    cobol_synthetic_ai: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -403,7 +404,8 @@ def create_application(bindings=None):
             hydra_q=getattr(bindings, 'hydra_q', None),
             labyrinth=getattr(bindings, 'labyrinth', None),
             cerberus=getattr(bindings, 'cerberus', None),
-            chorus=getattr(bindings, 'chorus', None)
+            chorus=getattr(bindings, 'chorus', None),
+            cobol_synthetic_ai=getattr(bindings, 'cobol_synthetic_ai', None)
         )
     else:
         verifier = _denied
@@ -737,7 +739,8 @@ def create_application(bindings=None):
                     '/api/hydra-q/healthz',
                     '/api/labyrinth/healthz',
                     '/api/cerberus/healthz',
-                    '/api/chorus/healthz'):
+                    '/api/chorus/healthz',
+                    '/api/cobol-synthetic-ai/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -769,6 +772,7 @@ def create_application(bindings=None):
                 '/api/labyrinth/healthz': ('labyrinth', 'labyrinth', 'labyrinth_unavailable'),
                 '/api/cerberus/healthz': ('cerberus', 'cerberus', 'cerberus_unavailable'),
                 '/api/chorus/healthz': ('chorus', 'chorus', 'chorus_unavailable'),
+                '/api/cobol-synthetic-ai/healthz': ('cobol_synthetic_ai', 'cobol_synthetic_ai', 'cobol_synthetic_ai_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:

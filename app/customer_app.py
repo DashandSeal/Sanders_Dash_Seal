@@ -52,6 +52,7 @@ from core_platform.hydra_q_service import HydraQDenied, HydraQForbidden
 from core_platform.labyrinth_service import LabyrinthDenied, LabyrinthForbidden
 from core_platform.cerberus_service import CerberusDenied, CerberusForbidden
 from core_platform.chorus_service import ChorusDenied, ChorusForbidden
+from core_platform.cobol_synthetic_ai_service import CobolDenied, CobolForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -178,9 +179,12 @@ CERB_ASSESSMENT_DETERMINATION_ROUTE = re.compile(r'^/api/cerberus/assessments/([
 CHORUS_COMPOSITION_ROUTE = re.compile(r'^/api/chorus/compositions/([A-Za-z0-9_-]{1,128})$')
 CHORUS_COMPOSITION_ACTION_ROUTE = re.compile(r'^/api/chorus/compositions/([A-Za-z0-9_-]{1,128})/action$')
 CHORUS_COMPOSITION_OUTCOME_ROUTE = re.compile(r'^/api/chorus/compositions/([A-Za-z0-9_-]{1,128})/outcome$')
+COBOL_ASSESSMENT_ROUTE = re.compile(r'^/api/cobol-synthetic-ai/assessments/([A-Za-z0-9_-]{1,128})$')
+COBOL_ASSESSMENT_ACTION_ROUTE = re.compile(r'^/api/cobol-synthetic-ai/assessments/([A-Za-z0-9_-]{1,128})/action$')
+COBOL_ASSESSMENT_DETERMINATION_ROUTE = re.compile(r'^/api/cobol-synthetic-ai/assessments/([A-Za-z0-9_-]{1,128})/determination$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -301,6 +305,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         chorus_composition_match = CHORUS_COMPOSITION_ROUTE.fullmatch(path)
         chorus_composition_action_match = CHORUS_COMPOSITION_ACTION_ROUTE.fullmatch(path)
         chorus_composition_outcome_match = CHORUS_COMPOSITION_OUTCOME_ROUTE.fullmatch(path)
+        cobol_assessment_match = COBOL_ASSESSMENT_ROUTE.fullmatch(path)
+        cobol_assessment_action_match = COBOL_ASSESSMENT_ACTION_ROUTE.fullmatch(path)
+        cobol_assessment_determination_match = COBOL_ASSESSMENT_DETERMINATION_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -495,6 +502,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                            or chorus_composition_match is not None
                            or chorus_composition_action_match is not None
                            or chorus_composition_outcome_match is not None)
+        is_cobol_route = (path in ('/api/cobol-synthetic-ai/status',
+                                   '/api/cobol-synthetic-ai/assessments',
+                                   '/api/cobol-synthetic-ai/contract',
+                                   '/api/cobol-synthetic-ai/operation-check',
+                                   '/api/cobol-synthetic-ai/check-in')
+                          or cobol_assessment_match is not None
+                          or cobol_assessment_action_match is not None
+                          or cobol_assessment_determination_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -514,7 +529,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_hydraq_route
                              or is_lab_route
                              or is_cerb_route
-                             or is_chorus_route)
+                             or is_chorus_route
+                             or is_cobol_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -586,7 +602,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/cerberus/contract',
                                             '/api/chorus/status',
                                             '/api/chorus/compositions',
-                                            '/api/chorus/contract')
+                                            '/api/chorus/contract',
+                                            '/api/cobol-synthetic-ai/status',
+                                            '/api/cobol-synthetic-ai/assessments',
+                                            '/api/cobol-synthetic-ai/contract')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -614,7 +633,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or hydra_asset_match is not None
                                    or lab_analysis_match is not None
                                    or cerb_assessment_match is not None
-                                   or chorus_composition_match is not None) else ('POST',)
+                                   or chorus_composition_match is not None
+                                   or cobol_assessment_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -642,6 +662,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/cerberus/assessments':
             allowed = ('GET', 'POST')
         if path == '/api/chorus/compositions':
+            allowed = ('GET', 'POST')
+        if path == '/api/cobol-synthetic-ai/assessments':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -1709,6 +1731,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = chorus.composition_view(identity, chorus_role, chorus_composition_match.group(1))
                         return respond(start, '200 OK', {'composition': record})
                     return check_in(chorus)
+                if is_cobol_route:
+                    if cobol_synthetic_ai is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'cobol_synthetic_ai_unavailable'})
+                    cobol_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/cobol-synthetic-ai/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': cobol_synthetic_ai.status()})
+                    if path == '/api/cobol-synthetic-ai/contract':
+                        return respond(start, '200 OK', {'contract': cobol_synthetic_ai.contract_view()})
+                    if path == '/api/cobol-synthetic-ai/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = cobol_synthetic_ai.operation_check(identity, cobol_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/cobol-synthetic-ai/assessments':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'assessments': cobol_synthetic_ai.assessments_list(identity, cobol_role)})
+                        if set(data) != {'system_ref', 'language_ref', 'target_ref', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = cobol_synthetic_ai.create_assessment(identity, data['system_ref'], data['language_ref'], data['target_ref'], data['scope_ref'])
+                        return respond(start, '201 Created', {'assessment': record})
+                    if cobol_assessment_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = cobol_synthetic_ai.assessment_action(identity, cobol_assessment_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'assessment': record})
+                    if cobol_assessment_determination_match:
+                        if set(data) != {'verdict', 'compatibility_evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = cobol_synthetic_ai.record_determination(identity, cobol_assessment_determination_match.group(1), data['verdict'], data['compatibility_evidence_ref'])
+                        return respond(start, '200 OK', {'assessment': record})
+                    if cobol_assessment_match:
+                        record = cobol_synthetic_ai.assessment_view(identity, cobol_role, cobol_assessment_match.group(1))
+                        return respond(start, '200 OK', {'assessment': record})
+                    return check_in(cobol_synthetic_ai)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -1824,6 +1882,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'chorus_forbidden'})
         except ChorusDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'chorus_denied', 'detail': str(exc)})
+        except CobolForbidden:
+            return respond(start, '403 Forbidden', {'error': 'cobol_synthetic_ai_forbidden'})
+        except CobolDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'cobol_synthetic_ai_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

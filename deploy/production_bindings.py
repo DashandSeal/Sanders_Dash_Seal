@@ -170,6 +170,7 @@ from core_platform.hydra_q_service import HydraQService
 from core_platform.labyrinth_service import LabyrinthService
 from core_platform.cerberus_service import CerberusService
 from core_platform.chorus_service import ChorusService
+from core_platform.cobol_synthetic_ai_service import CobolSyntheticAiService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -508,6 +509,17 @@ def create_production_bindings():
         data_dir / 'chorus.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # COBOL Synthetic AI (RTSA Build Program): the legacy
+    # systems and modernization role contract built as its own
+    # platform — governed modernization assessment records
+    # under the contract's discipline (it reads, parses,
+    # converts, and executes no legacy code, and records no
+    # migration approval), on its own store. Daedalus's COBOL
+    # Bridge is a Daedalus component, not this platform.
+    cobol_synthetic_ai = CobolSyntheticAiService(
+        data_dir / 'cobol_synthetic_ai.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -539,4 +551,5 @@ def create_production_bindings():
         labyrinth=labyrinth,
         cerberus=cerberus,
         chorus=chorus,
+        cobol_synthetic_ai=cobol_synthetic_ai,
     )

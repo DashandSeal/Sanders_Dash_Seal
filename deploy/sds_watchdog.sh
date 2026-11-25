@@ -67,6 +67,7 @@
 #   labyrinth                              system  http://127.0.0.1:8000/api/labyrinth/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   cerberus                               system  http://127.0.0.1:8000/api/cerberus/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   chorus                                 system  http://127.0.0.1:8000/api/chorus/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   cobol-synthetic-ai                     system  http://127.0.0.1:8000/api/cobol-synthetic-ai/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   money-factory-legal.service            system  http://127.0.0.1:8668/health (Money Factory /health)
 #   sanders-corporations-secretary.service user    http://127.0.0.1:8791/api/health (app/main.py @app.get("/api/health"))
 #   sanders-twostep.service                user    http://127.0.0.1:9400/healthz (sanders_twostep_v2.py)
@@ -524,6 +525,7 @@ main() {
   check_http "labyrinth" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/labyrinth/healthz"
   check_http "cerberus" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/cerberus/healthz"
   check_http "chorus" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/chorus/healthz"
+  check_http "cobol-synthetic-ai" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/cobol-synthetic-ai/healthz"
   check_http "money-factory-legal" "money-factory-legal.service" "system" "http://127.0.0.1:8668/health"
   check_http "secretary" "sanders-corporations-secretary.service" "user" "http://127.0.0.1:8791/api/health"
   check_http "twostep" "sanders-twostep.service" "user" "http://127.0.0.1:9400/healthz"
