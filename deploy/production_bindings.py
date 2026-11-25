@@ -366,6 +366,24 @@ def _provider_clients():
     return clients
 
 
+class LoopbackServiceBinding:
+    """Wiring handle for a platform that runs as a standalone loopback
+    service (its own host systemd unit + an nginx location in
+    deploy/nginx.conf) rather than as an in-process service object:
+    the loopback endpoint the served application routes to, and the
+    service's own health path. The dispatcher's healthz answers 200
+    when this handle is present in the bindings -- the same
+    bindings-presence semantics as every in-process platform."""
+
+    def __init__(self, endpoint: str, health_path: str):
+        self.endpoint = endpoint
+        self.health_path = health_path
+
+    def __repr__(self):
+        return (f'LoopbackServiceBinding(endpoint={self.endpoint!r}, '
+                f'health_path={self.health_path!r})')
+
+
 def create_production_bindings():
     """Build the production ``RuntimeBindings`` from the repo's own modules."""
     repo_root = Path(__file__).resolve().parent.parent
@@ -1286,6 +1304,20 @@ def create_production_bindings():
         data_dir / 'sanders_ethics_impact_collective.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Loopback sidecar platforms (Secretary, Money Factory Legal Aid):
+    # standalone FastAPI apps running as host systemd services on
+    # loopback -- Secretary (uvicorn 127.0.0.1:8791, unit installed by
+    # sanders-corporations-secretary/deploy/oracle/deploy_secretary.sh)
+    # and Money Factory Legal Aid (uvicorn 127.0.0.1:8668, unit in
+    # money_factory_legal_aid_v1_668/infra/oracle_linux_9/) -- reached
+    # publicly through the nginx locations in deploy/nginx.conf. The
+    # handle below is the wiring the dispatcher's healthz checks for
+    # presence, exactly as for the in-process platforms.
+    secretary = LoopbackServiceBinding(
+        endpoint='http://127.0.0.1:8791', health_path='/api/health')
+    money_factory_legal_aid = LoopbackServiceBinding(
+        endpoint='http://127.0.0.1:8668', health_path='/health')
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -1389,4 +1421,6 @@ def create_production_bindings():
         sanders_healthcare=sanders_healthcare,
         the_godfather=the_godfather,
         sanders_ethics_impact_collective=sanders_ethics_impact_collective,
+        secretary=secretary,
+        money_factory_legal_aid=money_factory_legal_aid,
     )

@@ -140,6 +140,8 @@ class RuntimeBindings:
     sanders_healthcare: object = None
     the_godfather: object = None
     sanders_ethics_impact_collective: object = None
+    secretary: object = None
+    money_factory_legal_aid: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -389,6 +391,8 @@ PLATFORM_HEALTHZ_PATHS = (
     '/api/sanders-healthcare/healthz',
     '/api/the-godfather/healthz',
     '/api/sanders-ethics-impact-collective/healthz',
+    '/api/secretary/healthz',
+    '/api/money-factory-legal-aid/healthz',
 )
 
 PLATFORM_HEALTH = {
@@ -485,6 +489,8 @@ PLATFORM_HEALTH = {
     '/api/sanders-healthcare/healthz': ('sanders_healthcare', 'sanders_healthcare', 'sanders_healthcare_unavailable'),
     '/api/the-godfather/healthz': ('the_godfather', 'the_godfather', 'the_godfather_unavailable'),
     '/api/sanders-ethics-impact-collective/healthz': ('sanders_ethics_impact_collective', 'sanders_ethics_impact_collective', 'sanders_ethics_impact_collective_unavailable'),
+    '/api/secretary/healthz': ('secretary', 'secretary', 'secretary_unavailable'),
+    '/api/money-factory-legal-aid/healthz': ('money_factory_legal_aid', 'money_factory_legal_aid', 'money_factory_legal_aid_unavailable'),
 }
 
 
