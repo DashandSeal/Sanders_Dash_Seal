@@ -232,6 +232,7 @@ from core_platform.sanders_research_service import SandersResearchService
 from core_platform.sanders_communications_service import SandersCommunicationsService
 from core_platform.sanders_banking_hub_service import SandersBankingHubService
 from core_platform.sanders_legal_services_service import SandersLegalServicesService
+from core_platform.sanders_strategy_intel_service import SandersStrategyIntelService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1093,6 +1094,16 @@ def create_production_bindings():
     sanders_legal_services = SandersLegalServicesService(
         data_dir / 'sanders_legal_services.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Strategy Intel platform (Q85,
+    # RTSA Build Program tranche 24): governed
+    # strategic-intelligence records over its
+    # own store — it collects no intelligence,
+    # conducts no surveillance, and runs no
+    # operation itself. Radar is a display
+    # name only (D-N14), never an identifier.
+    sanders_strategy_intel = SandersStrategyIntelService(
+        data_dir / 'sanders_strategy_intel.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1179,4 +1190,5 @@ def create_production_bindings():
         sanders_communications=sanders_communications,
         sanders_banking_hub=sanders_banking_hub,
         sanders_legal_services=sanders_legal_services,
+        sanders_strategy_intel=sanders_strategy_intel,
     )
