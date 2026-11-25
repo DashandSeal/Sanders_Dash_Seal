@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/application_agent_service.py",
+        "payload_hash": "dbad2fa6da981484feb5388e055f027e93c73790cf181acb1396bc0b3b11818b",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
