@@ -88,6 +88,12 @@ What it wires:
   stays behind the owner's ``grantwriter_purpose`` gate, which is
   UNAPPROVED, so live drafts refuse and offline drafts are labeled
   offline.
+- PBDScriptValidationEngine is ``PBDValidationEngine`` on
+  ``data/pbd_validation.db``, validating Dual-File Pairs against
+  the deployed repository root (the MASTER §13 pre-execution
+  validation gate), with the same operator verifier and audit
+  chain. It assesses and records; it does not itself execute or
+  block other code.
 
 The factory never invents a boot mechanism: it is loaded only through
 the existing ``deployment.load_application`` factory-reference mechanism,
@@ -112,6 +118,7 @@ from core_platform.grantwriter_service import GrantwriterPlatform
 from core_platform.home_healthcare import HomeHealthcarePlatform
 from core_platform.native_case_bridge import CaseNativeBridge
 from core_platform.native_notary import NativeNotarySessions
+from core_platform.pbd_validation import PBDValidationEngine
 from core_platform.provider_connections import WriteProviderClient
 from core_platform.provider_workflows import ProviderWorkflows
 from core_platform.rooms import RoomService
@@ -284,6 +291,13 @@ def create_production_bindings():
         auth.operator_verifier, audit,
         approval_checker=_gate_is_approved)
 
+    # PBDScriptValidationEngine (RTSA Build Program): the MASTER
+    # §13 Dual-File Pair validation gate over the deployed
+    # repository root, on its own store.
+    pbd_validation = PBDValidationEngine(
+        data_dir / 'pbd_validation.db', repo_root,
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -298,4 +312,5 @@ def create_production_bindings():
         carehive_os=carehive_os,
         home_healthcare=home_healthcare,
         grantwriter=grantwriter,
+        pbd_validation=pbd_validation,
     )

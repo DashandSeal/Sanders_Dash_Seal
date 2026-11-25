@@ -1,16 +1,16 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "core_platform/ai_platform_links.json",
-    "payload_hash": "0ac17a42519d6e5295138743250563008888abbf4fda4489ac25a5f25b2534af",
-    "scope": {
-      "endpoint": "local://development",
-      "method": "TEST",
-      "ip": "127.0.0.1",
-      "operation": "DEVELOPMENT_VALIDATION"
-    }
-  },
-  "signatures": {},
-  "status": "UNSIGNED_SOURCE_MANIFEST"
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/ai_platform_links.json",
+        "payload_hash": "1e041c1fd08e4a10510a7f3fc1b8afb7ae0e6e335178f8e13c24c870d43d8d14",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
 }

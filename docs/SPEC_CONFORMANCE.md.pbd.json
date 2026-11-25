@@ -1,11 +1,11 @@
 {
-  "body": {
-    "schema": 1,
-    "platform": "Sanders Dash & Seal",
-    "artifact": "docs/SPEC_CONFORMANCE.md",
-    "payload_hash": "b5b6461289e5300952268a4708ff828b6b92ec11a475258d5bb3baf03ff4fda0",
-    "scope": "source-manifest",
-    "signatures": {},
-    "status": "UNSIGNED_SOURCE_MANIFEST"
-  }
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/SPEC_CONFORMANCE.md",
+        "payload_hash": "f5c7c08b2a70bdf0e2f7e93f09e6c203b3170e2edf5f2798f70dd6ed5a83cc6c",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }

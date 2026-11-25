@@ -51,6 +51,7 @@ class RuntimeBindings:
     carehive_os: object = None
     home_healthcare: object = None
     grantwriter: object = None
+    pbd_validation: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -369,7 +370,8 @@ def create_application(bindings=None):
             uncle_nickey_mao=getattr(bindings, 'uncle_nickey_mao', None),
             carehive_os=getattr(bindings, 'carehive_os', None),
             home_healthcare=getattr(bindings, 'home_healthcare', None),
-            grantwriter=getattr(bindings, 'grantwriter', None)
+            grantwriter=getattr(bindings, 'grantwriter', None),
+            pbd_validation=getattr(bindings, 'pbd_validation', None)
         )
     else:
         verifier = _denied
@@ -686,9 +688,11 @@ def create_application(bindings=None):
                 return _response(start, '503 Service Unavailable',
                                  {'error': 'bozly_status_unavailable'})
         if path in ('/api/uncle-nickey-mao/healthz', '/api/carehive-os/healthz',
-                    '/api/home-healthcare/healthz', '/api/grantwriter/healthz'):
+                    '/api/home-healthcare/healthz', '/api/grantwriter/healthz',
+                    '/api/pbd-validation/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
-            # platforms (Three Originals Reconstruction Program): no
+            # platforms (Three Originals Reconstruction Program) and
+            # the RTSA Build Program platforms as they land: no
             # auth, liveness only, like /healthz — answerable from
             # loopback so the watchdog can probe each in-process
             # surface of this service. 200 only when the platform's
@@ -700,6 +704,7 @@ def create_application(bindings=None):
                 '/api/carehive-os/healthz': ('carehive_os', 'carehive_os', 'carehive_os_unavailable'),
                 '/api/home-healthcare/healthz': ('home_healthcare', 'sanders_home_healthcare', 'home_healthcare_unavailable'),
                 '/api/grantwriter/healthz': ('grantwriter', 'grantwriter', 'grantwriter_unavailable'),
+                '/api/pbd-validation/healthz': ('pbd_validation', 'pbd_validation', 'pbd_validation_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -750,7 +755,9 @@ def create_application(bindings=None):
                 or path == '/api/home-healthcare'
                 or path.startswith('/api/home-healthcare/')
                 or path == '/api/grantwriter'
-                or path.startswith('/api/grantwriter/'))
+                or path.startswith('/api/grantwriter/')
+                or path == '/api/pbd-validation'
+                or path.startswith('/api/pbd-validation/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

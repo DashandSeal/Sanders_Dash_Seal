@@ -29,6 +29,10 @@ from core_platform.grantwriter_service import (
     GrantwriterPlatformDenied,
     GrantwriterPlatformForbidden,
 )
+from core_platform.pbd_validation import (
+    PBDValidationDenied,
+    PBDValidationForbidden,
+)
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -105,9 +109,10 @@ GW_APPLICATION_TRANSITIONS_ROUTE = re.compile(r'^/api/grantwriter/applications/(
 GW_APPLICATION_SUBMISSION_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/submission$')
 GW_APPLICATION_DRAFT_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/draft$')
 GW_APPLICATION_COMPLIANCE_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/compliance$')
+PBD_VALIDATION_VIEW_ROUTE = re.compile(r'^/api/pbd-validation/validations/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -184,6 +189,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         gw_submission_match = GW_APPLICATION_SUBMISSION_ROUTE.fullmatch(path)
         gw_draft_match = GW_APPLICATION_DRAFT_ROUTE.fullmatch(path)
         gw_compliance_match = GW_APPLICATION_COMPLIANCE_ROUTE.fullmatch(path)
+        pbd_validation_view_match = PBD_VALIDATION_VIEW_ROUTE.fullmatch(path)
         is_unm_route = (path in ('/api/uncle-nickey-mao/status',
                                  '/api/uncle-nickey-mao/guardian-relay',
                                  '/api/uncle-nickey-mao/referrals',
@@ -223,9 +229,15 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                 or gw_submission_match is not None
                                 or gw_draft_match is not None
                                 or gw_compliance_match is not None)
+        is_pbd_validation_route = (path in ('/api/pbd-validation/status',
+                                            '/api/pbd-validation/validate',
+                                            '/api/pbd-validation/scan',
+                                            '/api/pbd-validation/check-in')
+                                   or pbd_validation_view_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
-                             or is_grantwriter_route)
+                             or is_grantwriter_route
+                             or is_pbd_validation_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -250,12 +262,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/carehive-os/status',
                                             '/api/home-healthcare/status',
                                             '/api/grantwriter/status',
-                                            '/api/grantwriter/portfolio')
+                                            '/api/grantwriter/portfolio',
+                                            '/api/pbd-validation/status')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
                                    or gw_stage_match is not None
-                                   or gw_compliance_match is not None) else ('POST',)
+                                   or gw_compliance_match is not None
+                                   or pbd_validation_view_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -609,6 +623,28 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         result = grantwriter.compliance_evaluate(identity, 'OPERATOR', gw_compliance_match.group(1))
                         return respond(start, '200 OK', {'compliance': result})
                     return check_in(grantwriter)
+                if is_pbd_validation_route:
+                    if pbd_validation is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'pbd_validation_unavailable'})
+                    if path == '/api/pbd-validation/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': pbd_validation.status()})
+                    if path == '/api/pbd-validation/validate':
+                        if set(data) != {'artifact'}:
+                            raise ValueError('unexpected fields')
+                        record = pbd_validation.validate_pair(identity, data['artifact'])
+                        return respond(start, '201 Created', {'validation': record})
+                    if path == '/api/pbd-validation/scan':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = pbd_validation.scan(identity)
+                        return respond(start, '201 Created', {'scan': record})
+                    if pbd_validation_view_match:
+                        role = 'OPERATOR' if is_operator() else 'COORDINATOR'
+                        record = pbd_validation.validation_view(identity, role, pbd_validation_view_match.group(1))
+                        return respond(start, '200 OK', {'validation': record})
+                    return check_in(pbd_validation)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -656,6 +692,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'grantwriter_forbidden'})
         except GrantwriterPlatformDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'grantwriter_denied', 'detail': str(exc)})
+        except PBDValidationForbidden:
+            return respond(start, '403 Forbidden', {'error': 'pbd_validation_forbidden'})
+        except PBDValidationDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'pbd_validation_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
