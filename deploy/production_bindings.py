@@ -219,6 +219,7 @@ from core_platform.sanders_consulting_service import SandersConsultingService
 from core_platform.sanders_hospitality_service import SandersHospitalityService
 from core_platform.sanders_entertainment_service import SandersEntertainmentService
 from core_platform.sanders_sports_service import SandersSportsService
+from core_platform.sanders_wellness_service import SandersWellnessService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -959,6 +960,15 @@ def create_production_bindings():
     sanders_sports = SandersSportsService(
         data_dir / 'sanders_sports.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Wellness platform (Q72, RTSA Build
+    # Program tranche 20): governed wellness
+    # records over its own store — it delivers
+    # no care, provides no treatment, and
+    # prescribes nothing itself. Distinct from
+    # the healthcare identities (catalog 64/96/132).
+    sanders_wellness = SandersWellnessService(
+        data_dir / 'sanders_wellness.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1032,4 +1042,5 @@ def create_production_bindings():
         sanders_hospitality=sanders_hospitality,
         sanders_entertainment=sanders_entertainment,
         sanders_sports=sanders_sports,
+        sanders_wellness=sanders_wellness,
     )
