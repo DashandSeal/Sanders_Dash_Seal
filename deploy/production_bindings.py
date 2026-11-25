@@ -226,6 +226,7 @@ from core_platform.sanders_freedom_revolution_service import SandersFreedomRevol
 from core_platform.sanders_strategy_hub_service import SandersStrategyHubService
 from core_platform.sanders_global_freedom_service import SandersGlobalFreedomService
 from core_platform.sanders_coordinator_service import SandersCoordinatorService
+from core_platform.sanders_intelligence_service import SandersIntelligenceService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1031,6 +1032,16 @@ def create_production_bindings():
     sanders_coordinator = SandersCoordinatorService(
         data_dir / 'sanders_coordinator.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Intelligence platform (Q79,
+    # RTSA Build Program tranche 22): governed
+    # intelligence-analysis records over its
+    # own store — it runs no covert operation,
+    # collects no intelligence, and accesses
+    # no classified system itself. Name per
+    # owner ruling D-N5.
+    sanders_intelligence = SandersIntelligenceService(
+        data_dir / 'sanders_intelligence.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1111,4 +1122,5 @@ def create_production_bindings():
         sanders_strategy_hub=sanders_strategy_hub,
         sanders_global_freedom=sanders_global_freedom,
         sanders_coordinator=sanders_coordinator,
+        sanders_intelligence=sanders_intelligence,
     )
