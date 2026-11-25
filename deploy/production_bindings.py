@@ -210,6 +210,7 @@ from core_platform.sanders_finance_service import SandersFinanceService
 from core_platform.sanders_retail_service import SandersRetailService
 from core_platform.sanders_logistics_service import SandersLogisticsService
 from core_platform.sanders_security_service import SandersSecurityService
+from core_platform.sanders_real_estate_service import SandersRealEstateService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -878,6 +879,14 @@ def create_production_bindings():
     sanders_security = SandersSecurityService(
         data_dir / 'sanders_security.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Real Estate platform (Q63, RTSA Build
+    # Program tranche 17): governed real-estate records
+    # over its own store — it sells no property,
+    # leases no property, and closes no transaction
+    # itself.
+    sanders_real_estate = SandersRealEstateService(
+        data_dir / 'sanders_real_estate.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -942,4 +951,5 @@ def create_production_bindings():
         sanders_retail=sanders_retail,
         sanders_logistics=sanders_logistics,
         sanders_security=sanders_security,
+        sanders_real_estate=sanders_real_estate,
     )
