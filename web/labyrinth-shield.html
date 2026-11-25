@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Sanders Labyrinth Shield — the perimeter platform of Sanders Legal Helpers LLC, holding the Sanders house to one premium standard, Global By Design.">
+<title>Sanders Labyrinth Shield | Sanders Legal Helpers LLC</title>
+<link rel="stylesheet" href="/assets/labyrinth-shield.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/labyrinth-shield" aria-label="Sanders Labyrinth Shield — Sanders Legal Helpers LLC — home">
+    <span class="seal-lockup">
+      <img class="seal-medallion seal-medallion-hq" src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc., corporate headquarters">
+      <img class="seal-medallion" src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC">
+    </span>
+  </a>
+  <button id="menuToggle" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span></button>
+  <nav id="nav" aria-label="Main navigation">
+    <a href="#the-shield">The Shield</a>
+    <a href="#the-house">The House</a>
+    <a href="#the-standard">The Standard</a>
+    <a href="/appointments">Appointments</a>
+    <a href="/auth/login">Client Portal</a>
+  </nav>
+</header>
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">SANDERS LABYRINTH SHIELD · SANDERS LEGAL HELPERS LLC</p>
+      <h1>The perimeter of the house,<br><em>held to one standard.</em></h1>
+      <p>Sanders Labyrinth Shield is the perimeter platform of Sanders Legal Helpers LLC — the standing presence at the edge of the Sanders house, where every arrival meets the same premium standard before it reaches the family of companies behind it.</p>
+      <div class="actions">
+        <a class="button" href="/appointments">Request an Appointment →</a>
+        <a class="button secondary" href="#the-standard">The Standard</a>
+      </div>
+      <p class="fine">Sanders Labyrinth Shield is a platform of Sanders Legal Helpers LLC, under S &amp; G Security Inc., corporate headquarters.</p>
+    </div>
+  </section>
+  <section class="global-register plaque" aria-label="Global By Design">
+    <p class="eyebrow">GLOBAL BY DESIGN</p>
+    <p class="global-line">The Shield is <span>Global By Design</span>: one Imperial Jade standard at the perimeter of the Sanders house, the same in Colorado, in Wisconsin, and everywhere the house serves.</p>
+  </section>
+  <section class="section" id="the-shield">
+    <p class="eyebrow">THE SHIELD</p>
+    <h2>A Standing Perimeter</h2>
+    <p>The house does its work behind a perimeter that never stands down — presented here the way the house presents everything: in marble and jade, under both seals.</p>
+    <div class="cards">
+      <article>
+        <h3>The Edge of the House</h3>
+        <p>Every Sanders service stands behind this one perimeter. What reaches the companies of the house has first met the Shield.</p>
+      </article>
+      <article>
+        <h3>One Standard, Every Arrival</h3>
+        <p>There is no second, lesser standard at the edge. The perimeter holds the same measure for every arrival, at every hour.</p>
+      </article>
+      <article>
+        <h3>Premium, Without Compromise</h3>
+        <p>The Shield is a premium platform of a premium house — built whole, held to the Fortune 500 standard end to end.</p>
+      </article>
+    </div>
+  </section>
+  <section class="section about" id="the-house">
+    <p class="eyebrow">THE HOUSE</p>
+    <h2>Four Companies, One Perimeter</h2>
+    <p>Behind the Shield stand S &amp; G Security Inc., corporate headquarters, and the three companies of the house: Sanders Home Healthcare &amp; Caregivers LLC, Sanders Senior Living LLC, and Sanders Legal Helpers LLC. The Shield serves them all, and merges with none of them — each company keeps its own name, its own seal, and its own work.</p>
+  </section>
+  <section class="section about" id="the-standard">
+    <p class="eyebrow">THE STANDARD</p>
+    <h2>The Sanders Royal Enterprise Standard</h2>
+    <p>Marble and jade throughout. Sculpted surfaces, original seals in their original colors, and the dual seal of headquarters and company on every surface — the presentation standard of the house, carried at its perimeter exactly as it is carried at its flagship.</p>
+  </section>
+  <section class="section cta">
+    <h2>Start Your Request</h2>
+    <p>Sign in to request an appointment, track your request, and review an itemized quote through our existing customer workflow.</p>
+    <div class="actions">
+      <a class="button" href="/appointments">Appointment Requests →</a>
+      <a class="button secondary" href="/auth/login">Client Sign In</a>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="seal-strip" aria-label="The Sanders companies">
+    <figure>
+      <img src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc.">
+      <figcaption>S &amp; G Security Inc. — Corporate Headquarters</figcaption>
+    </figure>
+    <figure>
+      <img src="/assets/seal-home-healthcare.png" alt="Seal of Sanders Home Healthcare &amp; Caregivers LLC">
+      <figcaption>Sanders Home Healthcare &amp; Caregivers LLC</figcaption>
+    </figure>
+    <figure>
+      <img src="/assets/seal-senior-living.png" alt="Seal of Sanders Senior Living LLC">
+      <figcaption>Sanders Senior Living LLC</figcaption>
+    </figure>
+    <figure>
+      <img src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC">
+      <figcaption>Sanders Legal Helpers LLC</figcaption>
+    </figure>
+  </div>
+  <div class="footer-lines">
+    <span>© <span id="year">2026</span> Sanders Labyrinth Shield · Sanders Legal Helpers LLC</span>
+    <span class="footer-tagline">Our family will take great care of your family</span>
+    <span class="footer-closing">The Sanders Way!</span>
+    <span class="footer-global">Global By Design</span>
+  </div>
+</footer>
+<script>
+(function () {
+    var toggle = document.getElementById('menuToggle');
+    var nav = document.getElementById('nav');
+    if (toggle && nav) {
+        toggle.addEventListener('click', function () {
+            var open = nav.classList.toggle('open');
+            toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        });
+    }
+    var year = document.getElementById('year');
+    if (year) { year.textContent = String(new Date().getFullYear()); }
+}());
+</script>
+</body>
+</html>

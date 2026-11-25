@@ -42,6 +42,7 @@ from core_platform.pbd_sentinel import PBDSentinelDenied, PBDSentinelForbidden
 from core_platform.it_ai_manager import ITAIManagerDenied, ITAIManagerForbidden
 from core_platform.twin_gate_service import TwinGateServiceDenied, TwinGateServiceForbidden
 from core_platform.sharpshooter_service import SharpshooterDenied, SharpshooterForbidden
+from core_platform.labyrinth_shield_service import LabyrinthShieldDenied, LabyrinthShieldForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -66,6 +67,8 @@ ASSETS = {
     # the only route that ever served them.
     '/assets/auth.js': ('auth.js', 'application/javascript; charset=utf-8'),
     '/landing': ('jade-landing.html', 'text/html; charset=utf-8'),
+    '/labyrinth-shield': ('labyrinth-shield.html', 'text/html; charset=utf-8'),
+    '/assets/labyrinth-shield.css': ('labyrinth-shield.css', 'text/css; charset=utf-8'),
     '/assets/jade-landing.css': ('jade-landing.css', 'text/css; charset=utf-8'),
     '/assets/jade-landing.js': ('jade-landing.js', 'application/javascript; charset=utf-8'),
     '/assets/sds-founder.png': ('sds-founder.png', 'image/png'),
@@ -136,9 +139,11 @@ SS_INCIDENT_ROUTE = re.compile(r'^/api/sharpshooter/incidents/([A-Za-z0-9_-]{1,1
 SS_INCIDENT_PLAN_ROUTE = re.compile(r'^/api/sharpshooter/incidents/([A-Za-z0-9_-]{1,128})/plan$')
 SS_REMEDIATION_ROUTE = re.compile(r'^/api/sharpshooter/remediations/([A-Za-z0-9_-]{1,128})$')
 SS_REMEDIATION_ACTION_ROUTE = re.compile(r'^/api/sharpshooter/remediations/([A-Za-z0-9_-]{1,128})/(execute|rollback)$')
+LS_EVALUATION_ROUTE = re.compile(r'^/api/labyrinth-shield/evaluations/([A-Za-z0-9_-]{1,128})$')
+LS_ISOLATION_RELEASE_ROUTE = re.compile(r'^/api/labyrinth-shield/isolations/([A-Za-z0-9_-]{1,128})/release$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -230,6 +235,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         tg_auth_match = TG_AUTH_ROUTE.fullmatch(path)
         tg_action_match = TG_AUTH_ACTION_ROUTE.fullmatch(path)
         ss_incident_match = SS_INCIDENT_ROUTE.fullmatch(path)
+        ls_evaluation_match = LS_EVALUATION_ROUTE.fullmatch(path)
+        ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
         ss_remediation_action_match = SS_REMEDIATION_ACTION_ROUTE.fullmatch(path)
@@ -325,6 +332,16 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                        or ss_incident_plan_match is not None
                        or ss_remediation_match is not None
                        or ss_remediation_action_match is not None)
+        is_ls_route = (path in ('/api/labyrinth-shield/status',
+                                '/api/labyrinth-shield/evaluate',
+                                '/api/labyrinth-shield/blocklist',
+                                '/api/labyrinth-shield/blocklist-remove',
+                                '/api/labyrinth-shield/isolations',
+                                '/api/labyrinth-shield/integrity',
+                                '/api/labyrinth-shield/integrity-pin',
+                                '/api/labyrinth-shield/check-in')
+                       or ls_evaluation_match is not None
+                       or ls_isolation_release_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -334,7 +351,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_pbd_sentinel_route
                              or is_itm_route
                              or is_tg_route
-                             or is_ss_route)
+                             or is_ss_route
+                             or is_ls_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -371,7 +389,11 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/sharpshooter/status',
                                             '/api/sharpshooter/adapters',
                                             '/api/sharpshooter/cert-inventory',
-                                            '/api/sharpshooter/jobs')
+                                            '/api/sharpshooter/jobs',
+                                            '/api/labyrinth-shield/status',
+                                            '/api/labyrinth-shield/blocklist',
+                                            '/api/labyrinth-shield/isolations',
+                                            '/api/labyrinth-shield/integrity')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -386,7 +408,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or itm_evaluation_match is not None
                                    or tg_auth_match is not None
                                    or ss_incident_match is not None
-                                   or ss_remediation_match is not None) else ('POST',)
+                                   or ss_remediation_match is not None
+                                   or ls_evaluation_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -395,6 +418,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                 ('POST',) if operator_match or case_match else ('GET',)
             )
         if path == '/api/sharpshooter/jobs':
+            allowed = ('GET', 'POST')
+        if path == '/api/labyrinth-shield/blocklist':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -1042,6 +1067,50 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = sharpshooter.remediation_view(identity, role, ss_remediation_match.group(1))
                         return respond(start, '200 OK', {'remediation': record})
                     return check_in(sharpshooter)
+                if is_ls_route:
+                    if labyrinth_shield is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'labyrinth_shield_unavailable'})
+                    ls_role = 'OPERATOR' if is_operator() else 'VERIFIER'
+                    ls_read_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/labyrinth-shield/status':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'status': labyrinth_shield.status()})
+                    if path == '/api/labyrinth-shield/evaluate':
+                        if set(data) != {'source', 'payload'}:
+                            raise ValueError('unexpected fields')
+                        record = labyrinth_shield.evaluate(identity, ls_role, data['source'], data['payload'])
+                        return respond(start, '201 Created', {'evaluation': record})
+                    if path == '/api/labyrinth-shield/blocklist':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'blocklist': labyrinth_shield.blocklist_list(identity, ls_read_role)})
+                        if set(data) != {'entry', 'reason'}:
+                            raise ValueError('unexpected fields')
+                        record = labyrinth_shield.blocklist_add(identity, data['entry'], data['reason'])
+                        return respond(start, '201 Created', {'blocklist_entry': record})
+                    if path == '/api/labyrinth-shield/blocklist-remove':
+                        if set(data) != {'entry'}:
+                            raise ValueError('unexpected fields')
+                        record = labyrinth_shield.blocklist_remove(identity, data['entry'])
+                        return respond(start, '200 OK', {'blocklist_entry': record})
+                    if ls_evaluation_match:
+                        record = labyrinth_shield.evaluation_view(identity, ls_role, ls_evaluation_match.group(1))
+                        return respond(start, '200 OK', {'evaluation': record})
+                    if path == '/api/labyrinth-shield/isolations':
+                        return respond(start, '200 OK', {'isolations': labyrinth_shield.isolations_list(identity, ls_read_role)})
+                    if ls_isolation_release_match:
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = labyrinth_shield.isolation_release(identity, ls_isolation_release_match.group(1))
+                        return respond(start, '200 OK', {'isolation': record})
+                    if path == '/api/labyrinth-shield/integrity':
+                        return respond(start, '200 OK', {'integrity': labyrinth_shield.integrity_status(identity, ls_read_role)})
+                    if path == '/api/labyrinth-shield/integrity-pin':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = labyrinth_shield.integrity_pin(identity)
+                        return respond(start, '200 OK', {'integrity': record})
+                    return check_in(labyrinth_shield)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -1117,6 +1186,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'sharpshooter_forbidden'})
         except SharpshooterDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'sharpshooter_denied', 'detail': str(exc)})
+        except LabyrinthShieldForbidden:
+            return respond(start, '403 Forbidden', {'error': 'labyrinth_shield_forbidden'})
+        except LabyrinthShieldDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'labyrinth_shield_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

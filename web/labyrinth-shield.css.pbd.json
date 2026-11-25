@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/labyrinth-shield.css",
+        "payload_hash": "4744bd4da06bb77cae0433f4254f1841ce6201c90b3072122445a8836927bf92",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

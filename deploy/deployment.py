@@ -58,6 +58,7 @@ class RuntimeBindings:
     it_ai_manager: object = None
     twin_gate: object = None
     sharpshooter: object = None
+    labyrinth_shield: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -383,7 +384,8 @@ def create_application(bindings=None):
             pbd_sentinel=getattr(bindings, 'pbd_sentinel', None),
             it_ai_manager=getattr(bindings, 'it_ai_manager', None),
             twin_gate=getattr(bindings, 'twin_gate', None),
-            sharpshooter=getattr(bindings, 'sharpshooter', None)
+            sharpshooter=getattr(bindings, 'sharpshooter', None),
+            labyrinth_shield=getattr(bindings, 'labyrinth_shield', None)
         )
     else:
         verifier = _denied
@@ -707,7 +709,8 @@ def create_application(bindings=None):
                     '/api/pbd-sentinel/healthz',
                     '/api/it-ai-manager/healthz',
                     '/api/twin-gate/healthz',
-                    '/api/sharpshooter/healthz'):
+                    '/api/sharpshooter/healthz',
+                    '/api/labyrinth-shield/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -729,6 +732,7 @@ def create_application(bindings=None):
                 '/api/it-ai-manager/healthz': ('it_ai_manager', 'it_ai_manager', 'it_ai_manager_unavailable'),
                 '/api/twin-gate/healthz': ('twin_gate', 'twin_gate', 'twin_gate_unavailable'),
                 '/api/sharpshooter/healthz': ('sharpshooter', 'sharpshooter', 'sharpshooter_unavailable'),
+                '/api/labyrinth-shield/healthz': ('labyrinth_shield', 'sanders_labyrinth_shield', 'labyrinth_shield_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -793,7 +797,9 @@ def create_application(bindings=None):
                 or path == '/api/twin-gate'
                 or path.startswith('/api/twin-gate/')
                 or path == '/api/sharpshooter'
-                or path.startswith('/api/sharpshooter/'))
+                or path.startswith('/api/sharpshooter/')
+                or path == '/api/labyrinth-shield'
+                or path.startswith('/api/labyrinth-shield/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

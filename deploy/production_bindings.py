@@ -160,6 +160,7 @@ from core_platform.it_ai_manager import ITAIManager
 from core_platform.native_case_bridge import CaseNativeBridge
 from core_platform.twin_gate_service import TwinGateService
 from core_platform.sharpshooter_service import SharpshooterService
+from core_platform.labyrinth_shield_service import LabyrinthShieldService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -389,6 +390,15 @@ def create_production_bindings():
         data_dir / 'sharpshooter.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Sanders Labyrinth Shield (RTSA Build Program): the production
+    # build-out of the recovered labyrinth_shield.py foundation —
+    # durable evaluation ledger (payload hashes only), durable
+    # blocklist, rate limiting, isolation, and the self-integrity
+    # pin, on its own store.
+    labyrinth_shield = LabyrinthShieldService(
+        data_dir / 'labyrinth_shield.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -410,4 +420,5 @@ def create_production_bindings():
         it_ai_manager=it_ai_manager,
         twin_gate=twin_gate,
         sharpshooter=sharpshooter,
+        labyrinth_shield=labyrinth_shield,
     )
