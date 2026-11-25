@@ -1173,6 +1173,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                       '/api/sanders-sentinel/records',
                                       '/api/sanders-sentinel/design',
                                       '/api/sanders-sentinel/operation-check',
+                                      '/api/sanders-sentinel/bloodline/verify',
+                                      '/api/sanders-sentinel/bloodline/coverage',
                                       '/api/sanders-sentinel/check-in')
                                   or sentinel_record_match is not None
                                   or sentinel_record_action_match is not None
@@ -1831,6 +1833,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/sanders-sentinel/status',
                                             '/api/sanders-sentinel/records',
                                             '/api/sanders-sentinel/design',
+                                            '/api/sanders-sentinel/bloodline/coverage',
                                             '/api/lil-mama/status',
                                             '/api/lil-mama/records',
                                             '/api/lil-mama/design',
@@ -2166,6 +2169,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             allowed = ('GET', 'POST')
         if path == '/api/sanders-sentinel/records':
             allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/verify':
+            allowed = ('POST',)
+        if path == '/api/sanders-sentinel/bloodline/coverage':
+            allowed = ('GET',)
         if path == '/api/lil-mama/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/records':
@@ -4029,6 +4036,15 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = sanders_sentinel.create_record(identity, data['subject_ref'], data['signal_refs'], data['scope_ref'])
                         return respond(start, '201 Created', {'record': record})
+                    if path == '/api/sanders-sentinel/bloodline/verify':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.verify_bloodline_records(identity)
+                        return respond(start, '200 OK', {'bloodline_verification': record})
+                    if path == '/api/sanders-sentinel/bloodline/coverage':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'bloodline_coverage': sanders_sentinel.bloodline_coverage(identity, sentinel_role)})
                     if sentinel_record_action_match:
                         if set(data) != {'action'}:
                             raise ValueError('unexpected fields')

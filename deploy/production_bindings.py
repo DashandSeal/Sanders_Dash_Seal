@@ -803,10 +803,14 @@ def create_production_bindings():
     # tranche 12): governed global-watch records over its
     # own store, under the watchdog law — it detects and
     # escalates only, holds no decision authority, and
-    # takes no action against any subject.
+    # takes no action against any subject. Bound to the
+    # repository root for its bloodline governance coverage
+    # (founder's ruling, 2026-11-25): the governed watch
+    # over the bloodline governance records in docs/.
     sanders_sentinel = SandersSentinelService(
         data_dir / 'sanders_sentinel.db',
-        operator_verifier=auth.operator_verifier, audit=audit)
+        operator_verifier=auth.operator_verifier, audit=audit,
+        repo_root=repo_root)
     # Lil Mama platform (Q49, RTSA Build Program tranche
     # 12): governed human-oversight records over its own
     # store, under the watchdog law — she detects and

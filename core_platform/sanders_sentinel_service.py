@@ -90,6 +90,38 @@ No record, no action: every state-changing operation
 writes its Glass-Box receipt inside the same transaction,
 through the shared foundation's audit adapter; the service
 refuses to exist without one.
+
+FOUNDER'S RULING 2026-11-25 — BLOODLINE PROTECTION (a
+ruled extension of this platform's remit, recorded as a
+ruling, not as recovered design): the founder ruled,
+verbatim: "Sanders Sentinel is to do more than watch codes
+it's role is to protect my bloodline" (Founder's Rulings
+on the Bloodline Protection Open Items, addendum
+2026-11-25 11:37 MST). Under that ruling this platform
+carries BLOODLINE GOVERNANCE COVERAGE: a governed watch
+over the bloodline governance records — the Permanent
+Bloodline Protection Directive, the Founder's Rulings
+record, and the Bloodline Governance Directive in docs/,
+each paired with its `.pbd.json` manifest, and the
+Sanders Bloodline Registry at its designated docs/ path
+when it lands in the repository. A verification cycle
+assesses each watched document against its manifest's
+recorded payload hash (the MASTER §13 pair assessment,
+shared with — never merged into — the §13 validation
+engine and the §15 Global PBD Sentinel, whose code-file
+scope is unchanged by this coverage). Every assessment is
+a durable, receipted check record in this platform's own
+store. A document that does not assess sound — a hash
+mismatch, a missing or malformed manifest, a missing
+required document — raises a FINDING: a watch record
+under the bloodline governance scope, placed before a
+human operator exactly as every escalation this platform
+makes. The coverage verifies and escalates only: it
+amends nothing, restores nothing, repairs nothing, and
+decides nothing, and no finding is an act against any
+person or document. The registry entry is watched as
+NOT_LANDED — an informational state, never a finding —
+until the registry record itself lands in the repository.
 """
 
 from __future__ import annotations
@@ -100,6 +132,7 @@ import time
 import uuid
 from pathlib import Path
 
+from .pbd_validation import assess_pair
 from .rtsa_foundation import (
     AccessGuard,
     FoundationDenied,
@@ -131,6 +164,7 @@ WATCHDOG_DISCIPLINE = 'DETECT_AND_ESCALATE_ONLY'
 RECORD_OPERATIONS = (
     'record_watch', 'approve_watch', 'record_outcome',
     'view_watch', 'view_design',
+    'verify_bloodline_records', 'view_bloodline_coverage',
 )
 EXECUTION_OPERATIONS = (
     'enforce_containment', 'block_subject', 'suspend_platform',
@@ -147,6 +181,40 @@ OUTCOMES = ('ESCALATION_RECORDED', 'NO_ESCALATION_REQUIRED',
 DETERMINATIONS = ('ESCALATION_RECORDED', 'NO_ESCALATION_REQUIRED')
 MAX_SIGNAL_REFS = 100
 
+# -- Bloodline governance coverage (founder's ruling,
+# 2026-11-25) ------------------------------------------------
+FOUNDER_RULING_BLOODLINE_PROTECTION = (
+    "Sanders Sentinel is to do more than watch codes it's"
+    ' role is to protect my bloodline')
+FOUNDER_RULING_BLOODLINE_DATE = '2026-11-25'
+BLOODLINE_GOVERNANCE_SCOPE = 'BLOODLINE_GOVERNANCE'
+# The governed watch set: the bloodline governance records,
+# each verified against its paired `.pbd.json` manifest.
+# A required document that is missing or does not assess
+# sound raises a finding; a not-yet-landed optional document
+# stands NOT_LANDED and raises nothing.
+BLOODLINE_WATCH_SET = (
+    {'document': 'docs/PERMANENT_BLOODLINE_PROTECTION_DIRECTIVE.md',
+     'title': 'Permanent Bloodline Protection Directive',
+     'required': True},
+    {'document': 'docs/FOUNDER_RULINGS_BLOODLINE_PROTECTION_2026-11-25.md',
+     'title': "Founder's Rulings — Bloodline Protection"
+              ' (2026-11-25)',
+     'required': True},
+    {'document': 'docs/SANDERS_EXECUTIVE_BLOODLINE_GOVERNANCE.md',
+     'title': 'Bloodline Governance Directive',
+     'required': True},
+    {'document': 'docs/SANDERS_BLOODLINE_REGISTRY.md',
+     'title': 'Sanders Bloodline Registry',
+     'required': False},
+)
+# Pair verdicts that assess sound: the manifest's recorded
+# payload hash equals the document's SHA-256. UNSIGNED is
+# the repository's standing state for source manifests —
+# structurally sound, never authorization.
+BLOODLINE_SOUND_VERDICTS = ('VALID', 'UNSIGNED')
+BLOODLINE_CHECK_STATES = ('SOUND', 'FINDING', 'NOT_LANDED')
+
 
 class SandersSentinelDenied(Exception):
     """The requested Sanders Sentinel operation is not
@@ -162,7 +230,7 @@ class SandersSentinelService:
     under the watchdog detect-and-escalate discipline."""
 
     def __init__(self, database_path, *, operator_verifier, audit,
-                 clock=time.time):
+                 repo_root=None, clock=time.time):
         if audit is None or not callable(getattr(audit, 'preserve', None)):
             raise SandersSentinelDenied(
                 'Sanders Sentinel requires a working'
@@ -171,6 +239,8 @@ class SandersSentinelService:
         self._path.parent.mkdir(parents=True, exist_ok=True)
         self.operator_verifier = operator_verifier
         self._audit = audit
+        self._repo_root = (Path(repo_root)
+                           if repo_root is not None else None)
         self._clock = clock
         self.identity = IDENTITY
         self.geofence = GeofencePolicy(IDENTITY)
@@ -195,6 +265,21 @@ class SandersSentinelService:
                     requested_at REAL NOT NULL,
                     updated_by TEXT NOT NULL,
                     updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_bloodline_checks (
+                    check_id TEXT PRIMARY KEY,
+                    cycle_id TEXT NOT NULL,
+                    document_ref TEXT NOT NULL,
+                    manifest_ref TEXT,
+                    required INTEGER NOT NULL,
+                    state TEXT NOT NULL,
+                    verdict TEXT,
+                    payload_hash_observed TEXT,
+                    payload_hash_recorded TEXT,
+                    finding_record_id TEXT,
+                    checked_by TEXT NOT NULL,
+                    checked_at REAL NOT NULL,
                     receipt_id TEXT NOT NULL
                 );
                 """
@@ -253,6 +338,48 @@ class SandersSentinelService:
     # -- design -----------------------------------------------------
 
     @staticmethod
+    def bloodline_design_view() -> dict:
+        return {
+            'founder_ruling': FOUNDER_RULING_BLOODLINE_PROTECTION,
+            'ruling_date': FOUNDER_RULING_BLOODLINE_DATE,
+            'ruling_source': "Founder's Rulings on the Bloodline"
+                             ' Protection Open Items, addendum'
+                             ' 2026-11-25 11:37 MST',
+            'scope_ref': BLOODLINE_GOVERNANCE_SCOPE,
+            'watch_set': [
+                {'document': entry['document'],
+                 'manifest': entry['document'] + '.pbd.json',
+                 'title': entry['title'],
+                 'required': entry['required']}
+                for entry in BLOODLINE_WATCH_SET],
+            'mechanism': 'A verification cycle assesses each'
+                         ' watched document against its paired'
+                         ' `.pbd.json` manifest payload hash (the'
+                         ' MASTER §13 pair assessment). Sound'
+                         ' verdicts: VALID and UNSIGNED. Any'
+                         ' other verdict on a required document'
+                         ' raises a finding — a watch record'
+                         ' under the bloodline governance scope,'
+                         ' placed before a human operator. An'
+                         ' optional document that has not landed'
+                         ' in the repository stands NOT_LANDED'
+                         ' and raises nothing.',
+            'note': 'Bloodline governance coverage is Sanders'
+                    ' Sentinel\u2019s ruled remit under the'
+                    ' founder\u2019s 2026-11-25 ruling: its role'
+                    ' is to protect the bloodline, and the'
+                    ' governance records are what it protects'
+                    ' here. The coverage detects and escalates'
+                    ' only — it amends nothing, restores'
+                    ' nothing, and decides nothing. It is'
+                    ' carried by this platform, not by the'
+                    ' Global PBD Sentinel: that platform\u2019s'
+                    ' MASTER §15 scope over executable files is'
+                    ' unchanged, and the shared §13 assessment'
+                    ' merges no identities.',
+        }
+
+    @staticmethod
     def design_view() -> dict:
         return {
             'name': IDENTITY.name,
@@ -267,6 +394,8 @@ class SandersSentinelService:
             ],
             'watchdog_discipline': WATCHDOG_DISCIPLINE,
             'record_operations': list(RECORD_OPERATIONS),
+            'bloodline_protection':
+                SandersSentinelService.bloodline_design_view(),
             'note': 'Sanders Sentinel is the global watchdog'
                     ' platform: it carries watch records over'
                     ' subjects and detection signals presented by'
@@ -542,6 +671,228 @@ class SandersSentinelService:
                 (record_id,)).fetchone()
         return self._record_view(updated)
 
+    # -- bloodline governance coverage ----------------------------
+
+    @staticmethod
+    def _bloodline_check_view(row):
+        return {
+            'check_id': row['check_id'],
+            'cycle_id': row['cycle_id'],
+            'document_ref': row['document_ref'],
+            'manifest_ref': row['manifest_ref'],
+            'required': bool(row['required']),
+            'state': row['state'],
+            'verdict': row['verdict'],
+            'payload_hash_observed': row['payload_hash_observed'],
+            'payload_hash_recorded': row['payload_hash_recorded'],
+            'finding_record_id': row['finding_record_id'],
+            'checked_by': row['checked_by'],
+            'checked_at': row['checked_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def _open_bloodline_finding(self, db, document_ref, verdict):
+        """The id of the still-open finding watch record for a
+        document and verdict signal, if one already stands — a
+        standing finding is linked, never duplicated."""
+        signal = f'BLOODLINE_GOVERNANCE_ASSESSMENT:{verdict}'
+        rows = db.execute(
+            'SELECT record_id, signal_refs FROM'
+            ' sanders_sentinel_records WHERE scope_ref = ?'
+            ' AND subject_ref = ? AND status IN'
+            " ('REQUESTED', 'APPROVED')",
+            (BLOODLINE_GOVERNANCE_SCOPE, document_ref)).fetchall()
+        for row in rows:
+            if signal in json.loads(row['signal_refs']):
+                return row['record_id']
+        return None
+
+    def verify_bloodline_records(self, actor, *, region=None):
+        """Run one bloodline governance verification cycle
+        (operator only): assess every watched document against
+        its paired `.pbd.json` manifest, record each
+        assessment as a durable receipted check, and raise a
+        finding watch record for every required document that
+        does not assess sound. Detect and escalate only: the
+        cycle amends, restores, and repairs nothing, and a
+        finding is a record placed before a human operator."""
+        self._geo(region)
+        self._require_operator(actor)
+        if self._repo_root is None:
+            raise SandersSentinelDenied(
+                'Bloodline governance coverage is not bound to'
+                ' a repository root')
+        assessments = []
+        for entry in BLOODLINE_WATCH_SET:
+            document = entry['document']
+            if not entry['required'] and not (
+                    self._repo_root / document).is_file():
+                assessments.append({
+                    'entry': entry, 'verdict': None,
+                    'state': 'NOT_LANDED',
+                    'payload_hash_observed': None,
+                    'payload_hash_recorded': None,
+                    'manifest': document + '.pbd.json'})
+                continue
+            result = assess_pair(self._repo_root, document)
+            assessments.append({
+                'entry': entry, 'verdict': result['verdict'],
+                'state': ('SOUND' if result['verdict']
+                          in BLOODLINE_SOUND_VERDICTS
+                          else 'FINDING'),
+                'payload_hash_observed':
+                    result['payload_hash_observed'],
+                'payload_hash_recorded':
+                    result['payload_hash_recorded'],
+                'manifest': result['manifest']})
+        now = self._now()
+        cycle_id = f'bloodline-cycle-{uuid.uuid4().hex[:16]}'
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                for item in assessments:
+                    entry = item['entry']
+                    finding_record_id = None
+                    if item['state'] == 'FINDING':
+                        finding_record_id = \
+                            self._open_bloodline_finding(
+                                db, entry['document'],
+                                item['verdict'])
+                        if finding_record_id is None:
+                            finding_record_id = (
+                                'sentinel-record-'
+                                f"{uuid.uuid4().hex[:16]}")
+                            signals = [
+                                'BLOODLINE_GOVERNANCE_ASSESSMENT:'
+                                f"{item['verdict']}"]
+                            receipt_id = self._record(
+                                'SANDERS_SENTINEL_BLOODLINE_FINDING',
+                                actor=actor, cycle_id=cycle_id,
+                                record_id=finding_record_id,
+                                document_ref=entry['document'],
+                                verdict=item['verdict'])
+                            db.execute(
+                                'INSERT INTO'
+                                ' sanders_sentinel_records'
+                                ' (record_id, subject_ref,'
+                                ' signal_refs, signal_count,'
+                                ' scope_ref, status, outcome,'
+                                ' evidence_ref, requested_by,'
+                                ' requested_at, updated_by,'
+                                ' updated_at, receipt_id) VALUES'
+                                ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                                ' ?, ?, ?)',
+                                (finding_record_id,
+                                 entry['document'],
+                                 json.dumps(signals), len(signals),
+                                 BLOODLINE_GOVERNANCE_SCOPE,
+                                 'REQUESTED', None, None, actor,
+                                 now, actor, now, receipt_id))
+                    check_id = ('bloodline-check-'
+                                f"{uuid.uuid4().hex[:16]}")
+                    receipt_id = self._record(
+                        'SANDERS_SENTINEL_BLOODLINE_CHECK',
+                        actor=actor, cycle_id=cycle_id,
+                        check_id=check_id,
+                        document_ref=entry['document'],
+                        state=item['state'],
+                        verdict=item['verdict'])
+                    db.execute(
+                        'INSERT INTO'
+                        ' sanders_sentinel_bloodline_checks'
+                        ' (check_id, cycle_id, document_ref,'
+                        ' manifest_ref, required, state, verdict,'
+                        ' payload_hash_observed,'
+                        ' payload_hash_recorded,'
+                        ' finding_record_id, checked_by,'
+                        ' checked_at, receipt_id) VALUES'
+                        ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                        (check_id, cycle_id, entry['document'],
+                         item['manifest'],
+                         1 if entry['required'] else 0,
+                         item['state'], item['verdict'],
+                         item['payload_hash_observed'],
+                         item['payload_hash_recorded'],
+                         finding_record_id, actor, now,
+                         receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            rows = db.execute(
+                'SELECT * FROM sanders_sentinel_bloodline_checks'
+                ' WHERE cycle_id = ? ORDER BY document_ref',
+                (cycle_id,)).fetchall()
+        checks = [self._bloodline_check_view(row) for row in rows]
+        return {
+            'cycle_id': cycle_id,
+            'checked_at': now,
+            'checked_by': actor,
+            'scope_ref': BLOODLINE_GOVERNANCE_SCOPE,
+            'checks': checks,
+            'documents_sound': sum(
+                1 for c in checks if c['state'] == 'SOUND'),
+            'findings_raised': sum(
+                1 for c in checks if c['state'] == 'FINDING'),
+            'documents_not_landed': sum(
+                1 for c in checks if c['state'] == 'NOT_LANDED'),
+        }
+
+    def bloodline_coverage(self, actor, role, *, region=None):
+        """The current bloodline governance coverage view: the
+        latest recorded check for every watched document, and
+        the findings still standing open before a human."""
+        self._geo(region)
+        self._guard_access(actor, role, 'bloodline-coverage',
+                           'bloodline coverage view')
+        with self._connect() as db:
+            latest = []
+            for entry in BLOODLINE_WATCH_SET:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_bloodline_checks'
+                    ' WHERE document_ref = ? ORDER BY'
+                    ' checked_at DESC, rowid DESC LIMIT 1',
+                    (entry['document'],)).fetchone()
+                if row is None:
+                    latest.append({
+                        'document_ref': entry['document'],
+                        'manifest_ref':
+                            entry['document'] + '.pbd.json',
+                        'title': entry['title'],
+                        'required': entry['required'],
+                        'state': ('NOT_LANDED'
+                                  if not entry['required']
+                                  else 'NEVER_CHECKED'),
+                        'verdict': None, 'checked_at': None,
+                        'finding_record_id': None})
+                else:
+                    view = self._bloodline_check_view(row)
+                    view['title'] = entry['title']
+                    latest.append(view)
+            checks_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_bloodline_checks'
+            ).fetchone()['n']
+            cycles_total = db.execute(
+                'SELECT COUNT(DISTINCT cycle_id) AS n FROM'
+                ' sanders_sentinel_bloodline_checks'
+            ).fetchone()['n']
+            findings_open = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_records WHERE scope_ref = ?'
+                " AND status IN ('REQUESTED', 'APPROVED')",
+                (BLOODLINE_GOVERNANCE_SCOPE,)).fetchone()['n']
+        return {
+            'design': self.bloodline_design_view(),
+            'bound_to_repository_root':
+                self._repo_root is not None,
+            'latest_checks': latest,
+            'checks_total': checks_total,
+            'cycles_total': cycles_total,
+            'findings_open': findings_open,
+        }
+
     # -- status / check-in ----------------------------------------------
 
     def status(self) -> dict:
@@ -566,9 +917,40 @@ class SandersSentinelService:
                 ' FROM sanders_sentinel_records').fetchone()['n']
             latest = _foundation_latest_check_in(db,
                                                  IDENTITY.platform_id)
+            bloodline_checks_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_bloodline_checks'
+            ).fetchone()['n']
+            bloodline_latest_states = {}
+            for entry in BLOODLINE_WATCH_SET:
+                row = db.execute(
+                    'SELECT state FROM'
+                    ' sanders_sentinel_bloodline_checks'
+                    ' WHERE document_ref = ? ORDER BY'
+                    ' checked_at DESC, rowid DESC LIMIT 1',
+                    (entry['document'],)).fetchone()
+                bloodline_latest_states[entry['document']] = (
+                    row['state'] if row is not None
+                    else ('NOT_LANDED' if not entry['required']
+                          else 'NEVER_CHECKED'))
+            bloodline_findings_open = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_records WHERE scope_ref = ?'
+                " AND status IN ('REQUESTED', 'APPROVED')",
+                (BLOODLINE_GOVERNANCE_SCOPE,)).fetchone()['n']
         return {
             'identity': IDENTITY.to_dict(),
             'design': self.design_view(),
+            'bloodline_coverage': {
+                'founder_ruling':
+                    FOUNDER_RULING_BLOODLINE_PROTECTION,
+                'bound_to_repository_root':
+                    self._repo_root is not None,
+                'documents_watched': len(BLOODLINE_WATCH_SET),
+                'checks_total': bloodline_checks_total,
+                'latest_states': bloodline_latest_states,
+                'findings_open': bloodline_findings_open,
+            },
             'records_total': sum(by_status.values()),
             'records_by_status': by_status,
             'records_by_outcome': by_outcome,
