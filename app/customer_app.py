@@ -71,6 +71,7 @@ from core_platform.configuration_agent_service import ConfigurationAgentDenied, 
 from core_platform.it_support_agent_service import ITSupportAgentDenied, ITSupportAgentForbidden
 from core_platform.sanders_sentinel_service import SandersSentinelDenied, SandersSentinelForbidden
 from core_platform.lil_mama_service import LilMamaDenied, LilMamaForbidden
+from core_platform.baby_girl_service import BabyGirlDenied, BabyGirlForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -256,6 +257,10 @@ SANDERS_SENTINEL_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-sentinel/reco
 LIL_MAMA_RECORD_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})$')
 LIL_MAMA_RECORD_ACTION_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/action$')
 LIL_MAMA_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/outcome$')
+BABY_GIRL_RECORD_ROUTE = re.compile(r'^/api/baby-girl/records/([A-Za-z0-9_-]{1,128})$')
+BABY_GIRL_RECORD_ACTION_ROUTE = re.compile(r'^/api/baby-girl/records/([A-Za-z0-9_-]{1,128})/action$')
+BABY_GIRL_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/baby-girl/records/([A-Za-z0-9_-]{1,128})/outcome$')
+BABY_GIRL_CUSTODY_ROUTE = re.compile(r'^/api/baby-girl/custody/([A-Za-z0-9_-]{1,128})$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
 
@@ -263,7 +268,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -442,6 +447,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         lil_mama_record_match = LIL_MAMA_RECORD_ROUTE.fullmatch(path)
         lil_mama_record_action_match = LIL_MAMA_RECORD_ACTION_ROUTE.fullmatch(path)
         lil_mama_record_outcome_match = LIL_MAMA_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        baby_girl_record_match = BABY_GIRL_RECORD_ROUTE.fullmatch(path)
+        baby_girl_record_action_match = BABY_GIRL_RECORD_ACTION_ROUTE.fullmatch(path)
+        baby_girl_record_outcome_match = BABY_GIRL_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        baby_girl_custody_match = BABY_GIRL_CUSTODY_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -791,6 +800,16 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or lil_mama_record_match is not None
                                   or lil_mama_record_action_match is not None
                                   or lil_mama_record_outcome_match is not None)
+        is_baby_girl_route = (path in ('/api/baby-girl/status',
+                                       '/api/baby-girl/records',
+                                       '/api/baby-girl/custody',
+                                       '/api/baby-girl/design',
+                                       '/api/baby-girl/operation-check',
+                                       '/api/baby-girl/check-in')
+                                  or baby_girl_record_match is not None
+                                  or baby_girl_record_action_match is not None
+                                  or baby_girl_record_outcome_match is not None
+                                  or baby_girl_custody_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -829,7 +848,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_configuration_route
                              or is_it_support_route
                              or is_sentinel_route
-                             or is_lil_mama_route)
+                             or is_lil_mama_route
+                             or is_baby_girl_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -960,7 +980,11 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/sanders-sentinel/design',
                                             '/api/lil-mama/status',
                                             '/api/lil-mama/records',
-                                            '/api/lil-mama/design')
+                                            '/api/lil-mama/design',
+                                            '/api/baby-girl/status',
+                                            '/api/baby-girl/records',
+                                            '/api/baby-girl/design',
+                                            '/api/baby-girl/custody')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -1008,7 +1032,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or configuration_record_match is not None
                                    or it_support_record_match is not None
                                    or sentinel_record_match is not None
-                                   or lil_mama_record_match is not None) else ('POST',)
+                                   or lil_mama_record_match is not None
+                                   or baby_girl_record_match is not None
+                                   or baby_girl_custody_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -1076,6 +1102,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-sentinel/records':
             allowed = ('GET', 'POST')
         if path == '/api/lil-mama/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/baby-girl/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/baby-girl/custody':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -2839,6 +2869,52 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = lil_mama.record_view(identity, lil_mama_role, lil_mama_record_match.group(1))
                         return respond(start, '200 OK', {'record': record})
                     return check_in(lil_mama)
+                if is_baby_girl_route:
+                    if baby_girl is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'baby_girl_unavailable'})
+                    baby_girl_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/baby-girl/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': baby_girl.status()})
+                    if path == '/api/baby-girl/design':
+                        return respond(start, '200 OK', {'design': baby_girl.design_view()})
+                    if path == '/api/baby-girl/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = baby_girl.operation_check(identity, baby_girl_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/baby-girl/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': baby_girl.records_list(identity, baby_girl_role)})
+                        if set(data) != {'subject_ref', 'monitoring_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = baby_girl.create_record(identity, data['subject_ref'], data['monitoring_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if path == '/api/baby-girl/custody':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'custody_records': baby_girl.custody_list(identity, baby_girl_role)})
+                        if set(data) != {'evidence_ref', 'custody_event', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = baby_girl.record_custody(identity, data['evidence_ref'], data['custody_event'], data['scope_ref'])
+                        return respond(start, '201 Created', {'custody_record': record})
+                    if baby_girl_custody_match:
+                        record = baby_girl.custody_view(identity, baby_girl_role, baby_girl_custody_match.group(1))
+                        return respond(start, '200 OK', {'custody_record': record})
+                    if baby_girl_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = baby_girl.record_action(identity, baby_girl_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if baby_girl_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = baby_girl.record_outcome(identity, baby_girl_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if baby_girl_record_match:
+                        record = baby_girl.record_view(identity, baby_girl_role, baby_girl_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(baby_girl)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -3030,6 +3106,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'lil_mama_forbidden'})
         except LilMamaDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'lil_mama_denied', 'detail': str(exc)})
+        except BabyGirlForbidden:
+            return respond(start, '403 Forbidden', {'error': 'baby_girl_forbidden'})
+        except BabyGirlDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'baby_girl_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

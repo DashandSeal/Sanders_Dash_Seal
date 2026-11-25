@@ -189,6 +189,7 @@ from core_platform.configuration_agent_service import ConfigurationAgentService
 from core_platform.it_support_agent_service import ITSupportAgentService
 from core_platform.sanders_sentinel_service import SandersSentinelService
 from core_platform.lil_mama_service import LilMamaService
+from core_platform.baby_girl_service import BabyGirlService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -747,6 +748,16 @@ def create_production_bindings():
     lil_mama = LilMamaService(
         data_dir / 'lil_mama.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Baby Girl platform (Q50, RTSA Build Program tranche
+    # 12): governed redundant-monitoring records and
+    # forensic custody records over her own store, under
+    # the watchdog law — she detects and escalates only,
+    # holds no decision authority, alters no evidence,
+    # and takes no action against any subject. Her public
+    # business face is served at /baby-girl.
+    baby_girl = BabyGirlService(
+        data_dir / 'baby_girl.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -798,4 +809,5 @@ def create_production_bindings():
         it_support_agent=it_support_agent,
         sanders_sentinel=sanders_sentinel,
         lil_mama=lil_mama,
+        baby_girl=baby_girl,
     )

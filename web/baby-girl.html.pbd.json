@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/baby-girl.html",
+        "payload_hash": "a79ccdf2086a1f7b1acf24fad25c9f3d228d1e130f01db6f0007d26862943947",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
