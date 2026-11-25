@@ -3437,3 +3437,153 @@ it_support_agent_unavailable). Deployed-composition
 verification through create_application on the final
 composed tree is recorded in the tranche 11 entry of
 the build queue.
+
+## RTSA Build Program Q48 — Sanders Sentinel (2026-11-24)
+
+**Scope**: build the Sanders Sentinel design whole as
+its own platform service (canonical catalog row #54, Band
+2D), per the established tranche pattern, under the
+standards gate: Fortune 500 governs end to end, the MASTER
+architecture within it, and the Sanders Royal Enterprise
+Standard for presentation within it. Fortune 500 judgment:
+the platform meets the standard within its honest scope
+limits — it is an internal operator/auditor record surface
+over governed global-watch records; no public or customer
+surface is designed for Sanders Sentinel in any examined
+source (its designed hostname is a status endpoint, not a
+storefront), so none is built and the Royal Enterprise
+presentation layer does not apply; no security internals
+are exposed anywhere. Scope limits stated plainly: the
+platform enforces the watchdog law — it detects and
+escalates only, holds no corporate decision authority,
+takes no enforcement action against any person, company,
+or platform, and decides nothing; an escalation outcome
+is a record placed before a human decision-maker, never
+an act. It watches no live system and holds subjects and
+detection signals by reference only — no telemetry, no
+traffic, and no live-system state ever. Naming
+verification: the canonical catalog (row #54), the master
+grid (deploy/oracle/sanders_master_grid.json id 1), and
+the owner's recorded rulings (decisions D-N6 and the
+Group 3 watchdog roster) name this platform "Sanders
+Sentinel" — the name was verified against those sources
+before building, per the name law recorded after tranche
+8. D-N6 rules expressly: "Not Alpha. His name is Sanders
+Sentinel." RECORDS CONFLICT, flagged and not harmonized:
+the Police Men status record (rtsa_police_men/status.json)
+names a watchdog "Alpha (WD-03)" as an enforcer, Set B's
+tier pricing lists a watchdog roster of "Lil Mama, Baby
+Girl, Alpha, Bata", and the CareHiveOS inventory the
+owner supplied 2026-11-24 uses "Alpha"/"Beta" watchdog
+designations — all three conflict with the owner's ruled
+roster (Lil Mama, Baby Girl, Alph, Bata; no "Beta"
+watchdog; "Alpha" rejected as a name). The owner's
+rulings govern; the source designations are recorded
+exactly as found and none is adopted as a name.
+core_platform/agent_registry.py and
+core_platform/rtsa_registry.py remain byte-untouched.
+Sanders Sentinel is its own platform — not Global PBD
+Sentinel (Q4, the MASTER §15 deployed-state integrity
+monitor; the shared word "Sentinel" merges nothing), not
+Steward Sentinel (catalog #84), not Sanders Labyrinth
+Shield (Q8), not RTSA Minotaur (Q9), not the Police Men
+layer, and not any of the four roster watchdogs — never
+merged.
+
+**Built**: core_platform/sanders_sentinel_service.py
+(SandersSentinelService over
+core_platform/rtsa_foundation.py; independent identity
+sanders_sentinel; design view carrying the designed role
+"Global watchdog, critical infrastructure", its design
+sources, and the watchdog discipline
+DETECT_AND_ESCALATE_ONLY; fail-closed operation check
+refusing the execution boundary by name with the watchdog
+signal WATCHDOG_DETECT_AND_ESCALATE_ONLY —
+enforce_containment, block_subject, suspend_platform,
+take_action, external_execution — and unknown
+operations; watch records carried as durable, receipted
+records over a subject reference, a declared
+detection-signal reference set, and a scope reference,
+with lifecycle REQUESTED → APPROVED / REJECTED (the
+recorded human decision) → OUTCOME_RECORDED; the signal
+discipline enforced in the record model — a record
+declared with no detection signals stands
+NO_SIGNALS_SUBMITTED in every view and in the status
+tallies, and both determinations (ESCALATION_RECORDED,
+NO_ESCALATION_REQUIRED) are refused on it, while
+INCONCLUSIVE, which asserts nothing, records against
+evidence; outcomes recorded only for APPROVED records
+and only against a presented evidence reference, with a
+closed outcome set; every state change writes its
+Glass-Box receipt inside the same transaction;
+operator-only check-in bound to the identity integrity
+digest). Route family /api/sanders-sentinel/ wired
+through app/customer_app.py (create_customer_app
+parameter sanders_sentinel), deploy/deployment.py
+(RuntimeBindings.sanders_sentinel, health route
+/api/sanders-sentinel/healthz, forwarding through
+create_application), and deploy/production_bindings.py
+(construction on its own store sanders_sentinel.db);
+watchdog check_http entry in deploy/sds_watchdog.sh;
+registry entry in core_platform/ai_platform_links.json
+updated in place (registry remains 77 entries — the
+entry pre-existed from the records layer and now carries
+the built platform; its former grid endpoint, a file
+claim on an unreachable host, is replaced by the
+in-process status endpoint).
+
+**Pricing/teaching audit** (examined set: canonical
+catalog row #54; Set B database_schema.sql, read
+directly — row ('Sanders Sentinel', 'Alpha',
+'ultra_premium', 12, 19999, 7999600) — and Set B
+tier_pricing_global.py, read directly — the name in the
+ultra_premium list; Set C catalog (DeployPad branch
+README), read directly — Tier 2 row "Sanders Sentinel |
+Guardian | $455,000,000/yr"; the MASTER design — the
+name does not appear; the master grid and the Police Men
+status record): the design carries NO price for Sanders
+Sentinel that may be wired — Set B's $7,999,600 figure
+and Set C's $455,000,000/yr figure are BLOCKER FIGURES
+under the owner's 2026-11-24 21:31 ruling (unrealistic
+figures placed as blockers, never chargeable prices);
+both are flagged here, none is built, none is wired, and
+the two figures' conflict is not settled because neither
+is a price. The design carries NO teaching function for
+Sanders Sentinel — none built, none invented.
+
+**Verification**: scratch drive (never committed) —
+48/48 checks: identity and design view (designed role
+and watchdog discipline exact; the D-N6 name ruling
+carried in the design note); constructor refuses a
+missing audit adapter; operation check (record operation
+RECORD_ONLY; all five execution operations refused by
+name with the watchdog signal; unknown operation
+refused); record lifecycle (operator-only creation;
+subject/scope references required; signal set must be a
+list of non-empty references, capped; outcome refused
+before approval; outcome without evidence refused;
+outcome set closed — CONTAINED is not an outcome; the
+with-signals record's ESCALATION_RECORDED outcome
+records against evidence and a second outcome is
+refused; the no-signals record stands NO_SIGNALS_SUBMITTED
+with both determinations refused on it while INCONCLUSIVE
+records; reject records REJECTED and approve from
+REJECTED is refused; unknown record denied; geofence
+refuses an undeclared region; status totals including
+records_no_signals_submitted and signals_declared_total;
+operator-only check-in); registry at 77 entries with the
+updated entry carrying the built platform and naming the
+blocker figure as a blocker; all 9 approval gates
+UNAPPROVED; WSGI through create_customer_app (signed-out
+401, status 200, execution operation 400 with
+WATCHDOG_DETECT_AND_ESCALATE_ONLY in the detail, create
+refused for non-operator 403, create 201 standing
+NO_SIGNALS_SUBMITTED, approve 200, ESCALATION_RECORDED
+on the no-signals record refused 400 with
+NO_SIGNALS_SUBMITTED in the detail, INCONCLUSIVE outcome
+200, records list 200, unexpected fields 400, wrong
+origin 403, check-in 201, unwired service 503
+sanders_sentinel_unavailable). Deployed-composition
+verification through create_application on the final
+composed tree is recorded in the tranche 12 entry of
+the build queue.

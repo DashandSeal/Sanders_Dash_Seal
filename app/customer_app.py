@@ -69,6 +69,7 @@ from core_platform.observability_agent_service import ObservabilityAgentDenied, 
 from core_platform.quality_agent_service import QualityAgentDenied, QualityAgentForbidden
 from core_platform.configuration_agent_service import ConfigurationAgentDenied, ConfigurationAgentForbidden
 from core_platform.it_support_agent_service import ITSupportAgentDenied, ITSupportAgentForbidden
+from core_platform.sanders_sentinel_service import SandersSentinelDenied, SandersSentinelForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -245,6 +246,9 @@ CONFIGURATION_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/configuration-agent/reco
 IT_SUPPORT_RECORD_ROUTE = re.compile(r'^/api/it-support-agent/records/([A-Za-z0-9_-]{1,128})$')
 IT_SUPPORT_RECORD_ACTION_ROUTE = re.compile(r'^/api/it-support-agent/records/([A-Za-z0-9_-]{1,128})/action$')
 IT_SUPPORT_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/it-support-agent/records/([A-Za-z0-9_-]{1,128})/outcome$')
+SANDERS_SENTINEL_RECORD_ROUTE = re.compile(r'^/api/sanders-sentinel/records/([A-Za-z0-9_-]{1,128})$')
+SANDERS_SENTINEL_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-sentinel/records/([A-Za-z0-9_-]{1,128})/action$')
+SANDERS_SENTINEL_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-sentinel/records/([A-Za-z0-9_-]{1,128})/outcome$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
 
@@ -252,7 +256,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -425,6 +429,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         it_support_record_match = IT_SUPPORT_RECORD_ROUTE.fullmatch(path)
         it_support_record_action_match = IT_SUPPORT_RECORD_ACTION_ROUTE.fullmatch(path)
         it_support_record_outcome_match = IT_SUPPORT_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        sentinel_record_match = SANDERS_SENTINEL_RECORD_ROUTE.fullmatch(path)
+        sentinel_record_action_match = SANDERS_SENTINEL_RECORD_ACTION_ROUTE.fullmatch(path)
+        sentinel_record_outcome_match = SANDERS_SENTINEL_RECORD_OUTCOME_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -758,6 +765,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or it_support_record_match is not None
                                   or it_support_record_action_match is not None
                                   or it_support_record_outcome_match is not None)
+        is_sentinel_route = (path in ('/api/sanders-sentinel/status',
+                                      '/api/sanders-sentinel/records',
+                                      '/api/sanders-sentinel/design',
+                                      '/api/sanders-sentinel/operation-check',
+                                      '/api/sanders-sentinel/check-in')
+                                  or sentinel_record_match is not None
+                                  or sentinel_record_action_match is not None
+                                  or sentinel_record_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -794,7 +809,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_observability_route
                              or is_quality_route
                              or is_configuration_route
-                             or is_it_support_route)
+                             or is_it_support_route
+                             or is_sentinel_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -919,7 +935,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/configuration-agent/design',
                                             '/api/it-support-agent/status',
                                             '/api/it-support-agent/records',
-                                            '/api/it-support-agent/design')
+                                            '/api/it-support-agent/design',
+                                            '/api/sanders-sentinel/status',
+                                            '/api/sanders-sentinel/records',
+                                            '/api/sanders-sentinel/design')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -965,7 +984,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or observability_record_match is not None
                                    or quality_record_match is not None
                                    or configuration_record_match is not None
-                                   or it_support_record_match is not None) else ('POST',)
+                                   or it_support_record_match is not None
+                                   or sentinel_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -1029,6 +1049,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/configuration-agent/records':
             allowed = ('GET', 'POST')
         if path == '/api/it-support-agent/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/records':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -2720,6 +2742,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = it_support_agent.record_view(identity, it_support_role, it_support_record_match.group(1))
                         return respond(start, '200 OK', {'record': record})
                     return check_in(it_support_agent)
+                if is_sentinel_route:
+                    if sanders_sentinel is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'sanders_sentinel_unavailable'})
+                    sentinel_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/sanders-sentinel/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': sanders_sentinel.status()})
+                    if path == '/api/sanders-sentinel/design':
+                        return respond(start, '200 OK', {'design': sanders_sentinel.design_view()})
+                    if path == '/api/sanders-sentinel/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.operation_check(identity, sentinel_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/sanders-sentinel/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': sanders_sentinel.records_list(identity, sentinel_role)})
+                        if set(data) != {'subject_ref', 'signal_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.create_record(identity, data['subject_ref'], data['signal_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if sentinel_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_action(identity, sentinel_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if sentinel_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_outcome(identity, sentinel_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if sentinel_record_match:
+                        record = sanders_sentinel.record_view(identity, sentinel_role, sentinel_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(sanders_sentinel)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -2903,6 +2961,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'it_support_agent_forbidden'})
         except ITSupportAgentDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'it_support_agent_denied', 'detail': str(exc)})
+        except SandersSentinelForbidden:
+            return respond(start, '403 Forbidden', {'error': 'sanders_sentinel_forbidden'})
+        except SandersSentinelDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'sanders_sentinel_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:

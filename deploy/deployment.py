@@ -85,6 +85,7 @@ class RuntimeBindings:
     quality_agent: object = None
     configuration_agent: object = None
     it_support_agent: object = None
+    sanders_sentinel: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -437,7 +438,8 @@ def create_application(bindings=None):
             observability_agent=getattr(bindings, 'observability_agent', None),
             quality_agent=getattr(bindings, 'quality_agent', None),
             configuration_agent=getattr(bindings, 'configuration_agent', None),
-            it_support_agent=getattr(bindings, 'it_support_agent', None)
+            it_support_agent=getattr(bindings, 'it_support_agent', None),
+            sanders_sentinel=getattr(bindings, 'sanders_sentinel', None)
         )
     else:
         verifier = _denied
@@ -788,7 +790,8 @@ def create_application(bindings=None):
                     '/api/observability-agent/healthz',
                     '/api/quality-agent/healthz',
                     '/api/configuration-agent/healthz',
-                    '/api/it-support-agent/healthz'):
+                    '/api/it-support-agent/healthz',
+                    '/api/sanders-sentinel/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -837,6 +840,7 @@ def create_application(bindings=None):
                 '/api/quality-agent/healthz': ('quality_agent', 'quality_agent', 'quality_agent_unavailable'),
                 '/api/configuration-agent/healthz': ('configuration_agent', 'configuration_agent', 'configuration_agent_unavailable'),
                 '/api/it-support-agent/healthz': ('it_support_agent', 'it_support_agent', 'it_support_agent_unavailable'),
+                '/api/sanders-sentinel/healthz': ('sanders_sentinel', 'sanders_sentinel', 'sanders_sentinel_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -955,7 +959,9 @@ def create_application(bindings=None):
                 or path == '/api/configuration-agent'
                 or path.startswith('/api/configuration-agent/')
                 or path == '/api/it-support-agent'
-                or path.startswith('/api/it-support-agent/'))
+                or path.startswith('/api/it-support-agent/')
+                or path == '/api/sanders-sentinel'
+                or path.startswith('/api/sanders-sentinel/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

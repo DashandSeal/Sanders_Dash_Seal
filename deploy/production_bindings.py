@@ -187,6 +187,7 @@ from core_platform.observability_agent_service import ObservabilityAgentService
 from core_platform.quality_agent_service import QualityAgentService
 from core_platform.configuration_agent_service import ConfigurationAgentService
 from core_platform.it_support_agent_service import ITSupportAgentService
+from core_platform.sanders_sentinel_service import SandersSentinelService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -728,6 +729,14 @@ def create_production_bindings():
     it_support_agent = ITSupportAgentService(
         data_dir / 'it_support_agent.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Sentinel platform (Q48, RTSA Build Program
+    # tranche 12): governed global-watch records over its
+    # own store, under the watchdog law — it detects and
+    # escalates only, holds no decision authority, and
+    # takes no action against any subject.
+    sanders_sentinel = SandersSentinelService(
+        data_dir / 'sanders_sentinel.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -777,4 +786,5 @@ def create_production_bindings():
         quality_agent=quality_agent,
         configuration_agent=configuration_agent,
         it_support_agent=it_support_agent,
+        sanders_sentinel=sanders_sentinel,
     )
