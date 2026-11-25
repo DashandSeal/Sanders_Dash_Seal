@@ -244,6 +244,7 @@ from core_platform.sanders_cloud_services_service import SandersCloudServicesSer
 from core_platform.showtime_service import ShowtimeService
 from core_platform.sanders_marketing_service import SandersMarketingService
 from core_platform.sanders_sales_service import SandersSalesService
+from core_platform.sanders_customer_support_service import SandersCustomerSupportService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1217,6 +1218,14 @@ def create_production_bindings():
     sanders_sales = SandersSalesService(
         data_dir / 'sanders_sales.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Customer Support platform (Q96,
+    # RTSA Build Program tranche 28): governed
+    # customer support records over its own store
+    # — it sends no message, contacts no
+    # customer, and dispatches no agent itself.
+    sanders_customer_support = SandersCustomerSupportService(
+        data_dir / 'sanders_customer_support.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1314,4 +1323,5 @@ def create_production_bindings():
         showtime=showtime,
         sanders_marketing=sanders_marketing,
         sanders_sales=sanders_sales,
+        sanders_customer_support=sanders_customer_support,
     )
