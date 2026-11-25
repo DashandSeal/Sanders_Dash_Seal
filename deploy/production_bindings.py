@@ -174,6 +174,7 @@ from core_platform.cobol_synthetic_ai_service import CobolSyntheticAiService
 from core_platform.juggernaut_service import JuggernautService
 from core_platform.bozly_service import BozlyService
 from core_platform.fraud_rtsa_service import FraudRtsaService
+from core_platform.operations_rtsa_service import OperationsRtsaService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -567,6 +568,18 @@ def create_production_bindings():
         data_dir / 'fraud_rtsa.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Operations RTSA (RTSA Build Program): the operational
+    # reasoning and incident response role contract built as
+    # its own platform — governed operational incident records
+    # under the contract's discipline (subjects and incidents
+    # by reference only; a record with no active incidents
+    # stands NO_INCIDENTS_SUBMITTED and cannot be recorded
+    # RESOLVED; it executes nothing, deploys nothing, and
+    # dispatches no one), on its own store.
+    operations_rtsa = OperationsRtsaService(
+        data_dir / 'operations_rtsa.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -602,4 +615,5 @@ def create_production_bindings():
         juggernaut=juggernaut,
         bozly=bozly,
         fraud_rtsa=fraud_rtsa,
+        operations_rtsa=operations_rtsa,
     )

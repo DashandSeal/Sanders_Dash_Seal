@@ -1839,3 +1839,93 @@ check-in 201, unwired service 503 fraud_rtsa_unavailable).
 Deployed-composition verification through create_application
 runs on the final composed tree for this tranche and covers
 every built platform's route family.
+
+## RTSA Build Program Q35 — Operations RTSA (2026-11-24)
+
+**Scope**: build the Operations RTSA role contract whole as
+its own platform service (canonical catalog row #40, Band 2B —
+this landing completes Band 2B), per the established tranche
+pattern, under the standards gate: Fortune 500 governs end to
+end, the MASTER architecture within it, and the Sanders Royal
+Enterprise Standard for presentation within it. Fortune 500
+judgment: the platform meets the standard within its honest
+scope limits — it is an internal operator/auditor record
+surface over governed operational incident records; no public
+or customer surface exists for it by design, so the Royal
+Enterprise presentation layer does not apply, and no security
+internals are exposed anywhere. Scope limits stated plainly:
+the platform executes nothing, deploys nothing, dispatches no
+one, and reaches into no live system; subjects and incidents
+are carried by reference only. Operations RTSA is distinct
+from IT AI Manager (Q5) and from Sharpshooter (Q7) — the three
+are never merged. The role contract in
+core_platform/rtsa_registry.py remains SPECIFIED and enabled:
+False, byte-untouched.
+
+**Built**: core_platform/operations_rtsa_service.py
+(OperationsRtsaService over core_platform/rtsa_foundation.py;
+independent identity operations_rtsa; contract view of the
+Operations RTSA role contract; fail-closed operation check
+refusing the contract's prohibited operations by name —
+external_execution, credential_access, notarization,
+legal_filing, financial_transfer, production_deployment — and
+unknown operations; operational incident assessments carried
+as durable, receipted records over a subject reference, a
+declared active-incident reference set, and a scope reference,
+with lifecycle REQUESTED → APPROVED / REJECTED (the recorded
+human triage decision the contract and the designed offline
+assessment require) → OUTCOME_RECORDED; the designed incident
+discipline enforced in the record model — a record declared
+with no active incidents stands NO_INCIDENTS_SUBMITTED in
+every view and in the status tallies and a RESOLVED outcome on
+it is refused, while a record with incidents stands
+INCIDENT_TRIAGE_REQUIRED; outcomes recorded only for APPROVED
+records and only against a presented evidence reference, with
+a closed outcome set — RESOLVED / ESCALATED / INCONCLUSIVE;
+an ESCALATED outcome is a record inside this platform, not a
+dispatch; every state change writes its Glass-Box receipt
+inside the same transaction; operator-only check-in bound to
+the identity integrity digest). Route family
+/api/operations-rtsa/ wired through app/customer_app.py
+(create_customer_app parameter operations_rtsa), deploy/
+deployment.py (RuntimeBindings.operations_rtsa, health route
+/api/operations-rtsa/healthz, forwarding through
+create_application), and deploy/production_bindings.py
+(construction on its own store operations_rtsa.db); watchdog
+check_http entry in deploy/sds_watchdog.sh; registry entry in
+core_platform/ai_platform_links.json (registry now 65).
+
+**Pricing/teaching audit** (examined set: canonical catalog
+row #40; Set B database_schema.sql + tier_pricing_global.py;
+Set C catalog; the MASTER; the Operations RTSA role contract):
+the design carries NO price for Operations RTSA — none built,
+none invented, no blocker figure attaches to this name. The
+design carries NO teaching function for Operations RTSA — none
+built, none invented.
+
+**Verification**: scratch drive (never committed) — checks:
+identity and contract view; constructor refuses a missing
+audit adapter; operation check (record operation RECORD_ONLY;
+all six prohibited operations refused by name; unknown
+operation refused); incident lifecycle (operator-only
+creation; subject/scope references required; incident set must
+be a list of non-empty references, capped; outcome refused
+before approval; outcome without evidence refused; outcome
+set closed; a no-incident record stands NO_INCIDENTS_SUBMITTED
+and its RESOLVED outcome is refused while an ESCALATED
+outcome records against evidence; reject terminal; unknown
+record denied; geofence refuses an undeclared region); status
+tallies including records_no_incidents_submitted and
+incidents_declared_total; operator-only check-in; registry at
+65 entries; all 9 approval gates UNAPPROVED; WSGI through
+create_customer_app (signed-out 401, status 200, prohibited
+operation 400, create refused for non-operator 403, create 201
+with an empty incident set standing NO_INCIDENTS_SUBMITTED,
+approve 200, RESOLVED on the no-incident record refused 400
+with NO_INCIDENTS_SUBMITTED in the detail, outcome 200,
+incidents list 200, unexpected fields 400, wrong origin 403,
+check-in 201, unwired service 503
+operations_rtsa_unavailable). Deployed-composition
+verification through create_application runs on the final
+composed tree for this tranche and covers every built
+platform's route family.
