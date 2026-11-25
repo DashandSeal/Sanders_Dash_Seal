@@ -1,0 +1,56 @@
+name: Switch Stripe to live on Oracle instance (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  switch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write live Stripe env from the repo secret, restart the app, verify
+        uses: appleboy/ssh-action@v1
+        env:
+          SDS_STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          envs: SDS_STRIPE_SECRET_KEY
+          script: |
+            set -eu
+            if [ -z "${SDS_STRIPE_SECRET_KEY:-}" ]; then echo "KEY_SECRET_MISSING"; exit 1; fi
+            case "$SDS_STRIPE_SECRET_KEY" in sk_live_*|rk_live_*) echo "KEY_SHAPE_LIVE_OK";; *) echo "KEY_SHAPE_NOT_LIVE"; exit 1;; esac
+            sudo mkdir -p /etc/sanders-dash-seal
+            sudo --preserve-env=SDS_STRIPE_SECRET_KEY python3 - <<'PYEOF'
+            import os
+            import tempfile
+            from pathlib import Path
+            key = os.environ.get("SDS_STRIPE_SECRET_KEY", "")
+            if not key:
+                raise SystemExit("KEY_NOT_IN_ENV")
+            target = Path("/etc/sanders-dash-seal/environment")
+            existing = target.read_text().splitlines() if target.exists() else []
+            drop = ("STRIPE_SECRET_KEY=", "STRIPE_LIVEMODE=", "STRIPE_LIVE_VERIFIED=")
+            kept = [ln for ln in existing if not ln.strip().startswith(drop)]
+            kept.append("STRIPE_SECRET_KEY=" + key)
+            kept.append("STRIPE_LIVEMODE=true")
+            kept.append("STRIPE_LIVE_VERIFIED=1")
+            data = "\n".join(kept) + "\n"
+            fd, tmp = tempfile.mkstemp(dir=str(target.parent), prefix=".environment.")
+            os.write(fd, data.encode())
+            os.close(fd)
+            os.chown(tmp, 0, 0)
+            os.chmod(tmp, 0o600)
+            os.replace(tmp, target)
+            print("ENVIRONMENT_FILE_WRITTEN")
+            PYEOF
+            if sudo grep -Eq '^STRIPE_SECRET_KEY=(sk_live_|rk_live_)' /etc/sanders-dash-seal/environment; then echo "ENV_KEY_LINE_OK"; else echo "ENV_KEY_LINE_BAD"; exit 1; fi
+            echo "key prefix class: $(sudo grep -oE '^STRIPE_SECRET_KEY=(sk_live_|rk_live_)' /etc/sanders-dash-seal/environment | cut -d= -f2)"
+            if sudo grep -Eq '^STRIPE_LIVEMODE=true$' /etc/sanders-dash-seal/environment; then echo "ENV_LIVEMODE_OK"; else echo "ENV_LIVEMODE_BAD"; exit 1; fi
+            if sudo grep -Eq '^STRIPE_LIVE_VERIFIED=1$' /etc/sanders-dash-seal/environment; then echo "ENV_LIVE_VERIFIED_OK"; else echo "ENV_LIVE_VERIFIED_BAD"; exit 1; fi
+            sudo systemctl restart sanders-dash-seal.service || true
+            sleep 6
+            echo "service active: $(sudo systemctl is-active sanders-dash-seal.service || true)"
+            ss -ltn | grep ':8000' || echo "nothing on 8000 yet"
+            curl -s -o /dev/null -w 'local healthz: %{http_code}\n' http://127.0.0.1:8000/healthz || true
+            curl -s -H 'Host: sandersdashandseal.com' http://127.0.0.1:8000/api/platform/status | python3 -c "import sys, json; d = json.load(sys.stdin); s = (d.get('services') or {}).get('stripe') or {}; print(json.dumps(s, indent=2, sort_keys=True))" || echo "STATUS_PROBE_FAILED"
+            echo "SWITCH_STRIPE_LIVE_DONE"
