@@ -11,7 +11,13 @@ his own — the deterministic native core in
 ``core_platform/daedalus_native_core.py`` computes planning,
 registry-grounded synthesis, and source generation locally from the
 platform registry, with no external provider, key, or model. It is
-the L15+ head capability (``live_native_reasoning``). The Claude
+the L15+ head capability (``live_native_reasoning``). The core also
+learns in real time (founder direction, 2026-11-25): taught facts
+and relationships and recorded outcomes are kept in a persistent
+learned-knowledge store layered over the founder registry
+(``core_platform/daedalus_knowledge_store.py``) and are reflected
+in the core's next synthesis or planning call, with founder records
+governing on conflict. The Claude
 transport remains in the tree as an optional tool plug, selected
 explicitly with ``core="claude"`` on the config — never the default
 and never a fallback: no path in this module silently substitutes
@@ -565,6 +571,61 @@ def _native_capability_probes() -> dict:
             and first.message_id != third.message_id
         )
 
+    def probe_real_time_learning() -> bool:
+        import tempfile
+        from pathlib import Path
+
+        from .daedalus_knowledge_store import DaedalusKnowledgeStore
+
+        with tempfile.TemporaryDirectory() as tmp:
+            store = DaedalusKnowledgeStore(Path(tmp) / "probe_knowledge.db")
+            core = DaedalusNativeCore(knowledge_store=store)
+            ids = list(core.platform_ids())
+            pair = None
+            for source_id in ids:
+                for target_id in ids:
+                    if (
+                        target_id != source_id
+                        and target_id not in core.founder_references(source_id)
+                        and target_id not in core.founder_referenced_by(source_id)
+                    ):
+                        pair = (source_id, target_id)
+                        break
+                if pair:
+                    break
+            if pair is None:
+                return False
+            source_id, target_id = pair
+            before_refs = core.references(source_id)
+            core.learn_relationship(
+                source_id, target_id,
+                source="capability-probe", relation="references",
+            )
+            after_refs = core.references(source_id)
+            after_text = core.synthesize(
+                "What does " + source_id + " reference?"
+            )
+            core.record_outcome(
+                source_id, "failed",
+                reason="capability probe", source="capability-probe",
+            )
+            core.record_outcome(
+                source_id, "failed",
+                reason="capability probe", source="capability-probe",
+            )
+            plan = core.plan("Plan the rollout of " + source_id)
+            flagged = any(
+                comp.get("outcome_flag") == "repeated_failure"
+                for comp in plan["components"]
+                if comp.get("platform_id") == source_id
+            )
+            return bool(
+                target_id not in before_refs
+                and target_id in after_refs
+                and ("learned reference: " + target_id) in after_text
+                and flagged
+            )
+
     def guarded(fn):
         def run() -> bool:
             try:
@@ -583,6 +644,7 @@ def _native_capability_probes() -> dict:
         ),
         "graph_rag": guarded(probe_graph_rag),
         "request_correlation": guarded(probe_request_correlation),
+        "real_time_learning": guarded(probe_real_time_learning),
     }
 
 
