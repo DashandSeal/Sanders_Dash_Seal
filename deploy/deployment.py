@@ -67,6 +67,7 @@ class RuntimeBindings:
     hydra_q: object = None
     labyrinth: object = None
     cerberus: object = None
+    chorus: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -401,7 +402,8 @@ def create_application(bindings=None):
             promethean=getattr(bindings, 'promethean', None),
             hydra_q=getattr(bindings, 'hydra_q', None),
             labyrinth=getattr(bindings, 'labyrinth', None),
-            cerberus=getattr(bindings, 'cerberus', None)
+            cerberus=getattr(bindings, 'cerberus', None),
+            chorus=getattr(bindings, 'chorus', None)
         )
     else:
         verifier = _denied
@@ -734,7 +736,8 @@ def create_application(bindings=None):
                     '/api/promethean/healthz',
                     '/api/hydra-q/healthz',
                     '/api/labyrinth/healthz',
-                    '/api/cerberus/healthz'):
+                    '/api/cerberus/healthz',
+                    '/api/chorus/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -765,6 +768,7 @@ def create_application(bindings=None):
                 '/api/hydra-q/healthz': ('hydra_q', 'hydra_q', 'hydra_q_unavailable'),
                 '/api/labyrinth/healthz': ('labyrinth', 'labyrinth', 'labyrinth_unavailable'),
                 '/api/cerberus/healthz': ('cerberus', 'cerberus', 'cerberus_unavailable'),
+                '/api/chorus/healthz': ('chorus', 'chorus', 'chorus_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:

@@ -169,6 +169,7 @@ from core_platform.promethean_service import PrometheanService
 from core_platform.hydra_q_service import HydraQService
 from core_platform.labyrinth_service import LabyrinthService
 from core_platform.cerberus_service import CerberusService
+from core_platform.chorus_service import ChorusService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -498,6 +499,15 @@ def create_production_bindings():
         data_dir / 'cerberus.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # CHORUS (RTSA Build Program): the multimodal synthesis and
+    # orchestration role contract built as its own platform —
+    # governed composition records under the contract's modality
+    # discipline (it performs no synthesis and no live
+    # orchestration), on its own store.
+    chorus = ChorusService(
+        data_dir / 'chorus.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -528,4 +538,5 @@ def create_production_bindings():
         hydra_q=hydra_q,
         labyrinth=labyrinth,
         cerberus=cerberus,
+        chorus=chorus,
     )

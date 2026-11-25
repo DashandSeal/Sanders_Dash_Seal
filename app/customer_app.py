@@ -51,6 +51,7 @@ from core_platform.promethean_service import PrometheanDenied, PrometheanForbidd
 from core_platform.hydra_q_service import HydraQDenied, HydraQForbidden
 from core_platform.labyrinth_service import LabyrinthDenied, LabyrinthForbidden
 from core_platform.cerberus_service import CerberusDenied, CerberusForbidden
+from core_platform.chorus_service import ChorusDenied, ChorusForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -174,9 +175,12 @@ LAB_ANALYSIS_RESULT_ROUTE = re.compile(r'^/api/labyrinth/analyses/([A-Za-z0-9_-]
 CERB_ASSESSMENT_ROUTE = re.compile(r'^/api/cerberus/assessments/([A-Za-z0-9_-]{1,128})$')
 CERB_ASSESSMENT_ACTION_ROUTE = re.compile(r'^/api/cerberus/assessments/([A-Za-z0-9_-]{1,128})/action$')
 CERB_ASSESSMENT_DETERMINATION_ROUTE = re.compile(r'^/api/cerberus/assessments/([A-Za-z0-9_-]{1,128})/determination$')
+CHORUS_COMPOSITION_ROUTE = re.compile(r'^/api/chorus/compositions/([A-Za-z0-9_-]{1,128})$')
+CHORUS_COMPOSITION_ACTION_ROUTE = re.compile(r'^/api/chorus/compositions/([A-Za-z0-9_-]{1,128})/action$')
+CHORUS_COMPOSITION_OUTCOME_ROUTE = re.compile(r'^/api/chorus/compositions/([A-Za-z0-9_-]{1,128})/outcome$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -294,6 +298,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         cerb_assessment_match = CERB_ASSESSMENT_ROUTE.fullmatch(path)
         cerb_assessment_action_match = CERB_ASSESSMENT_ACTION_ROUTE.fullmatch(path)
         cerb_assessment_determination_match = CERB_ASSESSMENT_DETERMINATION_ROUTE.fullmatch(path)
+        chorus_composition_match = CHORUS_COMPOSITION_ROUTE.fullmatch(path)
+        chorus_composition_action_match = CHORUS_COMPOSITION_ACTION_ROUTE.fullmatch(path)
+        chorus_composition_outcome_match = CHORUS_COMPOSITION_OUTCOME_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -479,6 +486,15 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                          or cerb_assessment_match is not None
                          or cerb_assessment_action_match is not None
                          or cerb_assessment_determination_match is not None)
+        is_chorus_route = (path in ('/api/chorus/status',
+                                    '/api/chorus/compositions',
+                                    '/api/chorus/contract',
+                                    '/api/chorus/operation-check',
+                                    '/api/chorus/modality-check',
+                                    '/api/chorus/check-in')
+                           or chorus_composition_match is not None
+                           or chorus_composition_action_match is not None
+                           or chorus_composition_outcome_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -497,7 +513,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_prom_route
                              or is_hydraq_route
                              or is_lab_route
-                             or is_cerb_route)
+                             or is_cerb_route
+                             or is_chorus_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -566,7 +583,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/labyrinth/contract',
                                             '/api/cerberus/status',
                                             '/api/cerberus/assessments',
-                                            '/api/cerberus/contract')
+                                            '/api/cerberus/contract',
+                                            '/api/chorus/status',
+                                            '/api/chorus/compositions',
+                                            '/api/chorus/contract')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -593,7 +613,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or prom_eval_match is not None
                                    or hydra_asset_match is not None
                                    or lab_analysis_match is not None
-                                   or cerb_assessment_match is not None) else ('POST',)
+                                   or cerb_assessment_match is not None
+                                   or chorus_composition_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -619,6 +640,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/labyrinth/analyses':
             allowed = ('GET', 'POST')
         if path == '/api/cerberus/assessments':
+            allowed = ('GET', 'POST')
+        if path == '/api/chorus/compositions':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -1645,6 +1668,47 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = cerberus.assessment_view(identity, cerb_role, cerb_assessment_match.group(1))
                         return respond(start, '200 OK', {'assessment': record})
                     return check_in(cerberus)
+                if is_chorus_route:
+                    if chorus is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'chorus_unavailable'})
+                    chorus_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/chorus/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': chorus.status()})
+                    if path == '/api/chorus/contract':
+                        return respond(start, '200 OK', {'contract': chorus.contract_view()})
+                    if path == '/api/chorus/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = chorus.operation_check(identity, chorus_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/chorus/modality-check':
+                        if set(data) != {'modalities'}:
+                            raise ValueError('unexpected fields')
+                        record = chorus.modality_check(identity, chorus_role, data['modalities'])
+                        return respond(start, '200 OK', {'modality_check': record})
+                    if path == '/api/chorus/compositions':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'compositions': chorus.compositions_list(identity, chorus_role)})
+                        if set(data) != {'subject_ref', 'modalities', 'output_ref', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = chorus.create_composition(identity, data['subject_ref'], data['modalities'], data['output_ref'], data['scope_ref'])
+                        return respond(start, '201 Created', {'composition': record})
+                    if chorus_composition_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = chorus.composition_action(identity, chorus_composition_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'composition': record})
+                    if chorus_composition_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = chorus.record_outcome(identity, chorus_composition_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'composition': record})
+                    if chorus_composition_match:
+                        record = chorus.composition_view(identity, chorus_role, chorus_composition_match.group(1))
+                        return respond(start, '200 OK', {'composition': record})
+                    return check_in(chorus)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -1756,6 +1820,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'cerberus_forbidden'})
         except CerberusDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'cerberus_denied', 'detail': str(exc)})
+        except ChorusForbidden:
+            return respond(start, '403 Forbidden', {'error': 'chorus_forbidden'})
+        except ChorusDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'chorus_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
