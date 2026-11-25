@@ -24,6 +24,13 @@ Cost policy (owner direction 2026-11-13): free resources first. Free and
 offline backends (local packages, system TTS, SQLite, Oracle Always Free)
 are checked and auto-connected before any paid provider is considered.
 
+Platforms without a hand-written checker are verified against the WSGI
+dispatcher's own healthz map (deploy/deployment.py PLATFORM_HEALTH):
+LINKED when the platform's healthz route is wired in the dispatcher and
+its bindings field is populated -- the dispatcher's own bindings-presence
+semantics -- and NOT_IMPLEMENTED naming the specific fact (no healthz
+route wired, or the bindings field unpopulated) otherwise.
+
 Auto-connection only ever connects what is local/offline: the SQLite
 ledger (temp-database round-trip), the local agent registry, the local
 hash patrol, the offline TwinGate policy engine, local incident evidence,
@@ -674,6 +681,149 @@ _CHECKERS = {
 }
 
 
+# ---------------------------------------------------------------------------
+# Dispatcher healthz fallback checker
+# ---------------------------------------------------------------------------
+# Platforms without a hand-written checker above are checked against the
+# WSGI dispatcher's own healthz map (deploy/deployment.py PLATFORM_HEALTH,
+# hoisted to module level for exactly this): a platform is LINKED when its
+# healthz route is wired in the dispatcher AND its bindings field is
+# populated -- the same bindings-presence semantics the dispatcher itself
+# uses to answer 200 vs its honest 503. A platform with no wired route
+# reports that specific fact instead of a generic "no checker".
+
+# Registry ids whose dispatcher platform id differs from the registry id.
+_DISPATCHER_ID_ALIASES = {
+    "gai_mind": "gia_mind",
+    "sanders_ai_recon": "sanders_recon",
+}
+
+_DISPATCHER_ROUTES_CACHE: dict | None = None
+_PRODUCTION_BINDING_FIELDS_CACHE: frozenset | None = None
+
+
+def _dispatcher_health_routes() -> dict:
+    """Registry platform id -> (healthz path, bindings field), derived
+    from deploy/deployment.py's PLATFORM_HEALTH map. The map is read by
+    importing deploy.deployment; if that import is unavailable (isolated
+    tooling), the module source is parsed instead. Returns {} when the
+    map cannot be obtained at all."""
+    global _DISPATCHER_ROUTES_CACHE
+    if _DISPATCHER_ROUTES_CACHE is not None:
+        return _DISPATCHER_ROUTES_CACHE
+    health = None
+    try:
+        from deploy.deployment import PLATFORM_HEALTH
+        health = PLATFORM_HEALTH
+    except Exception:
+        health = None
+    if health is None:
+        try:
+            import ast as _ast
+            source = (Path(__file__).resolve().parent.parent
+                      / "deploy" / "deployment.py").read_text()
+            for node in _ast.parse(source).body:
+                if isinstance(node, _ast.Assign) and getattr(
+                        node.targets[0], "id", "") == "PLATFORM_HEALTH":
+                    health = _ast.literal_eval(node.value)
+                    break
+        except Exception:
+            health = None
+    routes: dict = {}
+    if isinstance(health, dict):
+        by_dispatcher_id = {}
+        for path, spec in health.items():
+            field, dispatcher_id = spec[0], spec[1]
+            by_dispatcher_id[dispatcher_id] = (path, field)
+        routes = dict(by_dispatcher_id)
+        for registry_id, dispatcher_id in _DISPATCHER_ID_ALIASES.items():
+            if dispatcher_id in by_dispatcher_id:
+                routes[registry_id] = by_dispatcher_id[dispatcher_id]
+    _DISPATCHER_ROUTES_CACHE = routes
+    return routes
+
+
+def _production_binding_fields() -> frozenset:
+    """Bindings fields populated by deploy/production_bindings.py's
+    create_production_bindings() -- read from its source (AST) so no
+    production bindings are constructed as a side effect of a status
+    check. Used only when the caller did not pass the live bindings."""
+    global _PRODUCTION_BINDING_FIELDS_CACHE
+    if _PRODUCTION_BINDING_FIELDS_CACHE is not None:
+        return _PRODUCTION_BINDING_FIELDS_CACHE
+    fields: set = set()
+    try:
+        import ast as _ast
+        source = (Path(__file__).resolve().parent.parent
+                  / "deploy" / "production_bindings.py").read_text()
+        for node in _ast.walk(_ast.parse(source)):
+            if isinstance(node, _ast.Return) and isinstance(
+                    node.value, _ast.Call) and getattr(
+                    node.value.func, "id", "") == "RuntimeBindings":
+                fields = {kw.arg for kw in node.value.keywords if kw.arg}
+                break
+    except Exception:
+        fields = set()
+    _PRODUCTION_BINDING_FIELDS_CACHE = frozenset(fields)
+    return _PRODUCTION_BINDING_FIELDS_CACHE
+
+
+def _check_dispatcher_healthz(platform_id: str,
+                              bindings: object | None) -> PlatformStatus:
+    """Fallback checker: dispatcher healthz route + bindings presence."""
+    if platform_id == "sanders_dash_and_seal":
+        # The flagship itself: its /healthz is the dispatcher's own
+        # process-liveness route and has no bindings field.
+        return PlatformStatus(
+            platform_id, "LINKED",
+            detail="Flagship platform: the dispatcher's own /healthz "
+                   "process-liveness route is wired in "
+                   "deploy/deployment.py (no bindings field).",
+            checks={"healthz_route": "/healthz", "bindings_field": None,
+                    "bindings_present": True})
+    routes = _dispatcher_health_routes()
+    route = routes.get(platform_id)
+    if route is None:
+        return PlatformStatus(
+            platform_id, "NOT_IMPLEMENTED",
+            missing=[f"no healthz route wired in the "
+                     f"deploy/deployment.py dispatcher for {platform_id}"],
+            detail="No HTTP route is wired for this platform in the "
+                   "served application: the dispatcher "
+                   "(deploy/deployment.py) has no healthz entry for it, "
+                   "so the platform's code exists without a routed "
+                   "healthz surface.",
+            checks={"healthz_route": None, "bindings_field": None,
+                    "bindings_present": False})
+    path, field = route
+    if bindings is not None:
+        present = getattr(bindings, field, None) is not None
+        source = "live bindings"
+    else:
+        present = field in _production_binding_fields()
+        source = "deploy/production_bindings.py"
+    checks = {"healthz_route": path, "bindings_field": field,
+              "bindings_present": present}
+    if present:
+        return PlatformStatus(
+            platform_id, "LINKED",
+            detail=f"Dispatcher healthz route {path} is wired in "
+                   f"deploy/deployment.py and its bindings field "
+                   f"'{field}' is populated ({source}) -- the same "
+                   f"bindings-presence semantics the dispatcher uses "
+                   f"to answer 200.",
+            checks=checks)
+    return PlatformStatus(
+        platform_id, "NOT_IMPLEMENTED",
+        missing=[f"bindings field '{field}' is not populated for the "
+                 f"dispatcher healthz route {path}"],
+        detail=f"The healthz route {path} is wired in the dispatcher, "
+               f"but its bindings field '{field}' is not populated "
+               f"({source}), so the dispatcher answers its honest 503 "
+               f"for this platform.",
+        checks=checks)
+
+
 # --------------------------------------------------------------------------
 # Public API
 # --------------------------------------------------------------------------
@@ -690,7 +840,8 @@ def _default_import_checker(name: str) -> bool:
 def check_platform(platform_id: str, registry: dict | None = None,
                    env: Mapping[str, str] | None = None,
                    import_checker: Callable[[str], bool] | None = None,
-                   which_checker: Callable[[str], str | None] | None = None
+                   which_checker: Callable[[str], str | None] | None = None,
+                   bindings: object | None = None
                    ) -> PlatformStatus:
     """Verify one platform's links. Every call returns a status; an
     unexpected failure inside a checker is reported as BROKEN, never
@@ -706,9 +857,7 @@ def check_platform(platform_id: str, registry: dict | None = None,
             return _check_voice_audio_video(entry, env, import_checker,
                                             which_checker)
         if checker is None:
-            return PlatformStatus(platform_id, "NOT_IMPLEMENTED",
-                                  missing=[f"no checker for {platform_id}"],
-                                  detail="No checker implemented.")
+            return _check_dispatcher_healthz(platform_id, bindings)
         return checker(entry, env, import_checker)
     except Exception as exc:  # a checker must never crash check_all()
         return PlatformStatus(platform_id, "BROKEN",
@@ -719,16 +868,23 @@ def check_platform(platform_id: str, registry: dict | None = None,
 def check_all(registry: dict | None = None,
               env: Mapping[str, str] | None = None,
               import_checker: Callable[[str], bool] | None = None,
-              which_checker: Callable[[str], str | None] | None = None
+              which_checker: Callable[[str], str | None] | None = None,
+              bindings: object | None = None
               ) -> dict[str, PlatformStatus]:
-    """Verify every platform in the registry. All 9 platforms always get
-    a status, even if a checker fails."""
+    """Verify every platform in the registry. Every platform always gets
+    a status, even if a checker fails. ``bindings`` is the serving
+    process's live RuntimeBindings when the caller has it (the WSGI
+    dispatcher's status endpoint passes its own); the dispatcher-healthz
+    fallback checker uses it for true bindings-presence semantics and
+    falls back to deploy/production_bindings.py's populated fields when
+    it is not given."""
     registry = registry or load_registry()
     results: dict[str, PlatformStatus] = {}
     for entry in registry["platforms"]:
         results[entry["id"]] = check_platform(
             entry["id"], registry=registry, env=env,
-            import_checker=import_checker, which_checker=which_checker)
+            import_checker=import_checker, which_checker=which_checker,
+            bindings=bindings)
     return results
 
 
@@ -775,14 +931,16 @@ def auto_connect(results: dict[str, PlatformStatus] | None = None,
                  registry: dict | None = None,
                  env: Mapping[str, str] | None = None,
                  import_checker: Callable[[str], bool] | None = None,
-                 which_checker: Callable[[str], str | None] | None = None
+                 which_checker: Callable[[str], str | None] | None = None,
+                 bindings: object | None = None
                  ) -> dict:
     """Auto-connect what CAN be auto-connected (local/offline only) and
     honestly list what cannot be. Returns connected items per platform
     plus the unmet requirements. Never connects a keyed provider."""
     results = results or check_all(registry=registry, env=env,
                                    import_checker=import_checker,
-                                   which_checker=which_checker)
+                                   which_checker=which_checker,
+                                   bindings=bindings)
     connected: dict[str, list] = {}
     cannot: dict[str, list] = {}
     for pid, status in results.items():
@@ -794,20 +952,21 @@ def auto_connect(results: dict[str, PlatformStatus] | None = None,
 
 
 def summarize(results: dict[str, PlatformStatus]) -> dict:
-    """Counts and a printable per-platform table."""
+    """Counts and a printable per-platform table, over every platform in
+    the results (the hand-written-checker platforms first, in
+    PLATFORM_IDS order, then the remaining registry platforms in
+    registry order)."""
     counts: dict[str, int] = {s: 0 for s in STATUSES}
     rows = []
-    for pid in PLATFORM_IDS:
-        status = results.get(pid)
-        if status is None:
-            counts["NOT_IMPLEMENTED"] += 1
-            rows.append((pid, "NOT_IMPLEMENTED", ["not checked"]))
-            continue
+    ordered = [pid for pid in PLATFORM_IDS if pid in results]
+    ordered += [pid for pid in results if pid not in PLATFORM_IDS]
+    for pid in ordered:
+        status = results[pid]
         counts[status.status] = counts.get(status.status, 0) + 1
         rows.append((pid, status.status, list(status.missing)))
     return {"counts": counts, "rows": rows,
             "total": len(rows),
-            "all_reported": len(rows) == len(PLATFORM_IDS)}
+            "all_reported": len(rows) == len(results)}
 
 
 def main(argv: list | None = None) -> int:
