@@ -167,6 +167,7 @@ from core_platform.architect_service import ArchitectService
 from core_platform.archimedes_service import ArchimedesService
 from core_platform.promethean_service import PrometheanService
 from core_platform.hydra_q_service import HydraQService
+from core_platform.labyrinth_service import LabyrinthService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -474,6 +475,17 @@ def create_production_bindings():
         data_dir / 'hydra_q.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # LABYRINTH (RTSA Build Program): the zero-trust and
+    # attack-path role contract built as its own platform —
+    # governed attack-path analysis records over declared models
+    # under the contract's discipline (it performs no scan,
+    # probe, or enforcement), on its own store. Separate from
+    # Sanders Labyrinth Shield and from RTSA Minotaur — never
+    # merged.
+    labyrinth = LabyrinthService(
+        data_dir / 'labyrinth.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -502,4 +514,5 @@ def create_production_bindings():
         archimedes=archimedes,
         promethean=promethean,
         hydra_q=hydra_q,
+        labyrinth=labyrinth,
     )

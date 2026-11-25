@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "deploy/sds_watchdog.sh",
-        "payload_hash": "dbb8fd4647df8daf320b454d11f79e14f083c490ee737ff6f44615d99d78accb",
+        "payload_hash": "72a89cbace9c96ab9bc3a3495ac3e6ee047c83895942da05b121eee4bab1bc93",
         "scope": {
             "endpoint": "local://development",
             "method": "TEST",
