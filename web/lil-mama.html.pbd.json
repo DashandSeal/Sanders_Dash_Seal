@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/lil-mama.html",
+        "payload_hash": "7f4af70efffbc019b1735996cd0d1bf12e58b27c8e0abe58364ab7c2156dabc4",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

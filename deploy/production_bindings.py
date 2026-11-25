@@ -188,6 +188,7 @@ from core_platform.quality_agent_service import QualityAgentService
 from core_platform.configuration_agent_service import ConfigurationAgentService
 from core_platform.it_support_agent_service import ITSupportAgentService
 from core_platform.sanders_sentinel_service import SandersSentinelService
+from core_platform.lil_mama_service import LilMamaService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -737,6 +738,15 @@ def create_production_bindings():
     sanders_sentinel = SandersSentinelService(
         data_dir / 'sanders_sentinel.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Lil Mama platform (Q49, RTSA Build Program tranche
+    # 12): governed human-oversight records over its own
+    # store, under the watchdog law — she detects and
+    # escalates only, holds no decision authority, and
+    # takes no action against any subject. Her public
+    # business face is served at /lil-mama.
+    lil_mama = LilMamaService(
+        data_dir / 'lil_mama.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -787,4 +797,5 @@ def create_production_bindings():
         configuration_agent=configuration_agent,
         it_support_agent=it_support_agent,
         sanders_sentinel=sanders_sentinel,
+        lil_mama=lil_mama,
     )
