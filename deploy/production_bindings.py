@@ -201,6 +201,7 @@ from core_platform.baby_girl_service import BabyGirlService
 from core_platform.sanders_omniconn_service import SandersOmniconnService
 from core_platform.gia_mind_service import GiaMindService
 from core_platform.ai_doctor_service import AIDoctorService
+from core_platform.ai_medical.enforcement import AIMedicalEnforcement
 from core_platform.sanders_ai_psychiatrist_service import SandersAIPsychiatristService
 from core_platform.sanders_recon_service import SandersReconService
 from core_platform.sanders_senior_living_service import SandersSeniorLivingService
@@ -834,6 +835,15 @@ def create_production_bindings():
     gia_mind = GiaMindService(
         data_dir / 'gia_mind.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Constitutional Execution Stack (AI Medical fix build):
+    # the enforcement layer over AI Doctor and Sanders AI
+    # Psychiatrist. Constructed from the environment; when
+    # the owner-provisioned bundle/keys are absent it stands
+    # NOT_PROVISIONED with the named missing state and the
+    # two services refuse outcome commits through it — fail
+    # closed, never waved through, no keys invented here.
+    ai_medical_enforcement = AIMedicalEnforcement.from_environment(
+        data_dir, glass_box_audit=audit)
     # AI Doctor platform (Q53, RTSA Build Program tranche
     # 13): governed AI-system health case records over
     # his own store — AI-to-AI only, never humans;
@@ -841,7 +851,8 @@ def create_production_bindings():
     # determinations are records, never acts.
     ai_doctor = AIDoctorService(
         data_dir / 'ai_doctor.db',
-        operator_verifier=auth.operator_verifier, audit=audit)
+        operator_verifier=auth.operator_verifier, audit=audit,
+        enforcement=ai_medical_enforcement)
     # Sanders AI Psychiatrist platform (Q54, RTSA Build
     # Program tranche 14): governed AI-system psychiatric
     # assessment records over her own store — AI-to-AI
@@ -850,7 +861,8 @@ def create_production_bindings():
     # acts. No persona (unruled).
     sanders_ai_psychiatrist = SandersAIPsychiatristService(
         data_dir / 'sanders_ai_psychiatrist.db',
-        operator_verifier=auth.operator_verifier, audit=audit)
+        operator_verifier=auth.operator_verifier, audit=audit,
+        enforcement=ai_medical_enforcement)
     # Sanders Recon platform (Q55, RTSA Build Program
     # tranche 14): governed security-intelligence records
     # over his own store — records only; he collects
