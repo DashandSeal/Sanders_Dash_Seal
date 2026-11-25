@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/showtime_service.py",
+        "payload_hash": "0ec6df1854665bd42bc6e9f59854529139a618b5ce7686fa0773037048bd22ea",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

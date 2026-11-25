@@ -240,6 +240,7 @@ from core_platform.sanders_logical_framework_service import SandersLogicalFramew
 from core_platform.sanders_infrastructure_service import SandersInfrastructureService
 from core_platform.sanders_technology_service import SandersTechnologyService
 from core_platform.sanders_cloud_services_service import SandersCloudServicesService
+from core_platform.showtime_service import ShowtimeService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1174,6 +1175,16 @@ def create_production_bindings():
     sanders_cloud_services = SandersCloudServicesService(
         data_dir / 'sanders_cloud_services.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Showtime platform (Q93, RTSA Build
+    # Program tranche 27): the owner's D-N10
+    # unification of Sanders Media and Sanders
+    # Media Hub — governed media records over
+    # its own store — it produces no media,
+    # broadcasts nothing, and distributes no
+    # content itself.
+    showtime = ShowtimeService(
+        data_dir / 'showtime.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1268,4 +1279,5 @@ def create_production_bindings():
         sanders_infrastructure=sanders_infrastructure,
         sanders_technology=sanders_technology,
         sanders_cloud_services=sanders_cloud_services,
+        showtime=showtime,
     )

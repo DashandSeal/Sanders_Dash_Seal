@@ -3,9 +3,23 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/ai_platform_links.json",
-        "payload_hash": "60d18f3391bfcd6b19b80424a613b57ad8fba1cd805c56cca46c639d0270866b",
+<<<<<<< HEAD
+        "payload_hash": "096adb18dd7ab1b6a746a744cfca4d6ef384d8790530e2782c1db8d0c21fb85a",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
     }
 }
+=======
+        "payload_hash": "fd9c6526b4528efbdeb384c984a7f92485c890c8d7940f33e86a4e82ca1ed1f8",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
+>>>>>>> 9083b89 (Build Showtime whole (RTSA Build Program Q93))
