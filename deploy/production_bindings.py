@@ -209,6 +209,7 @@ from core_platform.sanders_education_service import SandersEducationService
 from core_platform.sanders_finance_service import SandersFinanceService
 from core_platform.sanders_retail_service import SandersRetailService
 from core_platform.sanders_logistics_service import SandersLogisticsService
+from core_platform.sanders_security_service import SandersSecurityService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -870,6 +871,13 @@ def create_production_bindings():
     sanders_logistics = SandersLogisticsService(
         data_dir / 'sanders_logistics.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Security platform (Q62, RTSA Build Program
+    # tranche 16): governed security-services records
+    # over its own store — it enforces nothing, hunts
+    # no threat, and accesses no system itself.
+    sanders_security = SandersSecurityService(
+        data_dir / 'sanders_security.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -933,4 +941,5 @@ def create_production_bindings():
         sanders_finance=sanders_finance,
         sanders_retail=sanders_retail,
         sanders_logistics=sanders_logistics,
+        sanders_security=sanders_security,
     )
