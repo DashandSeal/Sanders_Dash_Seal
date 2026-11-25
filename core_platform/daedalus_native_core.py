@@ -69,6 +69,19 @@ planner under the explicit deterministic rule stated at
 :func:`_outcome_flag` — named thresholds over named outcome counts,
 inspectable in code, with no opaque weights.
 
+Protection (founder direction, 2026-11-25: "He's got to be
+tamper proof quantum encryption protection protocols with the
+full Sanders labyrinth shield 🛡️ and the RTSA minotaur patoling
+the labyrinth shield itself"): the core operates inside the
+Sanders Labyrinth Shield RTSA — every operation through
+:meth:`DaedalusNativeCore.generate` and every teaching or outcome
+write is evaluated by the Shield platform's own module before it
+runs — and under the RTSA Minotaur's file-integrity patrol, wired
+platform-to-platform by ``core_platform/daedalus_protection.py``.
+Neither platform is absorbed into this core: the Shield and the
+Minotaur keep their own modules, identities, and registry
+entries, and the core calls them as the separate RTSAs they are.
+
 Language honesty: the native core generates Python source only. A
 request for another language raises ``ValueError`` naming the fact
 instead of fabricating output in a language the core does not
@@ -110,6 +123,17 @@ except ImportError:  # Bare-module import, no package context.
     from daedalus_knowledge_store import (  # type: ignore[no-redef]
         DaedalusKnowledgeStore,
         default_store_path,
+    )
+
+try:  # Package context (the engine and the board checker).
+    from .daedalus_protection import (
+        DaedalusProtection,
+        ProtectionError,
+    )
+except ImportError:  # Bare-module import, no package context.
+    from daedalus_protection import (  # type: ignore[no-redef]
+        DaedalusProtection,
+        ProtectionError,
     )
 
 __all__ = [
@@ -265,6 +289,15 @@ class DaedalusNativeCore:
     reflected on the very next call in the same process. With no
     store attached, the first teaching call creates one at the
     configured default path.
+
+    Protection: a protection layer (see
+    ``core_platform/daedalus_protection.py``) may be attached —
+    explicitly, or lazily on the first operation. When attached,
+    operations through :meth:`generate` and every teaching or
+    outcome write are evaluated by the Sanders Labyrinth Shield
+    RTSA and gated by the RTSA Minotaur's integrity patrol before
+    they run, and generated responses and learned records are
+    entered into the protection layer's hash-chained ledger.
     """
 
     def __init__(
@@ -274,6 +307,9 @@ class DaedalusNativeCore:
         registry_path: str | Path | None = None,
         store_path: str | Path | None = None,
         knowledge_store: DaedalusKnowledgeStore | None = None,
+        protection: DaedalusProtection | None = None,
+        protection_state_dir: str | Path | None = None,
+        shield_source: str = "daedalus-native-core",
     ) -> None:
         if registry is None:
             path = Path(registry_path) if registry_path is not None else _REGISTRY_PATH
@@ -329,6 +365,17 @@ class DaedalusNativeCore:
         self._outcomes: dict[str, list[dict]] = {}
         self._conflicts: list[dict] = []
         self._refresh_learned()
+        # Protection layer (founder direction, 2026-11-25): the
+        # Labyrinth Shield gate, the Minotaur patrol, and the
+        # quantum protocol layer attach lazily on first operation,
+        # so construction and read-only registry reasoning stay
+        # exactly as they were; operations and teaching pass the
+        # perimeter first (see _get_protection).
+        self._protection_arg = protection
+        self._protection_state_dir = protection_state_dir
+        self._shield_source = shield_source
+        self._protection: DaedalusProtection | None = None
+        self._protection_error: str | None = None
 
     # ------------------------------------------------------------------
     # Registry facts
@@ -457,6 +504,94 @@ class DaedalusNativeCore:
             self._store_error = None
         return self._store
 
+    # ------------------------------------------------------------------
+    # Protection: Shield gate, Minotaur patrol, artifact ledger
+    # ------------------------------------------------------------------
+
+    def _get_protection(self) -> DaedalusProtection:
+        """The protection layer, attached on first operation.
+
+        Attachment is lazy so construction and read-only registry
+        reasoning stay exactly as they were; every operation and
+        every teaching write passes the perimeter before it runs.
+        If the layer cannot attach, operations refuse (fail
+        closed): an unprotected Daedalus does not operate.
+        """
+        if self._protection is not None:
+            return self._protection
+        if self._protection_error is not None:
+            raise ProtectionError(
+                "Daedalus protection layer could not attach: "
+                + self._protection_error
+            )
+        try:
+            if self._protection_arg is not None:
+                self._protection = self._protection_arg
+            else:
+                self._protection = DaedalusProtection(
+                    state_dir=self._protection_state_dir
+                )
+        except Exception as exc:
+            self._protection_error = (
+                type(exc).__name__ + ": " + str(exc)
+            )
+            raise ProtectionError(
+                "Daedalus protection layer could not attach: "
+                + self._protection_error
+            ) from exc
+        return self._protection
+
+    def _gate_write(self, source: str, payload: str) -> DaedalusProtection:
+        """Pass one teaching/outcome write through the perimeter.
+
+        The Shield evaluates the write's content (with the write's
+        own provenance source as the evaluated origin) and the
+        Minotaur integrity gate verifies the perimeter before
+        anything is learned or recorded.
+        """
+        protection = self._get_protection()
+        protection.require_shield_admission(source, payload)
+        protection.require_intact()
+        return protection
+
+    @staticmethod
+    def _seal_learned(protection: DaedalusProtection, record: dict) -> None:
+        """Enter one learned/outcome record into the artifact chain."""
+        protection.seal_artifact(
+            "learned_record",
+            json.dumps(
+                record, sort_keys=True, separators=(",", ":"),
+                ensure_ascii=True, default=str,
+            ).encode("utf-8"),
+            meta={"record_id": record.get("record_id")},
+        )
+
+    def protection_status(self) -> dict:
+        """The protection binding's status for this core.
+
+        Read-only: it reports the attached layer's live status when
+        operations have attached it, and the unattached state
+        otherwise — it never attaches the layer itself.
+        """
+        base = {
+            "shield_platform": "sanders_labyrinth_shield",
+            "shield_module": "labyrinth_shield.py",
+            "patrol_platform": "minotaur_sentinel",
+            "patrol_module": "minotaur_sentinel.py",
+            "binding": "platform_to_platform",
+            "layer_module": "core_platform/daedalus_protection.py",
+        }
+        if self._protection is not None:
+            base["attached"] = True
+            base["status"] = self._protection.status()
+        elif self._protection_error is not None:
+            base["attached"] = False
+            base["attach_error"] = self._protection_error
+        else:
+            base["attached"] = False
+            base["status"] = "attaches_on_first_operation"
+        return base
+
     def _refresh_learned(self) -> None:
         """Rebuild the learned overlay from the store.
 
@@ -552,10 +687,14 @@ class DaedalusNativeCore:
         governs and the conflict is surfaced (see
         :meth:`learned_conflicts`).
         """
+        protection = self._gate_write(
+            source, subject + " " + predicate + " " + object_value + " " + note
+        )
         record = self._ensure_store().learn_fact(
             subject, predicate, object_value, source=source, note=note
         )
         self._refresh_learned()
+        self._seal_learned(protection, record)
         return record
 
     def learn_relationship(
@@ -576,10 +715,14 @@ class DaedalusNativeCore:
         merged: they conflict with the founder records' identity
         declarations and are surfaced as conflicts.
         """
+        protection = self._gate_write(
+            source, subject + " " + relation + " " + target + " " + note
+        )
         record = self._ensure_store().learn_relationship(
             subject, relation, target, source=source, note=note
         )
         self._refresh_learned()
+        self._seal_learned(protection, record)
         return record
 
     def record_outcome(
@@ -597,10 +740,14 @@ class DaedalusNativeCore:
         the recorded history under the adaptation rule stated at
         :func:`_outcome_flag`.
         """
+        protection = self._gate_write(
+            source, component + " " + outcome + " " + reason
+        )
         record = self._ensure_store().record_outcome(
             component, outcome, reason=reason, source=source
         )
         self._refresh_learned()
+        self._seal_learned(protection, record)
         return record
 
     def learned_records(self) -> dict:
@@ -1493,6 +1640,16 @@ class DaedalusNativeCore:
         language, objective = self._parse_user_message(user_message)
         if not objective:
             raise ValueError("Objective required")
+        # Protection perimeter (founder direction, 2026-11-25):
+        # the operation is evaluated by the Sanders Labyrinth
+        # Shield and passes the Minotaur patrol's integrity gate
+        # before anything is computed; either refusal stops the
+        # operation and nothing is produced (fail closed).
+        protection = self._get_protection()
+        protection.require_shield_admission(
+            self._shield_source, system + "\n" + user_message
+        )
+        protection.require_intact()
         kind = self.classify(objective)
         if kind == "planning":
             text = self.render_plan(objective)
@@ -1504,7 +1661,7 @@ class DaedalusNativeCore:
         digest = hashlib.sha256(
             (system + "\x00" + user_message).encode("utf-8")
         ).hexdigest()
-        return NativeResponse(
+        response = NativeResponse(
             model=MODEL_ID,
             request_id="native-" + digest[:24],
             message_id="native-" + digest[24:48],
@@ -1513,6 +1670,15 @@ class DaedalusNativeCore:
             input_tokens=len((system + " " + user_message).split()),
             output_tokens=len(text.split()),
         )
+        # The response is a Daedalus artifact: it is entered into
+        # the protection layer's hash-chained ledger, and the
+        # defined-cycle patrol runs when its interval has elapsed.
+        protection.seal_artifact(
+            "generated_response", text.encode("utf-8"),
+            meta={"request_id": response.request_id, "kind": kind},
+        )
+        protection.patrol_if_due()
+        return response
 
     def declaration(self) -> dict:
         """This core's own declaration, stated factually."""
@@ -1532,12 +1698,14 @@ class DaedalusNativeCore:
                 learning["learned_facts"] + learning["learned_relationships"]
             ),
             "outcome_records": learning["outcome_records"],
+            "protection": self.protection_status(),
         }
 
 
 def build_native_transport(
     registry_path: str | Path | None = None,
     store_path: str | Path | None = None,
+    protection_state_dir: str | Path | None = None,
 ) -> DaedalusNativeCore:
     """Build the native core in its transport role.
 
@@ -1548,7 +1716,10 @@ def build_native_transport(
     a specific path; without it, the core's configured-path rules
     apply (see :class:`DaedalusNativeCore`).
     """
-    return DaedalusNativeCore(registry_path=registry_path, store_path=store_path)
+    return DaedalusNativeCore(
+        registry_path=registry_path, store_path=store_path,
+        protection_state_dir=protection_state_dir,
+    )
 
 
 def core_declaration() -> dict:
