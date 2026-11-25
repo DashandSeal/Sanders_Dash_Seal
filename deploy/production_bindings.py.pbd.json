@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "deploy/production_bindings.py",
-        "payload_hash": "7a269fdbf3d8f64b53791a41ce7f3d2deb82f28d41ade3c2b7eee642ce97a927",
+        "payload_hash": "b858a5a3f550860201e76823dd28765c77fcd5e8390682431b0f165aacb897f2",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

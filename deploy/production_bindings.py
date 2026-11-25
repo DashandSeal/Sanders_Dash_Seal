@@ -205,6 +205,7 @@ from core_platform.sanders_ai_psychiatrist_service import SandersAIPsychiatristS
 from core_platform.sanders_recon_service import SandersReconService
 from core_platform.sanders_senior_living_service import SandersSeniorLivingService
 from core_platform.sanders_legal_helpers_service import SandersLegalHelpersService
+from core_platform.sanders_education_service import SandersEducationService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -837,6 +838,14 @@ def create_production_bindings():
     sanders_legal_helpers = SandersLegalHelpersService(
         data_dir / 'sanders_legal_helpers.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Education platform (Q58, RTSA Build Program
+    # tranche 15): governed education-program records over
+    # its own store — the record platform for its designed
+    # education purpose; it delivers no instruction, assesses
+    # no learner, and certifies no one.
+    sanders_education = SandersEducationService(
+        data_dir / 'sanders_education.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -896,4 +905,5 @@ def create_production_bindings():
         sanders_recon=sanders_recon,
         sanders_senior_living=sanders_senior_living,
         sanders_legal_helpers=sanders_legal_helpers,
+        sanders_education=sanders_education,
     )
