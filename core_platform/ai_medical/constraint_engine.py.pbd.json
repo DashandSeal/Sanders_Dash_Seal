@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/ai_medical/constraint_engine.py",
+        "payload_hash": "f0e0bd0756754034a3f43c53b1110072a9bc901ec0761b5d31713f06484855d8",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

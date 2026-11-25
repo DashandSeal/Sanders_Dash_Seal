@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "core_platform/ai_medical/semantic_risk_engine.py",
+        "payload_hash": "aa9421e6ad3130ca75b73694dea66481531c9ec24eecdedfaa64507cdd8e80e8",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
