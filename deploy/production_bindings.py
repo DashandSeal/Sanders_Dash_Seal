@@ -178,6 +178,7 @@ from core_platform.operations_rtsa_service import OperationsRtsaService
 from core_platform.uptime_agent_service import UptimeAgentService
 from core_platform.application_agent_service import ApplicationAgentService
 from core_platform.database_agent_service import DatabaseAgentService
+from core_platform.deployment_agent_service import DeploymentAgentService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -621,6 +622,23 @@ def create_production_bindings():
         data_dir / 'database_agent.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
+    # Deployment Agent (RTSA Build Program): the fourth agent
+    # of the MASTER §7 IT AI agent matrix built as its own
+    # platform — governed deployment records under the agent
+    # design's INTERFACE_ONLY discipline (deployments and
+    # changes by reference only; a record with no changes
+    # stands NO_CHANGES_SUBMITTED and no determination can be
+    # recorded on it; the MASTER §10 MINOTAUR-denial failover
+    # sequence is carried as a governed record flow — a denial
+    # enters by reference, refuses the cleared determination,
+    # and the failover outcome requires all eight designed
+    # steps recorded in order; it deploys nothing, rolls back
+    # nothing, bypasses nothing, and executes nothing), on its
+    # own store.
+    deployment_agent = DeploymentAgentService(
+        data_dir / 'deployment_agent.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
     return RuntimeBindings(
         appointments=appointments,
         payments=payments,
@@ -660,4 +678,5 @@ def create_production_bindings():
         uptime_agent=uptime_agent,
         application_agent=application_agent,
         database_agent=database_agent,
+        deployment_agent=deployment_agent,
     )

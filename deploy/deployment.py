@@ -76,6 +76,7 @@ class RuntimeBindings:
     uptime_agent: object = None
     application_agent: object = None
     database_agent: object = None
+    deployment_agent: object = None
 
 def _response(start, status, payload, extra=None):
     body = json.dumps(payload, separators=(',', ':')).encode()
@@ -419,7 +420,8 @@ def create_application(bindings=None):
             operations_rtsa=getattr(bindings, 'operations_rtsa', None),
             uptime_agent=getattr(bindings, 'uptime_agent', None),
             application_agent=getattr(bindings, 'application_agent', None),
-            database_agent=getattr(bindings, 'database_agent', None)
+            database_agent=getattr(bindings, 'database_agent', None),
+            deployment_agent=getattr(bindings, 'deployment_agent', None)
         )
     else:
         verifier = _denied
@@ -761,7 +763,8 @@ def create_application(bindings=None):
                     '/api/operations-rtsa/healthz',
                     '/api/uptime-agent/healthz',
                     '/api/application-agent/healthz',
-                    '/api/database-agent/healthz'):
+                    '/api/database-agent/healthz',
+                    '/api/deployment-agent/healthz'):
             # Per-platform liveness for the four reconstructed RTSA
             # platforms (Three Originals Reconstruction Program) and
             # the RTSA Build Program platforms as they land: no
@@ -801,6 +804,7 @@ def create_application(bindings=None):
                 '/api/uptime-agent/healthz': ('uptime_agent', 'uptime_agent', 'uptime_agent_unavailable'),
                 '/api/application-agent/healthz': ('application_agent', 'application_agent', 'application_agent_unavailable'),
                 '/api/database-agent/healthz': ('database_agent', 'database_agent', 'database_agent_unavailable'),
+                '/api/deployment-agent/healthz': ('deployment_agent', 'deployment_agent', 'deployment_agent_unavailable'),
             }
             field, platform_id, unavailable = platform_health[path]
             if bindings is None or getattr(bindings, field, None) is None:
@@ -901,7 +905,9 @@ def create_application(bindings=None):
                 or path == '/api/application-agent'
                 or path.startswith('/api/application-agent/')
                 or path == '/api/database-agent'
-                or path.startswith('/api/database-agent/'))
+                or path.startswith('/api/database-agent/')
+                or path == '/api/deployment-agent'
+                or path.startswith('/api/deployment-agent/'))
 
     def application(env, start):
         host = env.get('HTTP_HOST', '')

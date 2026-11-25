@@ -2261,3 +2261,162 @@ platform families (health route 200 and route-family
 forwarding 401 signed-out, never 404/503/421, on both
 loopback and canonical hosts), covering every built
 platform including this tranche's three agents.
+
+## RTSA Build Program Q39 — Deployment Agent (2026-11-24)
+
+**Scope**: build the Deployment Agent design whole as its
+own platform service (canonical catalog row #45, Band 2C),
+per the established tranche pattern, under the standards
+gate: Fortune 500 governs end to end, the MASTER
+architecture within it, and the Sanders Royal Enterprise
+Standard for presentation within it. Fortune 500 judgment:
+the platform meets the standard within its honest scope
+limits — it is an internal operator/auditor record surface
+over governed deployment records; no public or customer
+surface exists for it by design, so the Royal Enterprise
+presentation layer does not apply, and no security
+internals are exposed anywhere. Scope limits stated
+plainly: the agent design is INTERFACE_ONLY with external
+execution disabled, and the build claims no execution —
+the catalog's words "executes deployments" are the
+design's role, not this platform's act; actual deployments
+run through GitHub Actions and the owner's gated
+workflows, and this platform deploys nothing, rolls back
+nothing, bypasses nothing, and holds deployments, changes,
+denials, and failover steps by reference only. The
+designed failover behavior on MINOTAUR denial (MASTER
+§10) is built as a governed record flow, not a performed
+deployment or containment. The Deployment Agent is
+distinct from the IT AI Manager (Q5) that commands its
+design, from RTSA Minotaur (Q9) whose denials it records
+by reference without consulting it, from the Quality
+Agent (a future Band 2C build) whose validation is one
+recorded step of the sequence, and from the read-only
+DeploymentAgent observer entry in
+core_platform/operational_runtime.py — never merged, and
+this platform reads, wraps, or replaces neither the
+observer nor any other component.
+core_platform/agent_registry.py and
+core_platform/rtsa_registry.py remain byte-untouched.
+Naming verification: the queue's Band 2C table, the
+canonical catalog (row #45), the MASTER §7 matrix, and
+core_platform/agent_registry.py all name this platform
+"Deployment Agent" — the name was verified against those
+sources before building, per the name law recorded after
+tranche 8.
+
+**Built**: core_platform/deployment_agent_service.py
+(DeploymentAgentService over
+core_platform/rtsa_foundation.py; independent identity
+deployment_agent; design view of the agent descriptor in
+core_platform/agent_registry.py — commanding authority
+IT_AI_Manager_v15.0, implementation_status INTERFACE_ONLY,
+external_execution_enabled False, designed role "Executes
+deployments; on MINOTAUR denial must move to a known-safe
+failover path"; fail-closed operation check refusing the
+design's execution boundary by name with the design's own
+signal AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED —
+execute_deployment, perform_deployment,
+rollback_deployment, bypass_minotaur, external_execution
+— and unknown operations; deployment records carried as
+durable, receipted records over a deployment-target
+reference, a declared change reference set, and a scope
+reference, with lifecycle REQUESTED → APPROVED / REJECTED
+(the recorded human decision) → OUTCOME_RECORDED; the
+evidence discipline enforced in the record model — a
+record declared with no changes stands
+NO_CHANGES_SUBMITTED in every view and in the status
+tallies and both determinations (DEPLOYMENT_PATH_CLEARED /
+FAILOVER_PATH_RECORDED) are refused on it, while
+INCONCLUSIVE records against evidence; outcomes recorded
+only for APPROVED records and only against a presented
+evidence reference, with a closed outcome set; the MASTER
+§10 MINOTAUR-denied failover rule enforced in the record
+model — a denial is recorded against an APPROVED record
+as a presented denial reference (a second denial is
+refused, MINOTAUR_DENIAL_ALREADY_RECORDED), a standing
+denial refuses the DEPLOYMENT_PATH_CLEARED determination
+(denial = no proceed, no bypass), failover steps record
+only from a recorded denial (NO_DENIAL_RECORDED) and only
+in the designed order — FREEZE_REQUESTED_ACTION,
+PRESERVE_CURRENT_STATE,
+ISOLATE_THREAT_AFFECTED_INTEGRATION,
+ACTIVATE_KNOWN_SAFE_FAILOVER_ROUTE,
+QUALITY_AGENT_VALIDATION, MINOTAUR_RECHECK,
+GLASS_BOX_RECORD_PRESERVED, IT_MANAGER_RECONCILIATION —
+each against a presented evidence reference
+(FAILOVER_STEP_OUT_OF_ORDER otherwise), and the
+FAILOVER_PATH_RECORDED outcome is refused until the
+denial stands and all eight steps are recorded
+(FAILOVER_INCOMPLETE); recording the sequence performs
+none of it; every state change writes its Glass-Box
+receipt inside the same transaction; operator-only
+check-in bound to the identity integrity digest). Route
+family /api/deployment-agent/ wired through
+app/customer_app.py (create_customer_app parameter
+deployment_agent, including the records/{id}/denial and
+records/{id}/failover-step routes),
+deploy/deployment.py (RuntimeBindings.deployment_agent,
+health route /api/deployment-agent/healthz, forwarding
+through create_application), and
+deploy/production_bindings.py (construction on its own
+store deployment_agent.db); watchdog check_http entry in
+deploy/sds_watchdog.sh; registry entry in
+core_platform/ai_platform_links.json (registry now 69).
+
+**Pricing/teaching audit** (examined set: canonical
+catalog row #45; Set B database_schema.sql +
+tier_pricing_global.py; Set C catalog; the MASTER §7
+matrix and §10 failover rule; the agent descriptor in
+core_platform/agent_registry.py): the design carries NO
+price for the Deployment Agent — none built, none
+invented, no blocker figure attaches to this name. The
+design carries NO teaching function for the Deployment
+Agent — none built, none invented.
+
+**Verification**: scratch drive (never committed) —
+checks: identity and design view (descriptor fields
+exact, the eight designed failover steps exact);
+constructor refuses a missing audit adapter; operation
+check (record operation RECORD_ONLY; all five execution
+operations refused by name with the design signal;
+unknown operation refused); record lifecycle
+(operator-only creation; target/scope references
+required; change set must be a list of non-empty
+references, capped; denial, failover step, and outcome
+all refused before approval; the full denial flow —
+failover step and failover outcome refused with no denial
+recorded, denial operator-only and reference required,
+denial recorded stands MINOTAUR_DENIAL_RECORDED, second
+denial refused, cleared determination refused under a
+denial, failover steps refused out of order and unknown
+steps refused, failover outcome refused while incomplete,
+all eight steps recorded in order standing
+failover_state COMPLETE, a ninth step refused, outcome
+without evidence refused, outcome set closed, failover
+outcome recorded against evidence, second outcome
+refused; the clean record's DEPLOYMENT_PATH_CLEARED
+determination records and a late denial on it is refused;
+a no-change record stands NO_CHANGES_SUBMITTED and both
+determinations are refused on it while an INCONCLUSIVE
+outcome records against evidence; reject terminal;
+unknown record denied; geofence refuses an undeclared
+region); status tallies including
+records_no_changes_submitted, changes_declared_total,
+records_minotaur_denial_recorded, and
+failover_steps_recorded_total; operator-only check-in;
+registry at 69 entries; all 9 approval gates UNAPPROVED;
+WSGI through create_customer_app (signed-out 401, status
+200, execution operation 400 with
+AGENT_NOT_IMPLEMENTED_OR_AUTHORIZED in the detail, create
+refused for non-operator 403, create 201, approve 200,
+denial 200 standing MINOTAUR_DENIAL_RECORDED, cleared
+outcome under a denial refused 400 with
+MINOTAUR_DENIAL_RECORDED in the detail, failover step
+200, failover outcome while incomplete refused 400 with
+FAILOVER_INCOMPLETE in the detail, records list 200,
+unexpected fields 400, wrong origin 403, check-in 201,
+unwired service 503 deployment_agent_unavailable).
+Deployed-composition verification through
+create_application runs on the final composed tree for
+this tranche (see the Q41 entry).

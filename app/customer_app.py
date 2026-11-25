@@ -60,6 +60,7 @@ from core_platform.operations_rtsa_service import OperationsRtsaDenied, Operatio
 from core_platform.uptime_agent_service import UptimeAgentDenied, UptimeAgentForbidden
 from core_platform.application_agent_service import ApplicationAgentDenied, ApplicationAgentForbidden
 from core_platform.database_agent_service import DatabaseAgentDenied, DatabaseAgentForbidden
+from core_platform.deployment_agent_service import DeploymentAgentDenied, DeploymentAgentForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
 
 ASSETS = {
@@ -207,6 +208,11 @@ APPLICATION_ASSESSMENT_OUTCOME_ROUTE = re.compile(r'^/api/application-agent/asse
 DATABASE_ASSESSMENT_ROUTE = re.compile(r'^/api/database-agent/assessments/([A-Za-z0-9_-]{1,128})$')
 DATABASE_ASSESSMENT_ACTION_ROUTE = re.compile(r'^/api/database-agent/assessments/([A-Za-z0-9_-]{1,128})/action$')
 DATABASE_ASSESSMENT_OUTCOME_ROUTE = re.compile(r'^/api/database-agent/assessments/([A-Za-z0-9_-]{1,128})/outcome$')
+DEPLOYMENT_RECORD_ROUTE = re.compile(r'^/api/deployment-agent/records/([A-Za-z0-9_-]{1,128})$')
+DEPLOYMENT_RECORD_ACTION_ROUTE = re.compile(r'^/api/deployment-agent/records/([A-Za-z0-9_-]{1,128})/action$')
+DEPLOYMENT_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/deployment-agent/records/([A-Za-z0-9_-]{1,128})/outcome$')
+DEPLOYMENT_RECORD_DENIAL_ROUTE = re.compile(r'^/api/deployment-agent/records/([A-Za-z0-9_-]{1,128})/denial$')
+DEPLOYMENT_RECORD_FAILOVER_STEP_ROUTE = re.compile(r'^/api/deployment-agent/records/([A-Za-z0-9_-]{1,128})/failover-step$')
 ROOM_CREATE_FIELDS = {'room_type', 'purpose', 'case_id', 'jurisdiction', 'scheduled_start', 'scheduled_end', 'recording_policy', 'retention_days', 'consent_notice_version'}
 
 
@@ -214,7 +220,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -358,6 +364,11 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         db_assessment_match = DATABASE_ASSESSMENT_ROUTE.fullmatch(path)
         db_assessment_action_match = DATABASE_ASSESSMENT_ACTION_ROUTE.fullmatch(path)
         db_assessment_outcome_match = DATABASE_ASSESSMENT_OUTCOME_ROUTE.fullmatch(path)
+        deployment_record_match = DEPLOYMENT_RECORD_ROUTE.fullmatch(path)
+        deployment_record_action_match = DEPLOYMENT_RECORD_ACTION_ROUTE.fullmatch(path)
+        deployment_record_outcome_match = DEPLOYMENT_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        deployment_record_denial_match = DEPLOYMENT_RECORD_DENIAL_ROUTE.fullmatch(path)
+        deployment_record_failover_step_match = DEPLOYMENT_RECORD_FAILOVER_STEP_ROUTE.fullmatch(path)
         ls_isolation_release_match = LS_ISOLATION_RELEASE_ROUTE.fullmatch(path)
         ss_incident_plan_match = SS_INCIDENT_PLAN_ROUTE.fullmatch(path)
         ss_remediation_match = SS_REMEDIATION_ROUTE.fullmatch(path)
@@ -617,6 +628,16 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or db_assessment_match is not None
                              or db_assessment_action_match is not None
                              or db_assessment_outcome_match is not None)
+        is_deployment_route = (path in ('/api/deployment-agent/status',
+                                        '/api/deployment-agent/records',
+                                        '/api/deployment-agent/design',
+                                        '/api/deployment-agent/operation-check',
+                                        '/api/deployment-agent/check-in')
+                               or deployment_record_match is not None
+                               or deployment_record_action_match is not None
+                               or deployment_record_outcome_match is not None
+                               or deployment_record_denial_match is not None
+                               or deployment_record_failover_step_match is not None)
         is_platform_route = (is_unm_route or is_carehive_route
                              or is_home_healthcare_route
                              or is_grantwriter_route
@@ -644,7 +665,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_ops_route
                              or is_uptime_route
                              or is_application_route
-                             or is_database_route)
+                             or is_database_route
+                             or is_deployment_route)
         is_rooms_route = (path == '/api/rooms'
                           or room_detail_match is not None
                           or room_transition_match is not None
@@ -742,7 +764,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/application-agent/design',
                                             '/api/database-agent/status',
                                             '/api/database-agent/assessments',
-                                            '/api/database-agent/design')
+                                            '/api/database-agent/design',
+                                            '/api/deployment-agent/status',
+                                            '/api/deployment-agent/records',
+                                            '/api/deployment-agent/design')
                                    or unm_referral_match is not None
                                    or hh_intake_match is not None
                                    or hh_assignment_match is not None
@@ -779,7 +804,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or ops_incident_match is not None
                                    or uptime_record_match is not None
                                    or app_assessment_match is not None
-                                   or db_assessment_match is not None) else ('POST',)
+                                   or db_assessment_match is not None
+                                   or deployment_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
                 ('GET',) if room_detail_match else ('POST',))
@@ -825,6 +851,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/application-agent/assessments':
             allowed = ('GET', 'POST')
         if path == '/api/database-agent/assessments':
+            allowed = ('GET', 'POST')
+        if path == '/api/deployment-agent/records':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -2182,6 +2210,52 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = database_agent.assessment_view(identity, db_role, db_assessment_match.group(1))
                         return respond(start, '200 OK', {'assessment': record})
                     return check_in(database_agent)
+                if is_deployment_route:
+                    if deployment_agent is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'deployment_agent_unavailable'})
+                    deployment_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/deployment-agent/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': deployment_agent.status()})
+                    if path == '/api/deployment-agent/design':
+                        return respond(start, '200 OK', {'design': deployment_agent.design_view()})
+                    if path == '/api/deployment-agent/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = deployment_agent.operation_check(identity, deployment_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/deployment-agent/records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'records': deployment_agent.records_list(identity, deployment_role)})
+                        if set(data) != {'target_ref', 'change_refs', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = deployment_agent.create_record(identity, data['target_ref'], data['change_refs'], data['scope_ref'])
+                        return respond(start, '201 Created', {'record': record})
+                    if deployment_record_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = deployment_agent.record_action(identity, deployment_record_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'record': record})
+                    if deployment_record_denial_match:
+                        if set(data) != {'denial_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = deployment_agent.record_denial(identity, deployment_record_denial_match.group(1), data['denial_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if deployment_record_failover_step_match:
+                        if set(data) != {'step', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = deployment_agent.record_failover_step(identity, deployment_record_failover_step_match.group(1), data['step'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if deployment_record_outcome_match:
+                        if set(data) != {'outcome', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = deployment_agent.record_outcome(identity, deployment_record_outcome_match.group(1), data['outcome'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'record': record})
+                    if deployment_record_match:
+                        record = deployment_agent.record_view(identity, deployment_role, deployment_record_match.group(1))
+                        return respond(start, '200 OK', {'record': record})
+                    return check_in(deployment_agent)
             if operator_match:
                 if set(data) != {'items', 'expires_at'}:
                     raise ValueError('unexpected fields')
@@ -2329,6 +2403,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'database_agent_forbidden'})
         except DatabaseAgentDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'database_agent_denied', 'detail': str(exc)})
+        except DeploymentAgentForbidden:
+            return respond(start, '403 Forbidden', {'error': 'deployment_agent_forbidden'})
+        except DeploymentAgentDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'deployment_agent_denied', 'detail': str(exc)})
         except RoomNotFound:
             return respond(start, '404 Not Found', {'error': 'not_found'})
         except RoomForbidden:
