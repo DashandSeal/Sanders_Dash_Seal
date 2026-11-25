@@ -1,3 +1,10 @@
 -r requirements.txt
 gunicorn==26.2.0
 stripe==15.6.0
+# Voice/Audio/Video local (offline) backends -- free resources first:
+# faster-whisper is the local STT engine and pyttsx3 the local system
+# TTS engine (drives espeak-ng, installed in the image's apt layer).
+# Without these the voice platform's local half cannot run; the paid
+# provider keys remain owner-placed and are NOT added here.
+faster-whisper
+pyttsx3

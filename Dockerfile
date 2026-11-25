@@ -15,6 +15,14 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+# System TTS engine for the voice platform's local half: pyttsx3 (in
+# requirements-server.txt) drives espeak-ng on Linux. Without it the
+# voice checker's "system TTS available" probe can never pass in this
+# image. No provider keys are installed here -- those stay owner-placed.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends espeak-ng \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt requirements-server.txt ./
 
 RUN pip install --no-cache-dir -r requirements-server.txt \
