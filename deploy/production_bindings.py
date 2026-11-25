@@ -247,6 +247,7 @@ from core_platform.sanders_sales_service import SandersSalesService
 from core_platform.sanders_customer_support_service import SandersCustomerSupportService
 from core_platform.sanders_human_resources_service import SandersHumanResourcesService
 from core_platform.sanders_security_ops_service import SandersSecurityOpsService
+from core_platform.sanders_global_relations_service import SandersGlobalRelationsService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1245,6 +1246,14 @@ def create_production_bindings():
     sanders_security_ops = SandersSecurityOpsService(
         data_dir / 'sanders_security_ops.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders Global Relations platform (Q99,
+    # RTSA Build Program tranche 29): governed
+    # global relations records over its own store
+    # — it conducts no diplomacy, negotiates no
+    # treaty, and forms no alliance itself.
+    sanders_global_relations = SandersGlobalRelationsService(
+        data_dir / 'sanders_global_relations.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1345,4 +1354,5 @@ def create_production_bindings():
         sanders_customer_support=sanders_customer_support,
         sanders_human_resources=sanders_human_resources,
         sanders_security_ops=sanders_security_ops,
+        sanders_global_relations=sanders_global_relations,
     )
