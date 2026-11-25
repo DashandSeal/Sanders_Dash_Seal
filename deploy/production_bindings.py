@@ -227,6 +227,7 @@ from core_platform.sanders_strategy_hub_service import SandersStrategyHubService
 from core_platform.sanders_global_freedom_service import SandersGlobalFreedomService
 from core_platform.sanders_coordinator_service import SandersCoordinatorService
 from core_platform.sanders_intelligence_service import SandersIntelligenceService
+from core_platform.sanders_ai_research_service import SandersAIResearchService
 from core_platform.native_notary import NativeNotarySessions
 from core_platform.pbd_manifest_generator import PBDManifestGenerator
 from core_platform.pbd_sentinel import PBDSentinel
@@ -1042,6 +1043,15 @@ def create_production_bindings():
     sanders_intelligence = SandersIntelligenceService(
         data_dir / 'sanders_intelligence.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Sanders AI Research platform (Q80,
+    # RTSA Build Program tranche 22): governed
+    # AI-research records over its own store
+    # — it conducts no research, develops no
+    # algorithm, and trains no model itself.
+    # Separate from Sanders Research (D-N11).
+    sanders_ai_research = SandersAIResearchService(
+        data_dir / 'sanders_ai_research.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
 
     return RuntimeBindings(
         appointments=appointments,
@@ -1123,4 +1133,5 @@ def create_production_bindings():
         sanders_global_freedom=sanders_global_freedom,
         sanders_coordinator=sanders_coordinator,
         sanders_intelligence=sanders_intelligence,
+        sanders_ai_research=sanders_ai_research,
     )
