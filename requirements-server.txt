@@ -8,3 +8,12 @@ stripe==15.6.0
 # provider keys remain owner-placed and are NOT added here.
 faster-whisper
 pyttsx3
+# PyAV floor (2026-11-25, voice repair): faster-whisper 1.2.x decodes
+# audio via av.open(..., metadata_errors="ignore"), a kwarg that only
+# exists in PyAV >= 13.  Unpinned, the instance's aarch64 venv resolved
+# PyAV 12.x, so every transcription died with a TypeError the voice
+# handler does not catch (production 500 on POST /api/voice/transcribe;
+# traceback in deploy run 45734343071, step 5d pre-warm).  The <15 cap
+# keeps pip on versions that publish aarch64 cp312 wheels (15.x does
+# not), so the deploy never falls into a source build.
+av>=13,<15
