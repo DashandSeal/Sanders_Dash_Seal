@@ -4,13 +4,8 @@
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/sovereign_shield_v3_service.py",
         "payload_hash": "f4f54ff0bec93c071eb980a9e96719cd52198558f401b4109cee6ad3620f0698",
-        "scope": {
-            "endpoint": "local://development",
-            "method": "TEST",
-            "ip": "127.0.0.1",
-            "operation": "DEVELOPMENT_VALIDATION"
-        }
-    },
-    "signatures": {},
-    "status": "UNSIGNED_SOURCE_MANIFEST"
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }
