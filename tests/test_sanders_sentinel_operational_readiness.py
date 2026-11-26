@@ -30,6 +30,7 @@ Run: python3 -m unittest tests.test_sanders_sentinel_operational_readiness -v
 """
 
 import hashlib
+import inspect
 import json
 import tempfile
 import unittest
@@ -638,6 +639,154 @@ class TestEscalationCoordinationClarification(OrrTestBase):
             len(self.sentinel.responder_coordinations(
                 OPERATOR, 'OPERATOR', case['case_id'])),
             coordinations_before)
+
+
+class TestReadinessNeverGatesProtection(OrrTestBase):
+    """Founder clarification No. 3 (2026-11-26
+    02:57 MST): readiness states are reporting
+    states only. They never function as a
+    precondition on the activation path."""
+
+    def test_clarification_no_3_carried_verbatim(self):
+        text = (
+            sentinel.FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_NO_3_VERBATIM)
+        self.assertTrue(text.startswith(
+            'Sanders Sentinel shall not withhold, delay,'
+            ' suspend, or refuse available, authorized'
+            ' life-preserving assistance because a field'
+            ' exercise has not been completed.'))
+        self.assertIn(
+            'never become an additional approval gate or'
+            ' a prerequisite for helping your bloodline'
+            ' during an actual emergency.', text)
+        self.assertTrue(text.endswith(
+            'No existing protective authority or'
+            ' responsibility shall be diminished.'))
+        view = (
+            SandersSentinelService.operational_readiness_design_view())
+        self.assertEqual(
+            view['clarification_no_3_verbatim'], text)
+        self.assertIn(
+            'never an approval gate',
+            view['readiness_non_gating_invariant'])
+        self.assertIn(
+            sentinel.ORR_READINESS_NON_GATING_INVARIANT,
+            view['invariants'])
+        board = self.sentinel.readiness_view(
+            OPERATOR, 'OPERATOR')
+        self.assertTrue(board['reporting_only'])
+        self.assertFalse(board['gates_activation'])
+        self.assertEqual(
+            board['readiness_non_gating_invariant'],
+            sentinel.ORR_READINESS_NON_GATING_INVARIANT)
+
+    def _states(self):
+        board = self.sentinel.readiness_view(
+            OPERATOR, 'OPERATOR')
+        return {entry['capability']: entry['state']
+                for entry in board['capabilities']}
+
+    def test_activation_proceeds_untested_truthfully(self):
+        # A functioning, authorized capability whose
+        # end-to-end test record is absent: the
+        # board truthfully reads UNTESTED.
+        self.sentinel.record_readiness_connection(
+            OPERATOR, 'VISUAL', 'camera-source-of-record',
+            'authorization-of-record', 'LIVE',
+            jurisdiction_ref='jurisdiction-of-record',
+            timezone_ref='timezone-of-record')
+        self.assertEqual(self._states()['VISUAL'],
+                         'UNTESTED')
+        # Sentinel-initiated protective activation on
+        # that capability proceeds immediately --
+        # perception, assessment, initiation -- with
+        # no test anywhere in the path.
+        self.sentinel.designate_perception_channel(
+            OPERATOR, 'VISUAL', 'visual-primary',
+            'visual-alternative')
+        self.sentinel.designate_perception_channel(
+            OPERATOR, 'MEDICAL_WEARABLE', 'wearable-primary',
+            'wearable-alternative')
+        obs1 = self.sentinel.record_perception_observation(
+            OPERATOR, 'VISUAL',
+            sentinel.PERCEPTION_SOURCES['VISUAL'],
+            source_ref='source-visual',
+            authorization_ref='authorization-of-record',
+            detail_ref='observation-detail',
+            evidence_ref='evidence-of-record')
+        obs2 = self.sentinel.record_perception_observation(
+            OPERATOR, 'MEDICAL_WEARABLE',
+            sentinel.PERCEPTION_SOURCES['MEDICAL_WEARABLE'],
+            source_ref='source-wearable',
+            authorization_ref='authorization-of-record',
+            detail_ref='observation-detail',
+            evidence_ref='evidence-of-record')
+        assessment = self.sentinel.record_situation_assessment(
+            OPERATOR,
+            [obs1['observation_id'], obs2['observation_id']],
+            'CREDIBLE_DANGER', 'evidence-bundle-1',
+            'fall detected; no response on camera')
+        result = self.sentinel.initiate_protective_activation(
+            OPERATOR, assessment['assessment_id'],
+            'bloodline-member-ref', 'initiation-detail',
+            activations=[{
+                'activation_kind': 'RELOCATION',
+                'target_ref': 'godfather-transport-matter-1',
+                'detail_ref': 'medical transport'}])
+        self.assertEqual(result['case']['state'], 'OPEN')
+        # The request-driven paths proceed too, on
+        # capabilities that read NOT_CONNECTED.
+        case = self.sentinel.record_emergency_signal(
+            OPERATOR, 'SOS_BUTTON', 'BLOODLINE_MEMBER',
+            'member-device-1', 'auth', 'bloodline-member-ref',
+            'sos pressed')
+        for kind, target in (
+                ('RELOCATION', 'godfather-transport-2'),
+                ('LEGAL', 'patriot-saint-matter-2'),
+                ('FUNDING', 'joint-funding-request-2')):
+            self.sentinel.record_emergency_activation(
+                OPERATOR, case['case_id'], kind, target,
+                'activation detail')
+        self.sentinel.record_responder_coordination(
+            OPERATOR, case['case_id'], 'MEDICAL',
+            'county-ems', 'coordination detail')
+        self.sentinel.record_escalation(
+            OPERATOR, case['case_id'], 'escalation detail')
+        # Both truths at once: everything above
+        # proceeded, AND the board still reports the
+        # truth -- acting on the capabilities did
+        # not relabel any of them.
+        states = self._states()
+        self.assertEqual(states['VISUAL'], 'UNTESTED')
+        self.assertEqual(states['MEDICAL_WEARABLE'],
+                         'NOT_CONNECTED')
+        self.assertEqual(states['PROTECTIVE_ACTIVATION'],
+                         'NOT_CONNECTED')
+
+    def test_activation_paths_do_not_consult_readiness(self):
+        # The audit, as a standing structural proof:
+        # no activation, escalation, coordination,
+        # or assistance code path references the
+        # readiness derivation, the readiness board,
+        # or the readiness/test record stores.
+        forbidden = (
+            '_readiness_state_for', 'readiness_view',
+            'sanders_sentinel_readiness_connections',
+            'sanders_sentinel_operational_tests')
+        for name in (
+                'record_emergency_signal',
+                'record_emergency_activation',
+                'initiate_protective_activation',
+                'record_responder_coordination',
+                'record_escalation',
+                'confirm_emergency_arrival',
+                'close_emergency_case'):
+            source = inspect.getsource(
+                getattr(SandersSentinelService, name))
+            for token in forbidden:
+                self.assertNotIn(
+                    token, source,
+                    f'{name} must not consult {token}')
 
 
 if __name__ == '__main__':
