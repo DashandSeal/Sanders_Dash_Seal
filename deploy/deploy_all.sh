@@ -241,6 +241,27 @@ if [ -f deploy/sds-watchdog.timer ]; then
 fi
 sudo loginctl enable-linger opc || true
 
+# 5d. Voice pre-warm (added 2026-11-25, transcriber repair). The local
+# transcriber (core_platform.daedalus_voice.FasterWhisperTranscriber)
+# downloads its ~75 MB tiny model at first construction, and the app
+# builds its voice backends lazily inside a request -- so a failed
+# construction surfaced NOWHERE: every wiring site swallows the
+# exception and /api/voice/status simply reported transcriber: null
+# while the faster-whisper package itself imported fine. (Root cause
+# of the original failure: HuggingFace's default cache under ~/.cache
+# is not writable by the sanders service user, which is created
+# --no-create-home; the model cache now lives under data/ -- see
+# daedalus_voice.py.) Construct the transcriber once here, as the
+# runtime user, so the model is cached before the first request and a
+# failure is LOUD in this deploy log, traceback included, instead of
+# invisible. A pre-warm failure is a warning, never a deploy failure
+# (the deployment law: nothing stops deployment); the voice surface
+# keeps answering honestly in the meantime.
+echo "VOICE PREWARM: caching the faster-whisper tiny model as sanders..."
+sudo -u sanders timeout 600 "$REPO_DIR/venv/bin/python" -c \
+  'from core_platform.daedalus_voice import FasterWhisperTranscriber; t = FasterWhisperTranscriber("tiny"); print("VOICE PREWARM OK: tiny model cached at", t.download_root)' \
+  || echo "VOICE PREWARM WARNING: the local transcriber could not be constructed at deploy time (traceback above); /api/voice/status will keep reporting transcriber: null until the cause is fixed. The deploy itself is unaffected."
+
 # 6. Bring up Docker Compose stacks if Docker is installed
 if command -v docker >/dev/null 2>&1 && [ -f compose.yaml ]; then
   docker compose up -d --build || true
