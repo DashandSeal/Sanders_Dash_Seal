@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency:
+  group: master-deploy-production
+  cancel-in-progress: false
+
 jobs:
   verify-legal-engine:
     runs-on: ubuntu-latest
