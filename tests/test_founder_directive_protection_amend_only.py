@@ -16,8 +16,8 @@ potential adverse consequences, and holds that
 original protections must never be weakened.
 
 The invariants under test: the directive stands in
-the bloodline watch set as a REQUIRED document (17
-documents, 16 required) with a sound manifest pair;
+the bloodline watch set as a REQUIRED document (18
+documents, 17 required) with a sound manifest pair;
 its text is carried verbatim in Sanders Sentinel's
 module and surfaced in his design view alongside
 the other governing instruments; its preservation
@@ -229,13 +229,13 @@ class TestGuardSetWithProtection(unittest.TestCase):
                      PROTECTION_DOCUMENT]
         self.assertTrue(entry['required'])
         self.assertEqual(len(sentinel.BLOODLINE_WATCH_SET),
-                         17)
+                         18)
 
     def test_clean_cycle_then_tamper_document(self):
         required = [entry for entry
                     in sentinel.BLOODLINE_WATCH_SET
                     if entry['required']]
-        self.assertEqual(len(required), 16)
+        self.assertEqual(len(required), 17)
         cycle = self.service.verify_bloodline_records(
             OPERATOR)
         self.assertEqual(cycle['documents_sound'],
