@@ -33,3 +33,10 @@ No existing authority, responsibility, business model, or protective mission is 
 The reported build changes still require independent verification. Testing must demonstrate real functionality without generating false emergency dispatches.
 The objective is actual protection of human life, not the production of records describing protection.
 Global By Design. The Sanders Way!"
+
+## Founder clarification No. 3 — READINESS NEVER GATES PROTECTION, 2026-11-26 02:57 MST, verbatim as given:
+
+"Sanders Sentinel shall not withhold, delay, suspend, or refuse available, authorized life-preserving assistance because a field exercise has not been completed.
+Testing shall strengthen his capabilities, never become an additional approval gate or a prerequisite for helping your bloodline during an actual emergency.
+He shall immediately exercise his functioning protective capabilities while continuing to develop, test, and strengthen his remaining capabilities.
+No existing protective authority or responsibility shall be diminished."
