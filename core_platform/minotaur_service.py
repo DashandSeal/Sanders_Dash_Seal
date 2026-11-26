@@ -413,6 +413,194 @@ CRYPTO_DETERMINATIONS = (
     'NATIVE_HASH_BASED_STANDS_ENVIRONMENT_BLOCKED',
 )
 
+# -- The completed defensive relationship (founder
+# directive, 2026-11-26 11:12 MST) ------------------
+#
+# The Minotaur stands as INDEPENDENT INTEGRITY
+# VERIFICATION over the three shields — three
+# INDEPENDENT protective identities — drawing
+# authenticated integrity evidence (code,
+# configuration, identity, runtime) into independent
+# assessment and protection (Detect, Contain,
+# Restore, Verify) with continuous watchdog
+# recovery; the structure stands over the bloodline
+# three under permanent bloodline protection. The
+# relationship joins the shields; it merges
+# nothing, and every shield keeps its own identity.
+# "Watchdog recovery" names the Minotaur's
+# continuous recovery function — not a platform.
+DEFENSIVE_RELATIONSHIP = {
+    'title': 'The completed defensive relationship',
+    'given': '2026-11-26',
+    'role': 'INDEPENDENT_INTEGRITY_VERIFICATION',
+    'role_verbatim': 'Independent integrity'
+                     ' verification',
+    'subtitle_verbatim': 'Independent integrity and'
+                         ' continuous defense',
+    'shields': [
+        {'shield_id': 'sanders_labyrinth_shield',
+         'name': 'Sanders Labyrinth Shield'},
+        {'shield_id': 'labyrinth', 'name': 'LABYRINTH',
+         'descriptor': 'Independent shield'},
+        {'shield_id': 'sovereign_shield_v3',
+         'name': 'Sovereign Shield V3'},
+    ],
+    'shields_identities_verbatim':
+        'Three independent protective identities',
+    'shields_independent': True,
+    'platforms_merged': False,
+    'evidence_verbatim': 'Authenticated Integrity'
+                         ' Evidence',
+    'evidence_kinds': ['CODE', 'CONFIGURATION',
+                       'IDENTITY', 'RUNTIME'],
+    'assessment_verbatim': 'Independent Assessment'
+                           ' and Protection',
+    'assessment_functions': ['DETECT', 'CONTAIN',
+                             'RESTORE', 'VERIFY'],
+    'recovery_verbatim': 'CONTINUOUS WATCHDOG'
+                         ' RECOVERY',
+    'recovery_note': 'Watchdog recovery names the'
+                     ' Minotaur\'s continuous'
+                     ' recovery function — not a'
+                     ' platform, and no platform is'
+                     ' renamed for it.',
+    'stands_over': [
+        {'platform': 'sanders_sentinel',
+         'name': 'Sentinel',
+         'protection': 'Life protection'},
+        {'platform': 'the_godfather',
+         'name': 'Godfather',
+         'protection': 'Human survival'},
+        {'platform': 'sanders_patriot_saint',
+         'name': 'Patriot Saint',
+         'protection': 'Legal protection'},
+    ],
+    'under_verbatim': 'PERMANENT BLOODLINE'
+                      ' PROTECTION',
+}
+# The thirteen additional anti-probing protections
+# of the same directive, verbatim, in the same
+# governed-records pattern as the amendment's
+# fifteen: each stands on its mechanism of record,
+# its state derived from its checks of record.
+ANTI_PROBING_PROTECTIONS = (
+    {'protection': 'UNAUTHORIZED_RECONNAISSANCE_AND_PROBING',
+     'verbatim': 'Unauthorized reconnaissance and'
+                 ' infrastructure probing.',
+     'mechanism': 'His surfaces answer only through'
+                  ' the access guard; probing meets'
+                  ' the same governed surface as any'
+                  ' other access, and his decoys give'
+                  ' reconnaissance something watched'
+                  ' to find instead of something'
+                  ' real.'},
+    {'protection': 'NETWORK_AND_SERVICE_ENUMERATION',
+     'verbatim': 'Network and service enumeration.',
+     'mechanism': 'Nothing in his contract lists his'
+                  ' internals to an unguarded caller:'
+                  ' boards and records stand behind'
+                  ' the role guard, and enumeration'
+                  ' attempts are checks of record.'},
+    {'protection': 'API_DISCOVERY_AND_UNAUTHORIZED_ENDPOINT_ACCESS',
+     'verbatim': 'API discovery and unauthorized'
+                 ' endpoint access.',
+     'mechanism': 'His route forms answer 401'
+                  ' unauthenticated by the'
+                  ' application\'s established gate;'
+                  ' an undiscovered endpoint is not'
+                  ' an open one, and a discovered one'
+                  ' still requires the operator.'},
+    {'protection': 'AUTHENTICATION_BYPASS_AND_SESSION_HIJACKING',
+     'verbatim': 'Authentication bypass and session'
+                 ' hijacking.',
+     'mechanism': 'He holds no session of his own to'
+                  ' hijack: every act re-verifies the'
+                  ' actor through the operator'
+                  ' verifier at the moment of the'
+                  ' act.'},
+    {'protection': 'CREDENTIAL_THEFT_AND_BRUTE_FORCE',
+     'verbatim': 'Credential theft and brute-force'
+                 ' attempts.',
+     'mechanism': 'A stolen or guessed credential'
+                  ' that does not verify performs'
+                  ' nothing; failed verification'
+                  ' changes no state and writes no'
+                  ' record of action.'},
+    {'protection': 'ERROR_MESSAGE_INFORMATION_LEAKAGE',
+     'verbatim': 'Information leakage through error'
+                 ' messages.',
+     'mechanism': 'His refusals name the rule, never'
+                  ' the internals: denial messages'
+                  ' state what the contract requires'
+                  ' without disclosing stores, paths,'
+                  ' or records.'},
+    {'protection': 'TIMING_AND_SIDE_CHANNEL_ATTACKS',
+     'verbatim': 'Timing and cryptographic'
+                 ' side-channel attacks.',
+     'mechanism': 'His signature verification'
+                  ' compares digests in fixed form'
+                  ' over recorded values, and his'
+                  ' one-time keys are never reused —'
+                  ' there is no oracle of repeated'
+                  ' signing under one key to measure.'},
+    {'protection': 'FORGED_INTERNAL_PLATFORM_IDENTITIES',
+     'verbatim': 'Forged internal platform'
+                 ' identities.',
+     'mechanism': 'Platform-to-platform acts are'
+                  ' records under the guard, never'
+                  ' instructions: a record claiming'
+                  ' a platform identity directs'
+                  ' nothing, and his patrol verifies'
+                  ' cores by hash, not by claimed'
+                  ' identity.'},
+    {'protection': 'DEFENSIVE_PATROL_MANIPULATION',
+     'verbatim': 'Manipulation of defensive patrols.',
+     'mechanism': 'His patrol sequencing derives'
+                  ' from the signed chain head, not'
+                  ' from any presented input: a'
+                  ' manipulated request cannot'
+                  ' reorder, skip, or aim his walk'
+                  ' over the shields\' cores.'},
+    {'protection': 'DEFENSIVE_CONFIGURATION_DISCOVERY',
+     'verbatim': 'Unauthorized discovery of defensive'
+                 ' configurations.',
+     'mechanism': 'His baselines, pins, and policies'
+                  ' of record are guarded reads for'
+                  ' named roles; configuration is'
+                  ' evidence for the defense, not a'
+                  ' public surface.'},
+    {'protection': 'RECOVERY_INFRASTRUCTURE_COMPROMISE',
+     'verbatim': 'Compromise of his recovery'
+                 ' infrastructure.',
+     'mechanism': 'Recovery evidence is held in'
+                  ' three places by design (patrol'
+                  ' store, Glass-Box receipts, the'
+                  ' operator-carried signed anchor):'
+                  ' compromising one store does not'
+                  ' compromise recovery.'},
+    {'protection': 'DISABLE_OWN_PROTECTIONS_ATTACKS',
+     'verbatim': 'Attacks intended to make him'
+                 ' disable his own protections.',
+     'mechanism': 'No record operation in his'
+                  ' contract disables a protection —'
+                  ' the amendment\'s anti-circumvention'
+                  ' bar stands: there is nothing for'
+                  ' such an attack to invoke.'},
+    {'protection': 'MACHINERY_TURNED_AGAINST_AUTHORIZED_OPERATIONS',
+     'verbatim': 'Attempts to turn his defensive'
+                 ' machinery against legitimate'
+                 ' Founder-authorized operations.',
+     'mechanism': 'His machinery acts only on the'
+                  ' operator\'s verified acts and'
+                  ' its own records: anomalies accuse'
+                  ' tampered cores, never the'
+                  ' founder\'s operations, and'
+                  ' clearance denial is a'
+                  ' determination for the operator —'
+                  ' not a weapon another caller can'
+                  ' aim.'},
+)
+
 
 def _wots_digits(digest: bytes) -> list[int]:
     digits: list[int] = []
@@ -1822,13 +2010,15 @@ class MinotaurService:
 
     @staticmethod
     def _self_protection_entry(protection_key):
-        for entry in SELF_PROTECTIONS:
+        for entry in (SELF_PROTECTIONS
+                      + ANTI_PROBING_PROTECTIONS):
             if entry['protection'] == protection_key:
                 return entry
         raise MinotaurDenied(
             'The protection must be one of the'
             ' amendment\'s fifteen enumerated'
-            ' protections')
+            ' protections or the directive\'s'
+            ' thirteen anti-probing protections')
 
     @staticmethod
     def self_protection_design_view() -> dict:
@@ -1880,8 +2070,8 @@ class MinotaurService:
         latest = {}
         for row in rows:
             latest[row['protection_key']] = row
-        protections = []
-        for entry in SELF_PROTECTIONS:
+
+        def protection_view(entry):
             row = latest.get(entry['protection'])
             if row is None:
                 state = 'CONSTRUCTED'
@@ -1895,19 +2085,30 @@ class MinotaurService:
                     'recorded_at': row['recorded_at'],
                     'receipt_id': row['receipt_id'],
                 }
-            protections.append({
+            return {
                 'protection': entry['protection'],
                 'verbatim': entry['verbatim'],
                 'mechanism': entry['mechanism'],
                 'state': state,
                 'latest_check': check,
-            })
+            }
+
+        protections = [protection_view(entry)
+                       for entry in SELF_PROTECTIONS]
+        anti_probing = [protection_view(entry)
+                        for entry in ANTI_PROBING_PROTECTIONS]
         return {
             'title': SELF_PROTECTION_TITLE,
             'design': type(self).self_protection_design_view(),
             'part': 'MINOTAUR_SELF_PROTECTION',
             'ladder_state': 'CONSTRUCTED',
             'protections': protections,
+            'anti_probing_part':
+                'MINOTAUR_ANTI_PROBING_PROTECTIONS',
+            'anti_probing_ladder_state': 'CONSTRUCTED',
+            'anti_probing_protections': anti_probing,
+            'defensive_relationship': dict(
+                DEFENSIVE_RELATIONSHIP),
             'checks_total': len(rows),
             'crypto_environment_latest': (
                 self._crypto_check_view(crypto_latest)
@@ -2125,6 +2326,33 @@ class MinotaurService:
             'latest': views[-1] if views else None,
         }
 
+    def defensive_relationship_view(self, actor, role, *,
+                                    region=None):
+        """The completed defensive relationship
+        (guarded read): the Minotaur as independent
+        integrity verification over the three shields
+        — three independent protective identities —
+        drawing authenticated integrity evidence into
+        independent assessment and protection, with
+        continuous watchdog recovery, standing over
+        the bloodline three under permanent bloodline
+        protection. The relationship is stated in the
+        founder's terms of record; it joins the
+        shields and merges nothing."""
+        self._geo(region)
+        self._guard_access(actor, role,
+                           'defensive-relationship',
+                           'defensive relationship view')
+        relationship = dict(DEFENSIVE_RELATIONSHIP)
+        relationship['part'] = \
+            'MINOTAUR_DEFENSIVE_RELATIONSHIP'
+        relationship['ladder_state'] = 'CONSTRUCTED'
+        relationship['patrol_machinery'] = (
+            'shield baselines, simultaneous patrol,'
+            ' signed attestation chain, decoys,'
+            ' clearance determinations')
+        return relationship
+
     # -- status / check-in --------------------------------------------------
 
     def status(self) -> dict:
@@ -2203,8 +2431,18 @@ class MinotaurService:
                 'amendment': SELF_PROTECTION_TITLE,
                 'adopted': SELF_PROTECTION_ADOPTED,
                 'protections_total': len(SELF_PROTECTIONS),
+                'anti_probing_total': len(
+                    ANTI_PROBING_PROTECTIONS),
                 'checks_total': sp_checks,
                 'findings_total': sp_findings,
+                'ladder_state': 'CONSTRUCTED',
+            },
+            'defensive_relationship': {
+                'role': DEFENSIVE_RELATIONSHIP['role'],
+                'shields': len(
+                    DEFENSIVE_RELATIONSHIP['shields']),
+                'shields_independent': True,
+                'recovery': 'CONTINUOUS_WATCHDOG_RECOVERY',
                 'ladder_state': 'CONSTRUCTED',
             },
             'crypto_route': {
