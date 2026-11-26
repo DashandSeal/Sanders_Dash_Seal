@@ -38,7 +38,7 @@ findings when touched; the amendment's fifteen
 protections derive state from checks of record; the
 crypto environment determination follows the check,
 never the reverse; and the guarded documents stand
-in the watch set (18 documents, 17 required) with
+in the watch set (20 documents, 19 required) with
 sound manifest pairs.
 These tests use only stdlib fakes and temporary
 SQLite files: no network, no keys.
@@ -74,7 +74,7 @@ from core_platform.sanders_patriot_saint_service import (
     SandersPatriotSaintService,
 )
 from core_platform.minotaur_service import (
-    MinotaurService, MinotaurDenied,
+    MinotaurService, MinotaurDenied, MinotaurForbidden,
     SELF_PROTECTIONS, ANTI_PROBING_PROTECTIONS,
     DEFENSIVE_RELATIONSHIP, CRYPTO_ROUTE)
 from core_platform.labyrinth_service import LabyrinthService
@@ -93,6 +93,12 @@ AMENDMENT_DOCUMENT = (
 RELATIONSHIP_DOCUMENT = (
     'docs/FOUNDER_DIRECTIVE_MINOTAUR_DEFENSIVE_'
     'RELATIONSHIP_2026-11-26.md')
+ARCHITECTURE_DOCUMENT = (
+    'docs/FOUNDER_DIRECTIVE_MINOTAUR_COMPLETE_'
+    'ARCHITECTURE_2026-11-26.md')
+INHERITANCE_DOCUMENT = (
+    'docs/FOUNDER_DIRECTIVE_SHIELDS_INHERIT_MINOTAUR_'
+    'DEFENSES_2026-11-26.md')
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 ORDER_LINE = (
@@ -164,7 +170,9 @@ class TestGuardedRecords(unittest.TestCase):
     def test_manifest_pairs_sound(self):
         for document in (ORDERS_DOCUMENT,
                          AMENDMENT_DOCUMENT,
-                         RELATIONSHIP_DOCUMENT):
+                         RELATIONSHIP_DOCUMENT,
+                         ARCHITECTURE_DOCUMENT,
+                         INHERITANCE_DOCUMENT):
             doc_bytes = (REPO_ROOT / document).read_bytes()
             manifest = json.loads(
                 (REPO_ROOT / (document + '.pbd.json'))
@@ -188,12 +196,40 @@ class TestGuardedRecords(unittest.TestCase):
         for entry in ANTI_PROBING_PROTECTIONS:
             self.assertIn(entry['verbatim'], text)
 
+    def test_architecture_document_of_record(self):
+        text = (REPO_ROOT / ARCHITECTURE_DOCUMENT).read_text(
+            encoding='utf-8')
+        self.assertIn('a named defense of record must '
+                      'become an actual', text)
+        self.assertIn('functioning defensive capability',
+                      text)
+        self.assertIn('defend himself, his defenses, the',
+                      text)
+        self.assertIn('infrastructure sustaining him, '
+                      'and the three', text)
+        self.assertIn('30 previously identified omissions',
+                      text)
+        self.assertIn('enumerations are NOT in', text)
+        self.assertIn('FUNCTIONING', text)
+
+    def test_inheritance_document_of_record(self):
+        text = (REPO_ROOT / INHERITANCE_DOCUMENT).read_text(
+            encoding='utf-8')
+        self.assertIn('must inherit the', text)
+        self.assertIn("don't you agree", text)
+        self.assertIn('shared defensive standard, '
+                      'separately embodied', text)
+        self.assertIn('INDEPENDENT protective identities',
+                      text)
+        self.assertIn('INHERITED_FUNCTIONING', text)
+        self.assertIn('INHERITED_BY_DESIGN', text)
+
     def test_watch_set_counts(self):
         self.assertEqual(len(sentinel.BLOODLINE_WATCH_SET),
-                         18)
+                         20)
         required = [e for e in sentinel.BLOODLINE_WATCH_SET
                     if e['required']]
-        self.assertEqual(len(required), 17)
+        self.assertEqual(len(required), 19)
         watched = {e['document']: e
                    for e in sentinel.BLOODLINE_WATCH_SET}
         self.assertTrue(watched[ORDERS_DOCUMENT]['required'])
@@ -201,6 +237,10 @@ class TestGuardedRecords(unittest.TestCase):
             watched[AMENDMENT_DOCUMENT]['required'])
         self.assertTrue(
             watched[RELATIONSHIP_DOCUMENT]['required'])
+        self.assertTrue(
+            watched[ARCHITECTURE_DOCUMENT]['required'])
+        self.assertTrue(
+            watched[INHERITANCE_DOCUMENT]['required'])
 
 
 class TestVerbatimCoverageConstants(unittest.TestCase):
@@ -790,6 +830,256 @@ class TestMinotaurDefensiveRelationship(
         self.assertEqual(
             status['self_protection']['anti_probing_total'],
             13)
+
+
+class TestAttackSimulations(MinotaurWorkspaceMixin,
+                            unittest.TestCase):
+    """INTERNAL-ONLY attack simulations (founder
+    directive 2026-11-26, the functioning-defense
+    standard): each simulation exercises a defense in
+    the Minotaur's own machinery and shows it working.
+    No network, no external dispatch — stdlib fakes and
+    temporary stores only."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        tmp = Path(self._tmp.name)
+        self.root = self.make_workspace(tmp)
+        self.now = [1_000_000.0]
+        self.promoted = [False]
+
+        def verifier(actor):
+            return (actor == OPERATOR
+                    or (actor == 'mallory'
+                        and self.promoted[0]))
+
+        self.service = MinotaurService(
+            tmp / 'minotaur.db', self.root, verifier,
+            FakeAudit(), clock=lambda: self.now[0])
+
+    def _record_check(self, actor):
+        return self.service.record_self_protection_check(
+            actor, 'DENIAL_OF_SERVICE', 'EVIDENCED',
+            'sim-evidence', 'simulation record')
+
+    def test_brute_force_lockout_functions(self):
+        for _ in range(5):
+            with self.assertRaises(MinotaurForbidden):
+                self._record_check('mallory')
+        # Even if the verifier would now pass her, the
+        # lockout refuses until the window clears.
+        self.promoted[0] = True
+        with self.assertRaises(MinotaurForbidden):
+            self._record_check('mallory')
+        # The operator is never locked out by her bucket.
+        self._record_check(OPERATOR)
+        # After the window, a verified actor passes and
+        # the bucket clears.
+        self.now[0] += 901
+        self._record_check('mallory')
+
+    def test_forged_patrol_instruction_refused(self):
+        with self.assertRaises(MinotaurForbidden):
+            self.service.shield_patrol('mallory')
+        view = self.service.shield_patrols_list(
+            OPERATOR, 'OPERATOR')
+        self.assertEqual(len(view), 0)
+        chain = self.service.verify_attestation_chain(
+            OPERATOR, 'OPERATOR')
+        self.assertEqual(chain['records'], 0)
+
+    def test_uniform_refusal_no_information_leakage(self):
+        seen = []
+        for call in (
+                lambda: self.service.shield_patrol('mallory'),
+                lambda: self._record_check('mallory'),
+                lambda: self.service.plant_decoy(
+                    'mallory', 'labyrinth', 'decoy-x',
+                    'patrol path x')):
+            try:
+                call()
+                self.fail('expected refusal')
+            except MinotaurForbidden as exc:
+                seen.append((type(exc).__name__, str(exc)))
+        self.assertEqual(len(set(seen)), 1)
+
+    def test_downgrade_claim_refused_in_code(self):
+        check = self.service.record_crypto_environment_check(
+            OPERATOR)
+        proven = check['determination']
+        self.assertNotEqual(
+            proven, 'VALIDATED_MODULE_APPROVED_MODE')
+        with self.assertRaises(MinotaurDenied):
+            self.service.assert_crypto_claim(
+                OPERATOR, 'VALIDATED_MODULE_APPROVED_MODE')
+        allowed = self.service.assert_crypto_claim(
+            OPERATOR, proven)
+        self.assertTrue(allowed['allowed'])
+        self.assertEqual(allowed['proven_by_check'], proven)
+
+    def test_decoy_isolation_enforced_in_code(self):
+        for target in ('patrol.db', 'docs/FOUNDER.md',
+                       'bloodline-registry-copy',
+                       'minotaur.db',
+                       'core_platform/minotaur_service.py'):
+            with self.assertRaises(MinotaurDenied):
+                self.service.plant_decoy(
+                    OPERATOR, 'labyrinth', target,
+                    'patrol path')
+        bait = self.root / 'bait-x.txt'
+        bait.write_text('bait', encoding='utf-8')
+        planted = self.service.plant_decoy(
+            OPERATOR, 'labyrinth', 'bait-x.txt',
+            'patrol path 1')
+        self.assertEqual(planted['status'], 'ACTIVE')
+
+    def test_signer_leaf_exhaustion_fails_closed(self):
+        for _ in range(32):
+            self.service.pin_shield_baselines(OPERATOR)
+        with self.assertRaises(MinotaurDenied):
+            self.service.pin_shield_baselines(OPERATOR)
+        chain = self.service.verify_attestation_chain(
+            OPERATOR, 'OPERATOR')
+        self.assertTrue(chain['valid'])
+        self.assertEqual(chain['records'], 32)
+
+    def test_domains_and_accounting_of_record(self):
+        domains = self.service.defensive_domains_view(
+            OPERATOR, 'OPERATOR')
+        self.assertEqual(
+            [d['domain'] for d in domains['domains']],
+            ['SELF_PROTECTION', 'ANTI_PROBING',
+             'ANTI_CIRCUMVENTION',
+             'CRYPTOGRAPHIC_PROTECTION',
+             'INFRASTRUCTURE_PROTECTION',
+             'RECOVERY_PROTECTION',
+             'DEFENSIVE_CONTINUITY',
+             'COUNTER_MANIPULATION'])
+        for entry in domains['domains']:
+            self.assertTrue(entry['scope'])
+            self.assertTrue(entry['members'])
+        expected = ({e['protection'] for e in SELF_PROTECTIONS}
+                    | {e['protection']
+                       for e in ANTI_PROBING_PROTECTIONS})
+        accounting = self.service.completeness_accounting_view(
+            OPERATOR, 'OPERATOR')
+        self.assertEqual(
+            accounting['total'],
+            len(minotaur_mod.COMPLETENESS_ACCOUNTING))
+        self.assertEqual(
+            accounting['already_protected']
+            + accounting['construction_required'],
+            accounting['total'])
+        self.assertEqual(
+            accounting['founder_counts_of_record'],
+            {'omissions': 30, 'exposures': 15,
+             'source_lists_in_hand': False})
+        self.assertEqual(
+            set(minotaur_mod.EXERCISE_EVIDENCE), expected)
+        view = self.service.self_protection_view(
+            OPERATOR, 'OPERATOR')
+        for entry in (view['protections']
+                      + view['anti_probing_protections']):
+            self.assertIn(entry['exercise_kind'],
+                          ('CODE', 'RECORD'))
+
+
+class TestShieldInheritance(unittest.TestCase):
+    """INTERNAL-ONLY: every shield inherits the
+    Minotaur's defenses — the shared standard,
+    separately embodied in each shield's own
+    machinery (founder directive 2026-11-26 11:18)."""
+
+    FOUNDER_LINE = (
+        'Everyone of my \U0001f6e1\ufe0f\'s must inherit '
+        "the minotaur's new defenses don't you agree")
+
+    def _services(self, tmp):
+        shield = LabyrinthShieldService(
+            tmp / 'shield.db', _verifier, FakeAudit())
+        labyrinth = LabyrinthService(
+            tmp / 'lab.db', operator_verifier=_verifier,
+            audit=FakeAudit())
+        v3 = SovereignShieldV3Service(
+            tmp / 'v3.db', operator_verifier=_verifier,
+            audit=FakeAudit())
+        return (('sanders_labyrinth_shield', shield,
+                 labyrinth_shield_mod),
+                ('labyrinth', labyrinth, labyrinth_mod),
+                ('sovereign_shield_v3', v3, sovereign_mod))
+
+    def test_inheritance_embodied_per_shield(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for name, service, module in self._services(
+                    Path(tmp)):
+                with self.subTest(shield=name):
+                    self.assertEqual(
+                        module
+                        .FOUNDER_INHERITANCE_DIRECTIVE_VERBATIM,
+                        self.FOUNDER_LINE)
+                    view = service.inherited_defenses_view(
+                        OPERATOR, 'OPERATOR')
+                    design = view['design']
+                    self.assertFalse(
+                        design['shields_merged'])
+                    self.assertFalse(
+                        design['merged_into_minotaur'])
+                    self.assertEqual(
+                        design['embodiment'],
+                        'SEPARATELY_EMBODIED')
+                    self.assertEqual(
+                        len(design['domains']), 8)
+                    self.assertEqual(
+                        len(view['protections']), 28)
+                    functioning = [
+                        p for p in view['protections']
+                        if p['applicability']
+                        == 'INHERITED_FUNCTIONING']
+                    self.assertGreaterEqual(
+                        len(functioning), 10)
+                    for entry in view['protections']:
+                        self.assertTrue(entry['basis'])
+                    self.assertEqual(
+                        len(design['machinery']), 4)
+
+    def test_shield_checks_derive_state(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for name, service, _module in self._services(
+                    Path(tmp)):
+                with self.subTest(shield=name):
+                    service.record_self_protection_check(
+                        OPERATOR,
+                        'CREDENTIAL_THEFT_AND_BRUTE_FORCE',
+                        'FUNCTIONING', 'sim-1',
+                        'lockout exercised in simulation')
+                    view = service.inherited_defenses_view(
+                        OPERATOR, 'OPERATOR')
+                    states = {p['protection']: p['state']
+                              for p in view['protections']}
+                    self.assertEqual(
+                        states[
+                            'CREDENTIAL_THEFT_AND_BRUTE_FORCE'],
+                        'FUNCTIONING')
+                    self.assertEqual(
+                        states['DENIAL_OF_SERVICE'],
+                        'CONSTRUCTED')
+
+    def test_shield_lockout_functions(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for name, service, _module in self._services(
+                    Path(tmp)):
+                with self.subTest(shield=name):
+                    for _ in range(6):
+                        with self.assertRaises(Exception):
+                            (service
+                             .record_self_protection_check(
+                                 'mallory', 'DENIAL_OF_SERVICE',
+                                 'FINDING', 'x', 'y'))
+                    # The operator's own bucket is clean.
+                    service.record_self_protection_check(
+                        OPERATOR, 'DENIAL_OF_SERVICE',
+                        'EVIDENCED', 'sim-2', 'operator act')
 
 
 if __name__ == '__main__':
