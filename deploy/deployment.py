@@ -66,6 +66,7 @@ class RuntimeBindings:
     promethean: object = None
     hydra_q: object = None
     labyrinth: object = None
+    sovereign_shield_v3: object = None
     cerberus: object = None
     chorus: object = None
     cobol_synthetic_ai: object = None
