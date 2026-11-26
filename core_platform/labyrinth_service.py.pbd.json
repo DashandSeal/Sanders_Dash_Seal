@@ -3,9 +3,14 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/labyrinth_service.py",
-        "payload_hash": "2456e5e77b792a79e934efb3238c2f8a0fcc8d6331cffbf25dfbea4be6196f00",
-        "scope": "source-manifest",
-        "signatures": {},
-        "status": "UNSIGNED_SOURCE_MANIFEST"
-    }
+        "payload_hash": "d7a582d0dc68b1a1adaff3b055bac8fbfd135c86ac093a425cb79ecaebc600a9",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
 }
