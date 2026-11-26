@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_founder_directive_protection_amend_only.py",
-        "payload_hash": "68f64c06c1d811a9ca901b07d05ddf16ca54678112763fd373208a345db682db",
+        "payload_hash": "0adb54fe2a2bf34040e09aeb1b0de792589bbfbdcd8257f39e47f2908bb6a51f",
         "scope": {
             "endpoint": "local://development",
             "method": "TEST",
