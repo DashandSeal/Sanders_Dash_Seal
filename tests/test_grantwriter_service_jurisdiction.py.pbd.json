@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "tests/test_grantwriter_service_jurisdiction.py",
+        "payload_hash": "4d1ac750483793f548a4e7adc26e24ad51fdf242d2cff3d082d8293ded7d9165",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

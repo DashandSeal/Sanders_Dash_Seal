@@ -449,6 +449,12 @@ BLOODLINE_WATCH_SET = (
     {'document': 'docs/SANDERS_BLOODLINE_REGISTRY.md',
      'title': 'Sanders Bloodline Registry',
      'required': False},
+    {'document': ('docs/GRANTWRITER_COMPLETE_SERVICE_'
+                  'JURISDICTION_2026-11-26.md'),
+     'title': ('Grantwriter \u2014 Complete Service'
+               ' Jurisdiction (Amendment to Her'
+               ' Original Purpose)'),
+     'required': True},
 )
 # Pair verdicts that assess sound: the manifest's recorded
 # payload hash equals the document's SHA-256. UNSIGNED is

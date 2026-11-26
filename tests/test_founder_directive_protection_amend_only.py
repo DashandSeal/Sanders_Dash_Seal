@@ -229,13 +229,13 @@ class TestGuardSetWithProtection(unittest.TestCase):
                      PROTECTION_DOCUMENT]
         self.assertTrue(entry['required'])
         self.assertEqual(len(sentinel.BLOODLINE_WATCH_SET),
-                         23)
+                         24)
 
     def test_clean_cycle_then_tamper_document(self):
         required = [entry for entry
                     in sentinel.BLOODLINE_WATCH_SET
                     if entry['required']]
-        self.assertEqual(len(required), 22)
+        self.assertEqual(len(required), 23)
         cycle = self.service.verify_bloodline_records(
             OPERATOR)
         self.assertEqual(cycle['documents_sound'],

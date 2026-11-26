@@ -38,7 +38,7 @@ findings when touched; the amendment's fifteen
 protections derive state from checks of record; the
 crypto environment determination follows the check,
 never the reverse; and the guarded documents stand
-in the watch set (23 documents, 22 required) with
+in the watch set (24 documents, 23 required) with
 sound manifest pairs.
 These tests use only stdlib fakes and temporary
 SQLite files: no network, no keys.
@@ -273,10 +273,10 @@ class TestGuardedRecords(unittest.TestCase):
 
     def test_watch_set_counts(self):
         self.assertEqual(len(sentinel.BLOODLINE_WATCH_SET),
-                         23)
+                         24)
         required = [e for e in sentinel.BLOODLINE_WATCH_SET
                     if e['required']]
-        self.assertEqual(len(required), 22)
+        self.assertEqual(len(required), 23)
         watched = {e['document']: e
                    for e in sentinel.BLOODLINE_WATCH_SET}
         self.assertTrue(watched[ORDERS_DOCUMENT]['required'])

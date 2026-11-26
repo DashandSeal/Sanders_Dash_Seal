@@ -90,10 +90,50 @@ attach_evidence -> add_evidence(c, owner, body) (the base name is
 add_evidence); reads -> list_opportunities / list_applications /
 get_application(c, owner, ...); drafts -> generate_draft(c,
 owner, application_id, generator=...).
+
+AMENDMENT — COMPLETE SERVICE JURISDICTION (founder-presented
+2026-11-26 12:57 MST; adopted 2026-11-26 13:03 MST as an
+AMENDMENT to her original purpose): the guarded record is
+docs/GRANTWRITER_COMPLETE_SERVICE_JURISDICTION_2026-11-26.md.
+Her original purpose (the grantwriter_purpose gate, APPROVED by
+the founder 2026-11-25; statement of record in
+ai_platform_approvals.json) stands governing and intact —
+this amendment expands her jurisdiction and supersedes nothing
+(founder ruling 2026-11-26 09:31 MST: adoptions amend the
+original scope, never supersede it). The amendment adds: three
+independent, concurrent service branches (public commercial;
+private corporate for the four companies; platform funding);
+a property acquisition objectives register exactly as the
+founder assigned it; the seven-stage duty cycle as a case
+lifecycle (PREPARE -> VALIDATE -> SUBMIT -> VERIFY_RECEIPT ->
+CORRECT -> MANAGE_AWARDS -> CLOSE_OUT_RENEW); and the adopted
+operating rules as structural properties of the machinery.
+
+Authority (founder correction 2026-11-26 13:12 MST): there is
+NO per-case founder authorization gate. Grantwriter executes
+submissions within her existing Founder-granted authority
+— the adopted jurisdiction and her original purpose are
+the standing grant — plus applicable client
+authorizations for public work. Submission records carry an
+AUTHORITY BASIS (the standing Founder grant of record, or the
+client authorization of record), never a per-application
+founder approval. JustGrants roles (Entity Administrator /
+Application Submitter / Authorized Representative) are modeled
+as facts of record per entity, never as a system reservation:
+for the seeded case of record the founder currently holds the
+Application Submitter role — a changeable role-assignment
+fact, not a restriction on her authority.
+
+The legacy application workflow in this module is unchanged:
+its record_submission remains a RECORDED state only and
+transmits nothing. The jurisdiction case lifecycle is the
+amendment's own machinery, in this service's own store,
+beside it.
 """
 
 import sqlite3
 import time
+import uuid
 from pathlib import Path
 
 from app import grantwriter_mother
@@ -158,6 +198,297 @@ _TRANSITIONS = {
     'CLOSED': frozenset(),
 }
 
+# -- Complete Service Jurisdiction (amendment, adopted 2026-11-26) ---
+
+JURISDICTION_GUARDED_DOCUMENT = (
+    'docs/GRANTWRITER_COMPLETE_SERVICE_JURISDICTION_2026-11-26.md')
+JURISDICTION_TITLE = 'Grantwriter \u2014 Complete Service Jurisdiction'
+JURISDICTION_ADOPTED = '2026-11-26'
+JURISDICTION_AMENDS = (
+    "Her original purpose of record \u2014 the founder's statement "
+    'approved 2026-11-25 under the grantwriter_purpose gate: '
+    'publicly a grant-services business; privately serving every '
+    'platform and S & G Security Inc, Sanders Home Healthcare '
+    '& Caregivers LLC, Sanders Senior Living LLC, Sanders Legal '
+    'Helpers LLC; the property closing line as corrected by the '
+    'founder (two upscale office buildings, upscale houses, two '
+    'warehouses)')
+AMEND_NEVER_SUPERSEDE_RULING = (
+    'Nothing is adopted if it supercede the original directives '
+    'those are to be immediately changed to amend the original '
+    'scope never supercede them')
+AMEND_NEVER_SUPERSEDE_RULING_SOURCE = (
+    "The founder's ruling of 2026-11-26 09:31 MST, quoted "
+    'verbatim (his spelling carried as given): an adoption '
+    'amends the original scope, it never supersedes it')
+
+JURISDICTION_STATEMENT = (
+    'Complete service jurisdiction\n'
+    'GRANTWRITER\n'
+    'Global funding acquisition and grant management\n'
+    'Public\n'
+    'Commercial grant services\n'
+    '4 companies\n'
+    'Private corporate funding\n'
+    '140+ RTSA\n'
+    'Platform-specific funding\n'
+    'Property acquisition objectives\n'
+    '2\n'
+    'Upscale office buildings\n'
+    'Multiple\n'
+    'Upscale houses\n'
+    '2\n'
+    'Warehouses\n'
+    'All three service branches must function independently and concurrently, without merging company identities, platform scopes, client records or financial accounts.\n'
+    'Prepare — Develop complete narratives, budgets, supporting documents and applications.\n'
+    'Validate — Check accuracy against original funding requirements.\n'
+    'Submit — Execute actual submissions through authorized interfaces.\n'
+    'Verify receipt — Obtain official tracking numbers and agency acceptance confirmations.\n'
+    'Correct — Resolve errors, rejected submissions and requests for additional information.\n'
+    'Manage awards — Track decisions, award conditions, funding and reporting.\n'
+    'Close out and renew — Complete reporting, identify continuation funding and maintain permanent records.\n'
+    'Grantwriter must continue performing every functioning duty while additional capabilities are developed.\n'
+    'No incomplete platform profile shall unnecessarily prevent an otherwise eligible application.\n'
+    'She must pursue individual, joint, collaborative and ecosystem-wide funding opportunities wherever permitted.\n'
+    'She must support every legitimate submission method, not exclusively API-based submissions.\n'
+    'She must execute actual authorized submissions without unnecessary internal approval gates.\n'
+    'She must explore alternative eligible funding structures rather than prematurely discard opportunities.\n'
+    'Her property acquisition objectives must remain exactly as you assigned them, without my imposing additional use restrictions.\n'
+    'Testing must strengthen her operations, not unnecessarily suspend them.\n'
+    'What must remain fully intact\n'
+    "Grantwriter's authority and capabilities must encompass:\n"
+    'Her independent public-facing commercial business.\n'
+    'The complete family of four companies.\n'
+    'The entire 140+ RTSA ecosystem.\n'
+    'Two upscale office buildings.\n'
+    'Upscale houses.\n'
+    'Two warehouses.\n'
+    'Global funding discovery, preparation, submission, acquisition and administration.\n'
+    'Expand her capabilities, not her restrictions. Amend the original directives, never supersede them.\n'
+    'Global By Design. The Sanders Way! 💙🩶')
+
+JURISDICTION_BRANCHES = (
+    {'branch': 'PUBLIC_COMMERCIAL',
+     'name': 'Public \u2014 commercial grant services',
+     'scope': 'Her independent public-facing commercial '
+              'business. Each client is its own record scope; '
+              'authority for public work is the client '
+              'authorization of record.'},
+    {'branch': 'PRIVATE_CORPORATE',
+     'name': 'Private \u2014 corporate funding',
+     'scope': 'The complete family of four companies, a '
+              'separate record scope per company; authority '
+              'is the standing Founder grant of record.'},
+    {'branch': 'PLATFORM_FUNDING',
+     'name': 'Platform-specific funding',
+     'scope': "The entire ecosystem of the statement's "
+              "'140+ RTSA' (canonical count of record: 140 "
+              'platforms), a separate record scope per '
+              'platform; authority is the standing Founder '
+              'grant of record.'},
+)
+JURISDICTION_BRANCH_IDS = tuple(
+    entry['branch'] for entry in JURISDICTION_BRANCHES)
+
+JURISDICTION_COMPANIES = (
+    'S & G Security Inc.',
+    'Sanders Home Healthcare & Caregivers LLC',
+    'Sanders Senior Living LLC',
+    'Sanders Legal Helpers LLC',
+)
+
+DUTY_CYCLE_STAGES = (
+    'PREPARE', 'VALIDATE', 'SUBMIT', 'VERIFY_RECEIPT',
+    'CORRECT', 'MANAGE_AWARDS', 'CLOSE_OUT_RENEW',
+)
+DUTY_CYCLE_STAGE_MEANINGS = {
+    'PREPARE': 'Develop complete narratives, budgets, '
+               'supporting documents and applications',
+    'VALIDATE': 'Check accuracy against original funding '
+                'requirements',
+    'SUBMIT': 'Execute actual submissions through authorized '
+              'interfaces',
+    'VERIFY_RECEIPT': 'Obtain official tracking numbers and '
+                      'agency acceptance confirmations',
+    'CORRECT': 'Resolve errors, rejected submissions and '
+               'requests for additional information',
+    'MANAGE_AWARDS': 'Track decisions, award conditions, '
+                     'funding and reporting',
+    'CLOSE_OUT_RENEW': 'Complete reporting, identify '
+                       'continuation funding and maintain '
+                       'permanent records',
+}
+# The adopted duty cycle as a checked lifecycle. CORRECT is
+# reached from VERIFY_RECEIPT and returns to SUBMIT (a corrected
+# resubmission runs the cycle again). DISCARDED is not a cycle
+# stage: it is reachable only through discard_jurisdiction_case,
+# which requires an alternative-structures check of record.
+_DUTY_CYCLE_TRANSITIONS = {
+    'PREPARE': frozenset(('VALIDATE',)),
+    'VALIDATE': frozenset(('SUBMIT',)),
+    'SUBMIT': frozenset(('VERIFY_RECEIPT',)),
+    'VERIFY_RECEIPT': frozenset(('CORRECT', 'MANAGE_AWARDS')),
+    'CORRECT': frozenset(('SUBMIT',)),
+    'MANAGE_AWARDS': frozenset(('CLOSE_OUT_RENEW',)),
+    'CLOSE_OUT_RENEW': frozenset(),
+    'DISCARDED': frozenset(),
+}
+
+SUBMISSION_METHODS = ('PORTAL', 'API', 'MAIL', 'EMAIL', 'IN_PERSON')
+
+# Authority basis (founder correction 2026-11-26 13:12 MST):
+# there is NO per-case founder authorization gate. Grantwriter
+# executes submissions within her existing Founder-granted
+# authority \u2014 the adopted jurisdiction and her original
+# purpose are the standing grant \u2014 plus applicable client
+# authorizations for public work. A submission record carries
+# the basis it stands on, never a per-application approval.
+AUTHORITY_BASES = ('FOUNDER_STANDING_GRANT', 'CLIENT_AUTHORIZATION')
+_BRANCH_AUTHORITY_BASIS = {
+    'PUBLIC_COMMERCIAL': 'CLIENT_AUTHORIZATION',
+    'PRIVATE_CORPORATE': 'FOUNDER_STANDING_GRANT',
+    'PLATFORM_FUNDING': 'FOUNDER_STANDING_GRANT',
+}
+
+OPPORTUNITY_KINDS = (
+    'INDIVIDUAL', 'JOINT', 'COLLABORATIVE', 'ECOSYSTEM_WIDE')
+
+# Her property acquisition objectives, exactly as the founder
+# assigned them. Objectives of record: the platform adds NO use
+# restrictions to them.
+PROPERTY_OBJECTIVES = (
+    {'objective': 'Upscale office buildings',
+     'quantity_of_record': '2'},
+    {'objective': 'Upscale houses',
+     'quantity_of_record': 'Multiple'},
+    {'objective': 'Warehouses',
+     'quantity_of_record': '2'},
+)
+
+FEE_BAR = {
+    'refused_structure': 'PERCENTAGE_OF_AWARD',
+    'refusal': 'GRANTWRITER_PERCENTAGE_OF_AWARD_PRICING_REFUSED',
+    'basis': 'Percentage-of-award grant pricing is barred '
+             '(GPA Ethics; AFP; 2 CFR 200.442) \u2014 law of '
+             'record, untouched by the amendment',
+}
+
+OPERATING_RULES = (
+    {'rule': 'FUNCTIONING_DUTIES_NEVER_SUSPEND',
+     'statement': 'Grantwriter continues performing every '
+                  'functioning duty while additional '
+                  'capabilities are developed. Testing '
+                  'strengthens her operations, not '
+                  'unnecessarily suspends them. This service '
+                  'exposes no disable or suspend switch.'},
+    {'rule': 'INCOMPLETE_PROFILE_DOES_NOT_BLOCK',
+     'statement': 'No incomplete platform profile '
+                  'unnecessarily prevents an otherwise '
+                  'eligible application: profile gaps record '
+                  'as gaps on the case. Only a funder\u2019s '
+                  'own mandatory requirement may block a '
+                  'submission, and the record names it as the '
+                  'funder\u2019s.'},
+    {'rule': 'ALL_OPPORTUNITY_KINDS_PURSUABLE',
+     'statement': 'She pursues individual, joint, '
+                  'collaborative and ecosystem-wide funding '
+                  'opportunities wherever permitted.'},
+    {'rule': 'EVERY_LEGITIMATE_SUBMISSION_METHOD',
+     'statement': 'She supports every legitimate submission '
+                  'method \u2014 portal, API, mail, email, '
+                  'in-person \u2014 not exclusively API-based '
+                  'submissions.'},
+    {'rule': 'NO_PER_CASE_FOUNDER_AUTHORIZATION_GATE',
+     'statement': 'She executes submissions within her '
+                  'existing Founder-granted authority (the '
+                  'standing grant of record) plus applicable '
+                  'client authorizations. She never '
+                  're-requests permission for responsibilities '
+                  'already assigned to her; no per-case '
+                  'founder approval object exists in her '
+                  'machinery.'},
+    {'rule': 'ALTERNATIVE_STRUCTURES_BEFORE_DISCARD',
+     'statement': 'She explores alternative eligible funding '
+                  'structures rather than prematurely '
+                  'discarding opportunities: a case may be '
+                  'discarded only after an alternative-'
+                  'structures check of record.'},
+    {'rule': 'PROPERTY_OBJECTIVES_EXACTLY_AS_ASSIGNED',
+     'statement': 'Her property acquisition objectives remain '
+                  'exactly as the founder assigned them; the '
+                  'platform imposes no additional use '
+                  'restrictions.'},
+    {'rule': 'BRANCHES_NEVER_MERGE',
+     'statement': 'All three service branches function '
+                  'independently and concurrently, without '
+                  'merging company identities, platform '
+                  'scopes, client records or financial '
+                  'accounts. Cross-branch access to a case is '
+                  'refused by name.'},
+)
+
+# JustGrants roles (founder correction 2026-11-26 13:12 MST):
+# three DISTINCT roles, modeled as facts of record per entity
+# \u2014 never as a system reservation. Submission is not
+# reserved to the Entity Administrator; JustGrants expressly
+# accommodates grant writers serving multiple entities.
+JUSTGRANTS_ROLES = (
+    'ENTITY_ADMINISTRATOR', 'APPLICATION_SUBMITTER',
+    'AUTHORIZED_REPRESENTATIVE')
+JUSTGRANTS_ROLE_MEANINGS = {
+    'ENTITY_ADMINISTRATOR': 'Assigns and manages authorized '
+                            'users',
+    'APPLICATION_SUBMITTER': 'Completes and submits '
+                             'applications',
+    'AUTHORIZED_REPRESENTATIVE': 'Representative and '
+                                 'award-acceptance '
+                                 'responsibilities',
+}
+_ROLE_SYSTEMS = {'JUSTGRANTS': JUSTGRANTS_ROLES}
+
+# The seeded case of record: the live JustGrants application.
+# Stage history is recorded at its factual positions (epoch
+# seconds, UTC): submitted 2026-11-21, Grants.gov validation
+# passed 2026-11-22, agency retrieval confirmed 2026-11-25.
+SEEDED_JUSTGRANTS_CASE_ID = 'A-547904'
+_SEED_ROLE_ASSIGNMENTS = (
+    ('JUSTGRANTS', 'Sanders Home Healthcare & Caregivers LLC',
+     'ENTITY_ADMINISTRATOR', 'Roosevelt Sanders'),
+    ('JUSTGRANTS', 'Sanders Home Healthcare & Caregivers LLC',
+     'APPLICATION_SUBMITTER', 'Roosevelt Sanders'),
+    ('JUSTGRANTS', 'Sanders Home Healthcare & Caregivers LLC',
+     'AUTHORIZED_REPRESENTATIVE', 'Roosevelt Sanders'),
+)
+_SEED_CASE_STAGES = (
+    {'stage': 'PREPARE', 'recorded_at': 1763683200,
+     'recorded_by': 'RooseveltSanders',
+     'note': 'Step 1 package prepared for the NIJ FY26 Elder '
+             'Abuse opportunity (GRANT14829509)'},
+    {'stage': 'SUBMIT', 'recorded_at': 1763683200,
+     'recorded_by': 'RooseveltSanders',
+     'submission_method': 'PORTAL',
+     'authority_basis': 'FOUNDER_STANDING_GRANT',
+     'note': 'Submitted 2026-11-21 through the Grants.gov / '
+             'JustGrants portal under the standing Founder '
+             'grant. Application Submitter of record: '
+             'Roosevelt Sanders \u2014 a role-assignment fact '
+             'of record, not a restriction on '
+             'Grantwriter\u2019s authority'},
+    {'stage': 'VALIDATE', 'recorded_at': 1763769600,
+     'recorded_by': 'GRANTWRITER_RECORD',
+     'note': 'Validation of record: Grants.gov validation '
+             'passed 2026-11-22 \u2014 the receiving '
+             'system\u2019s validation of the submitted '
+             'package, recorded at its factual position '
+             'after submission'},
+    {'stage': 'VERIFY_RECEIPT', 'recorded_at': 1764028800,
+     'recorded_by': 'GRANTWRITER_RECORD',
+     'tracking_ref': 'A-547904',
+     'note': 'Agency retrieval confirmed 2026-11-25; official '
+             'application number A-547904. Step 2 in '
+             'preparation \u2014 due 2026-12-07 8:59 PM EST'},
+)
+
 
 class GrantwriterPlatform:
     """Grantwriter at its recorded maximum level: a platform
@@ -189,9 +520,9 @@ class GrantwriterPlatform:
         self.geofence = GeofencePolicy(IDENTITY)
         self.guard = AccessGuard(audit, 'grantwriter', {
             'OPERATOR': {'OPPORTUNITY', 'APPLICATION', 'PORTFOLIO',
-                         'COMPLIANCE'},
+                         'COMPLIANCE', 'JURISDICTION'},
             'AUDITOR': {'OPPORTUNITY', 'APPLICATION', 'PORTFOLIO',
-                        'COMPLIANCE'},
+                        'COMPLIANCE', 'JURISDICTION'},
         })
         with self._connect() as db:
             ensure_checkin_schema(db)
@@ -203,6 +534,53 @@ class GrantwriterPlatform:
                 updated_by TEXT NOT NULL,
                 updated_at INTEGER NOT NULL
             );""")
+            db.execute("""CREATE TABLE IF NOT EXISTS jurisdiction_cases (
+                case_id TEXT PRIMARY KEY,
+                branch TEXT NOT NULL,
+                scope_ref TEXT NOT NULL,
+                title TEXT NOT NULL,
+                funder TEXT,
+                external_ref TEXT,
+                opportunity_kind TEXT NOT NULL,
+                fee_structure TEXT,
+                profile_complete INTEGER NOT NULL DEFAULT 1,
+                profile_gaps TEXT,
+                funder_block TEXT,
+                stage TEXT NOT NULL,
+                created_by TEXT NOT NULL,
+                created_at INTEGER NOT NULL,
+                updated_by TEXT NOT NULL,
+                updated_at INTEGER NOT NULL
+            );""")
+            db.execute("""CREATE TABLE IF NOT EXISTS jurisdiction_case_stages (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                case_id TEXT NOT NULL,
+                stage TEXT NOT NULL,
+                submission_method TEXT,
+                authority_basis TEXT,
+                tracking_ref TEXT,
+                note TEXT,
+                recorded_by TEXT NOT NULL,
+                recorded_at INTEGER NOT NULL
+            );""")
+            db.execute("""CREATE TABLE IF NOT EXISTS jurisdiction_alternative_checks (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                case_id TEXT NOT NULL,
+                structures_considered TEXT NOT NULL,
+                note TEXT,
+                recorded_by TEXT NOT NULL,
+                recorded_at INTEGER NOT NULL
+            );""")
+            db.execute("""CREATE TABLE IF NOT EXISTS jurisdiction_role_assignments (
+                system TEXT NOT NULL,
+                entity TEXT NOT NULL,
+                role TEXT NOT NULL,
+                holder TEXT NOT NULL,
+                updated_by TEXT NOT NULL,
+                updated_at INTEGER NOT NULL,
+                PRIMARY KEY (system, entity, role)
+            );""")
+            self._seed_jurisdiction(db)
 
     # -- plumbing ----------------------------------------------------
 
@@ -603,6 +981,594 @@ class GrantwriterPlatform:
                      passed=result['passed'])
         return result
 
+
+    # -- Complete Service Jurisdiction (amendment machinery) -----------
+
+    def _seed_jurisdiction(self, db):
+        """Seed the records of fact the amendment names: the
+        JustGrants role assignments for Sanders Home Healthcare
+        & Caregivers LLC and the live JustGrants case A-547904
+        at its truthful stage. Idempotent: existing records are
+        never overwritten (INSERT OR IGNORE / existence check),
+        so a later role-assignment change of record survives
+        restarts."""
+        for system, entity, role, holder in _SEED_ROLE_ASSIGNMENTS:
+            db.execute(
+                "INSERT OR IGNORE INTO jurisdiction_role_assignments "
+                "(system, entity, role, holder, updated_by, updated_at) "
+                "VALUES (?, ?, ?, ?, 'FOUNDER_RECORD', 1764028800);",
+                (system, entity, role, holder))
+        existing = db.execute(
+            "SELECT case_id FROM jurisdiction_cases WHERE case_id = ?;",
+            (SEEDED_JUSTGRANTS_CASE_ID,)).fetchone()
+        if existing is not None:
+            return
+        db.execute(
+            "INSERT INTO jurisdiction_cases (case_id, branch, "
+            "scope_ref, title, funder, external_ref, "
+            "opportunity_kind, fee_structure, profile_complete, "
+            "profile_gaps, funder_block, stage, created_by, "
+            "created_at, updated_by, updated_at) VALUES (?, "
+            "'PRIVATE_CORPORATE', ?, ?, ?, ?, 'INDIVIDUAL', NULL, "
+            "1, NULL, NULL, 'VERIFY_RECEIPT', 'RooseveltSanders', "
+            "1763683200, 'RooseveltSanders', 1764028800);",
+            (SEEDED_JUSTGRANTS_CASE_ID,
+             'Sanders Home Healthcare & Caregivers LLC',
+             'SHHC \u2013 Elder Abuse \u2014 NIJ FY26 Elder Abuse',
+             'National Institute of Justice (NIJ)',
+             'GRANT14829509'))
+        for entry in _SEED_CASE_STAGES:
+            db.execute(
+                "INSERT INTO jurisdiction_case_stages (case_id, "
+                "stage, submission_method, authority_basis, "
+                "tracking_ref, note, recorded_by, recorded_at) "
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+                (SEEDED_JUSTGRANTS_CASE_ID, entry['stage'],
+                 entry.get('submission_method'),
+                 entry.get('authority_basis'),
+                 entry.get('tracking_ref'), entry.get('note'),
+                 entry['recorded_by'], entry['recorded_at']))
+
+    @staticmethod
+    def _jurisdiction_case_view(db, row):
+        stages = db.execute(
+            "SELECT * FROM jurisdiction_case_stages "
+            "WHERE case_id = ? ORDER BY id;", (row['case_id'],)).fetchall()
+        checks = db.execute(
+            "SELECT COUNT(*) AS n FROM "
+            "jurisdiction_alternative_checks WHERE case_id = ?;",
+            (row['case_id'],)).fetchone()['n']
+        return {
+            'case_id': row['case_id'],
+            'branch': row['branch'],
+            'scope_ref': row['scope_ref'],
+            'title': row['title'],
+            'funder': row['funder'],
+            'external_ref': row['external_ref'],
+            'opportunity_kind': row['opportunity_kind'],
+            'fee_structure': row['fee_structure'],
+            'profile_complete': bool(row['profile_complete']),
+            'profile_gaps': row['profile_gaps'],
+            'funder_block': row['funder_block'],
+            'stage': row['stage'],
+            'alternative_structures_checks': checks,
+            'stage_history': [
+                {'stage': s['stage'],
+                 'submission_method': s['submission_method'],
+                 'authority_basis': s['authority_basis'],
+                 'tracking_ref': s['tracking_ref'],
+                 'note': s['note'],
+                 'recorded_by': s['recorded_by'],
+                 'recorded_at': s['recorded_at']}
+                for s in stages],
+            'created_by': row['created_by'],
+            'created_at': row['created_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+        }
+
+    def _jurisdiction_case_row(self, db, case_id):
+        return db.execute(
+            "SELECT * FROM jurisdiction_cases WHERE case_id = ?;",
+            (case_id,)).fetchone()
+
+    def _require_case_scope(self, db, case_id, branch, scope_ref):
+        """Fetch a case enforcing its branch + scope binding.
+        A case answers only inside its own branch and scope:
+        cross-branch or cross-scope access is refused by name
+        \u2014 the branches never merge identities, scopes,
+        client records, or financial accounts."""
+        row = self._jurisdiction_case_row(db, case_id)
+        if row is None:
+            raise GrantwriterPlatformDenied('Unknown jurisdiction case')
+        if row['branch'] != branch or row['scope_ref'] != scope_ref:
+            raise GrantwriterPlatformForbidden(
+                'GRANTWRITER_CROSS_BRANCH_ACCESS_REFUSED: case '
+                f"{case_id} belongs to branch {row['branch']} "
+                f"scope {row['scope_ref']!r}; access from branch "
+                f"{branch} scope {scope_ref!r} is refused \u2014 "
+                'the service branches never merge identities, '
+                'scopes, client records, or financial accounts')
+        return row
+
+    @staticmethod
+    def _validate_branch_scope(branch, scope_ref):
+        if branch not in JURISDICTION_BRANCH_IDS:
+            raise GrantwriterPlatformDenied(
+                f'Unknown service branch: {branch!r}')
+        if not isinstance(scope_ref, str) or not scope_ref.strip():
+            raise GrantwriterPlatformDenied(
+                'A non-empty record scope is required')
+        scope_ref = scope_ref.strip()
+        if branch == 'PRIVATE_CORPORATE' and \
+                scope_ref not in JURISDICTION_COMPANIES:
+            raise GrantwriterPlatformDenied(
+                'The PRIVATE_CORPORATE branch serves exactly the '
+                'four companies of record: '
+                + '; '.join(JURISDICTION_COMPANIES))
+        return scope_ref
+
+    def create_jurisdiction_case(self, actor, branch, scope_ref, title,
+                                 opportunity_kind='INDIVIDUAL',
+                                 funder=None, external_ref=None,
+                                 fee_structure=None,
+                                 profile_complete=True,
+                                 profile_gaps=None, case_id=None):
+        """Open a jurisdiction case at PREPARE in one branch and
+        one record scope. The standing fee bar is structural: a
+        percentage-of-award fee structure is refused by name.
+        An incomplete profile records as gaps on the case and
+        never blocks it. Receipt
+        GRANTWRITER_JURISDICTION_CASE_CREATED."""
+        self._check_actor(actor)
+        scope_ref = self._validate_branch_scope(branch, scope_ref)
+        if opportunity_kind not in OPPORTUNITY_KINDS:
+            raise GrantwriterPlatformDenied(
+                f'Unknown opportunity kind: {opportunity_kind!r}')
+        if not isinstance(title, str) or not title.strip():
+            raise GrantwriterPlatformDenied('A case title is required')
+        if fee_structure is not None and \
+                str(fee_structure).strip().upper() == 'PERCENTAGE_OF_AWARD':
+            raise GrantwriterPlatformDenied(
+                FEE_BAR['refusal'] + ': ' + FEE_BAR['basis'])
+        if case_id is None:
+            case_id = 'GWJ-' + uuid.uuid4().hex[:12].upper()
+        now = int(time.time())
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                if self._jurisdiction_case_row(db, case_id) is not None:
+                    raise GrantwriterPlatformDenied(
+                        f'Jurisdiction case already exists: {case_id}')
+                db.execute(
+                    "INSERT INTO jurisdiction_cases (case_id, branch, "
+                    "scope_ref, title, funder, external_ref, "
+                    "opportunity_kind, fee_structure, profile_complete, "
+                    "profile_gaps, funder_block, stage, created_by, "
+                    "created_at, updated_by, updated_at) VALUES (?, ?, "
+                    "?, ?, ?, ?, ?, ?, ?, ?, NULL, 'PREPARE', ?, ?, "
+                    "?, ?);",
+                    (case_id, branch, scope_ref, title.strip(), funder,
+                     external_ref, opportunity_kind, fee_structure,
+                     1 if profile_complete else 0, profile_gaps,
+                     actor, now, actor, now))
+                db.execute(
+                    "INSERT INTO jurisdiction_case_stages (case_id, "
+                    "stage, submission_method, authority_basis, "
+                    "tracking_ref, note, recorded_by, recorded_at) "
+                    "VALUES (?, 'PREPARE', NULL, NULL, NULL, NULL, ?, "
+                    "?);", (case_id, actor, now))
+                self._record('GRANTWRITER_JURISDICTION_CASE_CREATED',
+                             actor=actor, case_id=case_id, branch=branch,
+                             scope_ref=scope_ref,
+                             opportunity_kind=opportunity_kind)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return self._jurisdiction_case_view(
+                db, self._jurisdiction_case_row(db, case_id))
+
+    def jurisdiction_case(self, actor, role, case_id, branch, scope_ref):
+        """One case, read inside its own branch + scope only,
+        behind the JURISDICTION access guard."""
+        self._check_actor(actor)
+        self._guard_access(actor, role, 'JURISDICTION', case_id,
+                           purpose='jurisdiction case view')
+        with self._connect() as db:
+            row = self._require_case_scope(db, case_id, branch, scope_ref)
+            return self._jurisdiction_case_view(db, row)
+
+    def advance_jurisdiction_case(self, actor, case_id, branch, scope_ref,
+                                  target_stage, note=None,
+                                  submission_method=None,
+                                  authority_basis=None,
+                                  tracking_ref=None):
+        """One checked duty-cycle stage transition (operator-only,
+        receipt GRANTWRITER_JURISDICTION_STAGE_RECORDED). SUBMIT
+        records the submission method and the authority basis it
+        stands on \u2014 the standing Founder grant for the
+        companies and the ecosystem, the client authorization of
+        record for public work. There is no per-case founder
+        approval object and none is consulted. VERIFY_RECEIPT
+        requires the official tracking reference."""
+        self._check_actor(actor)
+        if not self._is_operator(actor):
+            raise GrantwriterPlatformForbidden(
+                'Duty-cycle stage transitions are an operator authority')
+        if target_stage == 'DISCARDED':
+            raise GrantwriterPlatformDenied(
+                'DISCARDED is reached only via '
+                'discard_jurisdiction_case, which requires an '
+                'alternative-structures check of record')
+        if target_stage not in DUTY_CYCLE_STAGES:
+            raise GrantwriterPlatformDenied(
+                f'Unknown duty-cycle stage: {target_stage!r}')
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                row = self._require_case_scope(
+                    db, case_id, branch, scope_ref)
+                current = row['stage']
+                if target_stage not in _DUTY_CYCLE_TRANSITIONS[current]:
+                    raise GrantwriterPlatformDenied(
+                        f'Duty-cycle transition {current}->{target_stage} '
+                        'is not permitted')
+                if target_stage == 'SUBMIT':
+                    if row['funder_block']:
+                        raise GrantwriterPlatformDenied(
+                            'GRANTWRITER_FUNDER_REQUIREMENT_BLOCKS_'
+                            'SUBMISSION: ' + row['funder_block']
+                            + ' \u2014 the funder\u2019s own '
+                            'mandatory requirement, named as the '
+                            'funder\u2019s; not an internal gate')
+                    if submission_method not in SUBMISSION_METHODS:
+                        raise GrantwriterPlatformDenied(
+                            'A submission method is required and must '
+                            'be one of: ' + ', '.join(SUBMISSION_METHODS))
+                    expected = _BRANCH_AUTHORITY_BASIS[row['branch']]
+                    if authority_basis != expected:
+                        raise GrantwriterPlatformDenied(
+                            'GRANTWRITER_AUTHORITY_BASIS_MISMATCH: '
+                            f"branch {row['branch']} submits on "
+                            f'{expected}; the standing grant and the '
+                            'client authorization of record are the '
+                            'only bases \u2014 no per-case founder '
+                            'approval exists or is required')
+                if target_stage == 'VERIFY_RECEIPT':
+                    if not isinstance(tracking_ref, str) or \
+                            not tracking_ref.strip():
+                        raise GrantwriterPlatformDenied(
+                            'VERIFY_RECEIPT requires the official '
+                            'tracking number or agency acceptance '
+                            'confirmation reference')
+                    tracking_ref = tracking_ref.strip()
+                now = int(time.time())
+                db.execute(
+                    "UPDATE jurisdiction_cases SET stage = ?, "
+                    "updated_by = ?, updated_at = ? WHERE case_id = ?;",
+                    (target_stage, actor, now, case_id))
+                db.execute(
+                    "INSERT INTO jurisdiction_case_stages (case_id, "
+                    "stage, submission_method, authority_basis, "
+                    "tracking_ref, note, recorded_by, recorded_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+                    (case_id, target_stage,
+                     submission_method if target_stage == 'SUBMIT' else None,
+                     authority_basis if target_stage == 'SUBMIT' else None,
+                     tracking_ref if target_stage == 'VERIFY_RECEIPT'
+                     else None,
+                     note, actor, now))
+                self._record('GRANTWRITER_JURISDICTION_STAGE_RECORDED',
+                             actor=actor, case_id=case_id,
+                             from_stage=current, to_stage=target_stage,
+                             submission_method=submission_method
+                             if target_stage == 'SUBMIT' else None,
+                             authority_basis=authority_basis
+                             if target_stage == 'SUBMIT' else None,
+                             tracking_ref=tracking_ref
+                             if target_stage == 'VERIFY_RECEIPT' else None)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return self._jurisdiction_case_view(
+                db, self._jurisdiction_case_row(db, case_id))
+
+    def record_funder_requirement(self, actor, case_id, branch, scope_ref,
+                                  requirement, met=False):
+        """Record a funder's own mandatory requirement against a
+        case (operator-only). An unmet funder requirement is the
+        ONLY block on an otherwise eligible submission, and the
+        record names it as the funder's. Recording it met clears
+        the block. Receipt
+        GRANTWRITER_JURISDICTION_FUNDER_REQUIREMENT."""
+        self._check_actor(actor)
+        if not self._is_operator(actor):
+            raise GrantwriterPlatformForbidden(
+                'Funder requirement records are an operator authority')
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                self._require_case_scope(db, case_id, branch, scope_ref)
+                if met:
+                    block = None
+                else:
+                    if not isinstance(requirement, str) or \
+                            not requirement.strip():
+                        raise GrantwriterPlatformDenied(
+                            'An unmet funder requirement must be named')
+                    block = requirement.strip()
+                now = int(time.time())
+                db.execute(
+                    "UPDATE jurisdiction_cases SET funder_block = ?, "
+                    "updated_by = ?, updated_at = ? WHERE case_id = ?;",
+                    (block, actor, now, case_id))
+                self._record(
+                    'GRANTWRITER_JURISDICTION_FUNDER_REQUIREMENT',
+                    actor=actor, case_id=case_id, requirement=requirement,
+                    met=bool(met))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return self._jurisdiction_case_view(
+                db, self._jurisdiction_case_row(db, case_id))
+
+    def record_alternative_structures_check(self, actor, case_id, branch,
+                                            scope_ref,
+                                            structures_considered,
+                                            note=None):
+        """Record that alternative eligible funding structures
+        were explored for a case (operator-only, receipt
+        GRANTWRITER_JURISDICTION_ALTERNATIVES_CHECKED). A case
+        may not be discarded without this check of record."""
+        self._check_actor(actor)
+        if not self._is_operator(actor):
+            raise GrantwriterPlatformForbidden(
+                'Alternative-structures checks are an operator authority')
+        if not isinstance(structures_considered, str) or \
+                not structures_considered.strip():
+            raise GrantwriterPlatformDenied(
+                'The alternative structures considered must be named')
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                self._require_case_scope(db, case_id, branch, scope_ref)
+                now = int(time.time())
+                db.execute(
+                    "INSERT INTO jurisdiction_alternative_checks "
+                    "(case_id, structures_considered, note, recorded_by, "
+                    "recorded_at) VALUES (?, ?, ?, ?, ?);",
+                    (case_id, structures_considered.strip(), note,
+                     actor, now))
+                self._record(
+                    'GRANTWRITER_JURISDICTION_ALTERNATIVES_CHECKED',
+                    actor=actor, case_id=case_id,
+                    structures_considered=structures_considered.strip())
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return self._jurisdiction_case_view(
+                db, self._jurisdiction_case_row(db, case_id))
+
+    def discard_jurisdiction_case(self, actor, case_id, branch, scope_ref,
+                                  note=None):
+        """Discard a case (operator-only, receipt
+        GRANTWRITER_JURISDICTION_CASE_DISCARDED) \u2014 only from
+        PREPARE or VALIDATE, and only after an alternative-
+        structures check of record: opportunities are never
+        discarded prematurely."""
+        self._check_actor(actor)
+        if not self._is_operator(actor):
+            raise GrantwriterPlatformForbidden(
+                'Discarding a case is an operator authority')
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                row = self._require_case_scope(
+                    db, case_id, branch, scope_ref)
+                if row['stage'] not in ('PREPARE', 'VALIDATE'):
+                    raise GrantwriterPlatformDenied(
+                        'Only a case at PREPARE or VALIDATE may be '
+                        f"discarded, not {row['stage']}")
+                checks = db.execute(
+                    "SELECT COUNT(*) AS n FROM "
+                    "jurisdiction_alternative_checks WHERE case_id = ?;",
+                    (case_id,)).fetchone()['n']
+                if checks < 1:
+                    raise GrantwriterPlatformDenied(
+                        'GRANTWRITER_DISCARD_REQUIRES_ALTERNATIVE_'
+                        'STRUCTURES_CHECK: an opportunity may not be '
+                        'discarded without an alternative-structures '
+                        'check of record')
+                now = int(time.time())
+                db.execute(
+                    "UPDATE jurisdiction_cases SET stage = 'DISCARDED', "
+                    "updated_by = ?, updated_at = ? WHERE case_id = ?;",
+                    (actor, now, case_id))
+                db.execute(
+                    "INSERT INTO jurisdiction_case_stages (case_id, "
+                    "stage, submission_method, authority_basis, "
+                    "tracking_ref, note, recorded_by, recorded_at) "
+                    "VALUES (?, 'DISCARDED', NULL, NULL, NULL, ?, ?, "
+                    "?);", (case_id, note, actor, now))
+                self._record('GRANTWRITER_JURISDICTION_CASE_DISCARDED',
+                             actor=actor, case_id=case_id)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            return self._jurisdiction_case_view(
+                db, self._jurisdiction_case_row(db, case_id))
+
+    def record_role_assignment(self, actor, system, entity, role, holder):
+        """Record who holds a role for an entity in an external
+        system (operator-only, receipt
+        GRANTWRITER_ROLE_ASSIGNMENT_RECORDED). Role assignments
+        are FACTS OF RECORD \u2014 changeable facts, never a
+        system reservation and never a restriction on
+        Grantwriter's authority."""
+        self._check_actor(actor)
+        if not self._is_operator(actor):
+            raise GrantwriterPlatformForbidden(
+                'Role assignment records are an operator authority')
+        if system in _ROLE_SYSTEMS and role not in _ROLE_SYSTEMS[system]:
+            raise GrantwriterPlatformDenied(
+                f'Unknown {system} role: {role!r} \u2014 the roles '
+                'of record are ' + ', '.join(_ROLE_SYSTEMS[system]))
+        for value, label in ((entity, 'entity'), (role, 'role'),
+                             (holder, 'holder')):
+            if not isinstance(value, str) or not value.strip():
+                raise GrantwriterPlatformDenied(
+                    f'A non-empty {label} is required')
+        now = int(time.time())
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                db.execute(
+                    "INSERT INTO jurisdiction_role_assignments (system, "
+                    "entity, role, holder, updated_by, updated_at) "
+                    "VALUES (?, ?, ?, ?, ?, ?) ON CONFLICT(system, "
+                    "entity, role) DO UPDATE SET holder = "
+                    "excluded.holder, updated_by = excluded.updated_by, "
+                    "updated_at = excluded.updated_at;",
+                    (system, entity.strip(), role.strip(),
+                     holder.strip(), actor, now))
+                self._record('GRANTWRITER_ROLE_ASSIGNMENT_RECORDED',
+                             actor=actor, system=system,
+                             entity=entity.strip(), role=role.strip(),
+                             holder=holder.strip())
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+        return {'system': system, 'entity': entity.strip(),
+                'role': role.strip(), 'holder': holder.strip(),
+                'updated_by': actor, 'updated_at': now}
+
+    def role_assignments(self, system=None, entity=None):
+        """The role assignments of record, optionally filtered."""
+        query = "SELECT * FROM jurisdiction_role_assignments"
+        clauses, params = [], []
+        if system is not None:
+            clauses.append("system = ?")
+            params.append(system)
+        if entity is not None:
+            clauses.append("entity = ?")
+            params.append(entity)
+        if clauses:
+            query += " WHERE " + " AND ".join(clauses)
+        query += " ORDER BY system, entity, role;"
+        with self._connect() as db:
+            return [
+                {'system': r['system'], 'entity': r['entity'],
+                 'role': r['role'], 'holder': r['holder'],
+                 'updated_by': r['updated_by'],
+                 'updated_at': r['updated_at']}
+                for r in db.execute(query, params).fetchall()]
+
+    @staticmethod
+    def jurisdiction_design_view() -> dict:
+        """The Complete Service Jurisdiction as adopted
+        2026-11-26: an AMENDMENT to her original purpose, which
+        stands governing and intact. Her authority is the
+        standing grant; her capabilities expand, her
+        restrictions do not."""
+        return {
+            'title': JURISDICTION_TITLE,
+            'adopted': JURISDICTION_ADOPTED,
+            'amendment': True,
+            'amends': JURISDICTION_AMENDS,
+            'original_purpose_governing_and_intact': True,
+            'amend_never_supersede_ruling': AMEND_NEVER_SUPERSEDE_RULING,
+            'amend_never_supersede_ruling_source':
+                AMEND_NEVER_SUPERSEDE_RULING_SOURCE,
+            'guarded_document': JURISDICTION_GUARDED_DOCUMENT,
+            'jurisdiction': 'Global funding acquisition and '
+                            'grant management',
+            'branches': [dict(entry) for entry in JURISDICTION_BRANCHES],
+            'branches_function': 'INDEPENDENT_AND_CONCURRENT',
+            'companies': list(JURISDICTION_COMPANIES),
+            'duty_cycle': [
+                {'stage': stage,
+                 'meaning': DUTY_CYCLE_STAGE_MEANINGS[stage]}
+                for stage in DUTY_CYCLE_STAGES],
+            'submission_methods': list(SUBMISSION_METHODS),
+            'authority_bases': list(AUTHORITY_BASES),
+            'per_case_founder_authorization_gate': False,
+            'opportunity_kinds': list(OPPORTUNITY_KINDS),
+            'property_objectives': {
+                'objectives': [dict(o) for o in PROPERTY_OBJECTIVES],
+                'use_restrictions_added_by_platform': False,
+            },
+            'fee_bar': dict(FEE_BAR),
+            'operating_rules': [dict(r) for r in OPERATING_RULES],
+            'justgrants_roles': [
+                {'role': role, 'meaning': JUSTGRANTS_ROLE_MEANINGS[role]}
+                for role in JUSTGRANTS_ROLES],
+            'roles_model': 'FACTS_OF_RECORD_PER_ENTITY',
+            'external_connections': 'NONE',
+            'funds_held': False,
+            'funds_disbursed': False,
+        }
+
+    def jurisdiction_board(self, actor, role):
+        """The jurisdiction board: the design view, case counts
+        by branch and duty-cycle stage, the property objectives
+        register, the role assignments of record, and the
+        seeded JustGrants case \u2014 computed from this
+        service's own store, behind the JURISDICTION guard."""
+        self._check_actor(actor)
+        self._guard_access(actor, role, 'JURISDICTION', 'jurisdiction',
+                           purpose='jurisdiction board')
+        with self._connect() as db:
+            by_branch = {branch: 0 for branch in JURISDICTION_BRANCH_IDS}
+            for row in db.execute(
+                    "SELECT branch, COUNT(*) AS n FROM "
+                    "jurisdiction_cases GROUP BY branch;").fetchall():
+                if row['branch'] in by_branch:
+                    by_branch[row['branch']] = row['n']
+            by_stage = {stage: 0 for stage in
+                        DUTY_CYCLE_STAGES + ('DISCARDED',)}
+            for row in db.execute(
+                    "SELECT stage, COUNT(*) AS n FROM "
+                    "jurisdiction_cases GROUP BY stage;").fetchall():
+                if row['stage'] in by_stage:
+                    by_stage[row['stage']] = row['n']
+            seeded_row = self._jurisdiction_case_row(
+                db, SEEDED_JUSTGRANTS_CASE_ID)
+            seeded = (self._jurisdiction_case_view(db, seeded_row)
+                      if seeded_row is not None else None)
+        return {
+            'platform_id': IDENTITY.platform_id,
+            'design': type(self).jurisdiction_design_view(),
+            'cases': {'total': sum(by_branch.values()),
+                      'by_branch': by_branch,
+                      'by_stage': by_stage},
+            'role_assignments': self.role_assignments(),
+            'seeded_case': seeded,
+        }
+
+    def _jurisdiction_status_summary(self):
+        with self._connect() as db:
+            total = db.execute(
+                "SELECT COUNT(*) AS n FROM jurisdiction_cases;"
+            ).fetchone()['n']
+            seeded = self._jurisdiction_case_row(
+                db, SEEDED_JUSTGRANTS_CASE_ID)
+        return {
+            'guarded_document': JURISDICTION_GUARDED_DOCUMENT,
+            'amendment': True,
+            'branches': list(JURISDICTION_BRANCH_IDS),
+            'cases_total': total,
+            'seeded_case': (
+                {'case_id': SEEDED_JUSTGRANTS_CASE_ID,
+                 'stage': seeded['stage']} if seeded is not None
+                else None),
+        }
+
     # -- check-in --------------------------------------------------------
 
     def record_check_in(self, actor, deployment_location,
@@ -677,12 +1643,26 @@ class GrantwriterPlatform:
                 'grantwriter_purpose': self._gate_state(),
             },
             'latest_check_in': latest,
+            'service_jurisdiction': self._jurisdiction_status_summary(),
         }
 
 
 __all__ = [
+    'AUTHORITY_BASES',
     'DESIGNED_LEVEL',
+    'DUTY_CYCLE_STAGES',
+    'FEE_BAR',
     'IDENTITY',
+    'JURISDICTION_BRANCHES',
+    'JURISDICTION_COMPANIES',
+    'JURISDICTION_GUARDED_DOCUMENT',
+    'JURISDICTION_STATEMENT',
+    'JUSTGRANTS_ROLES',
+    'OPERATING_RULES',
+    'OPPORTUNITY_KINDS',
+    'PROPERTY_OBJECTIVES',
+    'SEEDED_JUSTGRANTS_CASE_ID',
+    'SUBMISSION_METHODS',
     'WORKFLOW_STAGES',
     'GrantwriterPlatform',
     'GrantwriterPlatformDenied',

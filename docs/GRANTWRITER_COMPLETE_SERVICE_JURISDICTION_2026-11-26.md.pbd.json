@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/GRANTWRITER_COMPLETE_SERVICE_JURISDICTION_2026-11-26.md",
+        "payload_hash": "7d7341810b6468ce9244b389dea9049669a7aca04e901639bfd3f2e93e57dcd6",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}

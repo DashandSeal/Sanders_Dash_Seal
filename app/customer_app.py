@@ -425,6 +425,10 @@ GW_APPLICATION_TRANSITIONS_ROUTE = re.compile(r'^/api/grantwriter/applications/(
 GW_APPLICATION_SUBMISSION_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/submission$')
 GW_APPLICATION_DRAFT_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/draft$')
 GW_APPLICATION_COMPLIANCE_ROUTE = re.compile(r'^/api/grantwriter/applications/([A-Za-z0-9_-]{1,128})/compliance$')
+GW_JURISDICTION_CASE_ROUTE = re.compile(r'^/api/grantwriter/jurisdiction/cases/([A-Za-z0-9_-]{1,128})$')
+GW_JURISDICTION_CASE_STAGE_ROUTE = re.compile(r'^/api/grantwriter/jurisdiction/cases/([A-Za-z0-9_-]{1,128})/stage$')
+GW_JURISDICTION_CASE_DISCARD_ROUTE = re.compile(r'^/api/grantwriter/jurisdiction/cases/([A-Za-z0-9_-]{1,128})/discard$')
+GW_JURISDICTION_CASE_ALTERNATIVES_ROUTE = re.compile(r'^/api/grantwriter/jurisdiction/cases/([A-Za-z0-9_-]{1,128})/alternative-structures$')
 PBD_VALIDATION_VIEW_ROUTE = re.compile(r'^/api/pbd-validation/validations/([A-Za-z0-9_-]{1,128})$')
 PBD_GENERATOR_VIEW_ROUTE = re.compile(r'^/api/pbd-manifest-generator/generations/([A-Za-z0-9_-]{1,128})$')
 VAULT_LEASE_ROUTE = re.compile(r'^/api/vault/leases/([A-Za-z0-9_-]{1,128})$')
@@ -832,6 +836,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         gw_submission_match = GW_APPLICATION_SUBMISSION_ROUTE.fullmatch(path)
         gw_draft_match = GW_APPLICATION_DRAFT_ROUTE.fullmatch(path)
         gw_compliance_match = GW_APPLICATION_COMPLIANCE_ROUTE.fullmatch(path)
+        gw_jurisdiction_case_match = GW_JURISDICTION_CASE_ROUTE.fullmatch(path)
+        gw_jurisdiction_case_stage_match = GW_JURISDICTION_CASE_STAGE_ROUTE.fullmatch(path)
+        gw_jurisdiction_case_discard_match = GW_JURISDICTION_CASE_DISCARD_ROUTE.fullmatch(path)
+        gw_jurisdiction_case_alternatives_match = GW_JURISDICTION_CASE_ALTERNATIVES_ROUTE.fullmatch(path)
         pbd_validation_view_match = PBD_VALIDATION_VIEW_ROUTE.fullmatch(path)
         pbd_generator_view_match = PBD_GENERATOR_VIEW_ROUTE.fullmatch(path)
         vault_lease_match = VAULT_LEASE_ROUTE.fullmatch(path)
@@ -1191,13 +1199,20 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                          '/api/grantwriter/opportunities',
                                          '/api/grantwriter/applications',
                                          '/api/grantwriter/portfolio',
-                                         '/api/grantwriter/check-in')
+                                         '/api/grantwriter/check-in',
+                                         '/api/grantwriter/jurisdiction',
+                                         '/api/grantwriter/jurisdiction/cases',
+                                         '/api/grantwriter/jurisdiction/role-assignments')
                                 or gw_stage_match is not None
                                 or gw_budget_match is not None
                                 or gw_evidence_match is not None
                                 or gw_transitions_match is not None
                                 or gw_submission_match is not None
                                 or gw_draft_match is not None
+                                or gw_jurisdiction_case_match is not None
+                                or gw_jurisdiction_case_stage_match is not None
+                                or gw_jurisdiction_case_discard_match is not None
+                                or gw_jurisdiction_case_alternatives_match is not None
                                 or gw_compliance_match is not None)
         is_pbd_validation_route = (path in ('/api/pbd-validation/status',
                                             '/api/pbd-validation/validate',
@@ -2198,6 +2213,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/home-healthcare/status',
                                             '/api/grantwriter/status',
                                             '/api/grantwriter/portfolio',
+                                            '/api/grantwriter/jurisdiction',
                                             '/api/pbd-validation/status',
                                             '/api/pbd-manifest-generator/status',
                                             '/api/vault/status',
@@ -3317,6 +3333,28 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             return respond(start, '403 Forbidden', {'error': 'operator_required'})
                         result = grantwriter.compliance_evaluate(identity, 'OPERATOR', gw_compliance_match.group(1))
                         return respond(start, '200 OK', {'compliance': result})
+                    if path == '/api/grantwriter/jurisdiction':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'jurisdiction': grantwriter.jurisdiction_board(identity, 'OPERATOR')})
+                    if path == '/api/grantwriter/jurisdiction/cases':
+                        record = grantwriter.create_jurisdiction_case(identity, data['branch'], data['scope_ref'], data['title'], opportunity_kind=data.get('opportunity_kind', 'INDIVIDUAL'), funder=data.get('funder'), external_ref=data.get('external_ref'), fee_structure=data.get('fee_structure'), profile_complete=data.get('profile_complete', True), profile_gaps=data.get('profile_gaps'), case_id=data.get('case_id'))
+                        return respond(start, '201 Created', {'case': record})
+                    if gw_jurisdiction_case_match:
+                        record = grantwriter.jurisdiction_case(identity, 'OPERATOR', gw_jurisdiction_case_match.group(1), data['branch'], data['scope_ref'])
+                        return respond(start, '200 OK', {'case': record})
+                    if gw_jurisdiction_case_stage_match:
+                        record = grantwriter.advance_jurisdiction_case(identity, gw_jurisdiction_case_stage_match.group(1), data['branch'], data['scope_ref'], data['target_stage'], note=data.get('note'), submission_method=data.get('submission_method'), authority_basis=data.get('authority_basis'), tracking_ref=data.get('tracking_ref'))
+                        return respond(start, '200 OK', {'case': record})
+                    if gw_jurisdiction_case_alternatives_match:
+                        record = grantwriter.record_alternative_structures_check(identity, gw_jurisdiction_case_alternatives_match.group(1), data['branch'], data['scope_ref'], data['structures_considered'], note=data.get('note'))
+                        return respond(start, '200 OK', {'case': record})
+                    if gw_jurisdiction_case_discard_match:
+                        record = grantwriter.discard_jurisdiction_case(identity, gw_jurisdiction_case_discard_match.group(1), data['branch'], data['scope_ref'], note=data.get('note'))
+                        return respond(start, '200 OK', {'case': record})
+                    if path == '/api/grantwriter/jurisdiction/role-assignments':
+                        record = grantwriter.record_role_assignment(identity, data['system'], data['entity'], data['role'], data['holder'])
+                        return respond(start, '201 Created', {'role_assignment': record})
                     return check_in(grantwriter)
                 if is_pbd_validation_route:
                     if pbd_validation is None:
