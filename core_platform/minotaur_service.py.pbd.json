@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/minotaur_service.py",
-        "payload_hash": "536c928c56b9080c8d80268d8912d0888b6cc3c4f2a701e6ead9f8ae921e384f",
+        "payload_hash": "2546bbefed12dfd31296f35ddf6b4273b34030cfad74abf5b73e070826c411db",
         "scope": {
             "endpoint": "local://development",
             "method": "TEST",
