@@ -544,6 +544,7 @@ SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ROUTE = re.compile(r'^/api/sanders-sen
 SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ARRIVAL_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/emergency-cases/([A-Za-z0-9_-]{1,128})/arrival$')
 SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_CLOSE_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/emergency-cases/([A-Za-z0-9_-]{1,128})/close$')
 SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ACTIVATION_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/emergency-cases/([A-Za-z0-9_-]{1,128})/activations$')
+SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_COORDINATION_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/emergency-cases/([A-Za-z0-9_-]{1,128})/responder-coordination$')
 SANDERS_SENTINEL_BLOODLINE_PERCEPTION_CHANNEL_FAILURE_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/perception-channels/([A-Za-z0-9_-]{1,128})/failure$')
 SANDERS_SENTINEL_BLOODLINE_READINESS_CONNECTION_DISCONNECT_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/readiness-connections/([A-Za-z0-9_-]{1,128})/disconnect$')
 LIL_MAMA_RECORD_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})$')
@@ -934,6 +935,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         sentinel_bloodline_emergency_case_arrival_match = SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ARRIVAL_ROUTE.fullmatch(path)
         sentinel_bloodline_emergency_case_close_match = SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_CLOSE_ROUTE.fullmatch(path)
         sentinel_bloodline_emergency_case_activation_match = SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ACTIVATION_ROUTE.fullmatch(path)
+        sentinel_bloodline_emergency_case_coordination_match = SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_COORDINATION_ROUTE.fullmatch(path)
         sentinel_bloodline_perception_channel_failure_match = SANDERS_SENTINEL_BLOODLINE_PERCEPTION_CHANNEL_FAILURE_ROUTE.fullmatch(path)
         sentinel_bloodline_readiness_connection_disconnect_match = SANDERS_SENTINEL_BLOODLINE_READINESS_CONNECTION_DISCONNECT_ROUTE.fullmatch(path)
         lil_mama_record_match = LIL_MAMA_RECORD_ROUTE.fullmatch(path)
@@ -1514,6 +1516,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or sentinel_bloodline_emergency_case_arrival_match is not None
                                   or sentinel_bloodline_emergency_case_close_match is not None
                                   or sentinel_bloodline_emergency_case_activation_match is not None
+                                  or sentinel_bloodline_emergency_case_coordination_match is not None
                                   or sentinel_bloodline_perception_channel_failure_match is not None
                                   or sentinel_bloodline_readiness_connection_disconnect_match is not None)
         is_lil_mama_route = (path in ('/api/lil-mama/status',
@@ -4654,6 +4657,13 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = sanders_sentinel.record_emergency_activation(identity, sentinel_bloodline_emergency_case_activation_match.group(1), data['activation_kind'], data['target_ref'], data['detail_ref'])
                         return respond(start, '201 Created', {'emergency_activation': record})
+                    if sentinel_bloodline_emergency_case_coordination_match:
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'responder_coordinations': sanders_sentinel.responder_coordinations(identity, sentinel_role, sentinel_bloodline_emergency_case_coordination_match.group(1))})
+                        if set(data) != {'responder_kind', 'responder_ref', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_responder_coordination(identity, sentinel_bloodline_emergency_case_coordination_match.group(1), data['responder_kind'], data['responder_ref'], data['detail_ref'])
+                        return respond(start, '201 Created', {'responder_coordination': record})
                     if sentinel_bloodline_emergency_case_match:
                         record = sanders_sentinel.emergency_case_view(identity, sentinel_role, sentinel_bloodline_emergency_case_match.group(1))
                         return respond(start, '200 OK', {'emergency_case': record})
