@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-emergency-contact.html",
+        "payload_hash": "1816dfde209aa44b6bd0e90c98b89f25f0c8fc2b636cf5d16850246e948e5781",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

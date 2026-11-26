@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#030a26">
+<meta name="description" content="Customer support for the Sanders Companies: a tracked case with a reference ID, a human review, and an answer from a person.">
+<title>Customer Support | The Sanders Companies</title>
+<link rel="stylesheet" href="/assets/companies.css">
+<link rel="stylesheet" href="/assets/portals.css">
+<script defer src="/assets/portals.js"></script>
+</head>
+<body class="co-hq">
+<header class="topbar">
+  <a class="brand" href="/headquarters" aria-label="S &amp; G Security Inc., corporate headquarters — home">
+    <span class="seal-lockup">
+      <img class="seal-medallion seal-medallion-hq" src="/assets/seal-corporate-hq.png" alt="Official corporate seal of Sanders Corporate Headquarters — S &amp; G Security Inc.">
+    </span>
+    <span class="brand-name">S &amp; G Security Inc.<span>Corporate Headquarters</span></span>
+  </a>
+  <nav aria-label="Main navigation">
+    <a href="/headquarters">Home</a>
+    <a href="/headquarters/headquarters">Headquarters</a>
+    <a href="/headquarters/services">Services</a>
+    <a href="/headquarters/companies">Companies</a>
+    <a href="/headquarters/resources">Resources</a>
+    <a href="/headquarters/contact">Contact</a>
+    <a href="/appointments">Appointments</a>
+    <a href="/auth/login">Client Portal</a>
+  </nav>
+</header>
+<main>
+  <section class="page-hero">
+    <p class="eyebrow">THE SANDERS COMPANIES · SUPPORT</p>
+    <h1>Customer Support</h1>
+    <p class="lede">Support the way the house keeps everything: on the record, with a reference ID, answered by a person.</p>
+    <div class="page-seals">
+      <img src="/assets/seal-corporate-hq.png" alt="Official corporate seal of Sanders Corporate Headquarters — the Sanders Companies, established 1996">
+    </div>
+  </section>
+  <section class="section">
+    <p class="eyebrow">PLACE A RECORD</p>
+    <h2>Reach the House, On the Record</h2>
+    <div class="prose">
+      <p>Write to the house here and your message becomes a tracked case the moment it is placed: a reference ID, a standing in the review queue, and a person who reads it. Support through this portal is the house's own — no ticket farm, no script. If what you need is an appointment, the appointment door is faster; if it is an emergency in progress, emergency services come first, always.</p>
+    </div>
+    <form class="portal-form" data-portal-form="support" data-company="headquarters">
+      <div class="field">
+        <label for="sup-company">The company your record concerns</label>
+        <select id="sup-company" name="company">
+          <option value="headquarters">S &amp; G Security Inc. — Corporate Headquarters</option>
+          <option value="home_healthcare">Sanders Home Healthcare &amp; Caregivers LLC</option>
+          <option value="senior_living">Sanders Senior Living LLC</option>
+          <option value="legal_helpers">Sanders Legal Helpers LLC — Dash &amp; Seal</option>
+          <option value="s_and_g_security">S &amp; G Security Inc.</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="sup-name">Your name</label>
+        <input id="sup-name" name="name" type="text" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="sup-contact">How the company reaches you</label>
+        <input id="sup-contact" name="contact" type="text" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="sup-subject">What you need</label>
+        <input id="sup-subject" name="subject" type="text" required>
+      </div>
+      <div class="field">
+        <label for="sup-body">The details</label>
+        <textarea id="sup-body" name="body" required></textarea>
+      </div>
+      <button class="button" type="submit">Place the Record</button>
+      <p class="portal-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+  <section class="section">
+    <p class="eyebrow">FIND YOUR RECORD</p>
+    <h2>Standings, By Reference ID</h2>
+    <div class="prose">
+      <p>Every record placed through the portals carries a reference ID. Enter it to read its standing.</p>
+    </div>
+    <form class="portal-form" data-case-lookup>
+      <div class="field">
+        <label for="sup-ref">Your reference ID</label>
+        <input id="sup-ref" name="ref" type="text" required autocomplete="off">
+      </div>
+      <button class="button secondary" type="submit">Find My Record</button>
+      <p class="portal-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+  <section class="section">
+    <p class="eyebrow">OTHER DOORS</p>
+    <h2>The Faster Path, When There Is One</h2>
+    <div class="cards">
+      <article>
+        <h3>Appointments</h3>
+        <p>Request an appointment through Sanders Dash &amp; Seal.</p>
+        <a class="card-link" href="/appointments">Appointments →</a>
+      </article>
+      <article>
+        <h3>Emergency Contact</h3>
+        <p>When it cannot wait — the house's real paths, and emergency services first.</p>
+        <a class="card-link" href="/headquarters/emergency-contact">Emergency Contact →</a>
+      </article>
+      <article>
+        <h3>Complaints Portal</h3>
+        <p>When the house got it wrong, say so as a tracked case.</p>
+        <a class="card-link" href="/headquarters/complaints">Complaints →</a>
+      </article>
+    </div>
+
+  </section>
+
+</main>
+<footer>
+  <nav class="footer-nav" aria-label="S &amp; G Security Inc. — site pages">
+    <a href="/headquarters">Home</a>
+    <a href="/headquarters/headquarters">Headquarters</a>
+    <a href="/headquarters/services">Services</a>
+    <a href="/headquarters/companies">Companies</a>
+    <a href="/headquarters/resources">Resources</a>
+    <a href="/headquarters/contact">Contact</a>
+    <a href="/headquarters/privacy">Privacy</a>
+    <a href="/headquarters/terms">Terms</a>
+  </nav>
+  <div class="seal-strip" aria-label="The Sanders companies">
+    <figure>
+      <a href="/headquarters"><img src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc."></a>
+      <figcaption><a href="/headquarters">S &amp; G Security Inc. — Corporate Headquarters</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/home-healthcare"><img src="/assets/seal-home-healthcare.png" alt="Seal of Sanders Home Healthcare &amp; Caregivers LLC"></a>
+      <figcaption><a href="/home-healthcare">Sanders Home Healthcare &amp; Caregivers LLC</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/senior-living"><img src="/assets/seal-senior-living.png" alt="Seal of Sanders Senior Living LLC"></a>
+      <figcaption><a href="/senior-living">Sanders Senior Living LLC</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/"><img src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC"></a>
+      <figcaption><a href="/">Sanders Legal Helpers LLC</a></figcaption>
+    </figure>
+  </div>
+  <div class="footer-lines">
+    <span>© 2026 S &amp; G Security Inc. · The Sanders Companies</span>
+    <span class="footer-tagline">Our family will take great care of your family</span>
+    <span class="footer-closing">The Sanders Way!</span>
+    <span class="footer-global">Global By Design</span>
+  </div>
+</footer>
+</body>
+</html>

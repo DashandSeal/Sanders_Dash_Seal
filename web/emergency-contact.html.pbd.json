@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/emergency-contact.html",
+        "payload_hash": "59d224dfbbf915a883b05a858bc6b823659108dd19e86d63fa73e2c7ddc4b3ce",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

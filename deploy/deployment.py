@@ -74,6 +74,7 @@ class RuntimeBindings:
     fraud_rtsa: object = None
     operations_rtsa: object = None
     surn: object = None
+    portals: object = None
     ai_role_workers: object = None
     uptime_agent: object = None
     application_agent: object = None
@@ -824,6 +825,21 @@ def create_application(bindings=None):
                 allowed_origins=SITE_ORIGINS)
         return media_apps["realtime"]
 
+    def portals_app():
+        """Portals app for this instance (founder portals band,
+        2026-11-25), built lazily like the media apps and wired with
+        THIS application's session verifier. With no service bound
+        (diagnostic startup) the app answers an honest 503 on every
+        route; enforcement — consent, the review queue, operator
+        authority — runs inside the portals module itself."""
+        if "portals" not in media_apps:
+            from core_platform.portals_api import create_portals_app
+            media_apps["portals"] = create_portals_app(
+                bindings.portals if bindings else None,
+                authenticate=bindings.authenticate if bindings else None,
+                allowed_origins=SITE_ORIGINS)
+        return media_apps["portals"]
+
     def ready():
         try:
             return verifier() is True
@@ -941,6 +957,14 @@ def create_application(bindings=None):
             if path in ('/api/voice/turn', '/api/voice/daedalus/status'):
                 return daedalus_app(env, start)
             return voice_app(env, start)
+        if path == '/api/portals' or path.startswith('/api/portals/'):
+            # The Portals (founder portals band, 2026-11-25): public
+            # submissions land as cases AWAITING_HUMAN_REVIEW and
+            # publish nothing; public reads carry only what the
+            # operator's recorded decision made public; contractor
+            # and operator surfaces enforce the session and operator
+            # authority inside the portals module itself.
+            return portals_app()(env, start)
         if path == '/api/daedalus/describe':
             # Real Daedalus capability report (pure, no key, no live call).
             # fully_active is false until a live engine is built.

@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-contractors.html",
+        "payload_hash": "d67a911e3ee9352fc51c0d21d8eac53c98fb1fbfd9c5f2f38228913f789c8487",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

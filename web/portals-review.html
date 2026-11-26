@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The operator review surface for the Sanders Companies portals: the review queue, recorded decisions, and spotlight selections.">
+<title>Portals Review — Operator | Sanders Dash &amp; Seal</title>
+<link rel="stylesheet" href="/assets/jade-landing.css">
+<link rel="stylesheet" href="/assets/portals.css">
+<script defer src="/assets/jade-landing.js"></script>
+<script defer src="/assets/portals.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/landing" aria-label="Sanders Dash &amp; Seal — Sanders Legal Helpers LLC — home">
+    <span class="seal-lockup">
+      <img class="seal-medallion seal-medallion-hq" src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc., corporate headquarters">
+      <img class="seal-medallion" src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC">
+    </span>
+  </a>
+  <button id="menuToggle" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span></button>
+  <nav id="nav" aria-label="Main navigation">
+    <a href="/mobile-notary">Mobile Notary</a>
+    <a href="/remote-online-notarization">RON</a>
+    <a href="/document-support">Document Support</a>
+    <a href="/fees-packages">Fees &amp; Packages</a>
+    <a href="/headquarters">Our Companies</a>
+    <a href="/appointments">Appointments</a>
+    <a href="/auth/login">Client Portal</a>
+  </nav>
+</header>
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">OPERATOR · THE REVIEW DESK</p>
+      <h1>Portals Review</h1>
+      <p>The desk where portal records are decided. Every decision here is recorded with its Glass-Box receipt; nothing publishes without one.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="section-heading"><p class="eyebrow">THE QUEUE</p><h2>Awaiting Human Review</h2></div>
+    <div data-review-queue><p class="portal-note">Reading the queue…</p></div>
+
+  </section>
+  <section class="section">
+    <div class="section-heading"><p class="eyebrow">RECORD A SELECTION</p><h2>Contractor Spotlight</h2></div>
+    <div class="prose">
+      <p>A spotlight exists only as a selection recorded here, by the operator, with its citation. Recording is an operator action; the surface answers only to the operator's session.</p>
+    </div>
+    <form class="portal-form" data-spotlight-form>
+      <div class="field">
+        <label for="spt-name">Contractor name</label>
+        <input id="spt-name" name="contractor_name" type="text" required>
+      </div>
+      <div class="field">
+        <label for="spt-type">Period</label>
+        <select id="spt-type" name="period_type">
+          <option value="MONTH">Spotlight of the Month</option>
+          <option value="YEAR">Spotlight of the Year</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="spt-label">Period label (for example: November 2026)</label>
+        <input id="spt-label" name="period_label" type="text" required>
+      </div>
+      <div class="field">
+        <label for="spt-company">Company</label>
+        <select id="spt-company" name="company">
+          <option value="headquarters">S &amp; G Security Inc. — Corporate Headquarters</option>
+          <option value="home_healthcare">Sanders Home Healthcare &amp; Caregivers LLC</option>
+          <option value="senior_living">Sanders Senior Living LLC</option>
+          <option value="legal_helpers">Sanders Legal Helpers LLC — Dash &amp; Seal</option>
+          <option value="s_and_g_security">S &amp; G Security Inc.</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="spt-citation">Citation — the work the selection honors</label>
+        <textarea id="spt-citation" name="citation" required></textarea>
+      </div>
+      <button class="button" type="submit">Record the Selection</button>
+      <p class="portal-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+</main>
+<footer>
+  <div class="seal-strip" aria-label="The Sanders companies">
+    <figure>
+      <a href="/headquarters"><img src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc."></a>
+      <figcaption><a href="/headquarters">S &amp; G Security Inc. — Corporate Headquarters</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/home-healthcare"><img src="/assets/seal-home-healthcare.png" alt="Seal of Sanders Home Healthcare &amp; Caregivers LLC"></a>
+      <figcaption><a href="/home-healthcare">Sanders Home Healthcare &amp; Caregivers LLC</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/senior-living"><img src="/assets/seal-senior-living.png" alt="Seal of Sanders Senior Living LLC"></a>
+      <figcaption><a href="/senior-living">Sanders Senior Living LLC</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/landing"><img src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC"></a>
+      <figcaption><a href="/landing">Sanders Legal Helpers LLC</a></figcaption>
+    </figure>
+  </div>
+  <div class="footer-lines">
+    <span>© <span id="year">2026</span> Sanders Dash &amp; Seal · Sanders Legal Helpers LLC</span>
+    <span class="footer-tagline">Our family will take great care of your family</span>
+    <span>From the Road to Remote, We Seal the Deal.</span>
+    <span class="footer-closing">The Sanders Way!</span>
+    <span class="footer-global">Global By Design</span>
+  </div>
+</footer>
+</body>
+</html>

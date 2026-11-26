@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-complaints.html",
+        "payload_hash": "4de1a8fef399df2e49b71f4206b3678f451ba67a5f074452ad6a12312d12ef55",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

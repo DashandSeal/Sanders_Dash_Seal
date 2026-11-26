@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/wall-of-valor.html",
+        "payload_hash": "218ba1228053c7a65bd671a6f430d8494c543f58a4d5a2e4777428c3d77ec73f",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

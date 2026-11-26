@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Customer support at Sanders Dash & Seal: a tracked case with a reference ID, a human review, and an answer from a person.">
+<title>Customer Support | Sanders Dash &amp; Seal</title>
+<link rel="stylesheet" href="/assets/jade-landing.css">
+<link rel="stylesheet" href="/assets/portals.css">
+<script defer src="/assets/jade-landing.js"></script>
+<script defer src="/assets/portals.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/landing" aria-label="Sanders Dash &amp; Seal — Sanders Legal Helpers LLC — home">
+    <span class="seal-lockup">
+      <img class="seal-medallion seal-medallion-hq" src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc., corporate headquarters">
+      <img class="seal-medallion" src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC">
+    </span>
+  </a>
+  <button id="menuToggle" aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation"><span class="menu-bar"></span><span class="menu-bar"></span><span class="menu-bar"></span></button>
+  <nav id="nav" aria-label="Main navigation">
+    <a href="/mobile-notary">Mobile Notary</a>
+    <a href="/remote-online-notarization">RON</a>
+    <a href="/document-support">Document Support</a>
+    <a href="/fees-packages">Fees &amp; Packages</a>
+    <a href="/headquarters">Our Companies</a>
+    <a href="/appointments">Appointments</a>
+    <a href="/auth/login">Client Portal</a>
+  </nav>
+</header>
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">SANDERS DASH &amp; SEAL · SUPPORT</p>
+      <h1>Customer Support</h1>
+      <p>Support on the record: your message becomes a tracked case with a reference ID the moment it is placed, and a person answers it.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="section-heading"><p class="eyebrow">PLACE A RECORD</p><h2>Reach the Platform, On the Record</h2></div>
+    <div class="prose">
+      <p>Appointments have their own door, and it is faster for scheduling. For everything else — a record to check, a service to ask after, a problem to put before the platform — place it here. It enters the review queue as a case, and the answer comes from a person.</p>
+    </div>
+    <form class="portal-form" data-portal-form="support" data-company="legal_helpers">
+      <div class="field">
+        <label for="sup-name">Your name</label>
+        <input id="sup-name" name="name" type="text" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="sup-contact">How the company reaches you</label>
+        <input id="sup-contact" name="contact" type="text" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="sup-subject">What you need</label>
+        <input id="sup-subject" name="subject" type="text" required>
+      </div>
+      <div class="field">
+        <label for="sup-body">The details</label>
+        <textarea id="sup-body" name="body" required></textarea>
+      </div>
+      <button class="button" type="submit">Place the Record</button>
+      <p class="portal-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+  <section class="section">
+    <div class="section-heading"><p class="eyebrow">FIND YOUR RECORD</p><h2>Standings, By Reference ID</h2></div>
+    <div class="prose">
+      <p>Enter the reference ID your record was given to read its standing.</p>
+    </div>
+    <form class="portal-form" data-case-lookup>
+      <div class="field">
+        <label for="sup-ref">Your reference ID</label>
+        <input id="sup-ref" name="ref" type="text" required autocomplete="off">
+      </div>
+      <button class="button secondary" type="submit">Find My Record</button>
+      <p class="portal-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+  <section class="section">
+    <div class="section-heading"><p class="eyebrow">THE HOUSE</p><h2>Every Portal, One Hub</h2></div>
+    <div class="cards">
+      <article>
+        <h3>The Portals — Headquarters</h3>
+        <p>All twelve portals of the house.</p>
+        <a class="card-link" href="/headquarters/portals">The Portals →</a>
+      </article>
+      <article>
+        <h3>Complaints Portal</h3>
+        <p>When the platform got it wrong.</p>
+        <a class="card-link" href="/complaints">Complaints →</a>
+      </article>
+      <article>
+        <h3>Emergency Contact</h3>
+        <p>When it cannot wait.</p>
+        <a class="card-link" href="/emergency-contact">Emergency Contact →</a>
+      </article>
+    </div>
+
+  </section>
+
+</main>
+<footer>
+  <div class="seal-strip" aria-label="The Sanders companies">
+    <figure>
+      <a href="/headquarters"><img src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc."></a>
+      <figcaption><a href="/headquarters">S &amp; G Security Inc. — Corporate Headquarters</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/home-healthcare"><img src="/assets/seal-home-healthcare.png" alt="Seal of Sanders Home Healthcare &amp; Caregivers LLC"></a>
+      <figcaption><a href="/home-healthcare">Sanders Home Healthcare &amp; Caregivers LLC</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/senior-living"><img src="/assets/seal-senior-living.png" alt="Seal of Sanders Senior Living LLC"></a>
+      <figcaption><a href="/senior-living">Sanders Senior Living LLC</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/landing"><img src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC"></a>
+      <figcaption><a href="/landing">Sanders Legal Helpers LLC</a></figcaption>
+    </figure>
+  </div>
+  <div class="footer-lines">
+    <span>© <span id="year">2026</span> Sanders Dash &amp; Seal · Sanders Legal Helpers LLC</span>
+    <span class="footer-tagline">Our family will take great care of your family</span>
+    <span>From the Road to Remote, We Seal the Deal.</span>
+    <span class="footer-closing">The Sanders Way!</span>
+    <span class="footer-global">Global By Design</span>
+  </div>
+</footer>
+</body>
+</html>

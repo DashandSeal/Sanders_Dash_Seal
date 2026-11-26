@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#020a45">
+<meta name="description" content="The complaints portal of Sanders Senior Living LLC: a complaint becomes a tracked case with a reference ID and a recorded outcome.">
+<title>Complaints Portal | Sanders Senior Living LLC</title>
+<link rel="stylesheet" href="/assets/companies.css">
+<link rel="stylesheet" href="/assets/portals.css">
+<script defer src="/assets/portals.js"></script>
+</head>
+<body class="co-sl">
+<header class="topbar">
+  <a class="brand" href="/senior-living" aria-label="Sanders Senior Living LLC — home">
+    <span class="seal-lockup">
+      <img class="seal-medallion seal-medallion-hq" src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc., corporate headquarters">
+      <img class="seal-medallion" src="/assets/seal-senior-living.png" alt="Seal of Sanders Senior Living LLC">
+    </span>
+    <span class="brand-name">Sanders Senior Living<span>Senior Living LLC</span></span>
+  </a>
+  <nav aria-label="Main navigation">
+    <a href="/senior-living/about">About</a>
+    <a href="/senior-living/residences">Residences</a>
+    <a href="/senior-living/care">Care</a>
+    <a href="/senior-living/family-support">Family Support</a>
+    <a href="/senior-living/wellness">Wellness</a>
+    <a href="/senior-living/locations">Locations</a>
+    <a href="/senior-living/contact">Contact</a>
+    <a href="/appointments">Appointments</a>
+    <a href="/auth/login">Client Portal</a>
+  </nav>
+</header>
+<main>
+  <section class="page-hero">
+    <p class="eyebrow">SANDERS SENIOR LIVING · COMPLAINTS</p>
+    <h1>Complaints Portal</h1>
+    <p class="lede">Tell Sanders Senior Living where it got it wrong — as a case with a reference ID, a human review, and an outcome recorded on the same record.</p>
+    <div class="page-seals">
+      <img src="/assets/seal-corporate-hq.png" alt="Official corporate seal of Sanders Corporate Headquarters — the Sanders Companies, established 1996">
+      <img src="/assets/seal-senior-living.png" alt="Official seal of Sanders Senior Living LLC">
+    </div>
+  </section>
+  <section class="section">
+    <p class="eyebrow">PLACE A COMPLAINT</p>
+    <h2>A Case, Not a Drawer</h2>
+    <div class="prose">
+      <p>A complaint placed here becomes a tracked case: a reference ID at once, a standing in the review queue, a human review, and a recorded outcome — resolved on the record, or answered with the reasons standing beside it. The house would rather carry a complaint it can answer than a grievance it never heard. What you write is read by the company it concerns and reviewed at headquarters.</p>
+    </div>
+    <form class="portal-form" data-portal-form="complaints" data-company="senior_living">
+      <div class="field">
+        <label for="cmp-name">Your name</label>
+        <input id="cmp-name" name="name" type="text" required autocomplete="name">
+      </div>
+      <div class="field">
+        <label for="cmp-contact">How the company reaches you</label>
+        <input id="cmp-contact" name="contact" type="text" required autocomplete="email">
+      </div>
+      <div class="field">
+        <label for="cmp-subject">What the complaint concerns</label>
+        <input id="cmp-subject" name="subject" type="text" required>
+      </div>
+      <div class="field">
+        <label for="cmp-body">What happened, and what would set it right</label>
+        <textarea id="cmp-body" name="body" required></textarea>
+      </div>
+      <button class="button" type="submit">Place the Complaint</button>
+      <p class="portal-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+  <section class="section">
+    <p class="eyebrow">FIND YOUR RECORD</p>
+    <h2>Standings, By Reference ID</h2>
+    <div class="prose">
+      <p>Enter the reference ID your complaint was given to read its standing.</p>
+    </div>
+    <form class="portal-form" data-case-lookup>
+      <div class="field">
+        <label for="cmp-ref">Your reference ID</label>
+        <input id="cmp-ref" name="ref" type="text" required autocomplete="off">
+      </div>
+      <button class="button secondary" type="submit">Find My Record</button>
+      <p class="portal-status" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+  <section class="section">
+    <p class="eyebrow">THE DISCIPLINE</p>
+    <h2>How a Complaint Is Worked</h2>
+    <div class="prose">
+      <p>Receipt is recorded with its Glass-Box receipt. Review is by a person, at the company concerned, under headquarters' eye. Resolution — what was done, or why nothing could be — is recorded on the case itself, so the record of the complaint and the record of its answer are the same record. Conduct that concerns ethics rather than service stands in the ethics reporting channel as well.</p>
+    </div>
+    <div class="cards">
+      <article>
+        <h3>Ethics Reporting Channel</h3>
+        <p>The house's channel for matters of conduct and ethics.</p>
+        <a class="card-link" href="/headquarters/ethics-reporting">Ethics Reporting →</a>
+      </article>
+      <article>
+        <h3>Customer Support</h3>
+        <p>For help that is not a complaint.</p>
+        <a class="card-link" href="/headquarters/support">Support →</a>
+      </article>
+    </div>
+
+  </section>
+
+</main>
+<footer>
+  <nav class="footer-nav" aria-label="Sanders Senior Living LLC — site pages">
+    <a href="/senior-living">Home</a>
+    <a href="/senior-living/about">About</a>
+    <a href="/senior-living/residences">Residences</a>
+    <a href="/senior-living/care">Care</a>
+    <a href="/senior-living/family-support">Family Support</a>
+    <a href="/senior-living/wellness">Wellness</a>
+    <a href="/senior-living/locations">Locations</a>
+    <a href="/senior-living/contact">Contact</a>
+    <a href="/senior-living/privacy">Privacy</a>
+    <a href="/senior-living/terms">Terms</a>
+  </nav>
+  <div class="seal-strip" aria-label="The Sanders companies">
+    <figure>
+      <a href="/headquarters"><img src="/assets/seal-corporate-hq.png" alt="Seal of S &amp; G Security Inc."></a>
+      <figcaption><a href="/headquarters">S &amp; G Security Inc. — Corporate Headquarters</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/home-healthcare"><img src="/assets/seal-home-healthcare.png" alt="Seal of Sanders Home Healthcare &amp; Caregivers LLC"></a>
+      <figcaption><a href="/home-healthcare">Sanders Home Healthcare &amp; Caregivers LLC</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/senior-living"><img src="/assets/seal-senior-living.png" alt="Seal of Sanders Senior Living LLC"></a>
+      <figcaption><a href="/senior-living">Sanders Senior Living LLC</a></figcaption>
+    </figure>
+    <figure>
+      <a href="/"><img src="/assets/seal-legal-helpers.png" alt="Seal of Sanders Legal Helpers LLC"></a>
+      <figcaption><a href="/">Sanders Legal Helpers LLC</a></figcaption>
+    </figure>
+  </div>
+  <div class="footer-lines">
+    <span>© 2026 Sanders Senior Living LLC · The Sanders Companies</span>
+    <span class="footer-tagline">Our family will take great care of your family</span>
+    <span class="footer-closing">The Sanders Way!</span>
+    <span class="footer-global">Global By Design</span>
+  </div>
+</footer>
+</body>
+</html>

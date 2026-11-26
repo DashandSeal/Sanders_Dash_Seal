@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-contractor-handbook.html",
+        "payload_hash": "8acde4bcd15456c2916a74738c8cf220f2a52c9ef2500e30977fe32f8895c549",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-how-were-doing.html",
+        "payload_hash": "e76a8c53f99345da5987b1d5c479eb8ceabf4fca3cee88f0bac874712f2c686d",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

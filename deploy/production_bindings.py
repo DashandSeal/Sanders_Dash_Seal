@@ -184,6 +184,7 @@ from core_platform.bozly_service import BozlyService
 from core_platform.fraud_rtsa_service import FraudRtsaService
 from core_platform.operations_rtsa_service import OperationsRtsaService
 from core_platform.surn_service import SurnService
+from core_platform.portals_service import PortalsService
 from core_platform.tech_team_dispatch import TechTeamDispatcher
 from core_platform.uptime_agent_service import UptimeAgentService
 from core_platform.application_agent_service import ApplicationAgentService
@@ -695,6 +696,21 @@ def create_production_bindings():
     surn = SurnService(
         data_dir / 'surn.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+
+    # The Portals (founder portals band, 2026-11-25): the Sanders
+    # Companies' community, workforce, and support intake platform —
+    # headquarters scope, on its own store, with its held tribute
+    # photographs under its own media directory. Every public
+    # submission is a tracked case AWAITING_HUMAN_REVIEW; publication
+    # (the Wall of Valor, spotlights) is the operator's recorded
+    # decision only; every state change preserves its Glass-Box
+    # receipt on the shared audit chain. The shared ledger path is
+    # wired read-only so the how-we're-doing figures can count the
+    # appointment case registry from its own record.
+    portals = PortalsService(
+        data_dir / 'portals.db', data_dir / 'portals-media',
+        operator_verifier=auth.operator_verifier, audit=audit,
+        ledger_db=shared_db)
 
     # AI role workers (founder approval recorded 2026-11-25):
     # the IT AI Manager agent matrix's live dispatch core --
@@ -1380,6 +1396,7 @@ def create_production_bindings():
         fraud_rtsa=fraud_rtsa,
         operations_rtsa=operations_rtsa,
         surn=surn,
+        portals=portals,
         ai_role_workers=ai_role_workers,
         uptime_agent=uptime_agent,
         application_agent=application_agent,

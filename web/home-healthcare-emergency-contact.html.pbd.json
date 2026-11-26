@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-emergency-contact.html",
+        "payload_hash": "9b7aff429b300879c2ad4a2aca568ddbaf59406bc375d91f3cd56ef1111693fb",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

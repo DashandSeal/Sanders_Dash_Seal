@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-complaints.html",
+        "payload_hash": "0ecbba0d3cc76b99eedcbc4d5e69196c693e7b0d1edc5a748615436fd4e2f22b",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

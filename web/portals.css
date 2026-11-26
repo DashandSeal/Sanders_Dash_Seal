@@ -1,0 +1,157 @@
+/* =========================================================================
+ * THE PORTALS — component styles (2026-11-25, founder portals band).
+ *
+ * Forms, the Wall of Valor, the gallery, spotlights, the figures of
+ * record, and the operator's review table. This file carries NO color
+ * values of its own: every color is a token of the design system the
+ * page already wears — the companies' --co-* tokens on the company
+ * websites, the flagship's --sds-* tokens on Sanders Dash & Seal — so
+ * the frozen palettes stand exactly as they were. One component set,
+ * every company's own hues.
+ * ========================================================================= */
+
+.portal-form {
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: left;
+}
+
+.portal-form .field { margin-bottom: 20px; }
+
+.portal-form label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.portal-form input[type="text"],
+.portal-form input[type="email"],
+.portal-form input[type="tel"],
+.portal-form input[type="file"],
+.portal-form select,
+.portal-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    min-height: 48px;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 15px;
+}
+
+.portal-form textarea { min-height: 140px; resize: vertical; }
+
+.portal-form .consent {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 13.5px;
+    line-height: 1.6;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+}
+
+.portal-form .consent input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    flex: none;
+    margin-top: 2px;
+}
+
+.portal-status {
+    max-width: 760px;
+    margin: 22px auto 0;
+    font-size: 14.5px;
+    line-height: 1.65;
+}
+
+.portal-status:empty { display: none; }
+
+.portal-status .ref {
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+}
+
+.tributes, .spotlight-list, .gallery-grid, .figures {
+    display: grid;
+    gap: 22px;
+    margin-top: 8px;
+}
+
+.tributes { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.spotlight-list { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.gallery-grid { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.figures { grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+
+.tribute img, .gallery-grid img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px;
+    margin-bottom: 14px;
+}
+
+.gallery-grid figure { margin: 0; }
+.gallery-grid figcaption { font-size: 13.5px; line-height: 1.6; }
+
+.figure-value {
+    font-family: var(--co-serif, var(--sds-serif));
+    font-size: 40px;
+    line-height: 1.1;
+}
+
+.figure-label { font-weight: 700; margin-top: 6px; }
+.figure-source { font-size: 12.5px; line-height: 1.55; opacity: 0.85; }
+
+.review-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.review-table th, .review-table td {
+    text-align: left;
+    padding: 10px 12px;
+    vertical-align: top;
+}
+.review-table td .button { min-height: 38px; padding: 8px 14px; margin: 2px 4px 2px 0; }
+
+.portal-note { font-size: 13.5px; line-height: 1.65; }
+
+/* Token bindings — the companies' system. */
+body.co-hh .portal-form label, body.co-sl .portal-form label,
+body.co-hq .portal-form label { color: var(--co-gold); }
+
+body.co-hh .portal-form input, body.co-hh .portal-form select, body.co-hh .portal-form textarea,
+body.co-sl .portal-form input, body.co-sl .portal-form select, body.co-sl .portal-form textarea,
+body.co-hq .portal-form input, body.co-hq .portal-form select, body.co-hq .portal-form textarea {
+    background: var(--co-marble-panel);
+    border: 1px solid var(--co-gold-600);
+    color: var(--co-silver-bright);
+    box-shadow: var(--co-shadow-card);
+}
+
+body.co-hh .portal-status, body.co-sl .portal-status, body.co-hq .portal-status,
+body.co-hh .portal-note, body.co-sl .portal-note, body.co-hq .portal-note {
+    color: var(--co-silver);
+}
+
+body.co-hh .review-table th, body.co-sl .review-table th, body.co-hq .review-table th {
+    color: var(--co-gold);
+    border-bottom: 1px solid var(--co-gold-600);
+}
+body.co-hh .review-table td, body.co-sl .review-table td, body.co-hq .review-table td {
+    border-bottom: 1px solid var(--co-gold-800);
+}
+
+/* Token bindings — the flagship's system. */
+.portal-form label { color: var(--sds-gold); }
+.portal-form input, .portal-form select, .portal-form textarea {
+    background: var(--sds-jade-panel);
+    border: 1px solid var(--sds-field-border);
+    color: var(--sds-cream);
+    box-shadow: var(--sds-shadow-card);
+}
+.portal-status, .portal-note { color: var(--sds-cream-dim); }
+.review-table th { color: var(--sds-gold); border-bottom: 1px solid var(--sds-gold-deep); }
+.review-table td { border-bottom: 1px solid var(--sds-jade-panel-2); }

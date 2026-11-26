@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-complaints.html",
+        "payload_hash": "302e8ccd4a5c9ee86c3e92dcf4a0209f554a66012b1a1ca6188c134811f584c5",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

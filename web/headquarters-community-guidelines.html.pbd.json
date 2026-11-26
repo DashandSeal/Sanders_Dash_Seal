@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-community-guidelines.html",
+        "payload_hash": "f54ab888212743fb215ebd2beb14e87395a86d4bca9a2a68e649bcabbe7f6d2f",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
