@@ -235,7 +235,9 @@ class TestSegregation(PatriotSaintBloodlineTestBase):
         self.assertEqual(
             bloodline_tables,
             {'sanders_patriot_saint_bloodline_matters',
-             'sanders_patriot_saint_bloodline_disbursements'})
+             'sanders_patriot_saint_bloodline_disbursements',
+             'sanders_patriot_saint_shield_coverage_designations',
+             'sanders_patriot_saint_shield_coverage_tests'})
 
     def test_commercial_views_never_show_bloodline_matters(self):
         matter = self.open_matter()
