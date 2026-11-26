@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/FOUNDER_AMENDMENT_MINOTAUR_SELF_PROTECTION_2026-11-26.md",
+        "payload_hash": "826df9650fde0d7724d40eec430348d43987a60479d2b71822541dc7845783b7",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
