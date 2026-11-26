@@ -1282,6 +1282,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                 '/api/minotaur/crypto-environment',
                                 '/api/minotaur/crypto-environment/check',
                                 '/api/minotaur/defensive-relationship',
+                                '/api/minotaur/defensive-domains',
+                                '/api/minotaur/completeness-accounting',
+                                '/api/minotaur/crypto-environment/claim',
                                 '/api/minotaur/check-in')
                        or mn_anomaly_match is not None
                        or mn_anomaly_action_match is not None
@@ -2214,6 +2217,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/minotaur/self-protection',
                                             '/api/minotaur/crypto-environment',
                                             '/api/minotaur/defensive-relationship',
+                                            '/api/minotaur/defensive-domains',
+                                            '/api/minotaur/completeness-accounting',
                                             '/api/glass-box-audit/status',
                                             '/api/glass-box-audit/anchors',
                                             '/api/glass-box-audit/verifications',
@@ -2875,6 +2880,40 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-ethics-impact-collective/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/custody':
+            allowed = ('GET', 'POST')
+        if path == '/api/minotaur/self-protection':
+            allowed = ('GET',)
+        if path == '/api/minotaur/crypto-environment':
+            allowed = ('GET',)
+        if path == '/api/minotaur/defensive-relationship':
+            allowed = ('GET',)
+        if path == '/api/minotaur/defensive-domains':
+            allowed = ('GET',)
+        if path == '/api/minotaur/completeness-accounting':
+            allowed = ('GET',)
+        if path == '/api/minotaur/shield-targets':
+            allowed = ('GET',)
+        if path == '/api/minotaur/shield-patrols':
+            allowed = ('GET',)
+        if path == '/api/minotaur/shield-anchor':
+            allowed = ('GET',)
+        if path == '/api/minotaur/attestations':
+            allowed = ('GET',)
+        if path == '/api/labyrinth-shield/self-protection':
+            allowed = ('GET',)
+        if path == '/api/labyrinth/self-protection':
+            allowed = ('GET',)
+        if path == '/api/minotaur/self-protection/checks':
+            allowed = ('GET', 'POST')
+        if path == '/api/labyrinth/graphs':
+            allowed = ('GET', 'POST')
+        if path == '/api/labyrinth/graph-edges':
+            allowed = ('GET', 'POST')
+        if path == '/api/labyrinth/policies':
+            allowed = ('GET', 'POST')
+        if path == '/api/labyrinth-shield/self-protection/checks':
+            allowed = ('GET', 'POST')
+        if path == '/api/labyrinth/self-protection/checks':
             allowed = ('GET', 'POST')
         if method not in allowed:
             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
@@ -3703,6 +3742,15 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         return respond(start, '201 Created', {'crypto_environment_check': record})
                     if path == '/api/minotaur/defensive-relationship':
                         return respond(start, '200 OK', {'defensive_relationship': minotaur.defensive_relationship_view(identity, mn_role)})
+                    if path == '/api/minotaur/defensive-domains':
+                        return respond(start, '200 OK', {'defensive_domains': minotaur.defensive_domains_view(identity, mn_role)})
+                    if path == '/api/minotaur/completeness-accounting':
+                        return respond(start, '200 OK', {'completeness_accounting': minotaur.completeness_accounting_view(identity, mn_role)})
+                    if path == '/api/minotaur/crypto-environment/claim':
+                        if set(data) != {'determination'}:
+                            raise ValueError('unexpected fields')
+                        record = minotaur.assert_crypto_claim(identity, data['determination'])
+                        return respond(start, '201 Created', {'crypto_claim': record})
                     return check_in(minotaur)
                 if is_gba_route:
                     if glass_box_audit is None:
