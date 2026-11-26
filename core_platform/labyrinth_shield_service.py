@@ -33,6 +33,8 @@ without a working Glass-Box audit adapter: no record, no action.
 from __future__ import annotations
 
 import hashlib
+import ipaddress
+import re
 import sqlite3
 import time
 import uuid
@@ -73,6 +75,171 @@ FOUNDATION_FILE = Path(__file__).resolve().parent.parent / 'labyrinth_shield.py'
 
 DECISIONS = ('allowed', 'rejected', 'blocked', 'isolated')
 
+# -- Shield upgrade (founder's order, 2026-11-26): the
+# indicator classes the service layer adds natively over the
+# recovered foundation, from the shield-upgrade research of
+# record (OWASP Top 10:2025 and API Security Top 10; the
+# PortSwigger CRLF-desync research of August 2026; the OWASP
+# SSRF and credential-stuffing cheat sheets). The recovered
+# foundation file is untouched: its four structural indicators
+# still run, and these classes are scored by this service
+# around them. Each class records the OWASP Automated Threat
+# (OAT) class it belongs to where the taxonomy has one.
+INDICATOR_CLASSES = (
+    'DESYNC_DUAL_CL_TE', 'TE_OBFUSCATION', 'CRLF_INJECTION',
+    'SSRF_TARGET', 'PATH_TRAVERSAL', 'LOG_INJECTION',
+    'SSTI_PROBE', 'NOSQL_OPERATOR', 'MASS_ASSIGNMENT',
+    'CREDENTIAL_STUFFING',
+)
+INDICATOR_OAT = {
+    'CREDENTIAL_STUFFING': 'OAT-008',
+}
+_SSRF_HOSTNAMES = ('localhost', 'metadata.google.internal')
+_TE_OBFUSCATED = re.compile(r'transfer[\s_|]*encoding')
+_IPV4_LITERAL = re.compile(r'\b(?:\d{1,3}\.){3}\d{1,3}\b')
+_IPV6_LITERAL = re.compile(r'\[([0-9a-fA-F:]+)\]')
+_MASS_ASSIGNMENT = re.compile(
+    r'"(role|is_admin|isadmin|admin|superuser)"\s*:')
+
+
+def _ssrf_literal_hit(payload: str) -> bool:
+    """True when the payload names a literal internal target:
+    a private, loopback, link-local, reserved, or multicast
+    IP literal (dotted, octal, hex, or IPv6 form), or a known
+    internal hostname. Literal classification only — this
+    platform performs no DNS resolution and no fetch."""
+    lowered = payload.lower()
+    for hostname in _SSRF_HOSTNAMES:
+        if hostname in lowered:
+            return True
+    candidates = list(_IPV4_LITERAL.findall(payload))
+    candidates += _IPV6_LITERAL.findall(payload)
+    for token in re.findall(r'\b0x[0-9a-fA-F]{1,8}\b', payload):
+        try:
+            candidates.append(str(ipaddress.IPv4Address(
+                int(token, 16))))
+        except ValueError:
+            pass
+    for candidate in candidates:
+        try:
+            address = ipaddress.ip_address(candidate)
+        except ValueError:
+            # An octal-quad literal (e.g. 0177.0.0.1) is not a
+            # valid dotted quad for ipaddress; classify it by
+            # its octal reading.
+            parts = candidate.split('.')
+            if len(parts) == 4 and all(
+                    p.isdigit() and len(p) > 1
+                    and p.startswith('0') for p in parts):
+                try:
+                    address = ipaddress.IPv4Address(
+                        '.'.join(str(int(p, 8)) for p in parts))
+                except ValueError:
+                    continue
+            else:
+                continue
+        if (address.is_private or address.is_loopback
+                or address.is_link_local or address.is_reserved
+                or address.is_multicast
+                or address.is_unspecified):
+            return True
+    return False
+
+
+def scan_indicators(payload: str):
+    """Score one payload against the upgraded indicator
+    classes. Returns (indicator_class, oat_class) for the
+    first class that hits, in severity order, or None. Pure
+    pattern classification over the presented payload — the
+    shield reaches into nothing."""
+    lowered = payload.lower()
+    if 'content-length' in lowered \
+            and 'transfer-encoding' in lowered:
+        return ('DESYNC_DUAL_CL_TE', None)
+    if _TE_OBFUSCATED.search(lowered) \
+            and 'transfer-encoding' not in lowered:
+        return ('TE_OBFUSCATION', None)
+    if '\r' in payload or '\n' in payload \
+            or '%0d' in lowered or '%0a' in lowered:
+        return ('CRLF_INJECTION', None)
+    if _ssrf_literal_hit(payload):
+        return ('SSRF_TARGET', None)
+    if ('../' in payload or '..\\' in payload
+            or '%2e%2e' in lowered or '..%2f' in lowered
+            or '%c0%af' in lowered or '%00' in lowered):
+        return ('PATH_TRAVERSAL', None)
+    if any(ord(c) < 32 and c not in ('\t', '\r', '\n')
+           for c in payload):
+        return ('LOG_INJECTION', None)
+    if '{{' in payload or '${' in payload or '#{' in payload:
+        return ('SSTI_PROBE', None)
+    if any(token in payload for token in
+           ('"$gt"', '"$where"', '"$ne"', '"$regex"',
+            '"$exists"')):
+        return ('NOSQL_OPERATOR', None)
+    if _MASS_ASSIGNMENT.search(payload):
+        return ('MASS_ASSIGNMENT', None)
+    return None
+
+
+# The edge posture checklist of record (shield-upgrade
+# research, Area 4: TLSRef/Mozilla guidelines v6.0 and the
+# OWASP header cheat sheets, 2026 corrections applied). The
+# shield carries the checklist and verifies posture only
+# against presented evidence — it fetches nothing.
+EDGE_POSTURE_CHECKLIST = (
+    'TLS 1.2 and TLS 1.3 only; TLS 1.2 restricted to'
+    ' ECDHE+AEAD suites',
+    'Session tickets off (a leaked ticket key decrypts past'
+    ' traffic)',
+    'HSTS max-age=63072000; includeSubDomains and preload'
+    ' only once every subdomain is verified HTTPS-clean',
+    'Hybrid X25519MLKEM768 key exchange first where the TLS'
+    ' stack is OpenSSL >= 3.5',
+    'OCSP stapling removed: Let\u2019s Encrypt no longer'
+    ' supports OCSP, so stapling configuration is dead'
+    ' weight',
+    'Content-Security-Policy strict and nonce-based, rolled'
+    ' out first as Content-Security-Policy-Report-Only',
+    'X-Content-Type-Options: nosniff',
+    'X-XSS-Protection: 0 (the legacy auditor is disabled,'
+    ' not enabled)',
+    'Referrer-Policy: strict-origin-when-cross-origin',
+    'Permissions-Policy: geolocation=(), camera=(),'
+    ' microphone=()',
+    'frame-ancestors via CSP, or X-Frame-Options: DENY as'
+    ' fallback',
+    'Server and X-Powered-By removed or sanitized',
+    'No Access-Control-Allow-Origin: * on credentialed'
+    ' endpoints',
+    'Proxy and application parsers in agreement: dual'
+    ' Content-Length + Transfer-Encoding rejected, raw'
+    ' request URI passed, forwarded headers overwritten by'
+    ' the proxy, never appended',
+    'Exceptional conditions fail closed: parser errors,'
+    ' oversized bodies, and evaluator errors resolve to'
+    ' block + log',
+)
+# The resolve-validate-pin discipline (OWASP SSRF Prevention)
+# is this platform's recorded discipline for any server-side
+# fetch anywhere it serves: the shield itself performs no
+# fetch, and records the discipline so no component invents
+# a weaker one.
+SSRF_FETCH_DISCIPLINE = (
+    'Allowlist scheme + host + port; deny by default; never'
+    ' denylist or regex the URL string',
+    'Resolve DNS and classify every resolved IP with'
+    ' ipaddress: block RFC1918, loopback, link-local'
+    ' (including 169.254.169.254), IPv6 local/unique-local,'
+    ' multicast/reserved, and IPv4-mapped or encoded forms',
+    'Pin the validated IP for the actual connection, to'
+    ' defeat DNS-rebinding TOCTOU',
+    'Disable redirects, or re-run the full validation on'
+    ' every redirect hop',
+    'Short timeouts, bounded response size, never reflect'
+    ' raw upstream responses',
+)
+
 
 class LabyrinthShieldDenied(Exception):
     """The requested Labyrinth Shield operation is not allowed."""
@@ -87,12 +254,14 @@ class LabyrinthShieldService:
 
     def __init__(self, database_path, operator_verifier, audit, *,
                  shield=None, rate_limit=30, rate_window_seconds=60.0,
-                 isolation_threshold=3, clock=time.time):
+                 isolation_threshold=3, stuffing_source_threshold=5,
+                 clock=time.time):
         if audit is None or not callable(getattr(audit, 'preserve', None)):
             raise LabyrinthShieldDenied(
                 'Sanders Labyrinth Shield requires a working Glass-Box'
                 ' audit adapter')
-        if rate_limit < 1 or isolation_threshold < 1:
+        if rate_limit < 1 or isolation_threshold < 1 \
+                or stuffing_source_threshold < 2:
             raise LabyrinthShieldDenied('Invalid rate or isolation limits')
         self._path = Path(database_path)
         self._path.parent.mkdir(parents=True, exist_ok=True)
@@ -102,6 +271,7 @@ class LabyrinthShieldService:
         self._rate_limit = int(rate_limit)
         self._rate_window = float(rate_window_seconds)
         self._isolation_threshold = int(isolation_threshold)
+        self._stuffing_source_threshold = int(stuffing_source_threshold)
         self._clock = clock
         self.identity = IDENTITY
         self.geofence = GeofencePolicy(IDENTITY)
@@ -160,6 +330,23 @@ class LabyrinthShieldService:
                 );
                 """
             )
+            # Shield upgrade (2026-11-26): evaluations gain
+            # the upgraded indicator class, its OAT class, and
+            # the account reference the multi-key rate buckets
+            # key on. Pre-existing stores gain the columns by
+            # migration; the payload itself is still never
+            # stored — only its SHA-256.
+            columns = {
+                row['name']
+                for row in db.execute(
+                    'PRAGMA table_info(labyrinth_evaluations)')
+            }
+            for column in ('indicator_class', 'oat_class',
+                           'account_ref'):
+                if column not in columns:
+                    db.execute(
+                        'ALTER TABLE labyrinth_evaluations'
+                        f' ADD COLUMN {column} TEXT')
             # The durable blocklist is the record; the recovered
             # instance is kept in step with it, so a restart loses
             # nothing.
@@ -231,6 +418,9 @@ class LabyrinthShieldService:
             'payload_sha256': row['payload_sha256'],
             'decision': row['decision'],
             'reason': row['reason'],
+            'indicator_class': row['indicator_class'],
+            'oat_class': row['oat_class'],
+            'account_ref': row['account_ref'],
             'shield_hash': row['shield_hash'],
             'receipt_id': row['receipt_id'],
         }
@@ -264,7 +454,8 @@ class LabyrinthShieldService:
 
     # -- evaluation ---------------------------------------------------
 
-    def evaluate(self, actor, role, source, payload, *, region=None):
+    def evaluate(self, actor, role, source, payload, *, region=None,
+                 account_ref=None):
         """Evaluate one payload through the recovered shield, receipted.
 
         The payload itself is never stored — only its SHA-256. An
@@ -272,6 +463,16 @@ class LabyrinthShieldService:
         without reaching the shield. A source rejected as malicious
         ``isolation_threshold`` times is isolated in the same
         transaction as the evaluation that crosses the threshold.
+
+        Shield upgrade (2026-11-26): before the recovered scan, the
+        service scores the payload against its upgraded indicator
+        classes (desync/CRLF, SSRF literal targets, traversal, log
+        injection, SSTI, NoSQL operators, mass assignment) and,
+        when an account reference is presented, against the
+        multi-key credential-stuffing signal — one account reached
+        from many distinct sources inside the window is rejected
+        and recorded as CREDENTIAL_STUFFING (OAT-008), because a
+        per-source limit alone falls to source rotation.
         """
         self._geo(region)
         self._guard_access(actor, role, 'EVALUATION', source or '',
@@ -280,7 +481,13 @@ class LabyrinthShieldService:
             raise LabyrinthShieldDenied('An evaluation source is required')
         if not isinstance(payload, str):
             raise LabyrinthShieldDenied('The payload must be text')
+        if account_ref is not None and (
+                not isinstance(account_ref, str)
+                or not account_ref.strip()):
+            raise LabyrinthShieldDenied(
+                'An account reference must be non-empty text')
         source = source.strip()
+        account_ref = account_ref.strip() if account_ref else None
         now = self._now()
         payload_sha256 = hashlib.sha256(payload.encode('utf-8')).hexdigest()
         evaluation_id = f'ls-eval-{uuid.uuid4().hex[:16]}'
@@ -298,14 +505,34 @@ class LabyrinthShieldService:
                 ' ORDER BY isolated_at DESC LIMIT 1',
                 (source,),
             ).fetchone()
+            account_sources = 0
+            if account_ref is not None:
+                account_sources = db.execute(
+                    'SELECT COUNT(DISTINCT source) AS n'
+                    ' FROM labyrinth_evaluations'
+                    ' WHERE account_ref = ? AND evaluated_at >= ?',
+                    (account_ref, now - self._rate_window),
+                ).fetchone()['n']
         if recent >= self._rate_limit:
             raise LabyrinthShieldDenied(
                 'Rate limit exceeded: source is over its evaluation'
                 ' allowance for the current window')
+        indicator_class = None
+        oat_class = None
         if isolated is not None:
             decision, reason = 'isolated', 'source_isolated'
         elif source in self._shield.blocklist:
             decision, reason = 'blocked', 'source_blocked'
+        elif account_ref is not None \
+                and account_sources >= self._stuffing_source_threshold:
+            indicator_class = 'CREDENTIAL_STUFFING'
+            oat_class = INDICATOR_OAT[indicator_class]
+            decision = 'rejected'
+            reason = 'indicator_credential_stuffing'
+        elif (hit := scan_indicators(payload)) is not None:
+            indicator_class, oat_class = hit
+            decision = 'rejected'
+            reason = f'indicator_{indicator_class.lower()}'
         elif self._shield.evaluate_packet(source, payload):
             decision, reason = 'allowed', 'structural_scan_passed'
         else:
@@ -322,14 +549,17 @@ class LabyrinthShieldService:
                         'LABYRINTH_EVALUATION', actor=actor,
                         evaluation_id=evaluation_id, source=source,
                         payload_sha256=payload_sha256, decision=decision,
-                        reason=reason)
+                        reason=reason, indicator_class=indicator_class,
+                        oat_class=oat_class, account_ref=account_ref)
                     db.execute(
                         'INSERT INTO labyrinth_evaluations (evaluation_id,'
                         ' evaluated_at, source, payload_sha256, decision,'
-                        ' reason, shield_hash, receipt_id)'
-                        ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                        ' reason, indicator_class, oat_class, account_ref,'
+                        ' shield_hash, receipt_id)'
+                        ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                         (evaluation_id, now, source, payload_sha256,
-                         decision, reason, self._shield.compute_shield_hash(),
+                         decision, reason, indicator_class, oat_class,
+                         account_ref, self._shield.compute_shield_hash(),
                          receipt_id),
                     )
                     if decision == 'rejected':
@@ -611,6 +841,27 @@ class LabyrinthShieldService:
                 raise
         return self.integrity_status(actor, 'OPERATOR', region=region)
 
+    # -- edge posture (shield upgrade, 2026-11-26) ---------------------
+
+    def posture_view(self, actor, role, *, region=None):
+        """The edge posture checklist of record and the SSRF
+        fetch discipline. Posture is verified against presented
+        evidence by the operator; this view carries the standard
+        the evidence is checked against — the shield fetches
+        nothing and inspects no live endpoint."""
+        self._geo(region)
+        self._guard_access(actor, role, 'INTEGRITY', 'posture',
+                           'posture view')
+        return {
+            'checklist': list(EDGE_POSTURE_CHECKLIST),
+            'ssrf_fetch_discipline': list(SSRF_FETCH_DISCIPLINE),
+            'indicator_classes': list(INDICATOR_CLASSES),
+            'note': 'Posture verification is by presented'
+                    ' evidence against this checklist; no live'
+                    ' endpoint is fetched or inspected by this'
+                    ' platform.',
+        }
+
     # -- status / check-in --------------------------------------------------
 
     def status(self) -> dict:
@@ -650,6 +901,9 @@ class LabyrinthShieldService:
             'rate_limit': self._rate_limit,
             'rate_window_seconds': self._rate_window,
             'isolation_threshold': self._isolation_threshold,
+            'indicator_classes': list(INDICATOR_CLASSES),
+            'stuffing_source_threshold':
+                self._stuffing_source_threshold,
             'latest_check_in': latest,
         }
 
