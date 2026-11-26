@@ -447,6 +447,7 @@ LS_EVALUATION_ROUTE = re.compile(r'^/api/labyrinth-shield/evaluations/([A-Za-z0-
 LS_ISOLATION_RELEASE_ROUTE = re.compile(r'^/api/labyrinth-shield/isolations/([A-Za-z0-9_-]{1,128})/release$')
 MN_ANOMALY_ROUTE = re.compile(r'^/api/minotaur/anomalies/([A-Za-z0-9_-]{1,128})$')
 MN_ANOMALY_ACTION_ROUTE = re.compile(r'^/api/minotaur/anomalies/([A-Za-z0-9_-]{1,128})/action$')
+MN_DECOY_RETIRE_ROUTE = re.compile(r'^/api/minotaur/shield-decoys/([A-Za-z0-9_-]{1,128})/retire$')
 MN_CLEARANCE_ROUTE = re.compile(r'^/api/minotaur/clearances/([A-Za-z0-9_-]{1,128})$')
 GBA_ANCHOR_ROUTE = re.compile(r'^/api/glass-box-audit/anchors/([A-Za-z0-9_-]{1,128})$')
 GBA_ANCHOR_WITNESS_ROUTE = re.compile(r'^/api/glass-box-audit/anchors/([A-Za-z0-9_-]{1,128})/witness$')
@@ -467,6 +468,7 @@ HYDRA_ASSET_ASSESS_ROUTE = re.compile(r'^/api/hydra-q/assets/([A-Za-z0-9_-]{1,12
 LAB_ANALYSIS_ROUTE = re.compile(r'^/api/labyrinth/analyses/([A-Za-z0-9_-]{1,128})$')
 LAB_ANALYSIS_ACTION_ROUTE = re.compile(r'^/api/labyrinth/analyses/([A-Za-z0-9_-]{1,128})/action$')
 LAB_ANALYSIS_RESULT_ROUTE = re.compile(r'^/api/labyrinth/analyses/([A-Za-z0-9_-]{1,128})/result$')
+LAB_GRAPH_ROUTE = re.compile(r'^/api/labyrinth/graphs/([A-Za-z0-9_-]{1,128})$')
 CERB_ASSESSMENT_ROUTE = re.compile(r'^/api/cerberus/assessments/([A-Za-z0-9_-]{1,128})$')
 CERB_ASSESSMENT_ACTION_ROUTE = re.compile(r'^/api/cerberus/assessments/([A-Za-z0-9_-]{1,128})/action$')
 CERB_ASSESSMENT_DETERMINATION_ROUTE = re.compile(r'^/api/cerberus/assessments/([A-Za-z0-9_-]{1,128})/determination$')
@@ -555,6 +557,7 @@ SANDERS_SENTINEL_BLOODLINE_PROGRAM_DESIGNATION_END_ROUTE = re.compile(r'^/api/sa
 SANDERS_SENTINEL_BLOODLINE_FAMILY_NOTIFICATION_DELIVERY_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/family-notifications/([A-Za-z0-9_-]{1,128})/delivery$')
 SANDERS_SENTINEL_BLOODLINE_RECOVERY_ASSISTANCE_COMPLETE_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/recovery-assistance/([A-Za-z0-9_-]{1,128})/complete$')
 SANDERS_SENTINEL_BLOODLINE_HLP_DESIGNATION_END_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/hlp-designations/([A-Za-z0-9_-]{1,128})/end$')
+SANDERS_SENTINEL_BLOODLINE_SHIELD_DESIGNATION_END_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/shield-designations/([A-Za-z0-9_-]{1,128})/end$')
 LIL_MAMA_RECORD_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})$')
 LIL_MAMA_RECORD_ACTION_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/action$')
 LIL_MAMA_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -635,6 +638,7 @@ SANDERS_PATRIOT_SAINT_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-patriot-s
 SANDERS_PATRIOT_SAINT_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-patriot-saint/records/([A-Za-z0-9_-]{1,128})/outcome$')
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})$')
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_ACTION_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/action$')
+SANDERS_PATRIOT_SAINT_BLOODLINE_SHIELD_DESIGNATION_END_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/shield-designations/([A-Za-z0-9_-]{1,128})/end$')
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_COORDINATION_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/coordination$')
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_REQUEST_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/funding-request$')
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_DETERMINATION_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/funding-determination$')
@@ -733,6 +737,7 @@ THE_GODFATHER_BLOODLINE_RESERVE_COUNTERPART_ROUTE = re.compile(r'^/api/the-godfa
 THE_GODFATHER_BLOODLINE_TRANSPORT_MATTER_FULFILLMENT_ROUTE = re.compile(r'^/api/the-godfather/bloodline/transport-matters/([A-Za-z0-9_-]{1,128})/fulfillment$')
 THE_GODFATHER_BLOODLINE_RESERVE_FULFILLMENT_ROUTE = re.compile(r'^/api/the-godfather/bloodline/reserves/([A-Za-z0-9_-]{1,128})/fulfillment$')
 THE_GODFATHER_BLOODLINE_HS_DESIGNATION_END_ROUTE = re.compile(r'^/api/the-godfather/bloodline/hs-designations/([A-Za-z0-9_-]{1,128})/end$')
+THE_GODFATHER_BLOODLINE_SHIELD_DESIGNATION_END_ROUTE = re.compile(r'^/api/the-godfather/bloodline/shield-designations/([A-Za-z0-9_-]{1,128})/end$')
 SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ROUTE = re.compile(r'^/api/sanders-ethics-impact-collective/records/([A-Za-z0-9_-]{1,128})$')
 SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-ethics-impact-collective/records/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-ethics-impact-collective/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -845,6 +850,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         ls_evaluation_match = LS_EVALUATION_ROUTE.fullmatch(path)
         mn_anomaly_match = MN_ANOMALY_ROUTE.fullmatch(path)
         mn_anomaly_action_match = MN_ANOMALY_ACTION_ROUTE.fullmatch(path)
+        mn_decoy_retire_match = MN_DECOY_RETIRE_ROUTE.fullmatch(path)
         mn_clearance_match = MN_CLEARANCE_ROUTE.fullmatch(path)
         gba_anchor_match = GBA_ANCHOR_ROUTE.fullmatch(path)
         gba_anchor_witness_match = GBA_ANCHOR_WITNESS_ROUTE.fullmatch(path)
@@ -865,6 +871,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         lab_analysis_match = LAB_ANALYSIS_ROUTE.fullmatch(path)
         lab_analysis_action_match = LAB_ANALYSIS_ACTION_ROUTE.fullmatch(path)
         lab_analysis_result_match = LAB_ANALYSIS_RESULT_ROUTE.fullmatch(path)
+        lab_graph_match = LAB_GRAPH_ROUTE.fullmatch(path)
         cerb_assessment_match = CERB_ASSESSMENT_ROUTE.fullmatch(path)
         cerb_assessment_action_match = CERB_ASSESSMENT_ACTION_ROUTE.fullmatch(path)
         cerb_assessment_determination_match = CERB_ASSESSMENT_DETERMINATION_ROUTE.fullmatch(path)
@@ -955,6 +962,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         sentinel_bloodline_family_notification_delivery_match = SANDERS_SENTINEL_BLOODLINE_FAMILY_NOTIFICATION_DELIVERY_ROUTE.fullmatch(path)
         sentinel_bloodline_recovery_assistance_complete_match = SANDERS_SENTINEL_BLOODLINE_RECOVERY_ASSISTANCE_COMPLETE_ROUTE.fullmatch(path)
         sentinel_bloodline_hlp_designation_end_match = SANDERS_SENTINEL_BLOODLINE_HLP_DESIGNATION_END_ROUTE.fullmatch(path)
+        sentinel_bloodline_shield_designation_end_match = SANDERS_SENTINEL_BLOODLINE_SHIELD_DESIGNATION_END_ROUTE.fullmatch(path)
         lil_mama_record_match = LIL_MAMA_RECORD_ROUTE.fullmatch(path)
         lil_mama_record_action_match = LIL_MAMA_RECORD_ACTION_ROUTE.fullmatch(path)
         lil_mama_record_outcome_match = LIL_MAMA_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -1035,6 +1043,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         patriot_saint_record_outcome_match = SANDERS_PATRIOT_SAINT_RECORD_OUTCOME_ROUTE.fullmatch(path)
         patriot_saint_bloodline_matter_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_ROUTE.fullmatch(path)
         patriot_saint_bloodline_matter_action_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_ACTION_ROUTE.fullmatch(path)
+        patriot_saint_bloodline_shield_designation_end_match = SANDERS_PATRIOT_SAINT_BLOODLINE_SHIELD_DESIGNATION_END_ROUTE.fullmatch(path)
         patriot_saint_bloodline_matter_coordination_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_COORDINATION_ROUTE.fullmatch(path)
         patriot_saint_bloodline_matter_funding_request_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_REQUEST_ROUTE.fullmatch(path)
         patriot_saint_bloodline_matter_funding_determination_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_DETERMINATION_ROUTE.fullmatch(path)
@@ -1133,6 +1142,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         the_godfather_bloodline_transport_matter_fulfillment_match = THE_GODFATHER_BLOODLINE_TRANSPORT_MATTER_FULFILLMENT_ROUTE.fullmatch(path)
         the_godfather_bloodline_reserve_fulfillment_match = THE_GODFATHER_BLOODLINE_RESERVE_FULFILLMENT_ROUTE.fullmatch(path)
         the_godfather_bloodline_hs_designation_end_match = THE_GODFATHER_BLOODLINE_HS_DESIGNATION_END_ROUTE.fullmatch(path)
+        the_godfather_bloodline_shield_designation_end_match = THE_GODFATHER_BLOODLINE_SHIELD_DESIGNATION_END_ROUTE.fullmatch(path)
         sanders_ethics_impact_collective_record_match = SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ROUTE.fullmatch(path)
         sanders_ethics_impact_collective_record_action_match = SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ACTION_ROUTE.fullmatch(path)
         sanders_ethics_impact_collective_record_outcome_match = SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -1249,6 +1259,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                 '/api/labyrinth-shield/isolations',
                                 '/api/labyrinth-shield/integrity',
                                 '/api/labyrinth-shield/integrity-pin',
+                                '/api/labyrinth-shield/posture',
                                 '/api/labyrinth-shield/check-in')
                        or ls_evaluation_match is not None
                        or ls_isolation_release_match is not None)
@@ -1259,10 +1270,22 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                 '/api/minotaur/patrol',
                                 '/api/minotaur/anomalies',
                                 '/api/minotaur/clearances',
+                                '/api/minotaur/shield-targets',
+                                '/api/minotaur/shield-baselines',
+                                '/api/minotaur/shield-patrol',
+                                '/api/minotaur/shield-patrols',
+                                '/api/minotaur/shield-decoys',
+                                '/api/minotaur/shield-anchor',
+                                '/api/minotaur/attestations/verify',
+                                '/api/minotaur/self-protection',
+                                '/api/minotaur/self-protection/checks',
+                                '/api/minotaur/crypto-environment',
+                                '/api/minotaur/crypto-environment/check',
                                 '/api/minotaur/check-in')
                        or mn_anomaly_match is not None
                        or mn_anomaly_action_match is not None
-                       or mn_clearance_match is not None)
+                       or mn_clearance_match is not None
+                       or mn_decoy_retire_match is not None)
         is_gba_route = (path in ('/api/glass-box-audit/status',
                                  '/api/glass-box-audit/anchors',
                                  '/api/glass-box-audit/anchors/produce',
@@ -1317,12 +1340,17 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                            or hydra_asset_assess_match is not None)
         is_lab_route = (path in ('/api/labyrinth/status',
                                  '/api/labyrinth/analyses',
+                                 '/api/labyrinth/graphs',
+                                 '/api/labyrinth/graph-edges',
+                                 '/api/labyrinth/policies',
+                                 '/api/labyrinth/flow-checks',
                                  '/api/labyrinth/contract',
                                  '/api/labyrinth/operation-check',
                                  '/api/labyrinth/check-in')
                         or lab_analysis_match is not None
                         or lab_analysis_action_match is not None
-                        or lab_analysis_result_match is not None)
+                        or lab_analysis_result_match is not None
+                        or lab_graph_match is not None)
         is_cerb_route = (path in ('/api/cerberus/status',
                                   '/api/cerberus/assessments',
                                   '/api/cerberus/contract',
@@ -1522,6 +1550,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                       '/api/sanders-sentinel/bloodline/human-life-protection',
                                       '/api/sanders-sentinel/bloodline/hlp-designations',
                                       '/api/sanders-sentinel/bloodline/hlp-tests',
+                                      '/api/sanders-sentinel/bloodline/shield-coverage',
+                                      '/api/sanders-sentinel/bloodline/shield-designations',
+                                      '/api/sanders-sentinel/bloodline/shield-tests',
                                       '/api/sanders-sentinel/bloodline/threat-records',
                                       '/api/sanders-sentinel/bloodline/prevention-records',
                                       '/api/sanders-sentinel/bloodline/handover-records',
@@ -1559,7 +1590,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or sentinel_bloodline_program_designation_end_match is not None
                                   or sentinel_bloodline_family_notification_delivery_match is not None
                                   or sentinel_bloodline_recovery_assistance_complete_match is not None
-                                  or sentinel_bloodline_hlp_designation_end_match is not None)
+                                  or sentinel_bloodline_hlp_designation_end_match is not None
+                                  or sentinel_bloodline_shield_designation_end_match is not None)
         is_lil_mama_route = (path in ('/api/lil-mama/status',
                                       '/api/lil-mama/records',
                                       '/api/lil-mama/design',
@@ -1768,12 +1800,16 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                            '/api/sanders-patriot-saint/operation-check',
                                            '/api/sanders-patriot-saint/bloodline/remit',
                                            '/api/sanders-patriot-saint/bloodline/matters',
+                                           '/api/sanders-patriot-saint/bloodline/shield-coverage',
+                                           '/api/sanders-patriot-saint/bloodline/shield-designations',
+                                           '/api/sanders-patriot-saint/bloodline/shield-tests',
                                            '/api/sanders-patriot-saint/check-in')
                                   or patriot_saint_record_match is not None
                                   or patriot_saint_record_action_match is not None
                                   or patriot_saint_record_outcome_match is not None
                                   or patriot_saint_bloodline_matter_match is not None
                                   or patriot_saint_bloodline_matter_action_match is not None
+                                  or patriot_saint_bloodline_shield_designation_end_match is not None
                                   or patriot_saint_bloodline_matter_coordination_match is not None
                                   or patriot_saint_bloodline_matter_funding_request_match is not None
                                   or patriot_saint_bloodline_matter_funding_determination_match is not None
@@ -1998,6 +2034,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                            '/api/the-godfather/bloodline/human-survival',
                                            '/api/the-godfather/bloodline/hs-designations',
                                            '/api/the-godfather/bloodline/hs-tests',
+                                           '/api/the-godfather/bloodline/shield-coverage',
+                                           '/api/the-godfather/bloodline/shield-designations',
+                                           '/api/the-godfather/bloodline/shield-tests',
                                            '/api/the-godfather/bloodline/logistics-records',
                                            '/api/the-godfather/bloodline/movement-records',
                                            '/api/the-godfather/bloodline/lifespan-records',
@@ -2020,7 +2059,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or the_godfather_bloodline_reserve_counterpart_match is not None
                                   or the_godfather_bloodline_transport_matter_fulfillment_match is not None
                                   or the_godfather_bloodline_reserve_fulfillment_match is not None
-                                  or the_godfather_bloodline_hs_designation_end_match is not None)
+                                  or the_godfather_bloodline_hs_designation_end_match is not None
+                                  or the_godfather_bloodline_shield_designation_end_match is not None)
         is_sanders_ethics_impact_collective_route = (path in ('/api/sanders-ethics-impact-collective/status',
                                                               '/api/sanders-ethics-impact-collective/records',
                                                               '/api/sanders-ethics-impact-collective/design',
@@ -2163,9 +2203,15 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/labyrinth-shield/blocklist',
                                             '/api/labyrinth-shield/isolations',
                                             '/api/labyrinth-shield/integrity',
+                                            '/api/labyrinth-shield/posture',
                                             '/api/minotaur/status',
                                             '/api/minotaur/targets',
                                             '/api/minotaur/anomalies',
+                                            '/api/minotaur/shield-targets',
+                                            '/api/minotaur/shield-patrols',
+                                            '/api/minotaur/shield-anchor',
+                                            '/api/minotaur/self-protection',
+                                            '/api/minotaur/crypto-environment',
                                             '/api/glass-box-audit/status',
                                             '/api/glass-box-audit/anchors',
                                             '/api/glass-box-audit/verifications',
@@ -2334,6 +2380,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/sanders-patriot-saint/records',
                                             '/api/sanders-patriot-saint/design',
                                             '/api/sanders-patriot-saint/bloodline/remit',
+                                            '/api/sanders-patriot-saint/bloodline/shield-coverage',
                                             '/api/sanders-freedom-revolution/status',
                                             '/api/sanders-freedom-revolution/records',
                                             '/api/sanders-freedom-revolution/design',
@@ -2417,6 +2464,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/the-godfather/design',
                                             '/api/the-godfather/bloodline/remit',
                                             '/api/the-godfather/bloodline/human-survival',
+                                            '/api/the-godfather/bloodline/shield-coverage',
                                             '/api/sanders-ethics-impact-collective/status',
                                             '/api/sanders-ethics-impact-collective/records',
                                             '/api/sanders-ethics-impact-collective/design')
@@ -2668,6 +2716,12 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             allowed = ('GET', 'POST')
         if path == '/api/sanders-sentinel/bloodline/hlp-tests':
             allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/shield-coverage':
+            allowed = ('GET',)
+        if path == '/api/sanders-sentinel/bloodline/shield-designations':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/shield-tests':
+            allowed = ('GET', 'POST')
         if path == '/api/sanders-sentinel/bloodline/threat-records':
             allowed = ('GET', 'POST')
         if path == '/api/sanders-sentinel/bloodline/prevention-records':
@@ -2729,6 +2783,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-patriot-saint/records':
             allowed = ('GET', 'POST')
         if path == '/api/sanders-patriot-saint/bloodline/matters':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-patriot-saint/bloodline/shield-designations':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-patriot-saint/bloodline/shield-tests':
             allowed = ('GET', 'POST')
         if path == '/api/sanders-freedom-revolution/records':
             allowed = ('GET', 'POST')
@@ -2793,6 +2851,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/the-godfather/bloodline/hs-designations':
             allowed = ('GET', 'POST')
         if path == '/api/the-godfather/bloodline/hs-tests':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/shield-designations':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/shield-tests':
             allowed = ('GET', 'POST')
         if path == '/api/the-godfather/bloodline/logistics-records':
             allowed = ('GET', 'POST')
@@ -3542,6 +3604,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = labyrinth_shield.integrity_pin(identity)
                         return respond(start, '200 OK', {'integrity': record})
+                    if path == '/api/labyrinth-shield/posture':
+                        return respond(start, '200 OK', {'posture': labyrinth_shield.posture_view(identity, ls_read_role)})
                     return check_in(labyrinth_shield)
                 if is_mn_route:
                     if minotaur is None:
@@ -3586,6 +3650,55 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                     if mn_clearance_match:
                         record = minotaur.clearance_view(identity, mn_role, mn_clearance_match.group(1))
                         return respond(start, '200 OK', {'clearance': record})
+                    if path == '/api/minotaur/shield-targets':
+                        return respond(start, '200 OK', {'shield_targets': minotaur.shield_targets(identity, mn_role)})
+                    if path == '/api/minotaur/shield-baselines':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = minotaur.pin_shield_baselines(identity)
+                        return respond(start, '201 Created', {'shield_baselines': record})
+                    if path == '/api/minotaur/shield-patrol':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = minotaur.shield_patrol(identity)
+                        return respond(start, '201 Created', {'shield_patrol': record})
+                    if path == '/api/minotaur/shield-patrols':
+                        return respond(start, '200 OK', {'shield_patrols': minotaur.shield_patrols_list(identity, mn_role)})
+                    if path == '/api/minotaur/shield-decoys':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'decoys': minotaur.decoys_list(identity, mn_role)})
+                        if set(data) != {'shield_id', 'target', 'note'}:
+                            raise ValueError('unexpected fields')
+                        record = minotaur.plant_decoy(identity, data['shield_id'], data['target'], data['note'])
+                        return respond(start, '201 Created', {'decoy': record})
+                    if mn_decoy_retire_match:
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = minotaur.retire_decoy(identity, mn_decoy_retire_match.group(1))
+                        return respond(start, '200 OK', {'decoy': record})
+                    if path == '/api/minotaur/shield-anchor':
+                        return respond(start, '200 OK', {'shield_anchor': minotaur.shield_anchor(identity, mn_role)})
+                    if path == '/api/minotaur/attestations/verify':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = minotaur.verify_attestation_chain(identity, mn_role)
+                        return respond(start, '200 OK', {'attestation_chain': record})
+                    if path == '/api/minotaur/self-protection':
+                        return respond(start, '200 OK', {'self_protection': minotaur.self_protection_view(identity, mn_role)})
+                    if path == '/api/minotaur/self-protection/checks':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'self_protection_checks': minotaur.self_protection_checks(identity, mn_role)})
+                        if set(data) != {'protection_key', 'outcome', 'evidence_ref', 'detail'}:
+                            raise ValueError('unexpected fields')
+                        record = minotaur.record_self_protection_check(identity, data['protection_key'], data['outcome'], data['evidence_ref'], data['detail'])
+                        return respond(start, '201 Created', {'self_protection_check': record})
+                    if path == '/api/minotaur/crypto-environment':
+                        return respond(start, '200 OK', {'crypto_environment': minotaur.crypto_environment_checks(identity, mn_role)})
+                    if path == '/api/minotaur/crypto-environment/check':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = minotaur.record_crypto_environment_check(identity)
+                        return respond(start, '201 Created', {'crypto_environment_check': record})
                     return check_in(minotaur)
                 if is_gba_route:
                     if glass_box_audit is None:
@@ -3841,6 +3954,31 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                     if lab_analysis_match:
                         record = labyrinth.analysis_view(identity, lab_role, lab_analysis_match.group(1))
                         return respond(start, '200 OK', {'analysis': record})
+                    if path == '/api/labyrinth/graphs':
+                        if set(data) != {'graph_ref', 'entry_refs', 'crown_refs'}:
+                            raise ValueError('unexpected fields')
+                        record = labyrinth.record_graph(identity, data['graph_ref'], data['entry_refs'], data['crown_refs'])
+                        return respond(start, '201 Created', {'graph': record})
+                    if lab_graph_match:
+                        record = labyrinth.graph_view(identity, lab_role, lab_graph_match.group(1))
+                        return respond(start, '200 OK', {'graph': record})
+                    if path == '/api/labyrinth/graph-edges':
+                        if set(data) != {'graph_ref', 'from_ref', 'to_ref', 'relationship'}:
+                            raise ValueError('unexpected fields')
+                        record = labyrinth.record_edge(identity, data['graph_ref'], data['from_ref'], data['to_ref'], data['relationship'])
+                        return respond(start, '201 Created', {'edge': record})
+                    if path == '/api/labyrinth/policies':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'policies': labyrinth.policies_list(identity, lab_role)})
+                        if set(data) != {'from_platform', 'to_platform', 'endpoint_ref', 'mode'}:
+                            raise ValueError('unexpected fields')
+                        record = labyrinth.record_policy(identity, data['from_platform'], data['to_platform'], data['endpoint_ref'], data['mode'])
+                        return respond(start, '201 Created', {'policy': record})
+                    if path == '/api/labyrinth/flow-checks':
+                        if set(data) != {'from_platform', 'to_platform', 'endpoint_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = labyrinth.flow_check(identity, data['from_platform'], data['to_platform'], data['endpoint_ref'])
+                        return respond(start, '201 Created', {'flow_check': record})
                     return check_in(labyrinth)
                 if is_cerb_route:
                     if cerberus is None:
@@ -4802,6 +4940,29 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = sanders_sentinel.record_hlp_test(identity, data['part_key'], data['stages'], data['outcome'], data['detail_ref'])
                         return respond(start, '201 Created', {'hlp_test': record})
+                    if path == '/api/sanders-sentinel/bloodline/shield-coverage':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'shield_coverage': sanders_sentinel.shield_coverage_view(identity, sentinel_role)})
+                    if path == '/api/sanders-sentinel/bloodline/shield-designations':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'shield_designations': sanders_sentinel.shield_designations(identity, sentinel_role)})
+                        if set(data) != {'designation_ref', 'kind', 'authorization_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_shield_designation(identity, data['designation_ref'], data['kind'], data['authorization_ref'])
+                        return respond(start, '201 Created', {'shield_designation': record})
+                    if sentinel_bloodline_shield_designation_end_match:
+                        if set(data) != {'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.end_shield_designation(identity, sentinel_bloodline_shield_designation_end_match.group(1), data['detail_ref'])
+                        return respond(start, '200 OK', {'shield_designation': record})
+                    if path == '/api/sanders-sentinel/bloodline/shield-tests':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'shield_tests': sanders_sentinel.shield_tests(identity, sentinel_role)})
+                        if set(data) != {'phases', 'outcome', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_shield_test(identity, data['phases'], data['outcome'], data['detail_ref'])
+                        return respond(start, '201 Created', {'shield_test': record})
                     if path == '/api/sanders-sentinel/bloodline/threat-records':
                         if method == 'GET':
                             return respond(start, '200 OK', {'threat_records': sanders_sentinel.threat_records(identity, sentinel_role)})
@@ -5928,6 +6089,29 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         matter = sanders_patriot_saint.open_bloodline_matter(identity, data['matter_kind'], data['member_ref'], data['detail_ref'])
                         return respond(start, '201 Created', {'bloodline_matter': matter})
+                    if path == '/api/sanders-patriot-saint/bloodline/shield-coverage':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'shield_coverage': sanders_patriot_saint.shield_coverage_view(identity, patriot_saint_role)})
+                    if path == '/api/sanders-patriot-saint/bloodline/shield-designations':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'shield_designations': sanders_patriot_saint.shield_designations(identity, patriot_saint_role)})
+                        if set(data) != {'designation_ref', 'kind', 'authorization_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_patriot_saint.record_shield_designation(identity, data['designation_ref'], data['kind'], data['authorization_ref'])
+                        return respond(start, '201 Created', {'shield_designation': record})
+                    if patriot_saint_bloodline_shield_designation_end_match:
+                        if set(data) != {'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_patriot_saint.end_shield_designation(identity, patriot_saint_bloodline_shield_designation_end_match.group(1), data['detail_ref'])
+                        return respond(start, '200 OK', {'shield_designation': record})
+                    if path == '/api/sanders-patriot-saint/bloodline/shield-tests':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'shield_tests': sanders_patriot_saint.shield_tests(identity, patriot_saint_role)})
+                        if set(data) != {'phases', 'outcome', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_patriot_saint.record_shield_test(identity, data['phases'], data['outcome'], data['detail_ref'])
+                        return respond(start, '201 Created', {'shield_test': record})
                     if patriot_saint_bloodline_matter_action_match:
                         if set(data) != {'action'}:
                             raise ValueError('unexpected fields')
@@ -7030,6 +7214,29 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = the_godfather.record_hs_test(identity, data['part_key'], data['phases'], data['outcome'], data['detail_ref'])
                         return respond(start, '201 Created', {'hs_test': record})
+                    if path == '/api/the-godfather/bloodline/shield-coverage':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'shield_coverage': the_godfather.shield_coverage_view(identity, the_godfather_role)})
+                    if path == '/api/the-godfather/bloodline/shield-designations':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'shield_designations': the_godfather.shield_designations(identity, the_godfather_role)})
+                        if set(data) != {'designation_ref', 'kind', 'authorization_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_shield_designation(identity, data['designation_ref'], data['kind'], data['authorization_ref'])
+                        return respond(start, '201 Created', {'shield_designation': record})
+                    if the_godfather_bloodline_shield_designation_end_match:
+                        if set(data) != {'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.end_shield_designation(identity, the_godfather_bloodline_shield_designation_end_match.group(1), data['detail_ref'])
+                        return respond(start, '200 OK', {'shield_designation': record})
+                    if path == '/api/the-godfather/bloodline/shield-tests':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'shield_tests': the_godfather.shield_tests(identity, the_godfather_role)})
+                        if set(data) != {'phases', 'outcome', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_shield_test(identity, data['phases'], data['outcome'], data['detail_ref'])
+                        return respond(start, '201 Created', {'shield_test': record})
                     if path == '/api/the-godfather/bloodline/logistics-records':
                         if method == 'GET':
                             return respond(start, '200 OK', {'logistics_records': the_godfather.logistics_records(identity, the_godfather_role)})
