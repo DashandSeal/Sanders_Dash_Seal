@@ -1199,20 +1199,29 @@ class TestGlobalBenchmark(MinotaurWorkspaceMixin,
             OPERATOR, 'OPERATOR')
         limited = [e for e in view['benchmark']
                    if e['standing'] == 'ENVIRONMENT_LIMITED']
-        self.assertEqual(len(limited), 4)
+        self.assertEqual(len(limited), 1)
         for entry in limited:
             self.assertTrue(entry['limit'])
             self.assertTrue(entry['founder_decision'])
         controls = {e['control'] for e in limited}
         self.assertEqual(controls, {
-            'HYBRID_PQ_KEY_EXCHANGE_X25519MLKEM768',
-            'FIPS_140_3_VALIDATED_PQC_OPERATION',
-            'SC_12_CRYPTOGRAPHIC_KEY_ESTABLISHMENT_AND_MANAGEMENT',
-            'SC_13_CRYPTOGRAPHIC_PROTECTION_FIPS_VALIDATED'})
-        sc13 = {e['control']: e
-                for e in view['benchmark']}[
-                    'SC_13_CRYPTOGRAPHIC_PROTECTION_FIPS_VALIDATED']
-        self.assertIn('UNMET', sc13['basis'])
+            'FIPS_140_3_VALIDATED_PQC_OPERATION'})
+        by_control = {e['control']: e
+                      for e in view['benchmark']}
+        sc13 = by_control[
+            'SC_13_CRYPTOGRAPHIC_PROTECTION_FIPS_VALIDATED']
+        self.assertEqual(sc13['standing'],
+                         'RECORDED_WITH_REASON')
+        self.assertIn('certificate #5294', sc13['basis'])
+        sc12 = by_control[
+            'SC_12_CRYPTOGRAPHIC_KEY_ESTABLISHMENT_AND_MANAGEMENT']
+        self.assertEqual(sc12['standing'],
+                         'RECORDED_WITH_REASON')
+        hybrid = by_control[
+            'HYBRID_PQ_KEY_EXCHANGE_X25519MLKEM768']
+        self.assertEqual(hybrid['standing'],
+                         'RECORDED_WITH_REASON')
+        self.assertIn('X25519MLKEM768', hybrid['basis'])
 
     def test_accounting_carries_the_benchmark(self):
         view = self.service.completeness_accounting_view(
@@ -1304,9 +1313,9 @@ class TestShieldSelfProtection(unittest.TestCase):
                               entry['basis'])
             self.assertEqual(view['total'], 21)
             self.assertEqual(
-                view['already_protected'], 16)
+                view['already_protected'], 17)
             self.assertEqual(
-                view['construction_required'], 5)
+                view['construction_required'], 4)
 
 
 if __name__ == '__main__':
