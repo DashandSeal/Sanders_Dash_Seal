@@ -2,7 +2,7 @@
   "version": 1,
   "owner": "Roosevelt Sanders",
   "created": "2026-11-13",
-  "updated_at": "2026-11-25T21:46:00Z",
+  "updated_at": "2026-11-26T00:45:00Z",
   "note": "Initial state: every gate UNAPPROVED. No verifier has returned True for any gate. A gate flips to APPROVED only on an explicit owner approval for that specific gate, or a real verifier returning True.",
   "gates": {
     "release_verifier_pr2_checkout": {
@@ -70,12 +70,12 @@
       "note": "Owner approval given 2026-11-25 (chat): \"yes daedalus should be active\""
     },
     "ai_role_workers": {
-      "status": "UNAPPROVED",
-      "approved_by": null,
-      "approved_at": null,
-      "method": null,
+      "status": "APPROVED",
+      "approved_by": "Roosevelt Sanders",
+      "approved_at": "2026-11-26T00:45:00Z",
+      "method": "owner_approval",
       "verifier": null,
-      "note": null
+      "note": "Owner approval given 2026-11-25 (chat): \"Yes, lets do it\""
     }
   }
 }
