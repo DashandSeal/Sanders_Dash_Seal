@@ -38,7 +38,7 @@ findings when touched; the amendment's fifteen
 protections derive state from checks of record; the
 crypto environment determination follows the check,
 never the reverse; and the guarded documents stand
-in the watch set (21 documents, 20 required) with
+in the watch set (22 documents, 21 required) with
 sound manifest pairs.
 These tests use only stdlib fakes and temporary
 SQLite files: no network, no keys.
@@ -102,6 +102,9 @@ INHERITANCE_DOCUMENT = (
 BENCHMARK_DOCUMENT = (
     'docs/FOUNDER_DIRECTIVE_ENSURE_SHIELDS_BEST_'
     'GLOBALLY_2026-11-26.md')
+SHIELD_PROTECTION_DOCUMENT = (
+    'docs/FOUNDER_DIRECTIVE_SHIELDS_THEMSELVES_'
+    'PROTECTED_2026-11-26.md')
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 ORDER_LINE = (
@@ -176,7 +179,8 @@ class TestGuardedRecords(unittest.TestCase):
                          RELATIONSHIP_DOCUMENT,
                          ARCHITECTURE_DOCUMENT,
                          INHERITANCE_DOCUMENT,
-                         BENCHMARK_DOCUMENT):
+                         BENCHMARK_DOCUMENT,
+                         SHIELD_PROTECTION_DOCUMENT):
             doc_bytes = (REPO_ROOT / document).read_bytes()
             manifest = json.loads(
                 (REPO_ROOT / (document + '.pbd.json'))
@@ -239,12 +243,23 @@ class TestGuardedRecords(unittest.TestCase):
         self.assertIn('Forty-two controls in all', text)
         self.assertIn('X25519MLKEM768', text)
 
+    def test_shield_protection_document_of_record(self):
+        text = (REPO_ROOT
+                / SHIELD_PROTECTION_DOCUMENT).read_text(
+                    encoding='utf-8')
+        self.assertIn('must themselves be protected '
+                      'against compromise', text)
+        self.assertIn('Global By Design. The Sanders '
+                      'Way!', text)
+        self.assertIn('acceptance criterion', text)
+        self.assertIn('Protectors, protected', text)
+
     def test_watch_set_counts(self):
         self.assertEqual(len(sentinel.BLOODLINE_WATCH_SET),
-                         21)
+                         22)
         required = [e for e in sentinel.BLOODLINE_WATCH_SET
                     if e['required']]
-        self.assertEqual(len(required), 20)
+        self.assertEqual(len(required), 21)
         watched = {e['document']: e
                    for e in sentinel.BLOODLINE_WATCH_SET}
         self.assertTrue(watched[ORDERS_DOCUMENT]['required'])
@@ -258,6 +273,8 @@ class TestGuardedRecords(unittest.TestCase):
             watched[INHERITANCE_DOCUMENT]['required'])
         self.assertTrue(
             watched[BENCHMARK_DOCUMENT]['required'])
+        self.assertTrue(
+            watched[SHIELD_PROTECTION_DOCUMENT]['required'])
 
 
 class TestVerbatimCoverageConstants(unittest.TestCase):
@@ -1170,6 +1187,89 @@ class TestGlobalBenchmark(MinotaurWorkspaceMixin,
                       self.service.benchmark_view(
                           OPERATOR, 'OPERATOR')
                       ['proof_mechanism'])
+
+
+class TestShieldSelfProtection(unittest.TestCase):
+    """INTERNAL-ONLY acceptance tests (founder
+    directive 2026-11-26 11:42 MST): each shield must
+    ITSELF be protected against compromise — its
+    self-protection functioning in its own machinery,
+    separate from its protection of other platforms,
+    with the Minotaur's patrol as the independent
+    verification layer over it."""
+
+    def _services(self, tmp):
+        shield = LabyrinthShieldService(
+            tmp / 'shield.db', _verifier, FakeAudit())
+        labyrinth = LabyrinthService(
+            tmp / 'lab.db', operator_verifier=_verifier,
+            audit=FakeAudit())
+        v3 = SovereignShieldV3Service(
+            tmp / 'v3.db', operator_verifier=_verifier,
+            audit=FakeAudit())
+        return (
+            ('sanders_labyrinth_shield', shield,
+             tmp / 'shield.db', 'labyrinth_integrity',
+             ('pinned_file_hash',)),
+            ('labyrinth', labyrinth, tmp / 'lab.db',
+             'lab_integrity', ('pinned_file_hash',)),
+            ('sovereign_shield_v3', v3, tmp / 'v3.db',
+             'ssv3_integrity',
+             ('foundation_hash', 'service_hash')))
+
+    def test_self_integrity_lifecycle_per_shield(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            for (name, service, db_path, table,
+                 columns) in self._services(Path(tmp)):
+                with self.subTest(shield=name):
+                    status = service.integrity_status(
+                        OPERATOR, 'OPERATOR')
+                    self.assertEqual(status['state'],
+                                     'UNPINNED')
+                    pinned = service.integrity_pin(OPERATOR)
+                    self.assertEqual(pinned['state'],
+                                     'MATCH')
+                    # A divergent pin of record — the
+                    # state a tampered or rolled-back
+                    # core produces — reads MISMATCH.
+                    db = sqlite3.connect(db_path)
+                    for column in columns:
+                        db.execute(
+                            f'UPDATE {table} SET {column}'
+                            ' = ? WHERE id = 1',
+                            ('0' * 64,))
+                    db.commit()
+                    db.close()
+                    status = service.integrity_status(
+                        OPERATOR, 'OPERATOR')
+                    self.assertEqual(status['state'],
+                                     'MISMATCH')
+
+    def test_self_protection_accounting_lines(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = MinotaurWorkspaceMixin()
+            root_dir = workspace.make_workspace(Path(tmp))
+            service = MinotaurService(
+                Path(tmp) / 'minotaur.db', root_dir,
+                _verifier, FakeAudit())
+            view = service.completeness_accounting_view(
+                OPERATOR, 'OPERATOR')
+            lines = {e['item']: e
+                     for e in view['accounting']
+                     if e['item'].startswith(
+                         'Shield self-protection')}
+            self.assertEqual(len(lines), 3)
+            for item, entry in lines.items():
+                self.assertEqual(entry['status'],
+                                 'ALREADY_PROTECTED')
+                self.assertIn('independent', entry['basis'])
+                self.assertIn('verification layer',
+                              entry['basis'])
+            self.assertEqual(view['total'], 21)
+            self.assertEqual(
+                view['already_protected'], 16)
+            self.assertEqual(
+                view['construction_required'], 5)
 
 
 if __name__ == '__main__':
