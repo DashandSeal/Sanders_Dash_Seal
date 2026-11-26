@@ -220,7 +220,14 @@ class TestGuardSetExpansion(unittest.TestCase):
 
     def test_clean_cycle_then_tamper_each_new_document(self):
         cycle = self.service.verify_bloodline_records(OPERATOR)
-        self.assertEqual(cycle['documents_sound'], 6)
+        # Every required watched document assesses sound:
+        # the count derives from the required watch set,
+        # which the Real-Time Protective Intelligence
+        # instrument joined on 2026-11-26.
+        required = [entry for entry in sentinel.BLOODLINE_WATCH_SET
+                    if entry['required']]
+        self.assertEqual(cycle['documents_sound'],
+                         len(required))
         self.assertEqual(cycle['findings_raised'], 0)
         self.assertEqual(cycle['documents_not_landed'], 1)
         for document in NEW_GUARDED_DOCUMENTS:
