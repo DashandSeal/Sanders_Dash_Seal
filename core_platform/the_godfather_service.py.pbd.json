@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/the_godfather_service.py",
-        "payload_hash": "56517e88382aa563554cc6c17443c0b04b372019a3ecd13c33bef71c99a21479",
+        "payload_hash": "6bcdd69510021ce9bc4bd9cf00cd6fceef59ad83bdf10599b4a699ab1911d019",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
