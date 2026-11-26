@@ -40,6 +40,15 @@ EnvironmentFile=-/etc/sanders-dash-seal/runtime.env
 # from the repo's own modules (see deploy/production_bindings.py).
 # Not a secret; a plain Environment= line is correct here.
 Environment=SANDERS_RUNTIME_FACTORY=deploy.production_bindings:create_production_bindings
+# FIPS provider (SC-13 lift, founder-approved 2026-11-26): the app
+# process runs on the OS packaged FIPS-validated module (Oracle
+# Linux 9 OpenSSL FIPS Provider) through this OpenSSL
+# configuration — it activates the FIPS and base providers only,
+# so the platform's cryptography is served by the validated
+# module or refused. The configuration file is host state at
+# /etc/pki/tls/sanders_fips.cnf, provisioned on the instance
+# (like the env files above, it is not carried in the repo).
+Environment=OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf
 # Stop the stale, non-systemd gunicorn before binding: the app used to run
 # as a bare nohup process from /tmp/sds-app (started 2026-11-21, --bind
 # 0.0.0.0:8000) and no deploy step ever stopped it. It still holds port
