@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_three_shields_bloodline_protection.py",
-        "payload_hash": "1033d1c4990d49a6f57e2c0a95cabb93d06e0151c86cf86be911ab34c66d73fd",
+        "payload_hash": "ce3a6f015f7c60602d4fe854f5482932ab631c9537ba1bd8be31ea3a49841f5b",
         "scope": {
             "endpoint": "local://development",
             "method": "TEST",
