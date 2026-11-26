@@ -363,5 +363,120 @@ class TestOperationalTests(OrrTestBase):
         self.assertEqual(view['state'], 'OPEN')
 
 
+class TestRecoveryContinuityClarification(OrrTestBase):
+    """The founder's permanent clarification of
+    2026-11-26 02:47 MST: recovery occurs throughout
+    the entire operational sequence, not only at its
+    conclusion."""
+
+    def test_clarification_carried_verbatim(self):
+        text = (
+            sentinel.FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_VERBATIM)
+        self.assertTrue(text.startswith(
+            'One critical distinction must remain'
+            ' permanent: recovery must occur throughout'
+            ' the entire operational sequence, not only'
+            ' at its conclusion.'))
+        self.assertIn(
+            "His human escalation path remains"
+            " exclusively the Founder or, following the"
+            " Founder's death, the Founder's bloodline"
+            " CEO.", text)
+        self.assertTrue(text.endswith('The Sanders Way!'))
+        # The objective line stands as its own
+        # invariant, verbatim.
+        self.assertEqual(
+            sentinel.ORR_OBJECTIVE_VERBATIM,
+            'The objective is actual protection of human'
+            ' life, not the production of records'
+            ' describing protection.')
+        view = (
+            SandersSentinelService.operational_readiness_design_view())
+        self.assertEqual(view['objective'],
+                         sentinel.ORR_OBJECTIVE_VERBATIM)
+        self.assertEqual(
+            view['clarification_verbatim'],
+            sentinel.FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_VERBATIM)
+        self.assertIn('never pauses for recovery',
+                      view['recovery_continuity_invariant'])
+        # The sequence itself is unchanged, as given.
+        self.assertEqual(
+            view['operational_sequence'],
+            list(sentinel.OPERATIONAL_SEQUENCE))
+        self.assertEqual(
+            view['operational_sequence'][-1], 'RECOVER')
+
+    def _open_case_with_activation(self):
+        case = self.sentinel.record_emergency_signal(
+            OPERATOR, 'FAMILY_REPORT', 'BLOODLINE_FAMILY_MEMBER',
+            'family-1', 'auth', 'bloodline-member-ref',
+            'evacuation under way')
+        self.sentinel.record_emergency_activation(
+            OPERATOR, case['case_id'], 'RELOCATION',
+            'the-godfather-transport-matter-1',
+            'evacuation transport')
+        return case
+
+    def test_recovery_at_any_stage_never_suspends_case(self):
+        self.sentinel.designate_perception_channel(
+            OPERATOR, 'VISUAL', 'camera-primary',
+            'camera-alternative')
+        for stage in ('ASSESS', 'COORDINATE'):
+            case = self._open_case_with_activation()
+            event = self.sentinel.record_loss_of_visibility(
+                OPERATOR, 'PERCEPTION_CHANNEL',
+                f'visual-{stage.lower()}', 'feed dropped',
+                channel='VISUAL', stage=stage)
+            self.assertEqual(event['stage'], stage)
+            attempt = self.sentinel.record_recovery_attempt(
+                OPERATOR, event['event_id'],
+                'ACTIVATE_ALTERNATIVE', 'ALTERNATIVE_ACTIVE',
+                'alternative carrying')
+            # The attempt and its failover are recorded
+            # against the stage where visibility was
+            # lost.
+            self.assertEqual(attempt['stage'], stage)
+            channels = self.sentinel.perception_channels(
+                OPERATOR, 'OPERATOR')
+            staged = [f for f in channels['failovers']
+                      if f['stage'] == stage]
+            self.assertTrue(staged, stage)
+            # The open case and its activation are NOT
+            # suspended: the case reads OPEN throughout,
+            # its activation intact, and its ordinary
+            # life continues -- arrival can still be
+            # confirmed and the case closed on its own
+            # rule.
+            view = self.sentinel.emergency_case_view(
+                OPERATOR, 'OPERATOR', case['case_id'])
+            self.assertEqual(view['state'], 'OPEN')
+            self.assertEqual(len(view['activations']), 1)
+            self.sentinel.confirm_emergency_arrival(
+                OPERATOR, case['case_id'], 'arrival-1',
+                'evacuation transport arrived')
+            closed = self.sentinel.close_emergency_case(
+                OPERATOR, case['case_id'], 'resolution-1')
+            self.assertEqual(closed['state'],
+                             'CLOSED_RESOLVED')
+            # Restore the channel for the next stage.
+            self.sentinel.designate_perception_channel(
+                OPERATOR, 'VISUAL', 'camera-primary',
+                'camera-alternative')
+
+    def test_recovery_attempt_stage_validation(self):
+        event = self.sentinel.record_loss_of_visibility(
+            OPERATOR, 'SENSOR', 'sensor-1', 'sensor dark',
+            stage='PERCEIVE')
+        with self.assertRaises(SandersSentinelDenied):
+            self.sentinel.record_recovery_attempt(
+                OPERATOR, event['event_id'],
+                'RESTORE_CONNECTION', 'RESTORED', 'detail',
+                stage='NOT_A_STAGE')
+        with self.assertRaises(SandersSentinelDenied):
+            self.sentinel.record_loss_of_visibility(
+                OPERATOR, 'SENSOR', 'sensor-2', 'dark',
+                stage='NOT_A_STAGE')
+
+
 if __name__ == '__main__':
     unittest.main()
