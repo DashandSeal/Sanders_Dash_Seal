@@ -272,13 +272,13 @@ class TestGuardSetWithHlp(unittest.TestCase):
                      HLP_DOCUMENT]
         self.assertTrue(entry['required'])
         self.assertEqual(len(sentinel.BLOODLINE_WATCH_SET),
-                         17)
+                         18)
 
     def test_clean_cycle_then_tamper_hlp_document(self):
         required = [entry for entry
                     in sentinel.BLOODLINE_WATCH_SET
                     if entry['required']]
-        self.assertEqual(len(required), 16)
+        self.assertEqual(len(required), 17)
         cycle = self.service.verify_bloodline_records(
             OPERATOR)
         self.assertEqual(cycle['documents_sound'],
