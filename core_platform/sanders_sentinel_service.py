@@ -400,6 +400,13 @@ BLOODLINE_WATCH_SET = (
                ' Minotaur Patrols All Three'
                ' Shields; Minotaur Upgrade'),
      'required': True},
+    {'document': ('docs/FOUNDER_DIRECTIVE_MINOTAUR'
+                  '_DEFENSIVE_RELATIONSHIP_2026-11-26.md'),
+     'title': ('Founder Directive \u2014 The'
+               ' Minotaur: The Completed Defensive'
+               ' Relationship + Anti-Probing'
+               ' Protections'),
+     'required': True},
     {'document': ('docs/FOUNDER_AMENDMENT_MINOTAUR'
                   '_SELF_PROTECTION_2026-11-26.md'),
      'title': ('Founder Amendment \u2014 The'
