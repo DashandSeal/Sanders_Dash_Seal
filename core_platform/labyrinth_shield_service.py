@@ -249,6 +249,145 @@ class LabyrinthShieldForbidden(Exception):
     """The actor lacks authority for the requested operation."""
 
 
+
+# -- Inherited defenses (founder directive,
+# 2026-11-26) --------------------------------
+#
+# Every shield inherits the Minotaur's new
+# defenses: a shared defensive STANDARD,
+# separately embodied in this shield's own
+# machinery — never merged into the Minotaur
+# or into another shield. Each protection of
+# his set stands here with its applicability
+# for THIS shield: INHERITED_FUNCTIONING
+# (implemented and exercised in this
+# service) or INHERITED_BY_DESIGN (the
+# standard holds by this shield's design,
+# with the reason stated). His eight
+# domains organize the set.
+FOUNDER_INHERITANCE_DIRECTIVE_VERBATIM = (
+    'Everyone of my \U0001f6e1\ufe0f\'s must inherit the'
+    ' minotaur\'s new defenses don\'t you agree')
+INHERITED_STANDARD_SOURCE = (
+    'the Minotaur\'s upgrade, his adopted Self-'
+    'Protection Amendment, the thirteen anti-'
+    'probing protections, and the eight-domain'
+    ' architecture, under the functioning-'
+    'defense standard')
+INHERITED_PROTECTION_OUTCOMES = (
+    'EVIDENCED', 'FINDING', 'NOT_EVIDENCED',
+    'FUNCTIONING')
+INHERITED_PROTECTIONS = (
+    {'protection': 'COMPROMISED_ADMINISTRATIVE_CREDENTIALS',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'operator verification with per-actor failure bucketing and lockout, in this service'},
+    {'protection': 'PRIVILEGE_ESCALATION',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'the role guard is fixed in this service; guarded reads cannot write'},
+    {'protection': 'MALICIOUS_INTERNAL_PLATFORM_COMMUNICATIONS',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'records arriving platform-to-platform are never executed as instructions in this service — an architectural property; the Minotaur\'s patrol verifies this shield\'s core by hash, not by claimed identity'},
+    {'protection': 'COMPROMISED_RECOVERY_MECHANISMS',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'recovery for this shield is by reference to the Glass-Box receipts and the Minotaur\'s signed anchor over its core; a compromised recovery source is detected from his layer'},
+    {'protection': 'UNAUTHORIZED_CONFIGURATION_CHANGES',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'configuration of record in this service changes only through verified operator acts, each receipted'},
+    {'protection': 'DENIAL_OF_SERVICE',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'availability is a host property; this shield performs no unauthenticated work amplification — its acts are bounded governed records behind the guard'},
+    {'protection': 'RESOURCE_EXHAUSTION',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'his bounded-record discipline applies: this shield\'s acts are single governed records, and its stores are its own'},
+    {'protection': 'SECURITY_LOG_TAMPERING',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'log-injection payloads are rejected by indicator, and every evaluation is receipted at the moment of the act'},
+    {'protection': 'CLOCK_TIMESTAMP_MANIPULATION',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'this shield\'s records carry receipted sequence in the Glass-Box audit; its own determinations do not order by wall clock'},
+    {'protection': 'COMPROMISED_CRYPTOGRAPHIC_RANDOMNESS',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'this shield generates no key material; the Minotaur\'s deterministic derivation standard covers the signing layer above it'},
+    {'protection': 'MALICIOUS_SOFTWARE_ROLLBACK',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'this shield\'s core is hash-pinned by the Minotaur\'s patrol; a rolled-back module reads MISMATCH there and raises his anomaly'},
+    {'protection': 'UNAUTHORIZED_DISABLING_OF_DEFENSIVE_FUNCTIONS',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'this service exposes no operation that disables a defensive function'},
+    {'protection': 'SINGLE_POINTS_OF_FAILURE',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'evidence for this shield stands in its own store, the Glass-Box receipts, and the Minotaur\'s anchor — three places by design'},
+    {'protection': 'THREAT_DETECTION_INTELLIGENCE_COMPROMISE',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'this shield\'s detection records are receipted records; alteration is a tamper finding under the same discipline'},
+    {'protection': 'GOVERNING_DIRECTIVES_MODIFICATION',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'his governing directives stand in Sanders Sentinel\'s guarded record set; this shield holds no directive it could rewrite'},
+    {'protection': 'UNAUTHORIZED_RECONNAISSANCE_AND_PROBING',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'this shield\'s evaluate() IS the probing defense: presented payloads are scanned against ten indicator classes and rejected on match'},
+    {'protection': 'NETWORK_AND_SERVICE_ENUMERATION',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'SSRF literal targets in presented payloads — the enumeration of internal services — are classified and rejected by indicator, without DNS or fetch'},
+    {'protection': 'API_DISCOVERY_AND_UNAUTHORIZED_ENDPOINT_ACCESS',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'its single route form (posture) is a guarded read answering 401 unauthenticated'},
+    {'protection': 'AUTHENTICATION_BYPASS_AND_SESSION_HIJACKING',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'no session stands in this service to hijack; the actor is verified at the moment of every act'},
+    {'protection': 'CREDENTIAL_THEFT_AND_BRUTE_FORCE',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'the lockout: failed verifications bucket per actor and lock out at the threshold, in this service'},
+    {'protection': 'ERROR_MESSAGE_INFORMATION_LEAKAGE',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'refusals in this service are uniform: they name the rule, never the internals'},
+    {'protection': 'TIMING_AND_SIDE_CHANNEL_ATTACKS',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'no secret-bearing comparison stands in this shield\'s own code paths; its hashes are integrity values, not secrets'},
+    {'protection': 'FORGED_INTERNAL_PLATFORM_IDENTITIES',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'every state-changing act re-verifies the operator in this service; a forged instruction is an unverified actor and is refused before any state change'},
+    {'protection': 'DEFENSIVE_PATROL_MANIPULATION',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'this shield keeps no patrol of its own to manipulate; the Minotaur\'s sequencing derives from his signed chain head'},
+    {'protection': 'DEFENSIVE_CONFIGURATION_DISCOVERY',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'its posture of record is a guarded read for named roles'},
+    {'protection': 'RECOVERY_INFRASTRUCTURE_COMPROMISE',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'recovery evidence for this shield stands outside its own store (Glass-Box receipts, the Minotaur\'s anchor)'},
+    {'protection': 'DISABLE_OWN_PROTECTIONS_ATTACKS',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'there is no disabling operation in this service for such an attack to invoke'},
+    {'protection': 'MACHINERY_TURNED_AGAINST_AUTHORIZED_OPERATIONS',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'this service acts only on verified operator acts and its own records'},
+)
+INHERITED_MACHINERY = (
+    {'machinery': 'HASH_SIGNED_ATTESTATION_CHAIN',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'embodied as Glass-Box receipts for every act plus the Minotaur\'s signed chain over this shield\'s core; the shield does not duplicate his signer'},
+    {'machinery': 'LABYRINTH_BEHAVIOR',
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'native to this shield: indicator evaluation, isolation records, and stuffing detection are its own labyrinthine machinery'},
+    {'machinery': 'CRYPTO_CLAIM_RULE',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'no cryptographic claim surface stands in this shield to assert or downgrade'},
+    {'machinery': 'DECOY_ISOLATION',
+     'applicability': 'INHERITED_BY_DESIGN',
+     'basis': 'decoys are the Minotaur\'s machinery over this shield; this shield plants none and its stores are refused as decoy targets in his code'},
+)
+INHERITED_DOMAINS = (
+    'SELF_PROTECTION',
+    'ANTI_PROBING',
+    'ANTI_CIRCUMVENTION',
+    'CRYPTOGRAPHIC_PROTECTION',
+    'INFRASTRUCTURE_PROTECTION',
+    'RECOVERY_PROTECTION',
+    'DEFENSIVE_CONTINUITY',
+    'COUNTER_MANIPULATION',
+)
+
 class LabyrinthShieldService:
     """Durable, receipted Labyrinth Shield evaluations and perimeter state."""
 
@@ -378,11 +517,51 @@ class LabyrinthShieldService:
             return False
 
     def _require_operator(self, actor):
+        """Verify the operator — with the inherited
+        brute-force defense functioning: failed
+        verifications bucket per actor, and at the
+        lockout threshold the actor is refused
+        outright until the window clears. The
+        refusal is uniform."""
         self._check_actor(actor)
-        if not self._is_operator(actor):
+        now = self._now()
+        with self._connect() as db:
+            self._ensure_defense_tables(db)
+            failures = db.execute(
+                'SELECT COUNT(*) AS n FROM labyrinth_shield_auth_failures'
+                ' WHERE actor = ? AND failed_at > ?',
+                (actor, now - 900),
+            ).fetchone()['n']
+        if failures >= 5:
             raise LabyrinthShieldForbidden(
                 'Operator authority is required for this operation')
-
+        if self._is_operator(actor):
+            with self._connect() as db:
+                self._ensure_defense_tables(db)
+                db.execute('BEGIN IMMEDIATE;')
+                try:
+                    db.execute(
+                        'DELETE FROM labyrinth_shield_auth_failures'
+                        ' WHERE actor = ?', (actor,))
+                    db.commit()
+                except Exception:
+                    db.rollback()
+                    raise
+            return
+        with self._connect() as db:
+            self._ensure_defense_tables(db)
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                db.execute(
+                    'INSERT INTO labyrinth_shield_auth_failures'
+                    ' (actor, failed_at) VALUES (?, ?)',
+                    (actor, now))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+        raise LabyrinthShieldForbidden(
+            'Operator authority is required for this operation')
     def _record(self, event, **fields):
         return self._audit.preserve(event, **fields)
 
@@ -861,6 +1040,186 @@ class LabyrinthShieldService:
                     ' endpoint is fetched or inspected by this'
                     ' platform.',
         }
+
+
+    # -- inherited defenses (founder directive,
+    # 2026-11-26) --------------------------------
+    #
+    # The Minotaur's defensive standard, embodied
+    # in this shield's own machinery: the lockout
+    # in _require_operator above, and the governed
+    # self-protection checks of record here — each
+    # inherited protection's state derived from
+    # its checks, its applicability stated in the
+    # design of record.
+
+    @staticmethod
+    def _ensure_defense_tables(db):
+        db.executescript(
+            f"""
+            CREATE TABLE IF NOT EXISTS labyrinth_shield_defense_checks (
+                check_id TEXT PRIMARY KEY,
+                protection_key TEXT NOT NULL,
+                outcome TEXT NOT NULL,
+                evidence_ref TEXT NOT NULL,
+                detail TEXT NOT NULL,
+                recorded_by TEXT NOT NULL,
+                recorded_at REAL NOT NULL,
+                receipt_id TEXT NOT NULL
+            );
+            CREATE TABLE IF NOT EXISTS labyrinth_shield_auth_failures (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                actor TEXT NOT NULL,
+                failed_at REAL NOT NULL
+            );
+            """)
+
+    @staticmethod
+    def inherited_defenses_design_view() -> dict:
+        return {
+            'directive_verbatim':
+                FOUNDER_INHERITANCE_DIRECTIVE_VERBATIM,
+            'standard_source':
+                INHERITED_STANDARD_SOURCE,
+            'embodiment': 'SEPARATELY_EMBODIED',
+            'shields_merged': False,
+            'merged_into_minotaur': False,
+            'domains': list(INHERITED_DOMAINS),
+            'protections': [dict(e) for e in
+                INHERITED_PROTECTIONS],
+            'machinery': [dict(e) for e in
+                INHERITED_MACHINERY],
+            'external_connections': 'NONE',
+        }
+
+    def inherited_defenses_view(self, actor, role, *,
+                                region=None):
+        self._geo(region)
+        self._guard_access(actor, role, 'INTEGRITY',
+                           'self-protection',
+                           'inherited defenses view')
+        with self._connect() as db:
+            self._ensure_defense_tables(db)
+            rows = db.execute(
+                'SELECT * FROM labyrinth_shield_defense_checks'
+                ' ORDER BY recorded_at').fetchall()
+        latest = {}
+        for row in rows:
+            latest[row['protection_key']] = row
+        protections = []
+        for entry in INHERITED_PROTECTIONS:
+            row = latest.get(entry['protection'])
+            protections.append({
+                'protection': entry['protection'],
+                'applicability':
+                    entry['applicability'],
+                'basis': entry['basis'],
+                'state': (row['outcome'] if row
+                          else 'CONSTRUCTED'),
+                'latest_check': (
+                    {'check_id': row['check_id'],
+                     'outcome': row['outcome'],
+                     'evidence_ref':
+                         row['evidence_ref'],
+                     'recorded_at':
+                         row['recorded_at'],
+                     'receipt_id': row['receipt_id']}
+                    if row else None),
+            })
+        return {
+            'design': type(self)
+                .inherited_defenses_design_view(),
+            'part': 'INHERITED_MINOTAUR_DEFENSES',
+            'ladder_state': 'CONSTRUCTED',
+            'protections': protections,
+            'checks_total': len(rows),
+            'external_connections': 'NONE',
+        }
+
+    def record_self_protection_check(
+            self, actor, protection_key, outcome,
+            evidence_ref, detail, *, region=None):
+        self._geo(region)
+        self._require_operator(actor)
+        known = {e['protection'] for e in
+                 INHERITED_PROTECTIONS}
+        if protection_key not in known:
+            raise LabyrinthShieldDenied(
+                'The protection must be one of the inherited set')
+        if outcome not in INHERITED_PROTECTION_OUTCOMES:
+            raise LabyrinthShieldDenied(
+                'The check outcome must be one of: '
+                + ', '.join(
+                    INHERITED_PROTECTION_OUTCOMES))
+        for label, value in (
+                ('evidence_ref', evidence_ref),
+                ('detail', detail)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise LabyrinthShieldDenied(
+                    f'A {label} is required')
+        now = self._now()
+        check_id = 'labyrinth_shield-defcheck-' + uuid.uuid4().hex[:16]
+        with self._connect() as db:
+            self._ensure_defense_tables(db)
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'LABYRINTH_SHIELD_SELF_PROTECTION_CHECK',
+                    actor=actor, check_id=check_id,
+                    protection_key=protection_key,
+                    outcome=outcome)
+                db.execute(
+                    'INSERT INTO labyrinth_shield_defense_checks'
+                    ' (check_id, protection_key,'
+                    ' outcome, evidence_ref, detail,'
+                    ' recorded_by, recorded_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (check_id, protection_key, outcome,
+                     evidence_ref.strip(),
+                     detail.strip(), actor, now,
+                     receipt_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM labyrinth_shield_defense_checks'
+                ' WHERE check_id = ?',
+                (check_id,)).fetchone()
+        return {
+            'check_id': row['check_id'],
+            'protection': row['protection_key'],
+            'outcome': row['outcome'],
+            'evidence_ref': row['evidence_ref'],
+            'detail': row['detail'],
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def self_protection_checks(self, actor, role, *,
+                               region=None):
+        self._geo(region)
+        self._guard_access(actor, role, 'INTEGRITY',
+                           'self-protection',
+                           'self protection checks view')
+        with self._connect() as db:
+            self._ensure_defense_tables(db)
+            rows = db.execute(
+                'SELECT * FROM labyrinth_shield_defense_checks'
+                ' ORDER BY recorded_at').fetchall()
+        views = [{
+            'check_id': row['check_id'],
+            'protection': row['protection_key'],
+            'outcome': row['outcome'],
+            'evidence_ref': row['evidence_ref'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        } for row in rows]
+        return {'checks': views, 'total': len(views)}
 
     # -- status / check-in --------------------------------------------------
 
