@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "tests/test_founder_directive_protection_amend_only.py",
+        "payload_hash": "32606a2537ba3ac6b20bd5a42c4a641318becd9c241f0dc4f363318f3967e85e",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
