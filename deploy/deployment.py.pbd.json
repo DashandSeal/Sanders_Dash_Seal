@@ -3,9 +3,14 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "deploy/deployment.py",
-        "payload_hash": "7822a1a3afbb275881f34c95d423b015ad10b5914560707546afee45b555401a",
-        "scope": "source-manifest",
-        "signatures": {},
-        "status": "UNSIGNED_SOURCE_MANIFEST"
-    }
+        "payload_hash": "69d98aa1e534878b2d15e14cebdd43471ad654f075afe527b944c21e1dec13f0",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
 }
