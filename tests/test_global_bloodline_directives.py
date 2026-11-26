@@ -732,7 +732,14 @@ class TestSentinelCoveragePreserved(unittest.TestCase):
 
     def test_clean_cycle_sound_then_tamper_finding(self):
         cycle = self.service.verify_bloodline_records(OPERATOR)
-        self.assertEqual(cycle['documents_sound'], 3)
+        # Every required watched document assesses sound:
+        # the original three records plus the supplemental
+        # Founder-authorized directives the 2026-11-26
+        # Sentinel Directive added to the guard set.
+        required = [entry for entry in sentinel.BLOODLINE_WATCH_SET
+                    if entry['required']]
+        self.assertEqual(cycle['documents_sound'],
+                         len(required))
         self.assertEqual(cycle['findings_raised'], 0)
         target = self.documents[
             'docs/PERMANENT_BLOODLINE_PROTECTION_DIRECTIVE.md']
