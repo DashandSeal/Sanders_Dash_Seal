@@ -4567,16 +4567,16 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                     if path == '/api/sanders-sentinel/bloodline/visibility-events':
                         if method == 'GET':
                             return respond(start, '200 OK', {'visibility_events': sanders_sentinel.visibility_events(identity, sentinel_role)})
-                        if set(data) != {'resource_kind', 'resource_ref', 'channel', 'connection_id', 'detail_ref'}:
+                        if set(data) != {'resource_kind', 'resource_ref', 'channel', 'connection_id', 'detail_ref', 'stage'}:
                             raise ValueError('unexpected fields')
-                        record = sanders_sentinel.record_loss_of_visibility(identity, data['resource_kind'], data['resource_ref'], data['detail_ref'], data['channel'], data['connection_id'])
+                        record = sanders_sentinel.record_loss_of_visibility(identity, data['resource_kind'], data['resource_ref'], data['detail_ref'], data['channel'], data['connection_id'], data['stage'])
                         return respond(start, '201 Created', {'visibility_event': record})
                     if path == '/api/sanders-sentinel/bloodline/recovery-attempts':
                         if method == 'GET':
                             return respond(start, '200 OK', {'recovery_attempts': sanders_sentinel.recovery_attempts(identity, sentinel_role)})
-                        if set(data) != {'visibility_event_id', 'attempt_kind', 'outcome', 'detail_ref'}:
+                        if set(data) != {'visibility_event_id', 'attempt_kind', 'outcome', 'detail_ref', 'stage'}:
                             raise ValueError('unexpected fields')
-                        record = sanders_sentinel.record_recovery_attempt(identity, data['visibility_event_id'], data['attempt_kind'], data['outcome'], data['detail_ref'])
+                        record = sanders_sentinel.record_recovery_attempt(identity, data['visibility_event_id'], data['attempt_kind'], data['outcome'], data['detail_ref'], stage=data['stage'])
                         return respond(start, '201 Created', {'recovery_attempt': record})
                     if path == '/api/sanders-sentinel/bloodline/operational-tests':
                         if method == 'GET':
