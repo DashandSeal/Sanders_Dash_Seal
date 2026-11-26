@@ -1184,11 +1184,63 @@ FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_VERBATIM = (
     'The Sanders Way!'
 )
 
+RESPONDER_COORDINATION_KINDS = (
+    'FIRE', 'MEDICAL', 'LAW_ENFORCEMENT')
+ORR_ESCALATION_COORDINATION_DISTINCTION = (
+    'Escalation and coordination are distinct'
+    ' (founder clarification No. 2, 2026-11-26).'
+    ' The internal human escalation path remains'
+    ' exclusively the Founder, followed by the'
+    ' Founder\u2019s bloodline CEO: no responder,'
+    ' platform, or third party is or becomes an'
+    ' escalation authority, and no record in this'
+    ' platform names one. That exclusivity does'
+    ' not prevent direct coordination with'
+    ' emergency responders: coordination with'
+    ' fire, medical, and law-enforcement'
+    ' responders during an emergency is recorded'
+    ' as its own record kind on the emergency'
+    ' case, expressly separate from escalation'
+    ' records, and a coordination record confers,'
+    ' claims, and alters no escalation'
+    ' authority.')
+ORR_TESTING_SAFETY_INVARIANT = (
+    'Testing safety (founder clarification No. 2,'
+    ' 2026-11-26): every end-to-end operational'
+    ' test is internal-only and labeled TEST, and'
+    ' is structurally incapable of generating a'
+    ' false emergency dispatch -- no test path'
+    ' calls, signals, or dispatches anything'
+    ' outside this platform. A test opens no'
+    ' emergency case, raises no escalation,'
+    ' records no activation, and contacts no'
+    ' responder; it demonstrates the recorded'
+    ' sequence\u2019s functionality only.')
+FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_NO_2_VERBATIM = (
+    'His internal human escalation path remains '
+    'the Founder, followed by the Founder\'s '
+    'bloodline CEO. This does not prevent direct '
+    'coordination with emergency responders.\n'
+    'No existing authority, responsibility, '
+    'business model, or protective mission is '
+    'diminished.\n'
+    'The reported build changes still require '
+    'independent verification. Testing must '
+    'demonstrate real functionality without '
+    'generating false emergency dispatches.\n'
+    'The objective is actual protection of human '
+    'life, not the production of records '
+    'describing protection.\n'
+    'Global By Design. The Sanders Way!'
+)
+
 ORR_INVARIANTS = (
     ORR_TRUTHFUL_READINESS_INVARIANT,
     ORR_MISSION_PRESERVATION_INVARIANT,
     ORR_OBJECTIVE_VERBATIM,
     ORR_RECOVERY_CONTINUITY_INVARIANT,
+    ORR_ESCALATION_COORDINATION_DISTINCTION,
+    ORR_TESTING_SAFETY_INVARIANT,
     'Loss of visibility is itself an emergency'
     ' signal of record: a disconnected or'
     ' unavailable camera, sensor, channel, or'
@@ -1604,6 +1656,17 @@ class SandersSentinelService:
                     db.execute(
                         f'ALTER TABLE {_stage_table}'
                         ' ADD COLUMN stage TEXT')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_responder_coordination ('
+                ' coordination_id TEXT PRIMARY KEY,'
+                ' case_id TEXT NOT NULL,'
+                ' responder_kind TEXT NOT NULL,'
+                ' responder_ref TEXT NOT NULL,'
+                ' detail_ref TEXT NOT NULL,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
 
     # -- plumbing ---------------------------------------------------
 
@@ -4324,6 +4387,127 @@ class SandersSentinelService:
             'open_total': by_state.get('OPEN', 0),
         }
 
+    @staticmethod
+    def _responder_coordination_view(row):
+        return {
+            'coordination_id': row['coordination_id'],
+            'case_id': row['case_id'],
+            'record_kind': 'RESPONDER_COORDINATION',
+            'responder_kind': row['responder_kind'],
+            'responder_ref': row['responder_ref'],
+            'detail_ref': row['detail_ref'],
+            'escalation_authority': 'NONE',
+            'separate_from_escalation': True,
+            'scope_ref': EMERGENCY_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_responder_coordination(
+            self, actor, case_id, responder_kind,
+            responder_ref, detail_ref, *, region=None):
+        """Record direct coordination with an
+        emergency responder on an open emergency
+        case (operator only; founder clarification
+        No. 2, 2026-11-26). Coordination is its own
+        record kind, expressly separate from
+        escalation: the internal human escalation
+        path remains exclusively the Founder,
+        followed by the bloodline CEO, and this
+        record confers, claims, and alters no
+        escalation authority -- a responder is never
+        named an escalation authority here or
+        anywhere in this platform. Coordination
+        records the platform's own coordination
+        with fire, medical, or law-enforcement
+        responders during the emergency, by
+        reference; it dispatches nothing itself."""
+        self._geo(region)
+        self._require_operator(actor)
+        if responder_kind not in (
+                RESPONDER_COORDINATION_KINDS):
+            raise SandersSentinelDenied(
+                'The responder kind must be one of: '
+                + ', '.join(RESPONDER_COORDINATION_KINDS))
+        for label, value in (
+                ('responder_ref', responder_ref),
+                ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        coordination_id = (
+            f'sentinel-responder-coordination-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                case = self._emergency_case_row(db, case_id)
+                if case is None:
+                    raise SandersSentinelDenied(
+                        'No such emergency case')
+                if case['state'] != 'OPEN':
+                    raise SandersSentinelDenied(
+                        'Responder coordination records'
+                        ' only against an open emergency'
+                        ' case; this one reads '
+                        + case['state']
+                        + ' (EMERGENCY_CASE_NOT_OPEN)')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_RESPONDER_'
+                    'COORDINATION_RECORDED',
+                    actor=actor,
+                    coordination_id=coordination_id,
+                    case_id=case_id,
+                    responder_kind=responder_kind,
+                    escalation_authority='NONE')
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_responder_'
+                    'coordination (coordination_id,'
+                    ' case_id, responder_kind,'
+                    ' responder_ref, detail_ref,'
+                    ' recorded_by, recorded_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (coordination_id, case_id,
+                     responder_kind, responder_ref.strip(),
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_responder_coordination'
+                ' WHERE coordination_id = ?',
+                (coordination_id,)).fetchone()
+        return self._responder_coordination_view(row)
+
+    def responder_coordinations(self, actor, role,
+                                case_id, *, region=None):
+        """The responder-coordination records of one
+        emergency case (guarded read) -- separate
+        from its escalation records, always."""
+        self._geo(region)
+        self._guard_access(actor, role, 'emergency-cases',
+                           'responder coordination list')
+        with self._connect() as db:
+            case = self._emergency_case_row(db, case_id)
+            if case is None:
+                raise SandersSentinelDenied(
+                    'No such emergency case')
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_responder_coordination'
+                ' WHERE case_id = ? ORDER BY recorded_at',
+                (case_id,)).fetchall()
+        return [self._responder_coordination_view(row)
+                for row in rows]
+
     def emergency_case_view(self, actor, role, case_id,
                             *, region=None):
         """One emergency case (guarded read), with
@@ -4341,10 +4525,18 @@ class SandersSentinelService:
                 ' sanders_sentinel_emergency_activations'
                 ' WHERE case_id = ? ORDER BY recorded_at',
                 (case_id,)).fetchall()
+            coordinations = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_responder_coordination'
+                ' WHERE case_id = ? ORDER BY recorded_at',
+                (case_id,)).fetchall()
         view = self._emergency_case_view(row)
         view['activations'] = [
             self._emergency_activation_view(entry)
             for entry in activations]
+        view['responder_coordinations'] = [
+            self._responder_coordination_view(entry)
+            for entry in coordinations]
         return view
 
     def record_emergency_activation(
@@ -5640,6 +5832,14 @@ class SandersSentinelService:
             'objective': ORR_OBJECTIVE_VERBATIM,
             'recovery_continuity_invariant':
                 ORR_RECOVERY_CONTINUITY_INVARIANT,
+            'clarification_no_2_verbatim':
+                FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_NO_2_VERBATIM,
+            'escalation_coordination_distinction':
+                ORR_ESCALATION_COORDINATION_DISTINCTION,
+            'testing_safety_invariant':
+                ORR_TESTING_SAFETY_INVARIANT,
+            'responder_coordination_kinds': list(
+                RESPONDER_COORDINATION_KINDS),
             'note': (
                 'Readiness is derived, never declared:'
                 ' a capability reads OPERATIONAL only'
@@ -6261,6 +6461,8 @@ class SandersSentinelService:
             'test_id': row['test_id'],
             'record_kind': 'TEST',
             'is_test': True,
+            'internal_only': True,
+            'external_dispatch': 'NONE',
             'capability': row['capability'],
             'stages': json.loads(row['stages']),
             'outcome': row['outcome'],
