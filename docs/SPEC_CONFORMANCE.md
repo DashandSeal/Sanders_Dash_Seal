@@ -6216,3 +6216,19 @@ Our Family Will Take Great Care Of Your Family.
 The Sanders Way! 💙🩶
 
 **Recorded.** Entered into this record on 2026-11-25 as the governing strategic document of record for the native RON build (Q166), under the founder's architectural directive: Native by Design. Global by Design. Its §8 states the founder's customer-choice ruling and its §9 the founder-use ruling, each as its own section and in the founder's own words; its §11 carries the document's independence standard, including that necessary infrastructure components and legally required verification sources must not be confused with surrendering ownership or operational control of the notarization product.
+
+## Founder Declaration — Comprehensive Corporate Design System (founder declaration, 2026-11-25)
+
+**Scope.** This entry records the founder's declaration of the Comprehensive Corporate Design System, supplied by Roosevelt Sanders on 2026-11-25 (19:40 MST) and preserved verbatim at the time of receipt. It governs as the standing corporate design standard: the Royal Enterprise design standard is not a website theme but a comprehensive corporate design system extending throughout all 140 distinct RTSA platforms, customer portals, dashboards, payment interfaces, communications and digital experiences. The original seals, corporate colors, platform identities and operational capabilities remain protected; S & G Security Inc. retains the Headquarters seal as its own official seal; and the four founder-approved visual references of 2026-11-25 (the approved company concepts for Sanders Dash & Seal, Sanders Home Healthcare & Caregivers LLC, Sanders Senior Living LLC, and S & G Security Inc.) are the concrete benchmark for implementation. The earlier entries in this record remain undisturbed.
+
+**Founder's declaration (verbatim, 2026-11-25).**
+
+This is not merely a website theme. It is a comprehensive corporate design system that should extend throughout all 140 distinct RTSA platforms, customer portals, dashboards, payment interfaces, communications and digital experiences.
+The original seals, corporate colors, platform identities and operational capabilities must remain protected. S & G Security Inc. retains the Headquarters seal as its own official seal.
+These four visual references provide a concrete benchmark for implementation rather than leaving developers to interpret luxury or corporate professionalism independently.
+Four Companies. One Family. One Future. One Commitment.
+Global By Design.
+Our Family Will Take Great Care Of Your Family.
+The Sanders Way! 💙🩶
+
+**Recorded.** Entered into this record on 2026-11-25 as the governing design-system declaration of record for the Sanders companies and the RTSA platform program, under the founder's directives: Native by Design. Global by Design.
