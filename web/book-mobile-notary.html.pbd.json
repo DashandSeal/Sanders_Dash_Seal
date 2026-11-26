@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/book-mobile-notary.html",
+        "payload_hash": "44b96f5f5dc01d62cfe9c9c5cf4f3b7901a43a695bf3aced1cf8b3ca074a5dcb",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/apostille-support.html",
+        "payload_hash": "f7b7f2c229c1d58f989918bee54ae6e592e18760cf21b40ffa4cccc64d42df0f",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

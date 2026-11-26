@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/fees-packages.html",
+        "payload_hash": "5107dfdcd87411733a7f21c6f1584ce5ce61f5fb0af8e88682fb372f1dc95ebc",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

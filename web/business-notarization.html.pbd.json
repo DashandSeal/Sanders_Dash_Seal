@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/business-notarization.html",
+        "payload_hash": "501ec0ee07664e688172423f0ca07e1cd37d31f9d75e503206cc7d2fcef1ec7e",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

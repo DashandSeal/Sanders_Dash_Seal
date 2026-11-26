@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/for-healthcare-facilities.html",
+        "payload_hash": "0dc04a23b0647581f0060310dca309c66c56d28fbf980e02831e9c11ab4e1803",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

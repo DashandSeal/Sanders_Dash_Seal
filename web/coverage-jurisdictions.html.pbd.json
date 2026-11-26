@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/coverage-jurisdictions.html",
+        "payload_hash": "9d023ddacb361e131a6b7130a4a6914d2e07358d85744445053cde9e5163a895",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

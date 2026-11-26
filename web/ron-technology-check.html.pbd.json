@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/ron-technology-check.html",
+        "payload_hash": "728075e9337c307660e4ae91e5f9aa5538aa9ee66fa257f648a6e232394fa72f",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

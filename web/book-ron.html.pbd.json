@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/book-ron.html",
+        "payload_hash": "4a23a07aa0ba6a36603247777a40c184b069b57675d48a27e4febef3e0fe80ca",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

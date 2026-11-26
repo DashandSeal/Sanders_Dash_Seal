@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/estate-probate-notarization.html",
+        "payload_hash": "a4e37e7374abe9bbd61f6de072b836cb3ec1eb3badf4ebe98f324ea124c688d1",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

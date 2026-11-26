@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/real-estate-closings.html",
+        "payload_hash": "fcf1ca4aa7b8c0ffb84c66111c3dd60e1fa67196a52a9d261dd111a7ddc06212",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

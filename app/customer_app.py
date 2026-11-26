@@ -149,6 +149,34 @@ ASSETS = {
     # the only route that ever served them.
     '/assets/auth.js': ('auth.js', 'application/javascript; charset=utf-8'),
     '/landing': ('jade-landing.html', 'text/html; charset=utf-8'),
+    # The flagship's own full website (2026-11-25) — the 24 pages of
+    # Sanders Legal Helpers LLC — Sanders Dash & Seal mapped in the
+    # construction plan of record: services, booking entries, portal,
+    # readiness, audiences, and trust pages, in the jade-landing system.
+    '/mobile-notary': ('mobile-notary.html', 'text/html; charset=utf-8'),
+    '/remote-online-notarization': ('remote-online-notarization.html', 'text/html; charset=utf-8'),
+    '/document-support': ('document-support.html', 'text/html; charset=utf-8'),
+    '/apostille-support': ('apostille-support.html', 'text/html; charset=utf-8'),
+    '/loan-signing': ('loan-signing.html', 'text/html; charset=utf-8'),
+    '/real-estate-closings': ('real-estate-closings.html', 'text/html; charset=utf-8'),
+    '/estate-probate-notarization': ('estate-probate-notarization.html', 'text/html; charset=utf-8'),
+    '/business-notarization': ('business-notarization.html', 'text/html; charset=utf-8'),
+    '/fees-packages': ('fees-packages.html', 'text/html; charset=utf-8'),
+    '/how-it-works': ('how-it-works.html', 'text/html; charset=utf-8'),
+    '/coverage-jurisdictions': ('coverage-jurisdictions.html', 'text/html; charset=utf-8'),
+    '/book-mobile-notary': ('book-mobile-notary.html', 'text/html; charset=utf-8'),
+    '/book-ron': ('book-ron.html', 'text/html; charset=utf-8'),
+    '/client-portal': ('client-portal.html', 'text/html; charset=utf-8'),
+    '/ron-technology-check': ('ron-technology-check.html', 'text/html; charset=utf-8'),
+    '/identity-verification': ('identity-verification.html', 'text/html; charset=utf-8'),
+    '/for-attorneys': ('for-attorneys.html', 'text/html; charset=utf-8'),
+    '/for-lenders-title': ('for-lenders-title.html', 'text/html; charset=utf-8'),
+    '/for-healthcare-facilities': ('for-healthcare-facilities.html', 'text/html; charset=utf-8'),
+    '/business-subscriptions': ('business-subscriptions.html', 'text/html; charset=utf-8'),
+    '/document-privacy-security': ('document-privacy-security.html', 'text/html; charset=utf-8'),
+    '/accessibility-language': ('accessibility-language.html', 'text/html; charset=utf-8'),
+    '/notary-records': ('notary-records.html', 'text/html; charset=utf-8'),
+    '/faq': ('faq.html', 'text/html; charset=utf-8'),
     # The company surfaces of the Sanders Companies (2026-11-25
     # transformation): each company at a clean route, in its own
     # colors, on the shared companies.css presentation system.

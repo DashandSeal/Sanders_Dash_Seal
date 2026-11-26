@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/for-attorneys.html",
+        "payload_hash": "feac92a4183747cd9ba48f3e8f5b77c6bb410cb3bf60480e4e3dd2aefeed7ed4",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

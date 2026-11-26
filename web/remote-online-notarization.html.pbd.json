@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/remote-online-notarization.html",
+        "payload_hash": "265c5bb292c6cd815e4dae7cba62d754ff7e275bf29e881196c0a9163e6e2a23",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

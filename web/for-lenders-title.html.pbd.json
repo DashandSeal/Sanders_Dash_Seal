@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/for-lenders-title.html",
+        "payload_hash": "43d84f48594e9dc7b2d5fe37b3baca1ee0bbd1f8cde50229171eff47642ad60d",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

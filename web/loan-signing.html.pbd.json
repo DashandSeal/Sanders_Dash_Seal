@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/loan-signing.html",
+        "payload_hash": "77a29d70bb4ced81d633493998090b03f4f24998c34b77e2017057eb39ced7c4",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
