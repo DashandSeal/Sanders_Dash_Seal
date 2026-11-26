@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-founder.html",
+        "payload_hash": "576ab3226ed21ab25c597d03a9120f4a9897d3f8d0a61f29c43945ae0313a92b",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

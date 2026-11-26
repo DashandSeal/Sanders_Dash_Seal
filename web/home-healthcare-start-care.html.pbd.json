@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "web/home-healthcare-start-care.html",
-        "payload_hash": "a7e3a281b29262f8133b542a2f19038bb178857f4c5968f76c4ad69b43931226",
+        "payload_hash": "a649a4b0e2f316516b1be352db146913219995b143fe9110a707514aef588356",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

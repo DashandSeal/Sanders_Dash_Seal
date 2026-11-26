@@ -348,6 +348,26 @@ ASSETS = {
     '/sg-security/support': ('sg-security-support.html', 'text/html; charset=utf-8'),
     '/sg-security/complaints': ('sg-security-complaints.html', 'text/html; charset=utf-8'),
     '/sg-security/emergency-contact': ('sg-security-emergency-contact.html', 'text/html; charset=utf-8'),
+    # The all-sites additions (founder ruling, 2026-11-25 21:36 MST):
+    # every website carries a direction statement, a founder's portal,
+    # and a history of the company section — one uniform structure,
+    # each company's own content, drawn from the founder interview of
+    # 2026-11-25 (the source of record). Headquarters' founder's
+    # portal is the Office of the Founder at /headquarters/founder.
+    '/direction': ('direction.html', 'text/html; charset=utf-8'),
+    '/founder': ('founder.html', 'text/html; charset=utf-8'),
+    '/history': ('history.html', 'text/html; charset=utf-8'),
+    '/headquarters/direction': ('headquarters-direction.html', 'text/html; charset=utf-8'),
+    '/headquarters/history': ('headquarters-history.html', 'text/html; charset=utf-8'),
+    '/home-healthcare/direction': ('home-healthcare-direction.html', 'text/html; charset=utf-8'),
+    '/home-healthcare/founder': ('home-healthcare-founder.html', 'text/html; charset=utf-8'),
+    '/home-healthcare/history': ('home-healthcare-history.html', 'text/html; charset=utf-8'),
+    '/senior-living/direction': ('senior-living-direction.html', 'text/html; charset=utf-8'),
+    '/senior-living/founder': ('senior-living-founder.html', 'text/html; charset=utf-8'),
+    '/senior-living/history': ('senior-living-history.html', 'text/html; charset=utf-8'),
+    '/sg-security/direction': ('sg-security-direction.html', 'text/html; charset=utf-8'),
+    '/sg-security/founder': ('sg-security-founder.html', 'text/html; charset=utf-8'),
+    '/sg-security/history': ('sg-security-history.html', 'text/html; charset=utf-8'),
     '/portals/review': ('portals-review.html', 'text/html; charset=utf-8'),
     '/assets/sds-founder.png': ('sds-founder.png', 'image/png'),
     '/assets/wall-of-valor-primary.jpg': ('IMG_20261024_141701319_HDR.jpg', 'image/jpeg'),

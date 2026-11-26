@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-direction.html",
+        "payload_hash": "59f20c9ee1f31fba6b8f192edb20f6b44186b7fa6773f8779b746b904b31b7a5",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
