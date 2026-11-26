@@ -1,0 +1,845 @@
+/* =========================================================================
+ * The Sanders Companies — company surfaces stylesheet (web/companies.css)
+ * Property of: The Sanders Companies | Developed by: Roosevelt Sanders
+ * Tagline: "Our family will take great care of your family" — The Sanders Way!
+ *
+ * Presentation build of 2026-11-25 under the Sanders Royal Enterprise
+ * Standard, following the flagship storefront system (web/jade-landing.css):
+ * marble-grade dimensional surfaces, sculpted plaques, dual-seal medallion
+ * lockups, a serif-display / sans-body type system, elegant transitions on
+ * one easing curve, and the Global By Design register.
+ *
+ * Each company keeps its OWN colors. The token blocks below are frozen per
+ * company, derived from that company's own seal — the heraldic identity the
+ * founder issued: deep royal blue fields, gold lettering and rope, silver
+ * mantling. Anchors sampled from the seals: Home Healthcare field #010c54 /
+ * #010738, plume #002bba, gold #e7cb78 / #ad945c / #956d29, silver #f7f2d3 /
+ * #c2bcab; Senior Living field #07145e / #010c57 / #01083a, plume #0053e5,
+ * gold #e7c86d / #aa905b / #90692a, silver #f6efcd / #c0b9a6; Headquarters
+ * field #06123f / #040a25 / #020720, gold #cdba8f / #ad864d, cream #eee6c7,
+ * chevron #df0303. Royal Blue #2c4f9e and Royal Deep #0d2149 are the
+ * platform's documented corporate register values.
+ *
+ * Discipline (the flagship's): every color on these surfaces is a token —
+ * no hex or rgba literal appears outside the token blocks. The marble is
+ * crafted in CSS alone: layered mineral clouds and irregular vein
+ * gradients over each company's deep blue base, via color-mix over that
+ * company's own tokens. No webfonts, no external assets.
+ * ========================================================================= */
+
+:root {
+    /* Type system — serif display, system sans body. One voice with the
+       flagship and the portal. */
+    --co-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --co-serif: Georgia, "Times New Roman", serif;
+
+    /* Shadows — layered depth, never a single flat drop. Shared across the
+       companies: the black of every seal's shield. */
+    --co-shadow-card: 0 14px 28px rgba(0, 0, 0, 0.28), 0 30px 60px rgba(0, 0, 0, 0.30);
+    --co-shadow-card-hover: 0 20px 36px rgba(0, 0, 0, 0.34), 0 42px 84px rgba(0, 0, 0, 0.38);
+    --co-shadow-plaque: 0 18px 40px rgba(0, 0, 0, 0.42), 0 40px 90px rgba(0, 0, 0, 0.35);
+    --co-shadow-button: 0 8px 30px rgba(0, 0, 0, 0.38);
+    --co-shadow-button-hover: 0 14px 36px rgba(0, 0, 0, 0.45);
+
+    /* Motion — elegant, 180–260ms, one easing curve. */
+    --co-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+
+/* ---- Sanders Home Healthcare & Caregivers LLC — frozen palette ----------
+   Royal blue marble, gold trim, silver register; the plume's bright blue
+   is this company's accent light. */
+body.co-hh {
+    color-scheme: dark;
+
+    --co-blue-300: #2c4f9e;
+    --co-blue-400: #16349c;
+    --co-blue-500: #002bba;
+    --co-blue-600: #011a6e;
+    --co-blue-700: #010c54;
+    --co-blue-800: #010738;
+    --co-blue-850: #010630;
+    --co-blue-900: #01041f;
+    --co-blue-950: #00030f;
+    --co-blue-bar: #010a3d;
+
+    --co-gold-200: #fbf3d9;
+    --co-gold-300: #f2dc90;
+    --co-gold-400: #e7cb78;
+    --co-gold: #d9b95c;
+    --co-gold-600: #ad945c;
+    --co-gold-700: #956d29;
+    --co-gold-800: #6f4f1c;
+
+    --co-silver-bright: #f7f2d3;
+    --co-silver: #c2bcab;
+    --co-gray: #9d9ea0;
+    --co-gray-dim: #6e6e6a;
+
+    --co-accent: #002bba;
+    --co-ink: #0a0d1a;
+
+    --co-glow-gold: 0 0 16px color-mix(in srgb, var(--co-gold-600) 40%, transparent);
+    --co-gold-sheen: linear-gradient(120deg, var(--co-gold-700), var(--co-gold-400), var(--co-gold-700));
+
+    --co-marble-body:
+        radial-gradient(ellipse 62% 42% at 12% 0%, color-mix(in srgb, var(--co-blue-500) 30%, transparent), transparent 70%),
+        radial-gradient(ellipse 46% 36% at 88% 34%, color-mix(in srgb, var(--co-blue-400) 26%, transparent), transparent 70%),
+        radial-gradient(ellipse 72% 52% at 55% 108%, color-mix(in srgb, var(--co-blue-700) 42%, transparent), transparent 72%),
+        linear-gradient(140deg, var(--co-blue-800), var(--co-blue-700) 46%, var(--co-blue-900));
+
+    --co-marble-panel:
+        radial-gradient(ellipse 85% 62% at 16% 0%, color-mix(in srgb, var(--co-blue-400) 22%, transparent), transparent 62%),
+        radial-gradient(ellipse 60% 55% at 96% 100%, color-mix(in srgb, var(--co-blue-900) 55%, transparent), transparent 70%),
+        linear-gradient(155deg, var(--co-blue-600), var(--co-blue-800));
+}
+
+/* ---- Sanders Senior Living LLC — frozen palette --------------------------
+   The same heraldic house, a touch warmer in the gold, the plume at its
+   brightest — the golden register of the family. */
+body.co-sl {
+    color-scheme: dark;
+
+    --co-blue-300: #2c4f9e;
+    --co-blue-400: #1d44a8;
+    --co-blue-500: #0053e5;
+    --co-blue-600: #021f7a;
+    --co-blue-700: #07145e;
+    --co-blue-800: #010c57;
+    --co-blue-850: #01083a;
+    --co-blue-900: #01041f;
+    --co-blue-950: #00030f;
+    --co-blue-bar: #020a45;
+
+    --co-gold-200: #faf3d7;
+    --co-gold-300: #f0d98c;
+    --co-gold-400: #e7c86d;
+    --co-gold: #dcbc58;
+    --co-gold-600: #aa905b;
+    --co-gold-700: #90692a;
+    --co-gold-800: #6b4d1e;
+
+    --co-silver-bright: #f6efcd;
+    --co-silver: #c0b9a6;
+    --co-gray: #9c9a92;
+    --co-gray-dim: #6e6c64;
+
+    --co-accent: #0053e5;
+    --co-ink: #0a0d1a;
+
+    --co-glow-gold: 0 0 16px color-mix(in srgb, var(--co-gold-600) 40%, transparent);
+    --co-gold-sheen: linear-gradient(120deg, var(--co-gold-700), var(--co-gold-400), var(--co-gold-700));
+
+    --co-marble-body:
+        radial-gradient(ellipse 62% 42% at 12% 0%, color-mix(in srgb, var(--co-blue-500) 24%, transparent), transparent 70%),
+        radial-gradient(ellipse 46% 36% at 88% 34%, color-mix(in srgb, var(--co-blue-400) 26%, transparent), transparent 70%),
+        radial-gradient(ellipse 72% 52% at 55% 108%, color-mix(in srgb, var(--co-blue-700) 42%, transparent), transparent 72%),
+        linear-gradient(140deg, var(--co-blue-800), var(--co-blue-700) 46%, var(--co-blue-900));
+
+    --co-marble-panel:
+        radial-gradient(ellipse 85% 62% at 16% 0%, color-mix(in srgb, var(--co-blue-400) 22%, transparent), transparent 62%),
+        radial-gradient(ellipse 60% 55% at 96% 100%, color-mix(in srgb, var(--co-blue-900) 55%, transparent), transparent 70%),
+        linear-gradient(155deg, var(--co-blue-600), var(--co-blue-800));
+}
+
+/* ---- S & G Security Inc. — Corporate Headquarters — frozen palette -------
+   The deepest navy of the house, the pale gold of the lions, the corporate
+   grays, and the chevron's red — used once, the way the shield uses it. */
+body.co-hq {
+    color-scheme: dark;
+
+    --co-blue-300: #2c4f9e;
+    --co-blue-400: #16307a;
+    --co-blue-500: #0d2149;
+    --co-blue-600: #06123f;
+    --co-blue-700: #040a25;
+    --co-blue-800: #020720;
+    --co-blue-850: #01051a;
+    --co-blue-900: #01030f;
+    --co-blue-950: #000208;
+    --co-blue-bar: #030a26;
+
+    --co-gold-200: #f7efdb;
+    --co-gold-300: #e9dcba;
+    --co-gold-400: #cdba8f;
+    --co-gold: #bfa06a;
+    --co-gold-600: #ad864d;
+    --co-gold-700: #8a6524;
+    --co-gold-800: #66491a;
+
+    --co-silver-bright: #eee6c7;
+    --co-silver: #c9ced4;
+    --co-gray: #8b939e;
+    --co-gray-dim: #5d646e;
+
+    --co-accent: #df0303;
+    --co-ink: #0a0d1a;
+
+    --co-glow-gold: 0 0 16px color-mix(in srgb, var(--co-gold-600) 40%, transparent);
+    --co-gold-sheen: linear-gradient(120deg, var(--co-gold-700), var(--co-gold-400), var(--co-gold-700));
+
+    --co-marble-body:
+        radial-gradient(ellipse 62% 42% at 12% 0%, color-mix(in srgb, var(--co-blue-500) 30%, transparent), transparent 70%),
+        radial-gradient(ellipse 46% 36% at 88% 34%, color-mix(in srgb, var(--co-blue-400) 24%, transparent), transparent 70%),
+        radial-gradient(ellipse 72% 52% at 55% 108%, color-mix(in srgb, var(--co-blue-600) 42%, transparent), transparent 72%),
+        linear-gradient(140deg, var(--co-blue-800), var(--co-blue-700) 46%, var(--co-blue-900));
+
+    --co-marble-panel:
+        radial-gradient(ellipse 85% 62% at 16% 0%, color-mix(in srgb, var(--co-blue-400) 20%, transparent), transparent 62%),
+        radial-gradient(ellipse 60% 55% at 96% 100%, color-mix(in srgb, var(--co-blue-900) 55%, transparent), transparent 70%),
+        linear-gradient(155deg, var(--co-blue-600), var(--co-blue-800));
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+    margin: 0;
+    background: var(--co-marble-body);
+    background-attachment: fixed;
+    color: var(--co-silver-bright);
+    font-family: var(--co-font-stack);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-text-size-adjust: 100%;
+}
+
+/* Marble veining — silver and gold veins at varied angles and intervals
+   over the deep blue field, the stone of the seals' own fields. */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(117deg,
+            transparent 0 132px,
+            color-mix(in srgb, var(--co-silver) 5%, transparent) 133px,
+            transparent 136px,
+            transparent 261px,
+            color-mix(in srgb, var(--co-gold) 4%, transparent) 263px,
+            transparent 267px,
+            transparent 389px,
+            color-mix(in srgb, var(--co-silver) 3%, transparent) 390px,
+            transparent 392px),
+        repeating-linear-gradient(63deg,
+            transparent 0 187px,
+            color-mix(in srgb, var(--co-silver) 4%, transparent) 189px,
+            transparent 192px,
+            transparent 341px,
+            color-mix(in srgb, var(--co-gold) 3%, transparent) 343px,
+            transparent 346px),
+        radial-gradient(ellipse 34% 22% at 78% 12%, color-mix(in srgb, var(--co-silver) 4%, transparent), transparent 70%),
+        radial-gradient(ellipse 28% 30% at 8% 76%, color-mix(in srgb, var(--co-gold) 5%, transparent), transparent 70%);
+}
+
+/* A second, softer vein pass so the stone reads at more than one depth. */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(158deg,
+            transparent 0 218px,
+            color-mix(in srgb, var(--co-silver) 3%, transparent) 221px,
+            color-mix(in srgb, var(--co-silver) 1%, transparent) 228px,
+            transparent 234px,
+            transparent 457px,
+            color-mix(in srgb, var(--co-gold) 3%, transparent) 460px,
+            transparent 464px);
+}
+
+a { color: inherit; text-decoration: none; }
+
+::selection { background: var(--co-gold); color: var(--co-ink); }
+
+:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--co-gold-300) 85%, transparent);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ---- Sculpted plaque — the shared carved-surface treatment ------------- */
+
+.plaque {
+    position: relative;
+    background: var(--co-marble-panel);
+    border: 1px solid color-mix(in srgb, var(--co-gold-700) 78%, transparent);
+    border-radius: 18px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--co-silver-bright) 22%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--co-gold) 14%, transparent),
+        inset 0 -22px 34px color-mix(in srgb, var(--co-blue-950) 55%, transparent),
+        var(--co-shadow-plaque);
+}
+
+.plaque::after {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid color-mix(in srgb, var(--co-gold) 42%, transparent);
+    border-radius: 12px;
+    pointer-events: none;
+}
+
+/* ---- Topbar — the dual-seal lockup and the way through ----------------- */
+
+.topbar {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem 2rem;
+    padding: 14px clamp(20px, 5vw, 90px);
+    background: linear-gradient(180deg, var(--co-blue-850), var(--co-blue-bar));
+    border-bottom: 1px solid color-mix(in srgb, var(--co-gold-700) 62%, transparent);
+    box-shadow:
+        inset 0 -1px 0 color-mix(in srgb, var(--co-blue-300) 50%, transparent),
+        0 12px 30px color-mix(in srgb, var(--co-blue-950) 55%, transparent);
+}
+
+.brand { display: inline-flex; align-items: center; gap: 16px; border-radius: 999px; }
+
+/* The dual-seal lockup: headquarters and the company, paired on one
+   sculpted plaque — the dual-seal rule, mounted, not pasted. */
+.seal-lockup {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 9px 18px 9px 12px;
+    background: var(--co-marble-panel);
+    border: 1px solid color-mix(in srgb, var(--co-gold-700) 78%, transparent);
+    border-radius: 999px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--co-silver-bright) 22%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--co-gold) 14%, transparent),
+        inset 0 -10px 18px color-mix(in srgb, var(--co-blue-950) 50%, transparent),
+        0 10px 24px color-mix(in srgb, var(--co-blue-950) 55%, transparent);
+    transition: border-color 0.22s var(--co-ease), box-shadow 0.22s var(--co-ease);
+}
+
+.brand:hover .seal-lockup, .brand:focus-visible .seal-lockup {
+    border-color: var(--co-gold);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--co-silver-bright) 22%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--co-gold) 20%, transparent),
+        inset 0 -10px 18px color-mix(in srgb, var(--co-blue-950) 50%, transparent),
+        var(--co-glow-gold),
+        0 10px 24px color-mix(in srgb, var(--co-blue-950) 55%, transparent);
+}
+
+/* A seal mounted as a medallion: the artwork untouched, clipped to its
+   own circle and ringed in gold on a deep-blue mount. */
+.seal-medallion {
+    display: block;
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--co-gold);
+    background: var(--co-blue-900);
+    box-shadow:
+        0 0 0 3px var(--co-blue-900),
+        0 0 0 4px color-mix(in srgb, var(--co-gold-700) 75%, transparent),
+        0 6px 16px color-mix(in srgb, var(--co-blue-950) 60%, transparent);
+}
+
+.seal-medallion-hq { width: 62px; height: 62px; }
+
+.brand-name {
+    font-family: var(--co-serif);
+    font-size: 1.06rem;
+    letter-spacing: 0.02em;
+    color: var(--co-gold-300);
+    line-height: 1.3;
+}
+
+.brand-name span {
+    display: block;
+    font-family: var(--co-font-stack);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--co-silver);
+}
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem 2rem;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+}
+
+nav a {
+    position: relative;
+    padding: 4px 0;
+    transition: color 0.2s var(--co-ease);
+}
+
+nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--co-gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.24s var(--co-ease);
+}
+
+nav a:hover { color: var(--co-gold-300); }
+nav a:hover::after { transform: scaleX(1); }
+
+/* ---- Hero --------------------------------------------------------------- */
+
+.hero {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    align-items: center;
+    gap: 5vw;
+    max-width: 1440px;
+    margin: auto;
+    min-height: 560px;
+    padding: 70px 6vw;
+}
+
+.eyebrow {
+    color: var(--co-gold);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+}
+
+h1, h2, h3 { font-family: var(--co-serif); }
+
+h1 {
+    font-size: clamp(2.6rem, 5vw, 5.2rem);
+    line-height: 1.13;
+    margin: 22px 0;
+    color: var(--co-silver-bright);
+    text-shadow: 0 2px 22px color-mix(in srgb, var(--co-blue-950) 65%, transparent);
+}
+
+h1 em { color: var(--co-gold); font-style: normal; }
+
+h2 {
+    font-size: clamp(2rem, 3vw, 3.1rem);
+    line-height: 1.2;
+    color: var(--co-gold);
+    margin: 0 0 8px;
+}
+
+h3 { color: var(--co-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
+
+.hero-copy > p:not(.eyebrow), .section > p {
+    max-width: 640px;
+    font-size: 1.08rem;
+    color: var(--co-silver-bright);
+}
+
+.fine {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--co-silver);
+    margin-top: 26px;
+}
+
+.actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 30px; }
+
+/* Buttons — gold sheen, a lift on hover, a sweep of light, a press. */
+.button {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 13px 24px;
+    background: var(--co-gold-sheen);
+    border: 1px solid var(--co-gold-300);
+    border-radius: 10px;
+    color: var(--co-ink);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--co-gold-200) 65%, transparent),
+        var(--co-shadow-button);
+    transition: transform 0.22s var(--co-ease), box-shadow 0.22s var(--co-ease);
+}
+
+.button::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -80%;
+    width: 55%;
+    background: linear-gradient(115deg, transparent, color-mix(in srgb, var(--co-gold-200) 55%, transparent), transparent);
+    transform: skewX(-18deg);
+    transition: left 0.26s var(--co-ease);
+    pointer-events: none;
+}
+
+.button:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--co-gold-200) 65%, transparent),
+        var(--co-shadow-button-hover);
+}
+
+.button:hover::after { left: 130%; }
+.button:active { transform: translateY(0); }
+
+.button.secondary {
+    background: var(--co-marble-panel);
+    border-color: color-mix(in srgb, var(--co-gold-700) 78%, transparent);
+    color: var(--co-gold);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--co-silver-bright) 18%, transparent),
+        var(--co-shadow-button);
+}
+
+.button.secondary:hover { border-color: var(--co-gold); color: var(--co-gold-300); }
+
+/* The company's seal, presented the way the flagship presents the
+   founder's portrait — a sculpted double frame, the artwork untouched. */
+.seal-display {
+    padding: 26px 22px 18px;
+    background: var(--co-marble-panel);
+    border: 1px solid color-mix(in srgb, var(--co-gold-700) 78%, transparent);
+    border-radius: 16px;
+    box-shadow:
+        0 0 0 6px color-mix(in srgb, var(--co-blue-900) 88%, transparent),
+        0 0 0 7px color-mix(in srgb, var(--co-gold-700) 70%, transparent),
+        0 0 0 13px color-mix(in srgb, var(--co-blue-900) 55%, transparent),
+        0 0 0 14px color-mix(in srgb, var(--co-gold) 38%, transparent),
+        var(--co-shadow-plaque);
+    text-align: center;
+}
+
+.seal-display img {
+    display: block;
+    width: min(320px, 72vw);
+    height: auto;
+    aspect-ratio: 1;
+    object-fit: cover;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 3px solid var(--co-gold);
+    background: var(--co-blue-900);
+    box-shadow:
+        0 0 0 5px var(--co-blue-900),
+        0 0 0 6px color-mix(in srgb, var(--co-gold-700) 70%, transparent),
+        0 16px 34px color-mix(in srgb, var(--co-blue-950) 60%, transparent);
+}
+
+.seal-display p { margin: 16px 0 4px; color: var(--co-gold); font-family: var(--co-serif); font-size: 1.05rem; }
+
+.seal-display span {
+    display: block;
+    color: var(--co-silver);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.13em;
+}
+
+/* ---- Global By Design — the permanent register ------------------------- */
+
+.global-register {
+    position: relative;
+    z-index: 1;
+    max-width: 1080px;
+    margin: 6px auto 0;
+    width: calc(100% - 12vw);
+    padding: 30px 34px 26px;
+    text-align: center;
+}
+
+.global-register .eyebrow { margin: 0; }
+
+.global-line {
+    margin: 12px auto 4px;
+    max-width: 720px;
+    font-size: 1.08rem;
+    color: var(--co-silver-bright);
+    position: relative;
+    z-index: 1;
+}
+
+.global-line span {
+    font-family: var(--co-serif);
+    font-style: italic;
+    color: var(--co-gold-300);
+}
+
+/* ---- Sections ------------------------------------------------------------ */
+
+.section {
+    position: relative;
+    z-index: 1;
+    padding: 80px max(6vw, 22px);
+    border-top: 1px solid color-mix(in srgb, var(--co-gold) 20%, transparent);
+}
+
+.section > h2, .section > .eyebrow { text-align: center; }
+
+/* A gold double rule beneath every section heading. */
+.section > h2::after {
+    content: "";
+    display: block;
+    width: 88px;
+    margin: 16px auto 0;
+    border-top: 1px solid var(--co-gold);
+    box-shadow: 0 4px 0 -1px color-mix(in srgb, var(--co-gold) 55%, transparent);
+}
+
+.section > p { margin: 15px auto 40px; text-align: center; }
+
+/* Cards — sculpted marble plaques that rise to the hand. */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+    max-width: 1320px;
+    margin: 40px auto 0;
+}
+
+.cards article {
+    position: relative;
+    overflow: hidden;
+    min-height: 210px;
+    padding: 30px 28px;
+    background: var(--co-marble-panel);
+    border: 1px solid color-mix(in srgb, var(--co-gold) 42%, transparent);
+    border-radius: 16px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--co-silver-bright) 20%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--co-gold) 10%, transparent),
+        inset 0 -18px 28px color-mix(in srgb, var(--co-blue-950) 45%, transparent),
+        var(--co-shadow-card);
+    transition: transform 0.24s var(--co-ease), box-shadow 0.24s var(--co-ease), border-color 0.24s var(--co-ease);
+}
+
+/* One soft vein of light across each card's stone. */
+.cards article::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(112deg, transparent 40%, color-mix(in srgb, var(--co-silver-bright) 5%, transparent) 50%, transparent 60%);
+    pointer-events: none;
+}
+
+.cards article:hover {
+    transform: translateY(-5px);
+    border-color: var(--co-gold);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--co-silver-bright) 24%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--co-gold) 16%, transparent),
+        inset 0 -18px 28px color-mix(in srgb, var(--co-blue-950) 45%, transparent),
+        var(--co-shadow-card-hover);
+}
+
+.cards article p { position: relative; margin: 0 0 8px; color: var(--co-silver-bright); }
+
+.cards article .fact {
+    font-family: var(--co-serif);
+    font-size: 1.55rem;
+    font-weight: bold;
+    color: var(--co-gold);
+    margin: 0 0 8px;
+}
+
+/* Company cards (headquarters register) — a seal, a name, a door. */
+.cards article .card-seal {
+    display: block;
+    width: 92px;
+    height: 92px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--co-gold);
+    background: var(--co-blue-900);
+    box-shadow:
+        0 0 0 4px var(--co-blue-900),
+        0 0 0 5px color-mix(in srgb, var(--co-gold-700) 70%, transparent),
+        0 10px 22px color-mix(in srgb, var(--co-blue-950) 60%, transparent);
+    margin-bottom: 18px;
+}
+
+.cards article .card-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--co-gold);
+    border-bottom: 1px solid color-mix(in srgb, var(--co-gold) 45%, transparent);
+    padding-bottom: 3px;
+    transition: color 0.2s var(--co-ease), border-color 0.2s var(--co-ease);
+}
+
+.cards article .card-link:hover { color: var(--co-gold-300); border-color: var(--co-gold); }
+
+.about, .cta { text-align: center; }
+.about > p, .cta > p { margin-left: auto; margin-right: auto; }
+
+.cta .actions { justify-content: center; }
+
+/* The headquarters chevron — one restrained bar of the shield's red,
+   carried only on the headquarters surface. */
+body.co-hq .chevron-rule {
+    width: 88px;
+    margin: 18px auto 0;
+    border: 0;
+    border-top: 3px solid var(--co-accent);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    height: 10px;
+    background: var(--co-accent);
+}
+
+/* ---- Footer — the corporate register ------------------------------------ */
+
+footer {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 34px 6vw 30px;
+    background: linear-gradient(165deg, var(--co-blue-bar) 55%, var(--co-blue-800));
+    border-top: 2px solid color-mix(in srgb, var(--co-gold-700) 80%, transparent);
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--co-silver) 22%, transparent);
+    color: var(--co-gold);
+    font-size: 12.5px;
+}
+
+/* The four companies' seals — medallion mounts, one system, each a door
+   to that company's own surface. */
+.seal-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    margin-bottom: 22px;
+}
+
+.seal-strip figure { margin: 0; width: 132px; text-align: center; }
+
+.seal-strip img {
+    width: 118px;
+    height: 118px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--co-gold);
+    background: var(--co-blue-900);
+    box-shadow:
+        0 0 0 4px var(--co-blue-900),
+        0 0 0 5px color-mix(in srgb, var(--co-gold-700) 70%, transparent),
+        0 10px 22px color-mix(in srgb, var(--co-blue-950) 60%, transparent);
+    transition: transform 0.24s var(--co-ease), box-shadow 0.24s var(--co-ease);
+}
+
+.seal-strip figure:hover img {
+    transform: translateY(-3px);
+    box-shadow:
+        0 0 0 4px var(--co-blue-900),
+        0 0 0 5px var(--co-gold),
+        var(--co-glow-gold),
+        0 14px 26px color-mix(in srgb, var(--co-blue-950) 60%, transparent);
+}
+
+.seal-strip figcaption {
+    margin-top: 10px;
+    color: var(--co-gold);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    line-height: 1.45;
+}
+
+.seal-strip a { display: inline-block; }
+.seal-strip figcaption a { border-bottom: 1px solid transparent; transition: border-color 0.2s var(--co-ease); }
+.seal-strip figcaption a:hover { border-color: var(--co-gold); }
+
+.footer-lines {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    width: 100%;
+    color: var(--co-silver);
+}
+
+.footer-tagline {
+    font-family: var(--co-serif);
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--co-silver-bright);
+}
+
+.footer-closing {
+    font-family: var(--co-serif);
+    font-weight: bold;
+    font-size: 1.02rem;
+    letter-spacing: 0.04em;
+    color: var(--co-gold-300);
+}
+
+.footer-global {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--co-gold);
+}
+
+/* ---- Responsive ------------------------------------------------------------ */
+
+@media (max-width: 850px) {
+    .hero { grid-template-columns: 1fr; padding: 48px 6vw; min-height: 0; }
+    .seal-display { max-width: 480px; margin: auto; width: 100%; }
+    .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .topbar { justify-content: center; text-align: center; }
+    .brand { flex-direction: column; gap: 10px; }
+    nav { justify-content: center; }
+}
+
+@media (max-width: 560px) {
+    .cards { grid-template-columns: 1fr; }
+    .section { padding: 55px 20px; }
+    .seal-medallion { width: 46px; height: 46px; }
+    .seal-medallion-hq { width: 50px; height: 50px; }
+    .seal-lockup { gap: 10px; padding: 7px 13px 7px 9px; }
+    .global-register { width: calc(100% - 8vw); padding: 24px 20px 20px; }
+    .seal-strip { gap: 20px; }
+    .seal-strip figure { width: 118px; }
+    .seal-strip img { width: 104px; height: 104px; }
+    .brand-name { font-size: 0.98rem; }
+}
+
+/* ---- Reduced motion -------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    * { transition: none !important; animation: none !important; }
+    .cards article:hover, .button:hover, .seal-strip figure:hover img { transform: none; }
+}
