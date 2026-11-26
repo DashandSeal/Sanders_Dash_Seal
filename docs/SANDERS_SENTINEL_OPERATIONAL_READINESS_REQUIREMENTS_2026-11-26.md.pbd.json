@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/SANDERS_SENTINEL_OPERATIONAL_READINESS_REQUIREMENTS_2026-11-26.md",
+    "payload_hash": "67a56363dd2eb43e70e1a15863d57868a791517020ee8452b355ff364239b579",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
