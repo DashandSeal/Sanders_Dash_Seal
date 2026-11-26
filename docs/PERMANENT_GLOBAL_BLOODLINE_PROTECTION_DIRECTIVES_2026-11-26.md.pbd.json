@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/PERMANENT_GLOBAL_BLOODLINE_PROTECTION_DIRECTIVES_2026-11-26.md",
+    "payload_hash": "c0e26b015ec21a48ed554591c275b179124f7266a9354efb2b75eea499290013",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
