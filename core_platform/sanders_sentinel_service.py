@@ -346,6 +346,11 @@ BLOODLINE_WATCH_SET = (
                ' Global Bloodline Protection and'
                ' Succession Directive'),
      'required': True},
+    {'document': ('docs/SANDERS_SENTINEL_REAL_TIME_'
+                  'PROTECTIVE_INTELLIGENCE_2026-11-26.md'),
+     'title': ('Sanders Sentinel \u2014 Real-Time'
+               ' Protective Intelligence'),
+     'required': True},
     {'document': 'docs/SANDERS_BLOODLINE_REGISTRY.md',
      'title': 'Sanders Bloodline Registry',
      'required': False},
@@ -933,6 +938,123 @@ FOUNDER_EMERGENCY_ACTIVATION_ADDITION_NO_3_VERBATIM = (
     '4. Medical emergency detection: Authorized'
 )
 
+
+# -- Real-Time Protective Intelligence
+# (founder-established, 2026-11-26) ----------------
+# A distinct founder instrument supplementing the
+# Succession Directive: Sentinel's architecture
+# must support real-time perception, detection,
+# assessment, and protective response -- not
+# simply the ability to receive requests. The
+# instrument is carried verbatim below, after the
+# constants it governs, and stands as a guarded
+# record under Article II.
+RTPI_TITLE = ('Sanders Sentinel \u2014 Real-Time'
+              ' Protective Intelligence')
+RTPI_ESTABLISHED = '2026-11-26'
+RTPI_SOURCE = ('Founder record:'
+               ' founder-sanders-sentinel-real-time-'
+               'protective-intelligence-2026-11-26')
+RTPI_SCOPE = 'REAL_TIME_PROTECTIVE_INTELLIGENCE'
+RTPI_GUARDED_DOCUMENT = ('docs/SANDERS_SENTINEL_'
+                         'REAL_TIME_PROTECTIVE_'
+                         'INTELLIGENCE_2026-11-26.md')
+PERCEPTION_CHANNELS = ('VISUAL', 'ENVIRONMENTAL',
+                       'ACOUSTIC',
+                       'MEDICAL_WEARABLE',
+                       'OFFICIAL_WARNING')
+# Each perception channel has exactly one
+# authorized source kind of record. A source
+# outside the channel's authorized kind is refused
+# by name.
+PERCEPTION_SOURCES = {
+    'VISUAL': 'AUTHORIZED_CAMERA_OR_SHARED_VIDEO',
+    'ENVIRONMENTAL': 'CONNECTED_SENSOR',
+    'ACOUSTIC': 'AUTHORIZED_AUDIO_SYSTEM',
+    'MEDICAL_WEARABLE':
+        'SUPPORTED_MEDICAL_DEVICE_OR_WEARABLE',
+    'OFFICIAL_WARNING': 'OFFICIAL_WARNING_SOURCE',
+}
+PERCEPTION_CHANNEL_PATHS = ('PRIMARY', 'ALTERNATIVE')
+PERCEPTION_PRIMARY_STATES = ('DESIGNATED',
+                             'FAILED_RECORDED')
+ASSESSMENT_DETERMINATIONS = ('CREDIBLE_DANGER',
+                             'NO_CREDIBLE_DANGER')
+RTPI_INVARIANTS = (
+    'Perception is by authorized channels only:'
+    ' every observation records its source and its'
+    ' authorization basis by reference, and a'
+    ' source outside the channel\u2019s authorized'
+    ' kind is refused by name.',
+    'No camera, sensor, wearable, or warning feed'
+    ' is connected by this construction: live'
+    ' sources connect later as designated'
+    ' authorized counterparts, and nothing is'
+    ' represented as connected that is not.',
+    'A situation determination rests only on'
+    ' observations and evidence of record; nothing'
+    ' is determined on invented data.',
+    'Protective initiation acts on a recorded'
+    ' CREDIBLE_DANGER determination and is never'
+    ' gated on escalation delivery (Article IV);'
+    ' closure of an initiated case still requires'
+    ' verified arrival and a recorded resolution.',
+    'Each perception channel carries a designated'
+    ' primary and an alternative path of record; a'
+    ' recorded primary failure moves the channel'
+    ' to its alternative, and the failure itself'
+    ' stands as a recorded event.',
+)
+
+FOUNDER_PROTECTIVE_INTELLIGENCE_VERBATIM = (
+    'Sanders Sentinel \u2014 Real-Time Protective '
+    'Intelligence\n'
+    'His architecture must support:\n'
+    '1. Live visual perception: Analyze '
+    'authorized security camera feeds and '
+    'voluntarily shared live video to recognize '
+    'visible hazards as they develop.\n'
+    '2. Real-time environmental awareness: Detect '
+    'smoke, fire, flooding, hazardous conditions '
+    'and other immediate physical dangers through '
+    'connected sensors.\n'
+    '3. Live acoustic detection: Recognize '
+    'emergency alarms, cries for assistance and '
+    'distress sounds through authorized audio '
+    'systems.\n'
+    '4. Real-time medical awareness: Receive '
+    'supported medical-device and wearable alerts '
+    'as they occur.\n'
+    '5. Global threat awareness: Continuously '
+    'process official emergency warnings, severe '
+    'weather alerts, natural disasters and public '
+    'safety advisories.\n'
+    '6. Predictive hazard recognition: Identify '
+    'developing patterns of danger from available '
+    'evidence rather than waiting until an '
+    'emergency has fully developed.\n'
+    '7. Multisensor intelligence: Combine '
+    'authorized visual, acoustic, environmental '
+    'and emergency information to assess the '
+    'situation.\n'
+    '8. Immediate protective activation: Initiate '
+    'appropriate emergency assistance upon '
+    'detecting credible danger, without depending '
+    'exclusively on a person requesting help.\n'
+    '9. Continuous situational assessment: '
+    'Evaluate changing conditions throughout an '
+    'emergency and adapt protective assistance '
+    'accordingly.\n'
+    '10. Operational redundancy: Maintain '
+    'alternative detection and communication '
+    'channels when primary systems fail.\n'
+    'The fundamental architectural requirement is '
+    'that Sanders Sentinel must possess real-time '
+    'perception, detection, assessment and '
+    'protective response capabilities\u2014not simply '
+    'the ability to receive requests.'
+)
+
 class SandersSentinelDenied(Exception):
     """The requested Sanders Sentinel operation is not
     allowed."""
@@ -1128,6 +1250,74 @@ class SandersSentinelService:
                     activation_kind TEXT NOT NULL,
                     target_platform TEXT NOT NULL,
                     target_ref TEXT NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_perception_channels (
+                    channel TEXT PRIMARY KEY,
+                    primary_path_ref TEXT NOT NULL,
+                    alternative_path_ref TEXT NOT NULL,
+                    primary_state TEXT NOT NULL,
+                    designated_by TEXT NOT NULL,
+                    designated_at REAL NOT NULL,
+                    updated_by TEXT NOT NULL,
+                    updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_perception_observations (
+                    observation_id TEXT PRIMARY KEY,
+                    channel TEXT NOT NULL,
+                    source_kind TEXT NOT NULL,
+                    source_ref TEXT NOT NULL,
+                    authorization_ref TEXT NOT NULL,
+                    member_ref TEXT,
+                    detail_ref TEXT NOT NULL,
+                    evidence_ref TEXT NOT NULL,
+                    channel_path TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_perception_failovers (
+                    failover_id TEXT PRIMARY KEY,
+                    channel TEXT NOT NULL,
+                    failure_ref TEXT NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    carried_by TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_situation_assessments (
+                    assessment_id TEXT PRIMARY KEY,
+                    case_id TEXT,
+                    observation_refs TEXT NOT NULL,
+                    observation_count INTEGER NOT NULL,
+                    determination TEXT NOT NULL,
+                    evidence_ref TEXT NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    adaptation_ref TEXT,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_hazard_flags (
+                    flag_id TEXT PRIMARY KEY,
+                    pattern_ref TEXT NOT NULL,
+                    observation_refs TEXT NOT NULL,
+                    observation_count INTEGER NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    state TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_protective_initiations (
+                    initiation_id TEXT PRIMARY KEY,
+                    assessment_id TEXT NOT NULL,
+                    case_id TEXT NOT NULL,
                     detail_ref TEXT NOT NULL,
                     recorded_by TEXT NOT NULL,
                     recorded_at REAL NOT NULL,
@@ -2552,6 +2742,9 @@ class SandersSentinelService:
             'emergency_activation':
                 SandersSentinelService
                 .emergency_activation_design_view(),
+            'protective_intelligence':
+                SandersSentinelService
+                .protective_intelligence_design_view(),
             'note': (
                 'This Directive supplements and'
                 ' strengthens the Permanent Bloodline'
@@ -3623,6 +3816,9 @@ class SandersSentinelService:
                 EMERGENCY_NO_TRACKING_INVARIANT,
             'dual_nature_ruling':
                 SUCCESSION_DUAL_NATURE_RULING,
+            'protective_intelligence':
+                SandersSentinelService
+                .protective_intelligence_design_view(),
             'note': (
                 'Items 1-3 stand in addition No. 3'
                 ' (2026-11-26 02:31 MST), whose item 4'
@@ -4219,6 +4415,920 @@ class SandersSentinelService:
             updated = self._emergency_case_row(db, case_id)
         return self._emergency_case_view(updated)
 
+    # -- Real-Time Protective Intelligence --------
+
+    @staticmethod
+    def protective_intelligence_design_view() -> dict:
+        """The Real-Time Protective Intelligence
+        instrument of record, read-only: its verbatim
+        text, the five authorized perception channels
+        with their one authorized source kind each,
+        the assessment determinations, and the
+        governing invariants -- including the honest
+        limit of this construction: the architecture
+        and its records are built; no camera, sensor,
+        wearable, or warning feed is connected by it,
+        and live sources connect later as designated
+        authorized counterparts."""
+        return {
+            'title': RTPI_TITLE,
+            'established': RTPI_ESTABLISHED,
+            'source': RTPI_SOURCE,
+            'instrument_verbatim':
+                FOUNDER_PROTECTIVE_INTELLIGENCE_VERBATIM,
+            'guarded_document': RTPI_GUARDED_DOCUMENT,
+            'perception_channels':
+                list(PERCEPTION_CHANNELS),
+            'perception_sources':
+                dict(PERCEPTION_SOURCES),
+            'assessment_determinations':
+                list(ASSESSMENT_DETERMINATIONS),
+            'invariants': list(RTPI_INVARIANTS),
+            'no_tracking_invariant':
+                EMERGENCY_NO_TRACKING_INVARIANT,
+            'feeds_connected': False,
+            'note': (
+                'The fundamental architectural'
+                ' requirement of record: Sanders'
+                ' Sentinel must possess real-time'
+                ' perception, detection, assessment'
+                ' and protective response capabilities'
+                ' -- not simply the ability to receive'
+                ' requests. This construction builds'
+                ' that architecture: perception intake'
+                ' over authorized channels, multisensor'
+                ' assessment on evidence of record,'
+                ' predictive hazard flags, protective'
+                ' initiation of the Emergency'
+                ' Activation machinery on a recorded'
+                ' credible-danger determination,'
+                ' continuous situational assessment'
+                ' across an open case, and operational'
+                ' redundancy of record. The channels\u2019'
+                ' live sources -- cameras, sensors,'
+                ' wearables, warning feeds -- connect'
+                ' later as designated authorized'
+                ' counterparts; none is connected or'
+                ' represented as connected here.'),
+        }
+
+    @staticmethod
+    def _perception_channel_view(row, channel):
+        if row is None:
+            return {
+                'channel': channel,
+                'designation_state': 'NOT_DESIGNATED',
+                'primary_path_ref': None,
+                'alternative_path_ref': None,
+                'primary_state': None,
+                'designated_by': None,
+                'designated_at': None,
+                'updated_by': None,
+                'updated_at': None,
+                'receipt_id': None,
+            }
+        return {
+            'channel': row['channel'],
+            'designation_state': 'DESIGNATED',
+            'primary_path_ref': row['primary_path_ref'],
+            'alternative_path_ref':
+                row['alternative_path_ref'],
+            'primary_state': row['primary_state'],
+            'designated_by': row['designated_by'],
+            'designated_at': row['designated_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def _perception_channel_row(self, db, channel):
+        return db.execute(
+            'SELECT * FROM'
+            ' sanders_sentinel_perception_channels'
+            ' WHERE channel = ?', (channel,)).fetchone()
+
+    def designate_perception_channel(
+            self, actor, channel, primary_path_ref,
+            alternative_path_ref, *, region=None):
+        """Designate one perception channel's primary
+        and alternative paths (operator only), each by
+        reference (item 10: operational redundancy).
+        A designation is a record of the channel's
+        designated counterparts -- it connects
+        nothing, and represents nothing as connected.
+        Re-designation is a fresh human act of record
+        and returns a failed primary to DESIGNATED."""
+        self._geo(region)
+        self._require_operator(actor)
+        if channel not in PERCEPTION_CHANNELS:
+            raise SandersSentinelDenied(
+                'The perception channel must be one of: '
+                + ', '.join(PERCEPTION_CHANNELS))
+        for label, value in (
+                ('primary_path_ref', primary_path_ref),
+                ('alternative_path_ref',
+                 alternative_path_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required: each channel'
+                    ' carries a primary and an alternative'
+                    ' path of record')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_PERCEPTION_CHANNEL'
+                    '_DESIGNATED',
+                    actor=actor, channel=channel,
+                    primary_path_ref=primary_path_ref.strip(),
+                    alternative_path_ref=(
+                        alternative_path_ref.strip()))
+                existing = self._perception_channel_row(
+                    db, channel)
+                if existing is None:
+                    db.execute(
+                        'INSERT INTO'
+                        ' sanders_sentinel_perception_'
+                        'channels (channel, primary_path_ref,'
+                        ' alternative_path_ref, primary_state,'
+                        ' designated_by, designated_at,'
+                        ' updated_by, updated_at, receipt_id)'
+                        ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                        (channel, primary_path_ref.strip(),
+                         alternative_path_ref.strip(),
+                         'DESIGNATED', actor, now, actor, now,
+                         receipt_id))
+                else:
+                    db.execute(
+                        'UPDATE'
+                        ' sanders_sentinel_perception_'
+                        'channels SET primary_path_ref = ?,'
+                        ' alternative_path_ref = ?,'
+                        ' primary_state = ?, designated_by'
+                        ' = ?, designated_at = ?,'
+                        ' updated_by = ?, updated_at = ?,'
+                        ' receipt_id = ? WHERE channel = ?',
+                        (primary_path_ref.strip(),
+                         alternative_path_ref.strip(),
+                         'DESIGNATED', actor, now, actor, now,
+                         receipt_id, channel))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = self._perception_channel_row(db, channel)
+        return self._perception_channel_view(row, channel)
+
+    def perception_channels(self, actor, role, *,
+                            region=None):
+        """The perception channels of record (guarded
+        read): all five channels with their
+        designation and primary-path states. A channel
+        reading NOT_DESIGNATED has no designated
+        counterparts yet; nothing here represents a
+        live feed as connected."""
+        self._geo(region)
+        self._guard_access(actor, role, 'perception',
+                           'perception channels view')
+        with self._connect() as db:
+            rows = {row['channel']: row for row in
+                    db.execute(
+                        'SELECT * FROM'
+                        ' sanders_sentinel_perception_'
+                        'channels').fetchall()}
+            failovers = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_perception_failovers'
+                ' ORDER BY recorded_at').fetchall()
+        return {
+            'title': RTPI_TITLE,
+            'channels': [
+                self._perception_channel_view(
+                    rows.get(channel), channel)
+                for channel in PERCEPTION_CHANNELS],
+            'failovers': [
+                self._failover_view(row) for row in failovers],
+            'feeds_connected': False,
+        }
+
+    @staticmethod
+    def _failover_view(row):
+        return {
+            'failover_id': row['failover_id'],
+            'channel': row['channel'],
+            'failure_ref': row['failure_ref'],
+            'detail_ref': row['detail_ref'],
+            'carried_by': row['carried_by'],
+            'scope_ref': RTPI_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_perception_channel_failure(
+            self, actor, channel, failure_ref, detail_ref,
+            *, region=None):
+        """Record a primary channel's failure
+        (operator only): the failure itself stands as
+        a recorded event, the channel's primary reads
+        FAILED_RECORDED, and its designated alternative
+        carries the signal from that point (item 10).
+        Observations claiming the failed primary are
+        refused until a fresh designation of record."""
+        self._geo(region)
+        self._require_operator(actor)
+        if channel not in PERCEPTION_CHANNELS:
+            raise SandersSentinelDenied(
+                'The perception channel must be one of: '
+                + ', '.join(PERCEPTION_CHANNELS))
+        for label, value in (('failure_ref', failure_ref),
+                             ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        failover_id = (f'sentinel-perception-failover-'
+                       f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = self._perception_channel_row(db, channel)
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'This perception channel has no'
+                        ' designated paths of record; a'
+                        ' failure records only against a'
+                        ' designated channel'
+                        ' (PERCEPTION_CHANNEL_NOT_DESIGNATED)')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_PERCEPTION_CHANNEL'
+                    '_FAILURE',
+                    actor=actor, channel=channel,
+                    failover_id=failover_id,
+                    failure_ref=failure_ref.strip(),
+                    carried_by='ALTERNATIVE')
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_perception_failovers'
+                    ' (failover_id, channel, failure_ref,'
+                    ' detail_ref, carried_by, recorded_by,'
+                    ' recorded_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (failover_id, channel,
+                     failure_ref.strip(), detail_ref.strip(),
+                     'ALTERNATIVE', actor, now, receipt_id))
+                db.execute(
+                    'UPDATE'
+                    ' sanders_sentinel_perception_channels'
+                    ' SET primary_state = ?, updated_by = ?,'
+                    ' updated_at = ?, receipt_id = ? WHERE'
+                    ' channel = ?',
+                    ('FAILED_RECORDED', actor, now, receipt_id,
+                     channel))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_perception_failovers'
+                ' WHERE failover_id = ?',
+                (failover_id,)).fetchone()
+        return self._failover_view(updated)
+
+    @staticmethod
+    def _observation_view(row):
+        return {
+            'observation_id': row['observation_id'],
+            'channel': row['channel'],
+            'source_kind': row['source_kind'],
+            'source_ref': row['source_ref'],
+            'authorization_ref': row['authorization_ref'],
+            'member_ref': row['member_ref'],
+            'detail_ref': row['detail_ref'],
+            'evidence_ref': row['evidence_ref'],
+            'channel_path': row['channel_path'],
+            'scope_ref': RTPI_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def _observation_row(self, db, observation_id):
+        return db.execute(
+            'SELECT * FROM'
+            ' sanders_sentinel_perception_observations'
+            ' WHERE observation_id = ?',
+            (observation_id,)).fetchone()
+
+    def record_perception_observation(
+            self, actor, channel, source_kind, source_ref,
+            authorization_ref, detail_ref, evidence_ref,
+            channel_path='PRIMARY', member_ref=None, *,
+            region=None):
+        """Record one perception observation received
+        through an authorized channel (operator only).
+        The observation is by reference only: its
+        channel, its source and authorization basis,
+        the evidence it rests on, and the channel path
+        that carried it. Each channel has exactly one
+        authorized source kind; any other source is
+        refused by name
+        (PERCEPTION_SOURCE_NOT_AUTHORIZED). An
+        observation records only against a designated
+        channel (PERCEPTION_CHANNEL_NOT_DESIGNATED),
+        and never over a primary whose failure stands
+        recorded (PERCEPTION_CHANNEL_PRIMARY_FAILED).
+        This record is the platform's governed intake
+        of a perception event; it connects no feed."""
+        self._geo(region)
+        self._require_operator(actor)
+        if channel not in PERCEPTION_CHANNELS:
+            raise SandersSentinelDenied(
+                'The perception channel must be one of: '
+                + ', '.join(PERCEPTION_CHANNELS))
+        if source_kind != PERCEPTION_SOURCES[channel]:
+            raise SandersSentinelDenied(
+                f'A {channel} observation is received'
+                ' only from its authorized source kind,'
+                f' {PERCEPTION_SOURCES[channel]}; the'
+                ' presented source is refused'
+                ' (PERCEPTION_SOURCE_NOT_AUTHORIZED)')
+        if channel_path not in PERCEPTION_CHANNEL_PATHS:
+            raise SandersSentinelDenied(
+                'The channel path must be one of: '
+                + ', '.join(PERCEPTION_CHANNEL_PATHS))
+        for label, value in (
+                ('source_ref', source_ref),
+                ('authorization_ref', authorization_ref),
+                ('detail_ref', detail_ref),
+                ('evidence_ref', evidence_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if member_ref is not None and (
+                not isinstance(member_ref, str)
+                or not member_ref.strip()):
+            raise SandersSentinelDenied(
+                'A member reference, when given, must'
+                ' name the member by reference')
+        now = self._now()
+        observation_id = (f'sentinel-observation-'
+                          f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                channel_row = self._perception_channel_row(
+                    db, channel)
+                if channel_row is None:
+                    raise SandersSentinelDenied(
+                        'This perception channel has no'
+                        ' designated paths of record; an'
+                        ' observation records only against'
+                        ' a designated authorized channel'
+                        ' (PERCEPTION_CHANNEL_NOT_DESIGNATED)')
+                if (channel_row['primary_state']
+                        == 'FAILED_RECORDED'
+                        and channel_path == 'PRIMARY'):
+                    raise SandersSentinelDenied(
+                        'This channel\u2019s primary path'
+                        ' stands recorded as failed; the'
+                        ' signal is carried by its'
+                        ' designated alternative until a'
+                        ' fresh designation of record'
+                        ' (PERCEPTION_CHANNEL_PRIMARY_FAILED)')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_PERCEPTION_OBSERVATION'
+                    '_RECORDED',
+                    actor=actor,
+                    observation_id=observation_id,
+                    channel=channel, source_kind=source_kind,
+                    source_ref=source_ref.strip(),
+                    channel_path=channel_path)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_perception_'
+                    'observations (observation_id, channel,'
+                    ' source_kind, source_ref,'
+                    ' authorization_ref, member_ref,'
+                    ' detail_ref, evidence_ref, channel_path,'
+                    ' recorded_by, recorded_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?)',
+                    (observation_id, channel, source_kind,
+                     source_ref.strip(),
+                     authorization_ref.strip(),
+                     member_ref.strip() if member_ref else None,
+                     detail_ref.strip(), evidence_ref.strip(),
+                     channel_path, actor, now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = self._observation_row(db, observation_id)
+        return self._observation_view(row)
+
+    def perception_observations(self, actor, role, *,
+                                channel=None, region=None):
+        """The perception observations of record
+        (guarded read), optionally for one channel.
+        By reference only -- no imagery, audio, or
+        sensor data is held here, and no personal
+        tracking data."""
+        self._geo(region)
+        self._guard_access(actor, role, 'perception',
+                           'perception observations view')
+        if channel is not None and (
+                channel not in PERCEPTION_CHANNELS):
+            raise SandersSentinelDenied(
+                'The perception channel must be one of: '
+                + ', '.join(PERCEPTION_CHANNELS))
+        with self._connect() as db:
+            if channel is None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_perception_'
+                    'observations ORDER BY recorded_at'
+                ).fetchall()
+            else:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_perception_'
+                    'observations WHERE channel = ? ORDER'
+                    ' BY recorded_at', (channel,)).fetchall()
+        views = [self._observation_view(row) for row in rows]
+        by_channel = {}
+        for view in views:
+            by_channel[view['channel']] = (
+                by_channel.get(view['channel'], 0) + 1)
+        return {
+            'title': RTPI_TITLE,
+            'observations': views,
+            'by_channel': by_channel,
+            'total': len(views),
+        }
+
+    @staticmethod
+    def _assessment_view(row):
+        return {
+            'assessment_id': row['assessment_id'],
+            'case_id': row['case_id'],
+            'observation_refs':
+                json.loads(row['observation_refs']),
+            'observation_count': row['observation_count'],
+            'determination': row['determination'],
+            'credible_danger':
+                row['determination'] == 'CREDIBLE_DANGER',
+            'evidence_ref': row['evidence_ref'],
+            'detail_ref': row['detail_ref'],
+            'adaptation_ref': row['adaptation_ref'],
+            'scope_ref': RTPI_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def _assessment_row(self, db, assessment_id):
+        return db.execute(
+            'SELECT * FROM'
+            ' sanders_sentinel_situation_assessments'
+            ' WHERE assessment_id = ?',
+            (assessment_id,)).fetchone()
+
+    def _require_observations(self, db, observation_refs):
+        if (not isinstance(observation_refs, (list, tuple))
+                or not observation_refs):
+            raise SandersSentinelDenied(
+                'At least one observation of record is'
+                ' required: an assessment rests on'
+                ' observations, never on invented data')
+        refs = []
+        for ref in observation_refs:
+            if (not isinstance(ref, str)
+                    or not ref.strip()):
+                raise SandersSentinelDenied(
+                    'Each observation reference must name'
+                    ' an observation of record')
+            if self._observation_row(db, ref.strip()) is None:
+                raise SandersSentinelDenied(
+                    'An observation reference names no'
+                    ' observation of record:'
+                    f' {ref.strip()}')
+            refs.append(ref.strip())
+        return refs
+
+    def record_situation_assessment(
+            self, actor, observation_refs, determination,
+            evidence_ref, detail_ref, case_id=None,
+            adaptation_ref=None, *, region=None):
+        """Record one multisensor situation assessment
+        (operator only, item 7): observations across
+        the authorized channels combined into one
+        assessment, with the credibility/danger
+        determination recorded on the evidence
+        references it rests on -- never on invented
+        data. Against an open emergency case, the
+        assessment is one of the case's continuous
+        situational assessments (item 9), and its
+        adaptation reference names how the recorded
+        assistance adapts to the changed conditions."""
+        self._geo(region)
+        self._require_operator(actor)
+        if determination not in ASSESSMENT_DETERMINATIONS:
+            raise SandersSentinelDenied(
+                'The determination must be one of: '
+                + ', '.join(ASSESSMENT_DETERMINATIONS))
+        for label, value in (('evidence_ref', evidence_ref),
+                             ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if adaptation_ref is not None and (
+                not isinstance(adaptation_ref, str)
+                or not adaptation_ref.strip()):
+            raise SandersSentinelDenied(
+                'An adaptation reference, when given,'
+                ' must name the adapted assistance of'
+                ' record')
+        now = self._now()
+        assessment_id = (f'sentinel-assessment-'
+                         f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                refs = self._require_observations(
+                    db, observation_refs)
+                if case_id is not None:
+                    case = self._emergency_case_row(
+                        db, case_id)
+                    if case is None:
+                        raise SandersSentinelDenied(
+                            'No such emergency case')
+                    if case['state'] != 'OPEN':
+                        raise SandersSentinelDenied(
+                            'Situational assessments record'
+                            ' against an open emergency case;'
+                            ' this one reads '
+                            + case['state']
+                            + ' (EMERGENCY_CASE_NOT_OPEN)')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_SITUATION_ASSESSMENT'
+                    '_RECORDED',
+                    actor=actor, assessment_id=assessment_id,
+                    case_id=case_id,
+                    observation_count=len(refs),
+                    determination=determination,
+                    evidence_ref=evidence_ref.strip())
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_situation_'
+                    'assessments (assessment_id, case_id,'
+                    ' observation_refs, observation_count,'
+                    ' determination, evidence_ref,'
+                    ' detail_ref, adaptation_ref,'
+                    ' recorded_by, recorded_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?)',
+                    (assessment_id, case_id,
+                     json.dumps(refs), len(refs),
+                     determination, evidence_ref.strip(),
+                     detail_ref.strip(),
+                     adaptation_ref.strip()
+                     if adaptation_ref else None,
+                     actor, now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = self._assessment_row(db, assessment_id)
+        return self._assessment_view(row)
+
+    def situation_assessments(self, actor, role, *,
+                              case_id=None, region=None):
+        """The situation assessments of record
+        (guarded read), optionally for one emergency
+        case -- its continuous situational assessment
+        across the case's life (item 9)."""
+        self._geo(region)
+        self._guard_access(actor, role, 'perception',
+                           'situation assessments view')
+        with self._connect() as db:
+            if case_id is None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_situation_'
+                    'assessments ORDER BY recorded_at'
+                ).fetchall()
+            else:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_situation_'
+                    'assessments WHERE case_id = ? ORDER'
+                    ' BY recorded_at', (case_id,)).fetchall()
+        views = [self._assessment_view(row) for row in rows]
+        return {
+            'title': RTPI_TITLE,
+            'assessments': views,
+            'total': len(views),
+            'credible_danger_total': sum(
+                1 for view in views
+                if view['determination'] == 'CREDIBLE_DANGER'),
+        }
+
+    @staticmethod
+    def _hazard_flag_view(row):
+        return {
+            'flag_id': row['flag_id'],
+            'pattern_ref': row['pattern_ref'],
+            'observation_refs':
+                json.loads(row['observation_refs']),
+            'observation_count': row['observation_count'],
+            'detail_ref': row['detail_ref'],
+            'state': row['state'],
+            'scope_ref': RTPI_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def raise_hazard_flag(self, actor, pattern_ref,
+                          observation_refs, detail_ref, *,
+                          region=None):
+        """Raise one predictive hazard flag (operator
+        only, item 6): a developing pattern of danger
+        identified from accumulated observations of
+        record, before an emergency has fully
+        developed. The flag cites every observation it
+        rests on -- a pattern rests on accumulated
+        evidence, so at least two observations of
+        record are required."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (('pattern_ref', pattern_ref),
+                             ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        flag_id = (f'sentinel-hazard-flag-'
+                   f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                refs = self._require_observations(
+                    db, observation_refs)
+                if len(refs) < 2:
+                    raise SandersSentinelDenied(
+                        'A hazard pattern rests on'
+                        ' accumulated evidence: at least'
+                        ' two observations of record are'
+                        ' required')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_HAZARD_FLAG_RAISED',
+                    actor=actor, flag_id=flag_id,
+                    pattern_ref=pattern_ref.strip(),
+                    observation_count=len(refs))
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_hazard_flags'
+                    ' (flag_id, pattern_ref,'
+                    ' observation_refs, observation_count,'
+                    ' detail_ref, state, recorded_by,'
+                    ' recorded_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (flag_id, pattern_ref.strip(),
+                     json.dumps(refs), len(refs),
+                     detail_ref.strip(), 'OPEN', actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_hazard_flags WHERE'
+                ' flag_id = ?', (flag_id,)).fetchone()
+        return self._hazard_flag_view(row)
+
+    def hazard_flags(self, actor, role, *, region=None):
+        """The predictive hazard flags of record
+        (guarded read)."""
+        self._geo(region)
+        self._guard_access(actor, role, 'perception',
+                           'hazard flags view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM sanders_sentinel_hazard_flags'
+                ' ORDER BY recorded_at').fetchall()
+        return {
+            'title': RTPI_TITLE,
+            'flags': [self._hazard_flag_view(row)
+                      for row in rows],
+            'open_total': sum(
+                1 for row in rows if row['state'] == 'OPEN'),
+        }
+
+    @staticmethod
+    def _initiation_view(row):
+        return {
+            'initiation_id': row['initiation_id'],
+            'assessment_id': row['assessment_id'],
+            'case_id': row['case_id'],
+            'detail_ref': row['detail_ref'],
+            'initiated_on': 'CREDIBLE_DANGER',
+            'gated_on_escalation_delivery': False,
+            'scope_ref': RTPI_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def initiate_protective_activation(
+            self, actor, assessment_id, member_ref,
+            detail_ref, assistance_due_at=None,
+            activations=None, *, region=None):
+        """Initiate protective activation on a recorded
+        credible-danger determination (operator only,
+        item 8): Sentinel initiates the Emergency
+        Activation machinery without depending on a
+        person requesting help -- the determination of
+        record is the trigger, and per Article IV the
+        initiation is never gated on escalation
+        delivery. The initiation opens an emergency
+        case on the RTSA platform signal channel (this
+        platform, an authorized RTSA platform,
+        transmitting the signal of its own assessment)
+        and records any activations given with it, by
+        reference, through the standing activation
+        path. Initiation opens and activates; closure
+        still requires verified arrival and a recorded
+        resolution, exactly as for any emergency case.
+        No new money authority is created."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (('member_ref', member_ref),
+                             ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if assistance_due_at is not None and (
+                isinstance(assistance_due_at, bool)
+                or not isinstance(assistance_due_at,
+                                  (int, float))):
+            raise SandersSentinelDenied(
+                'The assistance terms, when given, must'
+                ' set a delivery time (assistance_due_at)')
+        if activations is not None and (
+                not isinstance(activations, (list, tuple))):
+            raise SandersSentinelDenied(
+                'Activations, when given, must be a list'
+                ' of activation records')
+        now = self._now()
+        case_id = (f'sentinel-emergency-case-'
+                   f'{uuid.uuid4().hex[:16]}')
+        initiation_id = (f'sentinel-protective-initiation-'
+                         f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                assessment = self._assessment_row(
+                    db, assessment_id)
+                if assessment is None:
+                    raise SandersSentinelDenied(
+                        'No such situation assessment')
+                if (assessment['determination']
+                        != 'CREDIBLE_DANGER'):
+                    raise SandersSentinelDenied(
+                        'Protective initiation acts only on'
+                        ' a recorded CREDIBLE_DANGER'
+                        ' determination; this assessment'
+                        ' reads '
+                        + assessment['determination']
+                        + ' (PROTECTIVE_ACTIVATION_REQUIRES'
+                        '_CREDIBLE_DANGER)')
+                existing = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_protective_'
+                    'initiations WHERE assessment_id = ?',
+                    (assessment_id,)).fetchone()
+                if existing is not None:
+                    raise SandersSentinelDenied(
+                        'Protective activation already'
+                        ' stands initiated on this'
+                        ' assessment'
+                        ' (PROTECTIVE_INITIATION_ALREADY'
+                        '_RECORDED)')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_EMERGENCY_SIGNAL'
+                    '_RECORDED',
+                    actor=actor, case_id=case_id,
+                    signal_kind='RTSA_PLATFORM_SIGNAL',
+                    source_kind='AUTHORIZED_RTSA_PLATFORM',
+                    source_ref=assessment_id,
+                    authorization_ref=RTPI_SOURCE,
+                    member_ref=member_ref.strip(),
+                    initiated_by_assessment=assessment_id)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_emergency_cases'
+                    ' (case_id, signal_kind, source_kind,'
+                    ' source_ref, authorization_ref,'
+                    ' member_ref, detail_ref,'
+                    ' authorized_location_ref, state,'
+                    ' assistance_due_at, arrival_ref,'
+                    ' delivered_detail_ref,'
+                    ' arrival_confirmed_by,'
+                    ' arrival_confirmed_at,'
+                    ' resolution_ref, resolved_by,'
+                    ' resolved_at, finding_record_id,'
+                    ' recorded_by, recorded_at,'
+                    ' updated_by, updated_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?, ?)',
+                    (case_id, 'RTSA_PLATFORM_SIGNAL',
+                     'AUTHORIZED_RTSA_PLATFORM',
+                     assessment_id, RTPI_SOURCE,
+                     member_ref.strip(), detail_ref.strip(),
+                     None, 'OPEN',
+                     float(assistance_due_at)
+                     if assistance_due_at is not None
+                     else None,
+                     None, None, None, None, None, None,
+                     None, None, actor, now, actor, now,
+                     receipt_id))
+                initiation_receipt = self._record(
+                    'SANDERS_SENTINEL_PROTECTIVE_INITIATION',
+                    actor=actor, initiation_id=initiation_id,
+                    assessment_id=assessment_id,
+                    case_id=case_id,
+                    gated_on_escalation_delivery=False)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_protective_'
+                    'initiations (initiation_id,'
+                    ' assessment_id, case_id, detail_ref,'
+                    ' recorded_by, recorded_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    (initiation_id, assessment_id, case_id,
+                     detail_ref.strip(), actor, now,
+                     initiation_receipt))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            case_row = self._emergency_case_row(db, case_id)
+            initiation_row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_protective_initiations'
+                ' WHERE initiation_id = ?',
+                (initiation_id,)).fetchone()
+        recorded_activations = []
+        for entry in activations or ():
+            if not isinstance(entry, dict):
+                raise SandersSentinelDenied(
+                    'Each activation must be a record with'
+                    ' activation_kind, target_ref, and'
+                    ' detail_ref')
+            recorded_activations.append(
+                self.record_emergency_activation(
+                    actor, case_id,
+                    entry.get('activation_kind'),
+                    entry.get('target_ref'),
+                    entry.get('detail_ref')))
+        return {
+            'initiation':
+                self._initiation_view(initiation_row),
+            'case': self._emergency_case_view(case_row),
+            'activations': recorded_activations,
+        }
+
+    def protective_initiations(self, actor, role, *,
+                               region=None):
+        """The protective initiations of record
+        (guarded read)."""
+        self._geo(region)
+        self._guard_access(actor, role, 'perception',
+                           'protective initiations view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_protective_initiations'
+                ' ORDER BY recorded_at').fetchall()
+        return {
+            'title': RTPI_TITLE,
+            'initiations': [
+                self._initiation_view(row) for row in rows],
+            'total': len(rows),
+        }
+
     def disburse_funds(self, actor, *args, **kwargs):
         """Refused by name, unconditionally. Under the
         Permanent Global Bloodline Protection
@@ -4347,6 +5457,37 @@ class SandersSentinelService:
                 'SELECT COUNT(*) AS n FROM'
                 ' sanders_sentinel_emergency_activations'
             ).fetchone()['n']
+            rtpi_observations_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_perception_observations'
+            ).fetchone()['n']
+            rtpi_assessments_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_situation_assessments'
+            ).fetchone()['n']
+            rtpi_credible_danger_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_situation_assessments'
+                " WHERE determination = 'CREDIBLE_DANGER'"
+            ).fetchone()['n']
+            rtpi_hazard_flags_open = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_hazard_flags'
+                " WHERE state = 'OPEN'"
+            ).fetchone()['n']
+            rtpi_initiations_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_protective_initiations'
+            ).fetchone()['n']
+            rtpi_channels_designated = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_perception_channels'
+            ).fetchone()['n']
+            rtpi_channels_primary_failed = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_perception_channels'
+                " WHERE primary_state = 'FAILED_RECORDED'"
+            ).fetchone()['n']
         return {
             'identity': IDENTITY.to_dict(),
             'design': self.design_view(),
@@ -4403,6 +5544,25 @@ class SandersSentinelService:
                     emergency_activations_total,
                 'funds_disbursed': False,
                 'funds_held': False,
+            },
+            'real_time_protective_intelligence': {
+                'title': RTPI_TITLE,
+                'established': RTPI_ESTABLISHED,
+                'observations_total':
+                    rtpi_observations_total,
+                'assessments_total':
+                    rtpi_assessments_total,
+                'credible_danger_total':
+                    rtpi_credible_danger_total,
+                'hazard_flags_open':
+                    rtpi_hazard_flags_open,
+                'initiations_total':
+                    rtpi_initiations_total,
+                'channels_designated':
+                    rtpi_channels_designated,
+                'channels_primary_failed':
+                    rtpi_channels_primary_failed,
+                'feeds_connected': False,
             },
             'records_total': sum(by_status.values()),
             'records_by_status': by_status,
