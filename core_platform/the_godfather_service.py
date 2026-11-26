@@ -393,6 +393,12 @@ GLOBAL_DIRECTIVES_INVARIANTS = (
 # evacuation and repatriation arrangement, and
 # insurance, maintenance, repairs, and replacement
 # — each as coordination and records only.
+# Emergency shelter acquisition stands in the same
+# coordination discipline under item 39 of Sanders
+# Sentinel's adopted construction program
+# (2026-11-26): a shelter matter is coordination
+# toward a placement decided by a human, never a
+# placement made by the platform.
 TRANSPORT_MATTER_KINDS = (
     'TRANSPORTATION_ACQUISITION_GROUND',
     'TRANSPORTATION_ACQUISITION_AIR',
@@ -404,6 +410,7 @@ TRANSPORT_MATTER_KINDS = (
     'MEDICAL_TRANSPORTATION',
     'EMERGENCY_EVACUATION_ARRANGEMENT',
     'REPATRIATION_ARRANGEMENT',
+    'EMERGENCY_SHELTER_ACQUISITION',
     'TRANSPORTATION_INSURANCE',
     'TRANSPORTATION_MAINTENANCE',
     'TRANSPORTATION_REPAIRS',
