@@ -38,7 +38,7 @@ findings when touched; the amendment's fifteen
 protections derive state from checks of record; the
 crypto environment determination follows the check,
 never the reverse; and the guarded documents stand
-in the watch set (22 documents, 21 required) with
+in the watch set (23 documents, 22 required) with
 sound manifest pairs.
 These tests use only stdlib fakes and temporary
 SQLite files: no network, no keys.
@@ -105,6 +105,9 @@ BENCHMARK_DOCUMENT = (
 SHIELD_PROTECTION_DOCUMENT = (
     'docs/FOUNDER_DIRECTIVE_SHIELDS_THEMSELVES_'
     'PROTECTED_2026-11-26.md')
+NASA_DOCUMENT = (
+    'docs/FOUNDER_DECLARATION_SHIELDS_NASA_'
+    'STANDARDS_2026-11-26.md')
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 ORDER_LINE = (
@@ -180,7 +183,8 @@ class TestGuardedRecords(unittest.TestCase):
                          ARCHITECTURE_DOCUMENT,
                          INHERITANCE_DOCUMENT,
                          BENCHMARK_DOCUMENT,
-                         SHIELD_PROTECTION_DOCUMENT):
+                         SHIELD_PROTECTION_DOCUMENT,
+                         NASA_DOCUMENT):
             doc_bytes = (REPO_ROOT / document).read_bytes()
             manifest = json.loads(
                 (REPO_ROOT / (document + '.pbd.json'))
@@ -254,12 +258,25 @@ class TestGuardedRecords(unittest.TestCase):
         self.assertIn('acceptance criterion', text)
         self.assertIn('Protectors, protected', text)
 
+    def test_nasa_document_of_record(self):
+        text = (REPO_ROOT / NASA_DOCUMENT).read_text(
+            encoding='utf-8')
+        self.assertIn('They are now the most secure on '
+                      'the market and that\'s about '
+                      'become NASA standards', text)
+        self.assertIn('hard requirement line', text)
+        self.assertIn('stands UNMET in the current '
+                      'environment', text)
+        self.assertIn('never declared as market '
+                      'supremacy', text)
+        self.assertIn('certificate #5586', text)
+
     def test_watch_set_counts(self):
         self.assertEqual(len(sentinel.BLOODLINE_WATCH_SET),
-                         22)
+                         23)
         required = [e for e in sentinel.BLOODLINE_WATCH_SET
                     if e['required']]
-        self.assertEqual(len(required), 21)
+        self.assertEqual(len(required), 22)
         watched = {e['document']: e
                    for e in sentinel.BLOODLINE_WATCH_SET}
         self.assertTrue(watched[ORDERS_DOCUMENT]['required'])
@@ -275,6 +292,8 @@ class TestGuardedRecords(unittest.TestCase):
             watched[BENCHMARK_DOCUMENT]['required'])
         self.assertTrue(
             watched[SHIELD_PROTECTION_DOCUMENT]['required'])
+        self.assertTrue(
+            watched[NASA_DOCUMENT]['required'])
 
 
 class TestVerbatimCoverageConstants(unittest.TestCase):
@@ -1139,12 +1158,12 @@ class TestGlobalBenchmark(MinotaurWorkspaceMixin,
         self.assertEqual(
             view['directive_verbatim'],
             "We've got to ensure that they are")
-        self.assertEqual(view['total'], 42)
+        self.assertEqual(view['total'], 68)
         self.assertEqual(
             view['total'],
             len(minotaur_mod.BENCHMARK_CONTROLS))
         self.assertEqual(
-            sum(view['standings'].values()), 42)
+            sum(view['standings'].values()), 68)
         sets = {}
         for entry in view['benchmark']:
             self.assertIn(entry['standing'],
@@ -1161,28 +1180,46 @@ class TestGlobalBenchmark(MinotaurWorkspaceMixin,
             'POST_QUANTUM_ROUTE': 2,
             'PCI_DSS_FLOOR': 2,
             'RUNTIME_DISCIPLINE': 1,
+            'FEDERAL_NASA_TIER': 26,
         })
+        tier = view['federal_nasa_tier']
+        self.assertEqual(tier['total'], 26)
+        self.assertEqual(
+            sum(tier['standings'].values()), 26)
+        self.assertEqual(
+            tier['declaration_verbatim'],
+            'They are now the most secure on the market '
+            "and that's about become NASA standards")
+        self.assertEqual(
+            tier['hard_requirement'],
+            'SC_13_CRYPTOGRAPHIC_PROTECTION_FIPS_VALIDATED')
 
     def test_environment_limits_name_the_lifting_decision(self):
         view = self.service.benchmark_view(
             OPERATOR, 'OPERATOR')
         limited = [e for e in view['benchmark']
                    if e['standing'] == 'ENVIRONMENT_LIMITED']
-        self.assertEqual(len(limited), 2)
+        self.assertEqual(len(limited), 4)
         for entry in limited:
             self.assertTrue(entry['limit'])
             self.assertTrue(entry['founder_decision'])
         controls = {e['control'] for e in limited}
         self.assertEqual(controls, {
             'HYBRID_PQ_KEY_EXCHANGE_X25519MLKEM768',
-            'FIPS_140_3_VALIDATED_PQC_OPERATION'})
+            'FIPS_140_3_VALIDATED_PQC_OPERATION',
+            'SC_12_CRYPTOGRAPHIC_KEY_ESTABLISHMENT_AND_MANAGEMENT',
+            'SC_13_CRYPTOGRAPHIC_PROTECTION_FIPS_VALIDATED'})
+        sc13 = {e['control']: e
+                for e in view['benchmark']}[
+                    'SC_13_CRYPTOGRAPHIC_PROTECTION_FIPS_VALIDATED']
+        self.assertIn('UNMET', sc13['basis'])
 
     def test_accounting_carries_the_benchmark(self):
         view = self.service.completeness_accounting_view(
             OPERATOR, 'OPERATOR')
-        self.assertEqual(view['benchmark_total'], 42)
+        self.assertEqual(view['benchmark_total'], 68)
         self.assertEqual(
-            view['benchmark_standings']['FUNCTIONING'], 23)
+            view['benchmark_standings']['FUNCTIONING'], 33)
         self.assertIn('attack-simulation',
                       self.service.benchmark_view(
                           OPERATOR, 'OPERATOR')
