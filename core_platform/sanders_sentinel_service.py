@@ -356,6 +356,11 @@ BLOODLINE_WATCH_SET = (
      'title': ('Sanders Sentinel \u2014 Operational'
                ' Readiness Requirements'),
      'required': True},
+    {'document': ('docs/FOUNDER_RULING_EVERY_PLATFORM_'
+                  'MUST_SPEAK_2026-11-26.md'),
+     'title': ('Founder Ruling \u2014 Every Platform'
+               ' Must Be Able to Speak'),
+     'required': True},
     {'document': 'docs/SANDERS_BLOODLINE_REGISTRY.md',
      'title': 'Sanders Bloodline Registry',
      'required': False},
@@ -1095,7 +1100,7 @@ OPERATIONAL_SEQUENCE_VERBATIM = (
 # perception channels and the protective
 # activation path.
 READINESS_CAPABILITIES = PERCEPTION_CHANNELS + (
-    'PROTECTIVE_ACTIVATION',)
+    'PROTECTIVE_ACTIVATION', 'VOICE_CALLING',)
 READINESS_STATES = ('OPERATIONAL', 'NOT_CONNECTED',
                     'DISCONNECTED', 'UNTESTED',
                     'SIMULATED')
@@ -1300,6 +1305,152 @@ ORR_INVARIANTS = (
     ' fields on each connection, and no coverage is'
     ' invented beyond them.',
 )
+
+# -- Founder Ruling: Every Platform Must Be Able
+# to Speak (2026-11-26), Sentinel's band ----------
+SPEAK_RULING_TITLE = (
+    'Founder Ruling \u2014 Every Platform Must Be'
+    ' Able to Speak')
+SPEAK_RULING_DATE = '2026-11-26'
+FOUNDER_RULING_EVERY_PLATFORM_MUST_SPEAK_VERBATIM = (
+    'Every single platform must have the ability'
+    ' to speak')
+FOUNDER_SPEAK_SPECIFICATION_VERBATIM = (
+    'Real-time conversation \u2014 natural, '
+    'interactive, two-way verbal communication.\n'
+    'Multilingual communication \u2014 supporting the '
+    'ecosystem\'s Global By Design mission.\n'
+    'Native voice calling \u2014 incoming and outgoing '
+    'live voice communications through supported '
+    'communications infrastructure.\n'
+    'Emergency voice activation \u2014 where '
+    'applicable to the platform\'s original '
+    'assigned responsibilities.\n'
+    'Accessibility \u2014 preserving text, visual, '
+    'silent distress, and other communication '
+    'channels.\n'
+    'Voice continuity and recovery \u2014 '
+    'automatically recovering interrupted voice '
+    'capabilities while maintaining available '
+    'alternative communications.\n'
+    'Native infrastructure \u2014 no dependency on an '
+    'external proprietary voice-service provider '
+    'for the platform\'s voice intelligence.\n'
+    'Identity preservation \u2014 no platform shall '
+    'lose its individual identity, original '
+    'functions, industry scope, or established '
+    'authority through this implementation.\n'
+    'Voice shall be an additional operational '
+    'capability, never a replacement for existing '
+    'capabilities or a prerequisite for '
+    'protective action.\n'
+    'implemented.\n'
+    'All 140 platforms. Distinct identities. '
+    'Native voices. Two-way communication. Global '
+    'By Design'
+)
+SPEECH_SCOPE = 'SENTINEL_SPEECH'
+SENTINEL_SPEECH_NATIVE_PATH = 'DAEDALUS_SYSTEM_TTS'
+SENTINEL_SPEECH_NATIVE_PATH_DETAIL = (
+    'POST /api/voice/speak on the flagship'
+    ' deployment (deploy/deployment.py routes'
+    ' /api/voice/* to'
+    ' core_platform/voice_api.create_voice_app),'
+    ' synthesizer SystemTTSSynthesizer'
+    ' (core_platform/daedalus_voice.py) under the'
+    ' free-first native ordering. Provider'
+    ' synthesizers load only under the'
+    ' voice_video_provider gate, which stands'
+    ' declined/native-ruled and is not approved.')
+SPEECH_SUBJECT_KINDS = ('ESCALATION', 'EMERGENCY_CASE')
+SPEECH_DELIVERY_STATES = ('UNDELIVERED', 'DELIVERED')
+SPEECH_MAX_TEXT_CHARS = 5000
+VOICE_CONVERSATION_STATES = ('OPEN', 'CLOSED')
+VOICE_TURN_DIRECTIONS = ('INBOUND', 'OUTBOUND')
+VOICE_CALLING_LIVE = False
+SENTINEL_SPEECH_INVARIANT = (
+    'Sentinel speaks only through the flagship'
+    '\u2019s native Daedalus system-TTS path'
+    ' (SENTINEL_SPEECH_NATIVE_PATH): no outside'
+    ' voice provider is attached, loaded, or'
+    ' represented for Sentinel\u2019s speech, and'
+    ' no other path may be named on a speech'
+    ' record. Speech is a delivery channel under'
+    ' the same delivery-verification discipline'
+    ' as escalations: a spoken alert is born'
+    ' UNDELIVERED, and only the operator\u2019s'
+    ' recorded acknowledgment by reference,'
+    ' naming the acknowledging office of record,'
+    ' moves it to DELIVERED. A speech record'
+    ' supplements the written record; it never'
+    ' replaces it.')
+SENTINEL_VOICE_IDENTITY = 'SANDERS_SENTINEL'
+FOUNDER_SPEAK_IMPLEMENTATION_PRINCIPLE_VERBATIM = (
+    ': all 140 RTSA platforms shall possess '
+    'native, real-time, two-way voice '
+    'communication under their own distinct '
+    'identities.\n'
+    'One implementation principle is important: a '
+    'shared sovereign voice engine may serve all '
+    '140 platforms without merging their '
+    'identities, personalities, responsibilities, '
+    'or operational authority. Each platform '
+    'retains its own voice and conversational '
+    'identity while benefiting from shared '
+    'infrastructure.\n'
+    'This avoids unnecessarily duplicating 140 '
+    'separate voice engines while preserving '
+    'native ownership and architectural '
+    'independence from external proprietary voice '
+    'providers.\n'
+    'Live calling remains a required capability, '
+    'not a verified operational capability. Its '
+    'development and testing shall not interfere '
+    'with any existing platform function or '
+    'protective responsibility.'
+)
+SENTINEL_VOICE_DISTINCTION = (
+    'Engine shared, voice his (founder'
+    ' implementation principle, 2026-11-26): the'
+    ' speech path is the shared sovereign native'
+    ' voice engine serving all 140 platforms;'
+    ' Sentinel\u2019s voice and conversational'
+    ' identity are his own of record'
+    ' (SANDERS_SENTINEL), never merged with any'
+    ' other platform\u2019s identity, personality,'
+    ' responsibilities, or operational authority.'
+    ' Every speech and conversation record'
+    ' carries Sentinel\u2019s voice identity'
+    ' alongside the shared engine path, so the'
+    ' two are never confused.')
+VOICE_CALLING_STATUS = (
+    'REQUIRED CAPABILITY \u2014 NOT A VERIFIED'
+    ' OPERATIONAL CAPABILITY')
+SENTINEL_VOICE_NON_GATING_INVARIANT = (
+    'Voice is additional, never a gate (founder'
+    ' specification, 2026-11-26): voice is an'
+    ' additional operational capability, never a'
+    ' replacement for existing capabilities'
+    ' \u2014 text, visual, and silent channels'
+    ' stand preserved (accessibility) \u2014 and'
+    ' never a prerequisite for protective'
+    ' action. No activation, escalation,'
+    ' coordination, or assistance path in this'
+    ' platform consults voice availability,'
+    ' speech delivery, or conversation state as'
+    ' a precondition. Native voice calling'
+    ' (live incoming and outgoing calls) stands'
+    ' FALSE in the flagship\u2019s verified'
+    ' record: this build establishes its'
+    ' records, requirements, and wiring to the'
+    ' existing boundary; it does not make live'
+    ' calling function, and nothing may report'
+    ' it as live. Under the Readiness'
+    ' Requirements item 8, the VOICE_CALLING'
+    ' capability reads NOT_CONNECTED or UNTESTED'
+    ' until functioning connections and'
+    ' successful end-to-end tests stand of'
+    ' record.')
 
 FOUNDER_OPERATIONAL_READINESS_VERBATIM = (
     'Sanders Sentinel \u2014 Operational Readiness '
@@ -1707,6 +1858,61 @@ class SandersSentinelService:
                 ' recorded_by TEXT NOT NULL,'
                 ' recorded_at TEXT NOT NULL,'
                 ' receipt_id TEXT NOT NULL)')
+            for _voice_table in (
+                    'sanders_sentinel_speech_records',
+                    'sanders_sentinel_voice_conversations'):
+                _voice_columns = {row[1] for row in
+                                  db.execute(
+                                      'PRAGMA table_info('
+                                      f'{_voice_table})')}
+                if (_voice_columns and
+                        'voice_identity' not in _voice_columns):
+                    db.execute(
+                        f'ALTER TABLE {_voice_table}'
+                        ' ADD COLUMN voice_identity TEXT')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_speech_records ('
+                ' speech_id TEXT PRIMARY KEY,'
+                ' subject_kind TEXT NOT NULL,'
+                ' subject_ref TEXT NOT NULL,'
+                ' spoken_text TEXT NOT NULL,'
+                ' voice_identity TEXT,'
+                ' native_path TEXT NOT NULL,'
+                ' delivery_state TEXT NOT NULL,'
+                ' delivery_confirmation_ref TEXT,'
+                ' delivered_at TEXT,'
+                ' acknowledged_office TEXT,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' updated_by TEXT NOT NULL,'
+                ' updated_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_voice_conversations ('
+                ' conversation_id TEXT PRIMARY KEY,'
+                ' subject_kind TEXT NOT NULL,'
+                ' subject_ref TEXT NOT NULL,'
+                ' language TEXT NOT NULL,'
+                ' voice_identity TEXT,'
+                ' native_path TEXT NOT NULL,'
+                ' state TEXT NOT NULL,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' updated_by TEXT NOT NULL,'
+                ' updated_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_voice_turns ('
+                ' turn_id TEXT PRIMARY KEY,'
+                ' conversation_id TEXT NOT NULL,'
+                ' direction TEXT NOT NULL,'
+                ' spoken_text TEXT NOT NULL,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
 
     # -- plumbing ---------------------------------------------------
 
@@ -1792,6 +1998,8 @@ class SandersSentinelService:
             'sentinel_succession_directive': (
                 SandersSentinelService
                 .succession_directive_design_view()),
+            'sentinel_speech': (
+                SandersSentinelService.speech_design_view()),
             'note': 'Bloodline governance coverage is Sanders'
                     ' Sentinel\u2019s ruled remit under the'
                     ' founder\u2019s 2026-11-25 ruling: its role'
@@ -3472,9 +3680,21 @@ class SandersSentinelService:
                 ' sanders_sentinel_escalations WHERE'
                 ' escalation_id = ?',
                 (escalation_id,)).fetchone()
+            speech = []
+            if row is not None:
+                speech = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_speech_records'
+                    ' WHERE subject_kind = ? AND'
+                    ' subject_ref = ? ORDER BY'
+                    ' recorded_at',
+                    ('ESCALATION', escalation_id)).fetchall()
         if row is None:
             raise SandersSentinelDenied('No such escalation')
-        return self._escalation_view(row)
+        view = self._escalation_view(row)
+        view['speech_records'] = [
+            self._speech_view(entry) for entry in speech]
+        return view
 
     def confirm_escalation_delivery(
             self, actor, escalation_id,
@@ -3547,6 +3767,578 @@ class SandersSentinelService:
                 ' escalation_id = ?',
                 (escalation_id,)).fetchone()
         return self._escalation_view(updated)
+
+    # -- Speech and voice (Founder Ruling, 2026-11-26) --
+
+    @staticmethod
+    def _speech_view(row):
+        return {
+            'speech_id': row['speech_id'],
+            'record_kind': 'SPEECH',
+            'subject_kind': row['subject_kind'],
+            'subject_ref': row['subject_ref'],
+            'spoken_text': row['spoken_text'],
+            'voice_identity': row['voice_identity'],
+            'native_path': row['native_path'],
+            'delivery_state': row['delivery_state'],
+            'delivered': row['delivery_state'] == 'DELIVERED',
+            'delivery_confirmation_ref':
+                row['delivery_confirmation_ref'],
+            'delivered_at': row['delivered_at'],
+            'acknowledged_office': row['acknowledged_office'],
+            'scope_ref': SPEECH_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    @staticmethod
+    def _voice_conversation_view(row):
+        return {
+            'conversation_id': row['conversation_id'],
+            'record_kind': 'VOICE_CONVERSATION',
+            'subject_kind': row['subject_kind'],
+            'subject_ref': row['subject_ref'],
+            'language': row['language'],
+            'voice_identity': row['voice_identity'],
+            'native_path': row['native_path'],
+            'state': row['state'],
+            'live_call': False,
+            'scope_ref': SPEECH_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    @staticmethod
+    def _voice_turn_view(row):
+        return {
+            'turn_id': row['turn_id'],
+            'conversation_id': row['conversation_id'],
+            'record_kind': 'VOICE_TURN',
+            'direction': row['direction'],
+            'spoken_text': row['spoken_text'],
+            'scope_ref': SPEECH_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def _speech_subject_row(self, db, subject_kind,
+                            subject_ref):
+        if subject_kind == 'ESCALATION':
+            return db.execute(
+                'SELECT * FROM sanders_sentinel_escalations'
+                ' WHERE escalation_id = ?',
+                (subject_ref,)).fetchone()
+        return self._emergency_case_row(db, subject_ref)
+
+    @staticmethod
+    def speech_design_view():
+        """The speech design of record (founder
+        ruling, 2026-11-26): the ruling and its
+        specification verbatim, the one native path
+        Sentinel speaks through, and the honest
+        limits -- live voice calling stands FALSE,
+        and language is a recorded field, not a
+        translation capability."""
+        return {
+            'title': SPEAK_RULING_TITLE,
+            'ruling_verbatim':
+                FOUNDER_RULING_EVERY_PLATFORM_MUST_SPEAK_VERBATIM,
+            'specification_verbatim':
+                FOUNDER_SPEAK_SPECIFICATION_VERBATIM,
+            'native_path': SENTINEL_SPEECH_NATIVE_PATH,
+            'native_path_detail':
+                SENTINEL_SPEECH_NATIVE_PATH_DETAIL,
+            'implementation_principle_verbatim':
+                FOUNDER_SPEAK_IMPLEMENTATION_PRINCIPLE_VERBATIM,
+            'engine_shared': True,
+            'engine': SENTINEL_SPEECH_NATIVE_PATH,
+            'voice_identity': SENTINEL_VOICE_IDENTITY,
+            'voice_distinction':
+                SENTINEL_VOICE_DISTINCTION,
+            'voice_calling_status': VOICE_CALLING_STATUS,
+            'speech_invariant': SENTINEL_SPEECH_INVARIANT,
+            'voice_non_gating_invariant':
+                SENTINEL_VOICE_NON_GATING_INVARIANT,
+            'subject_kinds': list(SPEECH_SUBJECT_KINDS),
+            'delivery_states': list(SPEECH_DELIVERY_STATES),
+            'max_text_chars': SPEECH_MAX_TEXT_CHARS,
+            'voice_calling_live': VOICE_CALLING_LIVE,
+            'honest_limits': {
+                'live_voice_calling': False,
+                'speak_endpoint': 'POST /api/voice/speak',
+                'synthesizer_of_record':
+                    'SystemTTSSynthesizer'
+                    ' (core_platform/daedalus_voice.py)',
+                'translation':
+                    'NOT_BUILT -- language is a recorded'
+                    ' field of the conversation record'
+                    ' only',
+                'delivery_meaning':
+                    'DELIVERED records the operator'
+                    '\u2019s recorded acknowledgment by'
+                    ' reference; no system proves a human'
+                    ' heard the spoken form',
+            },
+        }
+
+    def record_speech(
+            self, actor, subject_kind, subject_ref,
+            spoken_text, native_path=None, *, region=None):
+        """Record one spoken communication of
+        Sentinel's (operator only; founder ruling,
+        2026-11-26): what was spoken, on which
+        subject of record (an escalation or an
+        emergency case), through the flagship's
+        native Daedalus system-TTS path -- the only
+        path a speech record may name; any other
+        path, a provider path included, is refused
+        by name. The record is born UNDELIVERED: a
+        speech record is not a delivered alert, and
+        its delivery stands under the same
+        verification discipline as an escalation's.
+        Sentinel's service records the speech and
+        its delivery; the spoken audio itself is
+        produced through the flagship's speak
+        endpoint at the boundary named in
+        SENTINEL_SPEECH_NATIVE_PATH_DETAIL."""
+        self._geo(region)
+        self._require_operator(actor)
+        if subject_kind not in SPEECH_SUBJECT_KINDS:
+            raise SandersSentinelDenied(
+                'The speech subject kind must be one of: '
+                + ', '.join(SPEECH_SUBJECT_KINDS))
+        if native_path is None:
+            native_path = SENTINEL_SPEECH_NATIVE_PATH
+        if native_path != SENTINEL_SPEECH_NATIVE_PATH:
+            raise SandersSentinelDenied(
+                'Sentinel speaks only through the'
+                ' flagship\u2019s native Daedalus'
+                ' system-TTS path ('
+                + SENTINEL_SPEECH_NATIVE_PATH
+                + '); no outside voice provider path'
+                ' may be named'
+                ' (SPEECH_NATIVE_PATH_ONLY)')
+        for label, value in (
+                ('subject_ref', subject_ref),
+                ('spoken_text', spoken_text)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if len(spoken_text) > SPEECH_MAX_TEXT_CHARS:
+            raise SandersSentinelDenied(
+                'The spoken text exceeds the speak'
+                ' endpoint\u2019s limit of '
+                + str(SPEECH_MAX_TEXT_CHARS)
+                + ' characters')
+        now = self._now()
+        speech_id = (f'sentinel-speech-'
+                     f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                subject = self._speech_subject_row(
+                    db, subject_kind, subject_ref)
+                if subject is None:
+                    raise SandersSentinelDenied(
+                        'No such ' + subject_kind.lower()
+                        + ' subject of record')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_SPEECH_RECORDED',
+                    actor=actor, speech_id=speech_id,
+                    subject_kind=subject_kind,
+                    subject_ref=subject_ref.strip(),
+                    voice_identity=SENTINEL_VOICE_IDENTITY,
+                    native_path=native_path,
+                    delivery_state='UNDELIVERED')
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_speech_records'
+                    ' (speech_id, subject_kind, subject_ref,'
+                    ' spoken_text, voice_identity,'
+                    ' native_path, delivery_state,'
+                    ' delivery_confirmation_ref,'
+                    ' delivered_at, acknowledged_office,'
+                    ' recorded_by, recorded_at, updated_by,'
+                    ' updated_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?, ?)',
+                    (speech_id, subject_kind,
+                     subject_ref.strip(), spoken_text,
+                     SENTINEL_VOICE_IDENTITY, native_path,
+                     'UNDELIVERED', None, None, None, actor,
+                     now, actor, now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_speech_records WHERE'
+                ' speech_id = ?', (speech_id,)).fetchone()
+        return self._speech_view(row)
+
+    def confirm_speech_delivery(
+            self, actor, speech_id,
+            delivery_confirmation_ref, *, region=None):
+        """Confirm delivery of one spoken
+        communication (operator only): the recorded
+        acknowledgment of the escalation authority's
+        office, held by reference -- the same
+        discipline as escalation delivery. Only this
+        confirmation moves a speech record to
+        DELIVERED."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(delivery_confirmation_ref, str)
+                or not delivery_confirmation_ref.strip()):
+            raise SandersSentinelDenied(
+                'A delivery confirmation reference is'
+                ' required')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_speech_records'
+                    ' WHERE speech_id = ?',
+                    (speech_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'No such speech record')
+                if row['delivery_state'] == 'DELIVERED':
+                    raise SandersSentinelDenied(
+                        'Delivery of this speech record'
+                        ' already stands confirmed')
+                authority = self._authority_row(db)
+                office = (authority['holder_office']
+                          if authority is not None
+                          else ESCALATION_AUTHORITY_FOUNDER_OFFICE)
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_SPEECH_DELIVERED',
+                    actor=actor, speech_id=speech_id,
+                    delivery_confirmation_ref=(
+                        delivery_confirmation_ref.strip()),
+                    acknowledged_office=office)
+                db.execute(
+                    'UPDATE sanders_sentinel_speech_records'
+                    ' SET delivery_state = ?,'
+                    ' delivery_confirmation_ref = ?,'
+                    ' delivered_at = ?,'
+                    ' acknowledged_office = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE speech_id = ?',
+                    ('DELIVERED',
+                     delivery_confirmation_ref.strip(), now,
+                     office, actor, now, receipt_id,
+                     speech_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_speech_records WHERE'
+                ' speech_id = ?', (speech_id,)).fetchone()
+        return self._speech_view(updated)
+
+    def speech_records(self, actor, role,
+                       subject_kind=None, subject_ref=None,
+                       *, region=None):
+        """The speech records of record (guarded
+        read), optionally narrowed to one subject.
+        Every record shows its delivery state exactly
+        as it stands."""
+        self._geo(region)
+        self._guard_access(actor, role, 'speech-records',
+                           'speech records list')
+        query = ('SELECT * FROM'
+                 ' sanders_sentinel_speech_records')
+        clauses, params = [], []
+        if subject_kind is not None:
+            clauses.append('subject_kind = ?')
+            params.append(subject_kind)
+        if subject_ref is not None:
+            clauses.append('subject_ref = ?')
+            params.append(subject_ref)
+        if clauses:
+            query += ' WHERE ' + ' AND '.join(clauses)
+        query += ' ORDER BY recorded_at'
+        with self._connect() as db:
+            rows = db.execute(query, params).fetchall()
+        return [self._speech_view(row) for row in rows]
+
+    def open_voice_conversation(
+            self, actor, subject_kind, subject_ref,
+            language, native_path=None, *, region=None):
+        """Open a two-way voice conversation record
+        on a subject of record (operator only;
+        founder specification, 2026-11-26). The
+        record carries the conversation's language
+        as a recorded field -- a field of the
+        record, not a translation capability, and
+        none is claimed. The conversation is a
+        record of verbal communication through the
+        native path; it is not a live call, and no
+        record here represents one (live voice
+        calling stands FALSE in the flagship's
+        verified record)."""
+        self._geo(region)
+        self._require_operator(actor)
+        if subject_kind not in SPEECH_SUBJECT_KINDS:
+            raise SandersSentinelDenied(
+                'The conversation subject kind must be'
+                ' one of: ' + ', '.join(SPEECH_SUBJECT_KINDS))
+        if native_path is None:
+            native_path = SENTINEL_SPEECH_NATIVE_PATH
+        if native_path != SENTINEL_SPEECH_NATIVE_PATH:
+            raise SandersSentinelDenied(
+                'Sentinel converses only through the'
+                ' flagship\u2019s native Daedalus'
+                ' system-TTS path ('
+                + SENTINEL_SPEECH_NATIVE_PATH
+                + '); no outside voice provider path'
+                ' may be named'
+                ' (SPEECH_NATIVE_PATH_ONLY)')
+        for label, value in (
+                ('subject_ref', subject_ref),
+                ('language', language)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        conversation_id = (
+            f'sentinel-voice-conversation-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                subject = self._speech_subject_row(
+                    db, subject_kind, subject_ref)
+                if subject is None:
+                    raise SandersSentinelDenied(
+                        'No such ' + subject_kind.lower()
+                        + ' subject of record')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_VOICE_CONVERSATION'
+                    '_OPENED',
+                    actor=actor,
+                    conversation_id=conversation_id,
+                    subject_kind=subject_kind,
+                    subject_ref=subject_ref.strip(),
+                    language=language.strip(),
+                    voice_identity=SENTINEL_VOICE_IDENTITY,
+                    native_path=native_path,
+                    live_call=False)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_voice_'
+                    'conversations (conversation_id,'
+                    ' subject_kind, subject_ref, language,'
+                    ' voice_identity, native_path, state,'
+                    ' recorded_by, recorded_at, updated_by,'
+                    ' updated_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (conversation_id, subject_kind,
+                     subject_ref.strip(), language.strip(),
+                     SENTINEL_VOICE_IDENTITY, native_path,
+                     'OPEN', actor, now, actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_voice_conversations'
+                ' WHERE conversation_id = ?',
+                (conversation_id,)).fetchone()
+        return self._voice_conversation_view(row)
+
+    def record_voice_turn(
+            self, actor, conversation_id, direction,
+            spoken_text, *, region=None):
+        """Record one turn of a two-way voice
+        conversation (operator only): INBOUND, what
+        was said to Sentinel; OUTBOUND, what
+        Sentinel said. Turns record only against an
+        OPEN conversation."""
+        self._geo(region)
+        self._require_operator(actor)
+        if direction not in VOICE_TURN_DIRECTIONS:
+            raise SandersSentinelDenied(
+                'The turn direction must be one of: '
+                + ', '.join(VOICE_TURN_DIRECTIONS))
+        if (not isinstance(spoken_text, str)
+                or not spoken_text.strip()):
+            raise SandersSentinelDenied(
+                'The spoken text is required')
+        if len(spoken_text) > SPEECH_MAX_TEXT_CHARS:
+            raise SandersSentinelDenied(
+                'The spoken text exceeds the speak'
+                ' endpoint\u2019s limit of '
+                + str(SPEECH_MAX_TEXT_CHARS)
+                + ' characters')
+        now = self._now()
+        turn_id = (f'sentinel-voice-turn-'
+                   f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                conversation = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_voice_conversations'
+                    ' WHERE conversation_id = ?',
+                    (conversation_id,)).fetchone()
+                if conversation is None:
+                    raise SandersSentinelDenied(
+                        'No such voice conversation')
+                if conversation['state'] != 'OPEN':
+                    raise SandersSentinelDenied(
+                        'Turns record only against an open'
+                        ' voice conversation; this one'
+                        ' reads ' + conversation['state']
+                        + ' (VOICE_CONVERSATION_NOT_OPEN)')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_VOICE_TURN_RECORDED',
+                    actor=actor, turn_id=turn_id,
+                    conversation_id=conversation_id,
+                    direction=direction)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_voice_turns'
+                    ' (turn_id, conversation_id, direction,'
+                    ' spoken_text, recorded_by,'
+                    ' recorded_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?)',
+                    (turn_id, conversation_id, direction,
+                     spoken_text, actor, now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM sanders_sentinel_voice_turns'
+                ' WHERE turn_id = ?', (turn_id,)).fetchone()
+        return self._voice_turn_view(row)
+
+    def close_voice_conversation(
+            self, actor, conversation_id, detail_ref, *,
+            region=None):
+        """Close a voice conversation record
+        (operator only) on a recorded human decision,
+        held by reference in the receipt. Closure is
+        a record state; nothing about it touches the
+        subject's own lifecycle."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersSentinelDenied(
+                'A detail reference is required')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_voice_conversations'
+                    ' WHERE conversation_id = ?',
+                    (conversation_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'No such voice conversation')
+                if row['state'] != 'OPEN':
+                    raise SandersSentinelDenied(
+                        'This voice conversation already'
+                        ' stands closed')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_VOICE_CONVERSATION'
+                    '_CLOSED',
+                    actor=actor,
+                    conversation_id=conversation_id,
+                    detail_ref=detail_ref.strip())
+                db.execute(
+                    'UPDATE sanders_sentinel_voice_'
+                    'conversations SET state = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE'
+                    ' conversation_id = ?',
+                    ('CLOSED', actor, now, receipt_id,
+                     conversation_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_voice_conversations'
+                ' WHERE conversation_id = ?',
+                (conversation_id,)).fetchone()
+        return self._voice_conversation_view(updated)
+
+    def voice_conversation_view(self, actor, role,
+                                conversation_id, *,
+                                region=None):
+        """One voice conversation (guarded read),
+        with its recorded turns in order."""
+        self._geo(region)
+        self._guard_access(actor, role, 'voice-conversations',
+                           'voice conversation view')
+        with self._connect() as db:
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_voice_conversations'
+                ' WHERE conversation_id = ?',
+                (conversation_id,)).fetchone()
+            if row is None:
+                raise SandersSentinelDenied(
+                    'No such voice conversation')
+            turns = db.execute(
+                'SELECT * FROM sanders_sentinel_voice_turns'
+                ' WHERE conversation_id = ?'
+                ' ORDER BY recorded_at',
+                (conversation_id,)).fetchall()
+        view = self._voice_conversation_view(row)
+        view['turns'] = [self._voice_turn_view(turn)
+                         for turn in turns]
+        return view
+
+    def voice_conversations(self, actor, role,
+                            subject_kind=None,
+                            subject_ref=None, *,
+                            region=None):
+        """The voice conversation records of record
+        (guarded read), optionally narrowed to one
+        subject."""
+        self._geo(region)
+        self._guard_access(actor, role, 'voice-conversations',
+                           'voice conversations list')
+        query = ('SELECT * FROM'
+                 ' sanders_sentinel_voice_conversations')
+        clauses, params = [], []
+        if subject_kind is not None:
+            clauses.append('subject_kind = ?')
+            params.append(subject_kind)
+        if subject_ref is not None:
+            clauses.append('subject_ref = ?')
+            params.append(subject_ref)
+        if clauses:
+            query += ' WHERE ' + ' AND '.join(clauses)
+        query += ' ORDER BY recorded_at'
+        with self._connect() as db:
+            rows = db.execute(query, params).fetchall()
+        return [self._voice_conversation_view(row)
+                for row in rows]
 
     def close_escalation(self, actor, escalation_id,
                          decision, reason_ref, *,
@@ -4577,6 +5369,24 @@ class SandersSentinelService:
         view['responder_coordinations'] = [
             self._responder_coordination_view(entry)
             for entry in coordinations]
+        with self._connect() as db:
+            speech = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_speech_records'
+                ' WHERE subject_kind = ? AND'
+                ' subject_ref = ? ORDER BY recorded_at',
+                ('EMERGENCY_CASE', case_id)).fetchall()
+            conversations = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_voice_conversations'
+                ' WHERE subject_kind = ? AND'
+                ' subject_ref = ? ORDER BY recorded_at',
+                ('EMERGENCY_CASE', case_id)).fetchall()
+        view['speech_records'] = [
+            self._speech_view(entry) for entry in speech]
+        view['voice_conversations'] = [
+            self._voice_conversation_view(entry)
+            for entry in conversations]
         return view
 
     def record_emergency_activation(
