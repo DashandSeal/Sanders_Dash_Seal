@@ -3,9 +3,14 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_three_shields_bloodline_protection.py",
-        "payload_hash": "63f89f2c281d384274b7aa1bf08f0b9284ffbbd6bc5402da10684a38a9badc2e",
-        "scope": "source-manifest",
-        "signatures": {},
-        "status": "UNSIGNED_SOURCE_MANIFEST"
-    }
+        "payload_hash": "2fff6f9ad4785f9d437c9582e490d93e76eaaefc44825f30f5f8052941314899",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
 }
