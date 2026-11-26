@@ -746,6 +746,95 @@ class SandersPatriotSaintForbidden(Exception):
     """The actor lacks authority for the requested operation."""
 
 
+
+# -- Three-shields coverage (founder's orders,
+# 2026-11-26) --------------------------------------
+#
+# The founder's three-shields order gives Sanders
+# Sentinel, The Godfather, and Sanders Patriot Saint
+# the three strongest RTSA shields of his design FOR
+# THEIR PROTECTION PROTOCOLS — all three shields over
+# all three platforms, layered, platform-to-platform
+# (the Daedalus precedent). Coverage is by reference
+# to the shield platforms: the shields keep their own
+# identities, modules, and records; nothing here
+# absorbs or merges them. RTSA Minotaur patrols all
+# three shields simultaneously under the founder's
+# patrol order of the same morning, and the
+# Minotaur's own upgrade (quantum protection
+# protocols and labyrinth behavior, built into the
+# Minotaur himself) stands as part of the same
+# protection — the Minotaur gains labyrinth behavior;
+# he does not absorb the Sanders Labyrinth Shield,
+# which remains a full platform in its own right.
+SHIELD_COVERAGE_TITLE = 'Three-Shields Protection Coverage'
+SHIELD_COVERAGE_GIVEN = '2026-11-26'
+FOUNDER_THREE_SHIELDS_ORDER_VERBATIM = (
+    'Sanders Sentenal, Godfather, Patriot Saint are'
+    ' to be given the three strongest RTSA \U0001f6e1\ufe0f s'
+    ' I\'ve designed to use the internet to upgrade'
+    ' all \U0001f6e1\ufe0f defenses immediately')
+FOUNDER_THREE_SHIELDS_CLARIFICATION_VERBATIM = (
+    'For their protection protocols')
+FOUNDER_THREE_SHIELDS_ASSIGNMENT_VERBATIM = (
+    'All three shields over all three platforms')
+FOUNDER_MINOTAUR_PATROL_ORDER_VERBATIM = (
+    'The RTSA minotaur patrols all 3 \U0001f6e1\ufe0f\'s'
+    ' simotaniosly immediately')
+FOUNDER_MINOTAUR_UPGRADE_VERBATIM = (
+    'Now we\'ve got to strengthen the RTSA minotaur'
+    ' with quantum encryption and labyrinth behavior'
+    ' built directly into the minotaur itself'
+    ' that\'s his upgrade')
+SHIELD_COVERAGE_SHIELDS = (
+    {'shield_id': 'sanders_labyrinth_shield',
+     'name': 'Sanders Labyrinth Shield',
+     'catalog_number': 41,
+     'protection': 'Perimeter evaluation shield:'
+                   ' governed packet evaluation,'
+                   ' upgraded indicator classes,'
+                   ' blocklist and isolation'
+                   ' records.'},
+    {'shield_id': 'labyrinth',
+     'name': 'LABYRINTH',
+     'catalog_number': 32,
+     'protection': 'Zero-trust attack-path shield:'
+                   ' attack-path analysis and graph'
+                   ' records, communication-policy'
+                   ' records.'},
+    {'shield_id': 'sovereign_shield_v3',
+     'name': 'Sovereign Shield V3',
+     'catalog_number': 18,
+     'protection': 'Sovereign shield layer:'
+                   ' chain-of-custody integrity'
+                   ' records and governed shield-layer'
+                   ' determinations.'},
+)
+SHIELD_COVERAGE_PART = {
+    'part': 'SHIELD_COVERAGE',
+    'title': 'Three-shields protection coverage',
+    'mechanism': 'Coverage records in this platform'
+                 ' naming all three shields standing'
+                 ' over this platform\'s protection'
+                 ' protocols, platform-to-platform,'
+                 ' with designation and test records'
+                 ' deriving the coverage ladder state'
+                 ' from records only.',
+    'designation': 'The founder designates the live'
+                   ' platform-to-platform coverage'
+                   ' arrangement of record, by'
+                   ' reference.',
+}
+SHIELD_COVERAGE_LADDER = (
+    'DESIGNED', 'CONSTRUCTED', 'CONNECTED', 'TESTED',
+    'OPERATIONAL')
+SHIELD_COVERAGE_DESIGNATION_KINDS = ('LIVE', 'SIMULATED')
+SHIELD_COVERAGE_TEST_PHASES = (
+    'IDENTIFY', 'DESIGNATE', 'CONNECT', 'EXERCISE',
+    'VERIFY', 'REPORT')
+SHIELD_COVERAGE_TEST_OUTCOMES = ('COMPLETED', 'FAILED')
+SHIELD_COVERAGE_CAPABILITY = 'SHIELD_COVERAGE'
+
 class SandersPatriotSaintService:
     """Sanders Patriot Saint: governed governance records under the patriot saint records discipline."""
 
@@ -826,6 +915,31 @@ class SandersPatriotSaintService:
                     disbursed_at REAL NOT NULL,
                     receipt_id TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS sanders_patriot_saint_shield_coverage_designations (
+                    designation_id TEXT PRIMARY KEY,
+                    part_key TEXT NOT NULL,
+                    designation_ref TEXT NOT NULL,
+                    kind TEXT NOT NULL,
+                    authorization_ref TEXT NOT NULL,
+                    state TEXT NOT NULL,
+                    ended_detail_ref TEXT,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    updated_by TEXT NOT NULL,
+                    updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_patriot_saint_shield_coverage_tests (
+                    test_id TEXT PRIMARY KEY,
+                    capability TEXT NOT NULL,
+                    phases TEXT NOT NULL,
+                    outcome TEXT NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+
                 """
             )
             # Funding-state columns (Article III of the
@@ -1681,6 +1795,406 @@ class SandersPatriotSaintService:
             'payment_rail_attached': False,
             'payment_rail_statement':
                 PAYMENT_RAIL_STATEMENT,
+        }
+
+
+    # -- three-shields coverage (founder's orders,
+    # 2026-11-26) --------------------------------
+
+    @staticmethod
+    def shield_coverage_design_view() -> dict:
+        return {
+            'title': SHIELD_COVERAGE_TITLE,
+            'given': SHIELD_COVERAGE_GIVEN,
+            'order_verbatim':
+                FOUNDER_THREE_SHIELDS_ORDER_VERBATIM,
+            'clarification_verbatim':
+                FOUNDER_THREE_SHIELDS_CLARIFICATION_VERBATIM,
+            'assignment_verbatim':
+                FOUNDER_THREE_SHIELDS_ASSIGNMENT_VERBATIM,
+            'minotaur_patrol_order_verbatim':
+                FOUNDER_MINOTAUR_PATROL_ORDER_VERBATIM,
+            'minotaur_upgrade_verbatim':
+                FOUNDER_MINOTAUR_UPGRADE_VERBATIM,
+            'shields': [dict(entry) for entry
+                        in SHIELD_COVERAGE_SHIELDS],
+            'coverage': 'ALL_THREE_OVER_THIS_PLATFORM',
+            'binding': 'PLATFORM_TO_PLATFORM',
+            'shields_keep_own_identities': True,
+            'shields_absorbed': False,
+            'platforms_merged': False,
+            'minotaur_patrol': (
+                'RTSA Minotaur patrols all three shields'
+                ' simultaneously under the founder\'s'
+                ' patrol order; the patrol stands over'
+                ' the shields, and his own upgrade'
+                ' (quantum protection protocols and'
+                ' labyrinth behavior built into the'
+                ' Minotaur himself) is part of the'
+                ' protection named here. The Minotaur'
+                ' gains labyrinth behavior; he does not'
+                ' absorb the Sanders Labyrinth Shield.'),
+            'ladder': list(SHIELD_COVERAGE_LADDER),
+            'test_phases': list(
+                SHIELD_COVERAGE_TEST_PHASES),
+            'external_connections': 'NONE',
+            'funds_disbursed': False,
+            'funds_held': False,
+        }
+
+    def _shield_coverage_part_state(self, db):
+        """Derive the coverage part's truthful ladder
+        state from the records — and only from the
+        records. An ACTIVE LIVE designation of record
+        is the coverage's connection; a SIMULATED
+        designation never counts as a connection. A
+        COMPLETED coverage test of record is the
+        coverage's test. OPERATIONAL requires both.
+        The part stands CONSTRUCTED on its mechanism
+        of record alone."""
+        entry = SHIELD_COVERAGE_PART
+        designation = db.execute(
+            'SELECT * FROM sanders_patriot_saint_shield_coverage_designations'
+            ' WHERE part_key = ? AND state = ? ORDER'
+            ' BY recorded_at DESC, rowid DESC LIMIT 1',
+            ('SHIELD_COVERAGE', 'ACTIVE')).fetchone()
+        tested = db.execute(
+            'SELECT COUNT(*) AS n FROM sanders_patriot_saint_shield_coverage_tests'
+            ' WHERE capability = ? AND outcome = ?',
+            (SHIELD_COVERAGE_CAPABILITY,
+             'COMPLETED')).fetchone()['n'] > 0
+        connected = (designation is not None
+                     and designation['kind'] == 'LIVE')
+        simulated = (designation is not None
+                     and designation['kind'] == 'SIMULATED')
+        if connected and tested:
+            state = 'OPERATIONAL'
+        elif tested:
+            state = 'TESTED'
+        elif connected:
+            state = 'CONNECTED'
+        else:
+            state = 'CONSTRUCTED'
+        return {
+            'part': entry['part'],
+            'title': entry['title'],
+            'mechanism': entry['mechanism'],
+            'designation_required': entry['designation'],
+            'ladder_state': state,
+            'designation_id': (
+                designation['designation_id']
+                if designation else None),
+            'designation_kind': (
+                designation['kind']
+                if designation else None),
+            'simulated_designation': simulated,
+            'end_to_end_test_completed': tested,
+            'reporting_only': True,
+            'gates_nothing': True,
+        }
+
+    def shield_coverage_view(self, actor, role, *,
+                             region=None):
+        """The three-shields coverage board (guarded
+        read): the founder's orders verbatim, the
+        three shields standing over this platform,
+        and the coverage part with its derived ladder
+        state. States are reporting only and gate
+        nothing."""
+        self._geo(region)
+        self._guard_access(actor, role, 'shield-coverage',
+                           'shield coverage view')
+        with self._bloodline_connect() as db:
+            part = self._shield_coverage_part_state(db)
+            designations_active = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_patriot_saint_shield_coverage_designations WHERE state = ?',
+                ('ACTIVE',)).fetchone()['n']
+            tests_completed = db.execute(
+                'SELECT COUNT(*) AS n FROM sanders_patriot_saint_shield_coverage_tests'
+                ' WHERE outcome = ?',
+                ('COMPLETED',)).fetchone()['n']
+        return {
+            'title': SHIELD_COVERAGE_TITLE,
+            'design': type(self).shield_coverage_design_view(),
+            'part': part,
+            'designations_active': designations_active,
+            'tests_completed': tests_completed,
+            'external_connections': 'NONE',
+            'funds_disbursed': False,
+            'funds_held': False,
+        }
+
+    @staticmethod
+    def _shield_designation_view(row):
+        return {
+            'designation_id': row['designation_id'],
+            'part': row['part_key'],
+            'designation_ref': row['designation_ref'],
+            'kind': row['kind'],
+            'authorization_ref':
+                row['authorization_ref'],
+            'state': row['state'],
+            'ended_detail_ref': row['ended_detail_ref'],
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_shield_designation(
+            self, actor, designation_ref, kind,
+            authorization_ref, *, region=None):
+        """Record one founder designation of the live
+        platform-to-platform shield coverage
+        (operator only), by reference, labeled LIVE
+        or SIMULATED exactly as it is. A designation
+        record designates and records; the coverage
+        ladder state is derived from it, and a
+        SIMULATED designation can never support a
+        CONNECTED or OPERATIONAL reading. Recording
+        a designation connects nothing by itself —
+        it is the record of the founder's
+        designation, the only path by which the
+        coverage may read CONNECTED."""
+        self._geo(region)
+        self._require_operator(actor)
+        if kind not in SHIELD_COVERAGE_DESIGNATION_KINDS:
+            raise SandersPatriotSaintDenied(
+                'The designation kind must be one of: '
+                + ', '.join(
+                    SHIELD_COVERAGE_DESIGNATION_KINDS))
+        for label, value in (
+                ('designation_ref', designation_ref),
+                ('authorization_ref', authorization_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersPatriotSaintDenied(
+                    f'A {label} is required')
+        now = self._now()
+        designation_id = (
+            f'patriot-saint-shield-coverage-designation-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._bloodline_connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_PATRIOT_SAINT_SHIELD_COVERAGE_DESIGNATION_RECORDED',
+                    actor=actor,
+                    designation_id=designation_id,
+                    part_key='SHIELD_COVERAGE', kind=kind)
+                db.execute(
+                    'INSERT INTO sanders_patriot_saint_shield_coverage_designations'
+                    ' (designation_id, part_key,'
+                    ' designation_ref, kind,'
+                    ' authorization_ref, state,'
+                    ' ended_detail_ref, recorded_by,'
+                    ' recorded_at, updated_by, updated_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (designation_id, 'SHIELD_COVERAGE',
+                     designation_ref.strip(), kind,
+                     authorization_ref.strip(), 'ACTIVE',
+                     None, actor, now, actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM sanders_patriot_saint_shield_coverage_designations'
+                ' WHERE designation_id = ?',
+                (designation_id,)).fetchone()
+        return self._shield_designation_view(row)
+
+    def end_shield_designation(
+            self, actor, designation_id, detail_ref, *,
+            region=None):
+        """End one ACTIVE coverage designation
+        (operator only): the designation stops
+        counting toward the coverage ladder state
+        from this record forward. The record is
+        never deleted."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersPatriotSaintDenied(
+                'A detail reference is required')
+        now = self._now()
+        with self._bloodline_connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM sanders_patriot_saint_shield_coverage_designations'
+                    ' WHERE designation_id = ?',
+                    (designation_id,)).fetchone()
+                if row is None:
+                    raise SandersPatriotSaintDenied(
+                        'Unknown shield coverage'
+                        ' designation')
+                if row['state'] != 'ACTIVE':
+                    raise SandersPatriotSaintDenied(
+                        'Only an ACTIVE designation can'
+                        ' be ended')
+                receipt_id = self._record(
+                    'SANDERS_PATRIOT_SAINT_SHIELD_COVERAGE_DESIGNATION_ENDED',
+                    actor=actor,
+                    designation_id=designation_id,
+                    part_key=row['part_key'])
+                db.execute(
+                    'UPDATE sanders_patriot_saint_shield_coverage_designations SET'
+                    ' state = ?, ended_detail_ref = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE'
+                    ' designation_id = ?',
+                    ('ENDED', detail_ref.strip(), actor,
+                     now, receipt_id, designation_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM sanders_patriot_saint_shield_coverage_designations'
+                ' WHERE designation_id = ?',
+                (designation_id,)).fetchone()
+        return self._shield_designation_view(row)
+
+    def shield_designations(self, actor, role, *,
+                            region=None):
+        """The shield coverage designations of record
+        (guarded read)."""
+        self._geo(region)
+        self._guard_access(actor, role, 'shield-coverage',
+                           'shield coverage designations'
+                           ' view')
+        with self._bloodline_connect() as db:
+            rows = db.execute(
+                'SELECT * FROM sanders_patriot_saint_shield_coverage_designations'
+                ' ORDER BY recorded_at').fetchall()
+        views = [self._shield_designation_view(row)
+                 for row in rows]
+        return {
+            'title': SHIELD_COVERAGE_TITLE,
+            'designations': views,
+            'total': len(views),
+            'active_total': sum(
+                1 for view in views
+                if view['state'] == 'ACTIVE'),
+        }
+
+    @staticmethod
+    def _shield_test_view(row):
+        return {
+            'test_id': row['test_id'],
+            'record_kind': 'TEST',
+            'is_test': True,
+            'internal_only': True,
+            'external_dispatch': 'NONE',
+            'capability': row['capability'],
+            'phases': json.loads(row['phases']),
+            'outcome': row['outcome'],
+            'detail_ref': row['detail_ref'],
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_shield_test(
+            self, actor, phases, outcome, detail_ref, *,
+            region=None):
+        """Record one end-to-end test of the shield
+        coverage (operator only). A COMPLETED outcome
+        requires all six coverage test phases —
+        identify, designate, connect, exercise,
+        verify, report. The record is labeled TEST
+        everywhere it appears: a test never counts
+        as live coverage, opens no connection, and
+        is incapable of external dispatch."""
+        self._geo(region)
+        self._require_operator(actor)
+        if outcome not in SHIELD_COVERAGE_TEST_OUTCOMES:
+            raise SandersPatriotSaintDenied(
+                'The test outcome must be one of: '
+                + ', '.join(
+                    SHIELD_COVERAGE_TEST_OUTCOMES))
+        if (not isinstance(phases, (list, tuple))
+                or not phases):
+            raise SandersPatriotSaintDenied(
+                'The exercised phases are required')
+        phase_list = []
+        for phase in phases:
+            if phase not in SHIELD_COVERAGE_TEST_PHASES:
+                raise SandersPatriotSaintDenied(
+                    'Each phase must be one of the'
+                    ' coverage test phases: '
+                    + ', '.join(
+                        SHIELD_COVERAGE_TEST_PHASES))
+            if phase not in phase_list:
+                phase_list.append(phase)
+        if (outcome == 'COMPLETED'
+                and set(phase_list)
+                != set(SHIELD_COVERAGE_TEST_PHASES)):
+            raise SandersPatriotSaintDenied(
+                'A completed end-to-end test exercises'
+                ' all six coverage phases')
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersPatriotSaintDenied(
+                'A detail reference is required')
+        now = self._now()
+        test_id = (
+            f'patriot-saint-shield-coverage-test-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._bloodline_connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_PATRIOT_SAINT_SHIELD_COVERAGE_TEST_RECORDED',
+                    actor=actor, test_id=test_id,
+                    record_kind='TEST',
+                    capability=SHIELD_COVERAGE_CAPABILITY,
+                    outcome=outcome,
+                    phases=list(phase_list))
+                db.execute(
+                    'INSERT INTO sanders_patriot_saint_shield_coverage_tests (test_id,'
+                    ' capability, phases, outcome,'
+                    ' detail_ref, recorded_by,'
+                    ' recorded_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (test_id, SHIELD_COVERAGE_CAPABILITY,
+                     json.dumps(phase_list), outcome,
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM sanders_patriot_saint_shield_coverage_tests'
+                ' WHERE test_id = ?', (test_id,)).fetchone()
+        return self._shield_test_view(row)
+
+    def shield_tests(self, actor, role, *, region=None):
+        """The shield coverage tests of record
+        (guarded read) — every one labeled TEST."""
+        self._geo(region)
+        self._guard_access(actor, role, 'shield-coverage',
+                           'shield coverage tests view')
+        with self._bloodline_connect() as db:
+            rows = db.execute(
+                'SELECT * FROM sanders_patriot_saint_shield_coverage_tests'
+                ' ORDER BY recorded_at').fetchall()
+        views = [self._shield_test_view(row) for row in rows]
+        return {
+            'title': SHIELD_COVERAGE_TITLE,
+            'record_kind': 'TEST',
+            'tests': views,
+            'total': len(views),
+            'completed_total': sum(
+                1 for view in views
+                if view['outcome'] == 'COMPLETED'),
         }
 
     @staticmethod
