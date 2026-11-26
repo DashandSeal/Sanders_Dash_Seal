@@ -166,6 +166,38 @@ his distinction from The Godfather, rather than
 merging their responsibilities." The Godfather's
 responsibilities are not merged into this platform
 by this remit, and this remit is not his.
+
+FOUNDER'S PERMANENT GLOBAL BLOODLINE PROTECTION
+DIRECTIVES (established by the founder, effective
+2026-11-26; ruled extensions of this platform's
+remit, recorded as rulings, not as recovered
+design): the Directives form an integral part of
+the Permanent Bloodline Protection Directive
+adopted 2026-11-25 and supplement it; they do not
+amend it. ARTICLE III restates this platform's
+private responsibilities and extends the remit
+above with three further matter kinds — emergency
+legal assistance, bail and bond assistance, and
+obtaining legal information, resources and
+necessary assistance — and with the
+funding-coordination duty: "Coordinating with
+Godfather and Sanders Sentinel to secure all
+funding necessary to fulfill these
+responsibilities." Under the reconciliation of
+record, that coordination is carried as a funding
+state on each matter: a matter that needs funding
+reads NOT FUNDED until the joint funding-approval
+determinations of Godfather and Sanders Sentinel
+are both recorded against it. The founder's
+2026-11-25 financial-authority duty stands entire:
+this platform still coordinates only and disburses
+nothing — approval is a recorded determination in
+Godfather's and Sentinel's services, and execution
+of any payment remains a human act. Articles IV–VI
+govern throughout: Global By Design, permanent
+bloodline exclusivity, and preservation of each
+platform's original identity and purpose —
+coordination without merging.
 """
 
 from __future__ import annotations
@@ -207,7 +239,9 @@ DISCIPLINE = 'PATRIOT_SAINT_RECORDS_ONLY'
 RECORD_OPERATIONS = ('record_patriot_saint', 'approve_patriot_saint', 'record_outcome',
     'view_patriot_saint', 'view_design',
     'open_bloodline_matter', 'act_on_bloodline_matter',
-    'record_bloodline_coordination', 'view_bloodline_remit')
+    'record_bloodline_coordination', 'view_bloodline_remit',
+    'request_bloodline_matter_funding',
+    'record_bloodline_matter_funding_determination')
 EXECUTION_OPERATIONS = ('issue_directive', 'exercise_authority',
     'integrate_command', 'deliver_briefing',
     'external_execution')
@@ -328,6 +362,29 @@ BLOODLINE_INVARIANTS = (
     ' other.',
     "The Godfather's responsibilities are not merged"
     ' into this platform, and this remit is not his.',
+    'Global By Design: the responsibilities'
+    ' established by the Permanent Global Bloodline'
+    ' Protection Directives (2026-11-26) extend'
+    ' worldwide, across all seven continents;'
+    ' geographical location, national borders,'
+    ' residency, relocation, or international travel'
+    ' shall not extinguish, diminish, or terminate'
+    ' them.',
+    'Permanent bloodline exclusivity: the private'
+    ' responsibilities are exclusively dedicated to'
+    ' the Sanders bloodline and its present and future'
+    ' bloodline descendants; they shall not be'
+    ' diluted, reassigned, abandoned, redirected, or'
+    ' subordinated to public-facing commercial'
+    ' interests.',
+    'Preservation of original authority and purpose:'
+    ' Godfather, Sanders Sentinel, and Patriot Saint'
+    ' retain their respective identities, original'
+    ' functions, established responsibilities, and'
+    ' independent purposes; their coordinated'
+    ' responsibilities strengthen one another without'
+    ' merging, replacing, or diminishing any'
+    " platform's original assignment.",
 )
 # The tracked matter kinds of the remit, from the
 # founder's role statement: funds for an incarcerated
@@ -337,6 +394,11 @@ BLOODLINE_MATTER_KINDS = (
     'INCARCERATED_FUNDS_COORDINATION',
     'TICKET_PAYMENT_COORDINATION',
     'LEGAL_REPRESENTATION_COORDINATION',
+    # Article III of the Permanent Global Bloodline
+    # Protection Directives (2026-11-26) adds:
+    'EMERGENCY_LEGAL_ASSISTANCE',
+    'BAIL_AND_BOND_ASSISTANCE',
+    'LEGAL_INFORMATION_RESOURCES',
 )
 BLOODLINE_MATTER_STATUSES = ('AWAITING_HUMAN_REVIEW',
                              'APPROVED', 'REJECTED',
@@ -355,6 +417,141 @@ BLOODLINE_EXECUTION_OPERATIONS = (
     'disburse_funds', 'disburse', 'pay_ticket',
     'pay_tickets', 'transfer_funds', 'move_money',
     'release_funds', 'send_money',
+)
+
+# -- Permanent Global Bloodline Protection
+# Directives (founder-established, effective
+# 2026-11-26) ---------------------------------------
+DIRECTIVES_TITLE = ('Permanent Global Bloodline'
+                    ' Protection Directives')
+DIRECTIVES_ESTABLISHED_BY = ('Roosevelt Sanders'
+                             ' \u2014 Founder')
+DIRECTIVES_EFFECTIVE_DATE = '2026-11-26'
+DIRECTIVES_DESIGNATION = 'Permanent | Global By Design'
+DIRECTIVES_SOURCE = ('Founder record:'
+                     ' founder-permanent-global-bloodline'
+                     '-protection-directives-2026-11-26')
+BLOODLINE_DIRECTIVES_SCOPE = 'GLOBAL_BLOODLINE_DIRECTIVES'
+# Article III's funding-coordination duty: a matter
+# that needs funding is funded only by the JOINT
+# funding-approval determinations of Godfather and
+# Sanders Sentinel, both recorded against it.
+FUNDING_APPROVAL_PLATFORMS = ('the_godfather',
+                              'sanders_sentinel')
+FUNDING_STATES = ('NOT_FUNDED', 'FUNDING_REQUESTED',
+                  'FUNDED')
+FOUNDER_DIRECTIVES_ARTICLE_III_VERBATIM = (
+    'ARTICLE III \u2014 PATRIOT SAINT\n'
+    '\n'
+    'Patriot Saint shall maintain its own independent'
+    ' public-facing commercial business model while'
+    ' permanently carrying out its private'
+    ' responsibilities exclusively for the Sanders'
+    ' bloodline.\n'
+    '\n'
+    'Its private responsibilities shall include:\n'
+    '\n'
+    '- Providing assistance whenever a Sanders'
+    ' bloodline member encounters legal'
+    ' difficulties.\n'
+    '- Securing attorneys and arranging legal'
+    ' representation.\n'
+    '- Providing emergency legal assistance.\n'
+    '- Providing bail and bond assistance.\n'
+    '- Placing money on the accounts of incarcerated'
+    ' Sanders bloodline members.\n'
+    '- Paying tickets and fines.\n'
+    '- Obtaining legal information, resources and'
+    ' necessary assistance.\n'
+    '- Coordinating with Godfather and Sanders'
+    ' Sentinel to secure all funding necessary to'
+    ' fulfill these responsibilities.')
+FOUNDER_DIRECTIVES_ARTICLES_IV_VI_VERBATIM = (
+    'ARTICLE IV \u2014 GLOBAL BY DESIGN\n'
+    '\n'
+    'All responsibilities established within these'
+    ' directives are Global By Design from their'
+    ' inception.\n'
+    '\n'
+    'The protection, assistance, transportation,'
+    ' funding and legal support provided to the'
+    ' Sanders bloodline shall extend worldwide,'
+    ' across all seven continents.\n'
+    '\n'
+    'Geographical location, national borders,'
+    ' residency, relocation or international travel'
+    ' shall not extinguish, diminish or terminate'
+    ' these assigned responsibilities.\n'
+    '\n'
+    'ARTICLE V \u2014 PERMANENT BLOODLINE EXCLUSIVITY\n'
+    '\n'
+    'The private responsibilities established herein'
+    ' are exclusively dedicated to the Sanders'
+    ' bloodline and its present and future bloodline'
+    ' descendants.\n'
+    '\n'
+    'These responsibilities shall remain permanent'
+    ' and shall not be diluted, reassigned, abandoned,'
+    ' redirected or subordinated to public-facing'
+    ' commercial interests.\n'
+    '\n'
+    'The separate public-facing business models shall'
+    ' remain intact without interfering with the'
+    ' fulfillment of these private responsibilities.\n'
+    '\n'
+    'ARTICLE VI \u2014 PRESERVATION OF ORIGINAL'
+    ' AUTHORITY AND PURPOSE\n'
+    '\n'
+    'Godfather, Sanders Sentinel and Patriot Saint'
+    ' shall retain their respective identities,'
+    ' original functions, established responsibilities'
+    ' and independent purposes.\n'
+    '\n'
+    'Their coordinated responsibilities shall'
+    ' strengthen one another without merging,'
+    ' replacing or diminishing any platform\u2019s'
+    ' original assignment.\n'
+    '\n'
+    'No unauthorized alteration, reinterpretation,'
+    ' restriction or modification shall weaken the'
+    ' responsibilities established by the Founder for'
+    ' the protection of the Sanders bloodline.\n'
+    '\n'
+    'These directives shall operate in conjunction'
+    ' with the Permanent Bloodline Protection'
+    ' Directive throughout the Sanders Sovereign RTSA'
+    ' Ecosystem.')
+# Articles IV–VI as governing invariants under the
+# Directives, with the reconciliation of record.
+GLOBAL_DIRECTIVES_INVARIANTS = (
+    'Global By Design: the responsibilities'
+    ' established by the Permanent Global Bloodline'
+    ' Protection Directives extend worldwide, across'
+    ' all seven continents; geographical location,'
+    ' national borders, residency, relocation, or'
+    ' international travel shall not extinguish,'
+    ' diminish, or terminate them.',
+    'Permanent bloodline exclusivity: the private'
+    ' responsibilities are exclusively dedicated to'
+    ' the Sanders bloodline and its present and future'
+    ' bloodline descendants; they shall not be'
+    ' diluted, reassigned, abandoned, redirected, or'
+    ' subordinated to public-facing commercial'
+    ' interests.',
+    'Preservation of original authority and purpose:'
+    ' Godfather, Sanders Sentinel, and Patriot Saint'
+    ' retain their respective identities, original'
+    ' functions, established responsibilities, and'
+    ' independent purposes; their coordinated'
+    ' responsibilities strengthen one another without'
+    ' merging, replacing, or diminishing any'
+    " platform's original assignment.",
+    'No platform disburses or holds funds under these'
+    ' Directives: funding approval is a recorded'
+    ' determination, emergency reserves are a register'
+    ' of designations and joint approvals rather than'
+    ' platform-held money, and execution of any'
+    ' payment or purchase remains a human act.',
 )
 
 
@@ -427,6 +624,10 @@ class SandersPatriotSaintService:
                     status TEXT NOT NULL,
                     coordination_ref TEXT,
                     funds_disbursed INTEGER NOT NULL DEFAULT 0,
+                    funding_state TEXT NOT NULL DEFAULT 'NOT_FUNDED',
+                    funding_requested_ref TEXT,
+                    funding_godfather_determination_ref TEXT,
+                    funding_sentinel_determination_ref TEXT,
                     opened_by TEXT NOT NULL,
                     opened_at REAL NOT NULL,
                     updated_by TEXT NOT NULL,
@@ -435,6 +636,41 @@ class SandersPatriotSaintService:
                 );
                 """
             )
+            # Funding-state columns (Article III of the
+            # Permanent Global Bloodline Protection
+            # Directives, 2026-11-26) are added to a
+            # matters table that predates them: existing
+            # stores gain the columns with their
+            # defaults, and every existing matter reads
+            # NOT_FUNDED until joint determinations are
+            # recorded against it.
+            columns = {row[1] for row in db.execute(
+                'PRAGMA table_info('
+                'sanders_patriot_saint_bloodline_matters)')}
+            for column, ddl in (
+                    ('funding_state',
+                     "ALTER TABLE"
+                     " sanders_patriot_saint_bloodline_matters"
+                     " ADD COLUMN funding_state TEXT NOT NULL"
+                     " DEFAULT 'NOT_FUNDED'"),
+                    ('funding_requested_ref',
+                     "ALTER TABLE"
+                     " sanders_patriot_saint_bloodline_matters"
+                     " ADD COLUMN funding_requested_ref TEXT"),
+                    ('funding_godfather_determination_ref',
+                     "ALTER TABLE"
+                     " sanders_patriot_saint_bloodline_matters"
+                     " ADD COLUMN"
+                     " funding_godfather_determination_ref"
+                     " TEXT"),
+                    ('funding_sentinel_determination_ref',
+                     "ALTER TABLE"
+                     " sanders_patriot_saint_bloodline_matters"
+                     " ADD COLUMN"
+                     " funding_sentinel_determination_ref"
+                     " TEXT")):
+                if column not in columns:
+                    db.execute(ddl)
 
     # -- plumbing ---------------------------------------------------
 
@@ -527,6 +763,8 @@ class SandersPatriotSaintService:
                 BLOODLINE_GODFATHER_DISTINCTION_RULING,
             'matter_kinds': list(BLOODLINE_MATTER_KINDS),
             'matter_statuses': list(BLOODLINE_MATTER_STATUSES),
+            'global_directives':
+                SandersPatriotSaintService.directives_design_view(),
             'funds_disbursed': False,
             'segregated_store': True,
             'note': (
@@ -834,6 +1072,7 @@ class SandersPatriotSaintService:
 
     @staticmethod
     def _bloodline_matter_view(row):
+        funding_state = row['funding_state']
         return {
             'matter_id': row['matter_id'],
             'matter_kind': row['matter_kind'],
@@ -845,6 +1084,25 @@ class SandersPatriotSaintService:
             # code: the platform coordinates assistance
             # and disburses nothing — always False.
             'funds_disbursed': False,
+            # Article III funding coordination: the
+            # matter reads NOT FUNDED until the joint
+            # Godfather + Sanders Sentinel approval
+            # determinations are both recorded against
+            # it.
+            'funding_state': funding_state,
+            'funding_approved': funding_state == 'FUNDED',
+            'funding': {
+                'state': funding_state,
+                'requested_ref': row['funding_requested_ref'],
+                'approval_platforms':
+                    list(FUNDING_APPROVAL_PLATFORMS),
+                'joint_approval_required': True,
+                'godfather_determination_ref':
+                    row['funding_godfather_determination_ref'],
+                'sentinel_determination_ref':
+                    row['funding_sentinel_determination_ref'],
+                'funds_disbursed': False,
+            },
             'scope_ref': BLOODLINE_SUPPORT_SCOPE,
             'segregated_store': True,
             'opened_by': row['opened_by'],
@@ -1059,6 +1317,209 @@ class SandersPatriotSaintService:
                 (matter_id,)).fetchone()
         return self._bloodline_matter_view(updated)
 
+    # -- Article III funding coordination (Permanent
+    # Global Bloodline Protection Directives,
+    # 2026-11-26) ---------------------------------------
+
+    @staticmethod
+    def directives_design_view() -> dict:
+        return {
+            'directives_title': DIRECTIVES_TITLE,
+            'established_by': DIRECTIVES_ESTABLISHED_BY,
+            'effective_date': DIRECTIVES_EFFECTIVE_DATE,
+            'designation': DIRECTIVES_DESIGNATION,
+            'source': DIRECTIVES_SOURCE,
+            'article_iii_verbatim':
+                FOUNDER_DIRECTIVES_ARTICLE_III_VERBATIM,
+            'articles_iv_vi_verbatim':
+                FOUNDER_DIRECTIVES_ARTICLES_IV_VI_VERBATIM,
+            'scope_ref': BLOODLINE_DIRECTIVES_SCOPE,
+            'invariants':
+                list(GLOBAL_DIRECTIVES_INVARIANTS),
+            'funding_approval_platforms':
+                list(FUNDING_APPROVAL_PLATFORMS),
+            'funding_states': list(FUNDING_STATES),
+            'funds_disbursed': False,
+            'note': (
+                'Under the founder\u2019s Permanent Global'
+                ' Bloodline Protection Directives'
+                ' (effective 2026-11-26), supplementing the'
+                ' Permanent Bloodline Protection Directive'
+                ' without amending it, Article III restates'
+                ' Patriot Saint\u2019s private'
+                ' responsibilities and extends the remit'
+                ' with emergency legal assistance, bail and'
+                ' bond assistance, and obtaining legal'
+                ' information, resources and necessary'
+                ' assistance \u2014 and with the duty of'
+                ' coordinating with Godfather and Sanders'
+                ' Sentinel to secure all funding necessary'
+                ' for these responsibilities. That'
+                ' coordination is carried as a funding'
+                ' state on each matter: a matter that needs'
+                ' funding reads NOT FUNDED until the joint'
+                ' funding-approval determinations of'
+                ' Godfather and Sanders Sentinel are both'
+                ' recorded against it. This platform still'
+                ' coordinates only and disburses nothing:'
+                ' approval is a recorded determination in'
+                ' Godfather\u2019s and Sentinel\u2019s'
+                ' services, and execution of any payment'
+                ' remains a human act.'),
+        }
+
+    def request_matter_funding(self, actor, matter_id,
+                               funding_ref, *, region=None):
+        """Record that a bloodline matter needs funding
+        (operator only), by reference — the Article III
+        coordination with Godfather and Sanders
+        Sentinel to secure the funding necessary for
+        the matter. The matter's funding state moves
+        from NOT_FUNDED to FUNDING_REQUESTED; it reads
+        FUNDED only when both platforms' approval
+        determinations stand recorded against it.
+        Requesting funding moves no money."""
+        self._geo(region)
+        self._require_operator(actor)
+        if not isinstance(funding_ref, str) \
+                or not funding_ref.strip():
+            raise SandersPatriotSaintDenied(
+                'A funding reference is required to'
+                ' request funding')
+        now = self._now()
+        with self._bloodline_connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_patriot_saint_bloodline_matters'
+                    ' WHERE matter_id = ?',
+                    (matter_id,)).fetchone()
+                if row is None:
+                    raise SandersPatriotSaintDenied(
+                        'Bloodline matter not found')
+                if row['status'] == 'REJECTED':
+                    raise SandersPatriotSaintDenied(
+                        'Funding is not requested for a'
+                        ' REJECTED bloodline matter')
+                if row['funding_state'] != 'NOT_FUNDED':
+                    raise SandersPatriotSaintDenied(
+                        'Funding has already been requested'
+                        ' for this matter (funding state:'
+                        f" {row['funding_state']})")
+                receipt_id = self._record(
+                    'SANDERS_PATRIOT_SAINT_BLOODLINE_FUNDING_REQUESTED',
+                    actor=actor, matter_id=matter_id,
+                    funding_ref=funding_ref.strip(),
+                    approval_platforms=
+                    list(FUNDING_APPROVAL_PLATFORMS),
+                    funds_disbursed=False)
+                db.execute(
+                    'UPDATE'
+                    ' sanders_patriot_saint_bloodline_matters'
+                    ' SET funding_state = ?,'
+                    ' funding_requested_ref = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE matter_id = ?',
+                    ('FUNDING_REQUESTED', funding_ref.strip(),
+                     actor, now, receipt_id, matter_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_patriot_saint_bloodline_matters'
+                ' WHERE matter_id = ?',
+                (matter_id,)).fetchone()
+        return self._bloodline_matter_view(updated)
+
+    def record_matter_funding_determination(
+            self, actor, matter_id, platform,
+            determination_ref, *, region=None):
+        """Record, against a bloodline matter whose
+        funding was requested, one approving platform's
+        funding-approval determination, by reference
+        (operator only): 'the_godfather' or
+        'sanders_sentinel'. The matter reads FUNDED
+        only when BOTH determinations stand recorded —
+        a single determination never funds a matter.
+        Recording a determination disburses nothing:
+        approval is a recorded determination, and
+        execution of any payment remains a human act."""
+        self._geo(region)
+        self._require_operator(actor)
+        if platform not in FUNDING_APPROVAL_PLATFORMS:
+            raise SandersPatriotSaintDenied(
+                f'Unknown funding approval platform:'
+                f' {platform!r}')
+        if not isinstance(determination_ref, str) \
+                or not determination_ref.strip():
+            raise SandersPatriotSaintDenied(
+                'A determination reference is required')
+        column = ('funding_godfather_determination_ref'
+                  if platform == 'the_godfather'
+                  else 'funding_sentinel_determination_ref')
+        now = self._now()
+        with self._bloodline_connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_patriot_saint_bloodline_matters'
+                    ' WHERE matter_id = ?',
+                    (matter_id,)).fetchone()
+                if row is None:
+                    raise SandersPatriotSaintDenied(
+                        'Bloodline matter not found')
+                if row['funding_state'] == 'NOT_FUNDED':
+                    raise SandersPatriotSaintDenied(
+                        'Funding determinations are recorded'
+                        ' only after funding is requested for'
+                        ' the matter (funding state:'
+                        ' NOT_FUNDED)')
+                if row['funding_state'] == 'FUNDED':
+                    raise SandersPatriotSaintDenied(
+                        'The matter already stands FUNDED on'
+                        ' both recorded determinations')
+                if row[column]:
+                    raise SandersPatriotSaintDenied(
+                        f'The {platform} determination is'
+                        ' already recorded for this matter')
+                other = ('funding_sentinel_determination_ref'
+                         if platform == 'the_godfather'
+                         else 'funding_godfather_determination_ref')
+                new_state = ('FUNDED' if row[other]
+                             else 'FUNDING_REQUESTED')
+                receipt_id = self._record(
+                    'SANDERS_PATRIOT_SAINT_BLOODLINE_FUNDING_DETERMINATION',
+                    actor=actor, matter_id=matter_id,
+                    platform=platform,
+                    determination_ref=
+                    determination_ref.strip(),
+                    funding_state=new_state,
+                    funds_disbursed=False)
+                db.execute(
+                    'UPDATE'
+                    ' sanders_patriot_saint_bloodline_matters'
+                    f' SET {column} = ?, funding_state = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE matter_id = ?',
+                    (determination_ref.strip(), new_state,
+                     actor, now, receipt_id, matter_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_patriot_saint_bloodline_matters'
+                ' WHERE matter_id = ?',
+                (matter_id,)).fetchone()
+        return self._bloodline_matter_view(updated)
+
     def disburse_funds(self, actor, matter_id, *args, **kwargs):
         """Refused by name, unconditionally. Under the
         founder's financial-authority duty (2026-11-25),
@@ -1104,8 +1565,16 @@ class SandersPatriotSaintService:
                 ' sanders_patriot_saint_bloodline_matters'
                 ' WHERE status IN (?, ?) ORDER BY opened_at',
                 BLOODLINE_OPEN_STATUSES).fetchall()
+            by_funding_state = {
+                s: 0 for s in FUNDING_STATES}
+            for row in db.execute(
+                    'SELECT funding_state, COUNT(*) AS n FROM'
+                    ' sanders_patriot_saint_bloodline_matters'
+                    ' GROUP BY funding_state'):
+                by_funding_state[row['funding_state']] = row['n']
         view = self.bloodline_design_view()
         view['matters_total'] = sum(by_status.values())
+        view['matters_by_funding_state'] = by_funding_state
         view['matters_by_status'] = by_status
         view['matters_by_kind'] = by_kind
         view['open_matters'] = [
@@ -1151,6 +1620,14 @@ class SandersPatriotSaintService:
                     ' sanders_patriot_saint_bloodline_matters'
                     ' GROUP BY matter_kind'):
                 matters_by_kind[row['matter_kind']] = row['n']
+            matters_by_funding_state = {
+                s: 0 for s in FUNDING_STATES}
+            for row in db.execute(
+                    'SELECT funding_state, COUNT(*) AS n FROM'
+                    ' sanders_patriot_saint_bloodline_matters'
+                    ' GROUP BY funding_state'):
+                matters_by_funding_state[
+                    row['funding_state']] = row['n']
         return {
             'identity': IDENTITY.to_dict(),
             'design': self.design_view(),
@@ -1158,6 +1635,8 @@ class SandersPatriotSaintService:
                 sum(matters_by_status.values()),
             'bloodline_matters_by_status': matters_by_status,
             'bloodline_matters_by_kind': matters_by_kind,
+            'bloodline_matters_by_funding_state':
+                matters_by_funding_state,
             'bloodline_funds_disbursed': False,
             'records_total': sum(by_status.values()),
             'records_by_status': by_status,
