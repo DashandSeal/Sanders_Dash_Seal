@@ -351,6 +351,11 @@ BLOODLINE_WATCH_SET = (
      'title': ('Sanders Sentinel \u2014 Real-Time'
                ' Protective Intelligence'),
      'required': True},
+    {'document': ('docs/SANDERS_SENTINEL_OPERATIONAL_'
+                  'READINESS_REQUIREMENTS_2026-11-26.md'),
+     'title': ('Sanders Sentinel \u2014 Operational'
+               ' Readiness Requirements'),
+     'required': True},
     {'document': 'docs/SANDERS_BLOODLINE_REGISTRY.md',
      'title': 'Sanders Bloodline Registry',
      'required': False},
@@ -1055,6 +1060,153 @@ FOUNDER_PROTECTIVE_INTELLIGENCE_VERBATIM = (
     'the ability to receive requests.'
 )
 
+
+# -- Operational Readiness Requirements
+# (founder-established, 2026-11-26) ----------------
+# The third Sentinel instrument of 2026-11-26,
+# supplementing the Succession Directive and the
+# Real-Time Protective Intelligence requirements
+# by its own closing terms: it changes nothing
+# about Sentinel's original identity, business
+# model, funding authority, or human escalation
+# path. The instrument is carried verbatim below,
+# after the constants it governs, and stands as a
+# guarded record under Article II.
+ORR_TITLE = ('Sanders Sentinel \u2014 Operational'
+             ' Readiness Requirements')
+ORR_ESTABLISHED = '2026-11-26'
+ORR_SOURCE = ('Founder record:'
+              ' founder-sanders-sentinel-operational-'
+              'readiness-requirements-2026-11-26')
+ORR_SCOPE = 'OPERATIONAL_READINESS'
+ORR_GUARDED_DOCUMENT = ('docs/SANDERS_SENTINEL_'
+                        'OPERATIONAL_READINESS_'
+                        'REQUIREMENTS_2026-11-26.md')
+# The governing operational sequence of record.
+OPERATIONAL_SEQUENCE = ('PERCEIVE', 'RECOGNIZE',
+                        'ASSESS', 'ACTIVATE',
+                        'COORDINATE', 'PROTECT',
+                        'VERIFY', 'RECOVER')
+OPERATIONAL_SEQUENCE_VERBATIM = (
+    'Perceive \u2192 Recognize \u2192 Assess'
+    ' \u2192 Activate \u2192 Coordinate \u2192'
+    ' Protect \u2192 Verify \u2192 Recover.')
+# Readiness is held per capability: the five
+# perception channels and the protective
+# activation path.
+READINESS_CAPABILITIES = PERCEPTION_CHANNELS + (
+    'PROTECTIVE_ACTIVATION',)
+READINESS_STATES = ('OPERATIONAL', 'NOT_CONNECTED',
+                    'DISCONNECTED', 'UNTESTED',
+                    'SIMULATED')
+READINESS_CONNECTION_KINDS = ('LIVE', 'SIMULATED')
+READINESS_CONNECTION_STATES = ('CONNECTED',
+                               'DISCONNECTED')
+VISIBILITY_RESOURCE_KINDS = ('CAMERA', 'SENSOR',
+                             'COMMUNICATION_CHANNEL',
+                             'PERCEPTION_CHANNEL',
+                             'PROTECTIVE_RESOURCE')
+RECOVERY_ATTEMPT_KINDS = ('RESTORE_CONNECTION',
+                          'ACTIVATE_ALTERNATIVE')
+RECOVERY_OUTCOMES = ('RESTORED', 'NOT_RESTORED',
+                     'ALTERNATIVE_ACTIVE')
+OPERATIONAL_TEST_OUTCOMES = ('COMPLETED', 'FAILED')
+ORR_TRUTHFUL_READINESS_INVARIANT = (
+    'Truthful readiness reporting (item 8): a'
+    ' capability reads OPERATIONAL only when a'
+    ' designated authorized source stands connected'
+    ' in the record as LIVE and an end-to-end'
+    ' operational test of the complete sequence'
+    ' stands completed against it. Readiness is'
+    ' derived from those records and is settable by'
+    ' no one: an unavailable, disconnected,'
+    ' simulated, or untested capability is labeled'
+    ' exactly as it is -- NOT_CONNECTED,'
+    ' DISCONNECTED, SIMULATED, or UNTESTED -- and'
+    ' no code path, view, or status surface may'
+    ' render it operational.')
+ORR_MISSION_PRESERVATION_INVARIANT = (
+    'Permanent mission preservation (item 10),'
+    ' standing beside Article V of the Succession'
+    ' Directive: neither infrastructure failure nor'
+    ' subsequent software modification shall'
+    ' redefine Sanders Sentinel as a passive'
+    ' reporting or administrative system. Sentinel'
+    ' remains a protective platform -- perceive,'
+    ' recognize, assess, activate, coordinate,'
+    ' protect, verify, recover -- whatever fails'
+    ' around it.')
+ORR_INVARIANTS = (
+    ORR_TRUTHFUL_READINESS_INVARIANT,
+    ORR_MISSION_PRESERVATION_INVARIANT,
+    'Loss of visibility is itself an emergency'
+    ' signal of record: a disconnected or'
+    ' unavailable camera, sensor, channel, or'
+    ' protective resource raises Sentinel\u2019s'
+    ' attention as a finding, and recovery is'
+    ' attempted and recorded -- restore the'
+    ' connection, or activate the designated'
+    ' alternative channel.',
+    'An operational test is labeled TEST in every'
+    ' record and view it touches: a test never'
+    ' counts as a real emergency, never opens or'
+    ' closes a real case, and proves readiness only'
+    ' for the capability it exercised.',
+    'Readiness exists only where authorized'
+    ' infrastructure is designated in the record:'
+    ' jurisdiction and time-zone scope are recorded'
+    ' fields on each connection, and no coverage is'
+    ' invented beyond them.',
+)
+
+FOUNDER_OPERATIONAL_READINESS_VERBATIM = (
+    'Sanders Sentinel \u2014 Operational Readiness '
+    'Requirements\n'
+    '1. Live connectivity: Maintain functioning '
+    'connections to designated, authorized '
+    'perception sources.\n'
+    '2. Real-time processing: Analyze incoming '
+    'information continuously, rather than '
+    'relying on periodic reports.\n'
+    '3. Independent danger recognition: Recognize '
+    'credible developing hazards without '
+    'requiring a human-generated emergency '
+    'request.\n'
+    '4. Immediate intervention: Initiate '
+    'authorized protective assistance when '
+    'credible danger is detected.\n'
+    '5. Loss-of-visibility detection: Recognize '
+    'when a camera, sensor, communication '
+    'channel, or other protective resource '
+    'becomes disconnected or unavailable.\n'
+    '6. Automatic recovery: Attempt to restore '
+    'interrupted connections and activate '
+    'available alternative protective channels.\n'
+    '7. Continuous operational testing: Verify '
+    'the complete sequence from danger detection '
+    'through delivery of protective assistance.\n'
+    '8. Truthful readiness reporting: Never '
+    'represent an unavailable, disconnected, '
+    'simulated, or untested capability as '
+    'operational.\n'
+    '9. Global continuity: Maintain protective '
+    'readiness across jurisdictions and time '
+    'zones through available authorized '
+    'infrastructure.\n'
+    '10. Permanent mission preservation: Neither '
+    'infrastructure failure nor subsequent '
+    'software modification shall redefine Sanders '
+    'Sentinel as a passive reporting or '
+    'administrative system.\n'
+    'His required operational sequence is:\n'
+    'Perceive \u2192 Recognize \u2192 Assess \u2192 Activate \u2192 '
+    'Coordinate \u2192 Protect \u2192 Verify \u2192 Recover.\n'
+    'These requirements supplement the existing '
+    'directives without changing his original '
+    'identity, business model, funding authority, '
+    'or human escalation path.'
+)
+
 class SandersSentinelDenied(Exception):
     """The requested Sanders Sentinel operation is not
     allowed."""
@@ -1318,6 +1470,53 @@ class SandersSentinelService:
                     initiation_id TEXT PRIMARY KEY,
                     assessment_id TEXT NOT NULL,
                     case_id TEXT NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_readiness_connections (
+                    connection_id TEXT PRIMARY KEY,
+                    capability TEXT NOT NULL,
+                    source_ref TEXT NOT NULL,
+                    authorization_ref TEXT NOT NULL,
+                    connection_kind TEXT NOT NULL,
+                    state TEXT NOT NULL,
+                    jurisdiction_ref TEXT,
+                    timezone_ref TEXT,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    updated_by TEXT NOT NULL,
+                    updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_visibility_events (
+                    event_id TEXT PRIMARY KEY,
+                    resource_kind TEXT NOT NULL,
+                    resource_ref TEXT NOT NULL,
+                    channel TEXT,
+                    connection_id TEXT,
+                    detail_ref TEXT NOT NULL,
+                    attention_record_id TEXT,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_recovery_attempts (
+                    attempt_id TEXT PRIMARY KEY,
+                    visibility_event_id TEXT NOT NULL,
+                    attempt_kind TEXT NOT NULL,
+                    outcome TEXT NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_operational_tests (
+                    test_id TEXT PRIMARY KEY,
+                    capability TEXT NOT NULL,
+                    stages TEXT NOT NULL,
+                    outcome TEXT NOT NULL,
                     detail_ref TEXT NOT NULL,
                     recorded_by TEXT NOT NULL,
                     recorded_at REAL NOT NULL,
@@ -2745,6 +2944,9 @@ class SandersSentinelService:
             'protective_intelligence':
                 SandersSentinelService
                 .protective_intelligence_design_view(),
+            'operational_readiness':
+                SandersSentinelService
+                .operational_readiness_design_view(),
             'note': (
                 'This Directive supplements and'
                 ' strengthens the Permanent Bloodline'
@@ -4447,6 +4649,9 @@ class SandersSentinelService:
             'no_tracking_invariant':
                 EMERGENCY_NO_TRACKING_INVARIANT,
             'feeds_connected': False,
+            'operational_readiness':
+                SandersSentinelService
+                .operational_readiness_design_view(),
             'note': (
                 'The fundamental architectural'
                 ' requirement of record: Sanders'
@@ -5329,6 +5534,744 @@ class SandersSentinelService:
             'total': len(rows),
         }
 
+    # -- Operational Readiness Requirements -------
+
+    @staticmethod
+    def operational_readiness_design_view() -> dict:
+        """The Operational Readiness Requirements of
+        record, read-only: the instrument verbatim,
+        the governing operational sequence, the
+        readiness capabilities and their truthful
+        states, and the invariants -- truthful
+        readiness reporting (item 8) and permanent
+        mission preservation (item 10) first among
+        them. By the instrument's own closing clause,
+        these requirements supplement the existing
+        directives without changing Sentinel's
+        original identity, business model, funding
+        authority, or human escalation path."""
+        return {
+            'title': ORR_TITLE,
+            'established': ORR_ESTABLISHED,
+            'source': ORR_SOURCE,
+            'instrument_verbatim':
+                FOUNDER_OPERATIONAL_READINESS_VERBATIM,
+            'guarded_document': ORR_GUARDED_DOCUMENT,
+            'operational_sequence':
+                list(OPERATIONAL_SEQUENCE),
+            'operational_sequence_verbatim':
+                OPERATIONAL_SEQUENCE_VERBATIM,
+            'readiness_capabilities':
+                list(READINESS_CAPABILITIES),
+            'readiness_states': list(READINESS_STATES),
+            'invariants': list(ORR_INVARIANTS),
+            'truthful_readiness_invariant':
+                ORR_TRUTHFUL_READINESS_INVARIANT,
+            'mission_preservation_invariant':
+                ORR_MISSION_PRESERVATION_INVARIANT,
+            'note': (
+                'Readiness is derived, never declared:'
+                ' a capability reads OPERATIONAL only'
+                ' when its designated authorized source'
+                ' stands connected in the record as'
+                ' LIVE and a completed end-to-end test'
+                ' of the full sequence -- Perceive'
+                ' \u2192 Recover -- stands against it.'
+                ' Everything else is labeled exactly'
+                ' as it is.'),
+        }
+
+    @staticmethod
+    def _readiness_connection_view(row):
+        return {
+            'connection_id': row['connection_id'],
+            'capability': row['capability'],
+            'source_ref': row['source_ref'],
+            'authorization_ref': row['authorization_ref'],
+            'connection_kind': row['connection_kind'],
+            'state': row['state'],
+            'jurisdiction_ref': row['jurisdiction_ref'],
+            'timezone_ref': row['timezone_ref'],
+            'scope_ref': ORR_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def _readiness_state_for(self, db, capability):
+        """Derive one capability's truthful readiness
+        state from the records -- and only from the
+        records (item 8). No caller sets a readiness
+        state; this derivation is the only path by
+        which a capability may read OPERATIONAL."""
+        conn = db.execute(
+            'SELECT * FROM'
+            ' sanders_sentinel_readiness_connections'
+            ' WHERE capability = ? ORDER BY recorded_at'
+            ' DESC, rowid DESC LIMIT 1',
+            (capability,)).fetchone()
+        tested = db.execute(
+            'SELECT COUNT(*) AS n FROM'
+            ' sanders_sentinel_operational_tests WHERE'
+            ' capability = ? AND outcome = ?',
+            (capability, 'COMPLETED')).fetchone()['n'] > 0
+        basis = {
+            'capability': capability,
+            'connection_id': (
+                conn['connection_id'] if conn else None),
+            'connection_kind': (
+                conn['connection_kind'] if conn else None),
+            'connection_state': (
+                conn['state'] if conn else None),
+            'jurisdiction_ref': (
+                conn['jurisdiction_ref'] if conn else None),
+            'timezone_ref': (
+                conn['timezone_ref'] if conn else None),
+            'end_to_end_test_completed': tested,
+        }
+        if conn is None:
+            state = 'NOT_CONNECTED'
+        elif conn['state'] == 'DISCONNECTED':
+            state = 'DISCONNECTED'
+        elif conn['connection_kind'] == 'SIMULATED':
+            state = 'SIMULATED'
+        elif not tested:
+            state = 'UNTESTED'
+        else:
+            state = 'OPERATIONAL'
+        basis['state'] = state
+        basis['operational'] = state == 'OPERATIONAL'
+        return basis
+
+    def readiness_view(self, actor, role, *,
+                       region=None):
+        """The truthful readiness board (guarded
+        read): every capability with its derived
+        state and the records the state rests on.
+        A capability that is unavailable,
+        disconnected, simulated, or untested is
+        labeled exactly as it is (item 8)."""
+        self._geo(region)
+        self._guard_access(actor, role, 'readiness',
+                           'readiness view')
+        with self._connect() as db:
+            capabilities = [
+                self._readiness_state_for(db, capability)
+                for capability in READINESS_CAPABILITIES]
+        return {
+            'title': ORR_TITLE,
+            'operational_sequence':
+                OPERATIONAL_SEQUENCE_VERBATIM,
+            'capabilities': capabilities,
+            'operational_capabilities': [
+                entry['capability'] for entry in capabilities
+                if entry['operational']],
+            'truthful_readiness_invariant':
+                ORR_TRUTHFUL_READINESS_INVARIANT,
+        }
+
+    def record_readiness_connection(
+            self, actor, capability, source_ref,
+            authorization_ref, connection_kind='LIVE',
+            jurisdiction_ref=None, timezone_ref=None, *,
+            region=None):
+        """Record one designated authorized source's
+        connection for a capability (operator only,
+        item 1): the source and its authorization
+        basis by reference, whether the connection is
+        LIVE or SIMULATED -- labeled exactly as it is
+        -- and its jurisdiction and time-zone scope as
+        recorded fields (item 9: readiness exists only
+        where authorized infrastructure is designated
+        in the record; no coverage is invented). A
+        connection record designates and records; the
+        readiness it supports is derived, and a
+        SIMULATED connection can never support an
+        OPERATIONAL reading."""
+        self._geo(region)
+        self._require_operator(actor)
+        if capability not in READINESS_CAPABILITIES:
+            raise SandersSentinelDenied(
+                'The readiness capability must be one of: '
+                + ', '.join(READINESS_CAPABILITIES))
+        if connection_kind not in (
+                READINESS_CONNECTION_KINDS):
+            raise SandersSentinelDenied(
+                'The connection kind must be one of: '
+                + ', '.join(READINESS_CONNECTION_KINDS))
+        for label, value in (
+                ('source_ref', source_ref),
+                ('authorization_ref', authorization_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        for label, value in (
+                ('jurisdiction_ref', jurisdiction_ref),
+                ('timezone_ref', timezone_ref)):
+            if value is not None and (
+                    not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label}, when given, must name'
+                    ' the scope of record')
+        now = self._now()
+        connection_id = (f'sentinel-readiness-connection-'
+                         f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_READINESS_CONNECTION'
+                    '_RECORDED',
+                    actor=actor, connection_id=connection_id,
+                    capability=capability,
+                    source_ref=source_ref.strip(),
+                    connection_kind=connection_kind)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_readiness_'
+                    'connections (connection_id, capability,'
+                    ' source_ref, authorization_ref,'
+                    ' connection_kind, state,'
+                    ' jurisdiction_ref, timezone_ref,'
+                    ' recorded_by, recorded_at, updated_by,'
+                    ' updated_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?)',
+                    (connection_id, capability,
+                     source_ref.strip(),
+                     authorization_ref.strip(),
+                     connection_kind, 'CONNECTED',
+                     jurisdiction_ref.strip()
+                     if jurisdiction_ref else None,
+                     timezone_ref.strip()
+                     if timezone_ref else None,
+                     actor, now, actor, now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_readiness_connections'
+                ' WHERE connection_id = ?',
+                (connection_id,)).fetchone()
+        return self._readiness_connection_view(row)
+
+    def readiness_connections(self, actor, role, *,
+                              region=None):
+        """The readiness connections of record
+        (guarded read)."""
+        self._geo(region)
+        self._guard_access(actor, role, 'readiness',
+                           'readiness connections view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_readiness_connections'
+                ' ORDER BY recorded_at').fetchall()
+        return {
+            'title': ORR_TITLE,
+            'connections': [
+                self._readiness_connection_view(row)
+                for row in rows],
+            'total': len(rows),
+        }
+
+    def record_readiness_disconnection(
+            self, actor, connection_id, detail_ref, *,
+            region=None):
+        """Record a connection's disconnection
+        (operator only): the connection reads
+        DISCONNECTED from this record, and its
+        capability's derived readiness follows --
+        labeled exactly as it is, never operational
+        while disconnected (item 8)."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersSentinelDenied(
+                'A detail reference is required')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_readiness_'
+                    'connections WHERE connection_id = ?',
+                    (connection_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'No such readiness connection')
+                if row['state'] == 'DISCONNECTED':
+                    raise SandersSentinelDenied(
+                        'This connection already stands'
+                        ' recorded as disconnected')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_READINESS_'
+                    'DISCONNECTION_RECORDED',
+                    actor=actor, connection_id=connection_id,
+                    capability=row['capability'],
+                    detail_ref=detail_ref.strip())
+                db.execute(
+                    'UPDATE'
+                    ' sanders_sentinel_readiness_'
+                    'connections SET state = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE connection_id'
+                    ' = ?',
+                    ('DISCONNECTED', actor, now, receipt_id,
+                     connection_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_readiness_connections'
+                ' WHERE connection_id = ?',
+                (connection_id,)).fetchone()
+        return self._readiness_connection_view(updated)
+
+    @staticmethod
+    def _visibility_event_view(row):
+        return {
+            'event_id': row['event_id'],
+            'resource_kind': row['resource_kind'],
+            'resource_ref': row['resource_ref'],
+            'channel': row['channel'],
+            'connection_id': row['connection_id'],
+            'detail_ref': row['detail_ref'],
+            'attention_record_id':
+                row['attention_record_id'],
+            'scope_ref': ORR_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_loss_of_visibility(
+            self, actor, resource_kind, resource_ref,
+            detail_ref, channel=None, connection_id=None,
+            *, region=None):
+        """Record a loss of visibility (operator only,
+        item 5): a camera, sensor, communication
+        channel, or other protective resource has
+        become disconnected or unavailable. The event
+        itself raises Sentinel's attention -- a
+        LOSS_OF_VISIBILITY finding record opens on it.
+        A named connection reads DISCONNECTED from
+        this record; a named perception channel's
+        primary reads FAILED_RECORDED, and its
+        designated alternative carries the signal
+        under the standing redundancy records until a
+        recovery stands recorded."""
+        self._geo(region)
+        self._require_operator(actor)
+        if resource_kind not in VISIBILITY_RESOURCE_KINDS:
+            raise SandersSentinelDenied(
+                'The resource kind must be one of: '
+                + ', '.join(VISIBILITY_RESOURCE_KINDS))
+        for label, value in (
+                ('resource_ref', resource_ref),
+                ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if channel is not None and (
+                channel not in PERCEPTION_CHANNELS):
+            raise SandersSentinelDenied(
+                'The perception channel must be one of: '
+                + ', '.join(PERCEPTION_CHANNELS))
+        now = self._now()
+        event_id = (f'sentinel-visibility-event-'
+                    f'{uuid.uuid4().hex[:16]}')
+        record_id = (f'sentinel-record-'
+                     f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                if connection_id is not None:
+                    conn = db.execute(
+                        'SELECT * FROM'
+                        ' sanders_sentinel_readiness_'
+                        'connections WHERE connection_id'
+                        ' = ?', (connection_id,)).fetchone()
+                    if conn is None:
+                        raise SandersSentinelDenied(
+                            'No such readiness connection')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_LOSS_OF_VISIBILITY',
+                    actor=actor, event_id=event_id,
+                    resource_kind=resource_kind,
+                    resource_ref=resource_ref.strip(),
+                    channel=channel,
+                    connection_id=connection_id,
+                    attention_record_id=record_id)
+                db.execute(
+                    'INSERT INTO sanders_sentinel_records'
+                    ' (record_id, subject_ref, signal_refs,'
+                    ' signal_count, scope_ref, status,'
+                    ' outcome, evidence_ref, requested_by,'
+                    ' requested_at, updated_by, updated_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?)',
+                    (record_id, resource_ref.strip(),
+                     json.dumps(['LOSS_OF_VISIBILITY']), 1,
+                     ORR_SCOPE, 'REQUESTED', None,
+                     detail_ref.strip(), actor, now, actor,
+                     now, receipt_id))
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_visibility_events'
+                    ' (event_id, resource_kind, resource_ref,'
+                    ' channel, connection_id, detail_ref,'
+                    ' attention_record_id, recorded_by,'
+                    ' recorded_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (event_id, resource_kind,
+                     resource_ref.strip(), channel,
+                     connection_id, detail_ref.strip(),
+                     record_id, actor, now, receipt_id))
+                if connection_id is not None:
+                    db.execute(
+                        'UPDATE'
+                        ' sanders_sentinel_readiness_'
+                        'connections SET state = ?,'
+                        ' updated_by = ?, updated_at = ?'
+                        ' WHERE connection_id = ?',
+                        ('DISCONNECTED', actor, now,
+                         connection_id))
+                if channel is not None:
+                    channel_row = (
+                        self._perception_channel_row(
+                            db, channel))
+                    if channel_row is not None:
+                        db.execute(
+                            'UPDATE'
+                            ' sanders_sentinel_perception_'
+                            'channels SET primary_state = ?,'
+                            ' updated_by = ?, updated_at = ?'
+                            ' WHERE channel = ?',
+                            ('FAILED_RECORDED', actor, now,
+                             channel))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_visibility_events'
+                ' WHERE event_id = ?',
+                (event_id,)).fetchone()
+        return self._visibility_event_view(row)
+
+    def visibility_events(self, actor, role, *,
+                          region=None):
+        """The loss-of-visibility events of record
+        (guarded read)."""
+        self._geo(region)
+        self._guard_access(actor, role, 'readiness',
+                           'visibility events view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_visibility_events'
+                ' ORDER BY recorded_at').fetchall()
+        return {
+            'title': ORR_TITLE,
+            'events': [self._visibility_event_view(row)
+                       for row in rows],
+            'total': len(rows),
+        }
+
+    @staticmethod
+    def _recovery_attempt_view(row):
+        return {
+            'attempt_id': row['attempt_id'],
+            'visibility_event_id':
+                row['visibility_event_id'],
+            'attempt_kind': row['attempt_kind'],
+            'outcome': row['outcome'],
+            'detail_ref': row['detail_ref'],
+            'scope_ref': ORR_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_recovery_attempt(
+            self, actor, visibility_event_id, attempt_kind,
+            outcome, detail_ref, *, region=None):
+        """Record one recovery attempt against a
+        loss-of-visibility event (operator only,
+        item 6): RESTORE_CONNECTION attempts to restore
+        the interrupted connection -- on a RESTORED
+        outcome the named connection reads CONNECTED
+        again and a named channel's primary returns to
+        DESIGNATED; ACTIVATE_ALTERNATIVE activates the
+        available alternative channel -- on an
+        ALTERNATIVE_ACTIVE outcome the failover stands
+        recorded in the channel's redundancy records,
+        carried by the alternative. Attempts and their
+        outcomes are recorded exactly as they stand;
+        nothing here represents a recovery that is not
+        recorded."""
+        self._geo(region)
+        self._require_operator(actor)
+        if attempt_kind not in RECOVERY_ATTEMPT_KINDS:
+            raise SandersSentinelDenied(
+                'The recovery attempt kind must be one'
+                ' of: ' + ', '.join(RECOVERY_ATTEMPT_KINDS))
+        if outcome not in RECOVERY_OUTCOMES:
+            raise SandersSentinelDenied(
+                'The recovery outcome must be one of: '
+                + ', '.join(RECOVERY_OUTCOMES))
+        if (attempt_kind == 'RESTORE_CONNECTION'
+                and outcome == 'ALTERNATIVE_ACTIVE'):
+            raise SandersSentinelDenied(
+                'A restore attempt records RESTORED or'
+                ' NOT_RESTORED; ALTERNATIVE_ACTIVE belongs'
+                ' to an alternative-channel activation')
+        if (attempt_kind == 'ACTIVATE_ALTERNATIVE'
+                and outcome == 'RESTORED'):
+            raise SandersSentinelDenied(
+                'An alternative-channel activation records'
+                ' ALTERNATIVE_ACTIVE or NOT_RESTORED;'
+                ' RESTORED belongs to a connection'
+                ' restoration')
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersSentinelDenied(
+                'A detail reference is required')
+        now = self._now()
+        attempt_id = (f'sentinel-recovery-attempt-'
+                      f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                event = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_visibility_events'
+                    ' WHERE event_id = ?',
+                    (visibility_event_id,)).fetchone()
+                if event is None:
+                    raise SandersSentinelDenied(
+                        'No such loss-of-visibility event')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_RECOVERY_ATTEMPT',
+                    actor=actor, attempt_id=attempt_id,
+                    visibility_event_id=visibility_event_id,
+                    attempt_kind=attempt_kind,
+                    outcome=outcome)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_recovery_attempts'
+                    ' (attempt_id, visibility_event_id,'
+                    ' attempt_kind, outcome, detail_ref,'
+                    ' recorded_by, recorded_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (attempt_id, visibility_event_id,
+                     attempt_kind, outcome,
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                if (attempt_kind == 'RESTORE_CONNECTION'
+                        and outcome == 'RESTORED'):
+                    if event['connection_id'] is not None:
+                        db.execute(
+                            'UPDATE'
+                            ' sanders_sentinel_readiness_'
+                            'connections SET state = ?,'
+                            ' updated_by = ?, updated_at = ?'
+                            ' WHERE connection_id = ?',
+                            ('CONNECTED', actor, now,
+                             event['connection_id']))
+                    if event['channel'] is not None:
+                        db.execute(
+                            'UPDATE'
+                            ' sanders_sentinel_perception_'
+                            'channels SET primary_state = ?,'
+                            ' updated_by = ?, updated_at = ?'
+                            ' WHERE channel = ?',
+                            ('DESIGNATED', actor, now,
+                             event['channel']))
+                if (attempt_kind == 'ACTIVATE_ALTERNATIVE'
+                        and outcome == 'ALTERNATIVE_ACTIVE'
+                        and event['channel'] is not None):
+                    failover_id = (
+                        f'sentinel-perception-failover-'
+                        f'{uuid.uuid4().hex[:16]}')
+                    db.execute(
+                        'INSERT INTO'
+                        ' sanders_sentinel_perception_'
+                        'failovers (failover_id, channel,'
+                        ' failure_ref, detail_ref,'
+                        ' carried_by, recorded_by,'
+                        ' recorded_at, receipt_id) VALUES'
+                        ' (?, ?, ?, ?, ?, ?, ?, ?)',
+                        (failover_id, event['channel'],
+                         event['resource_ref'],
+                         detail_ref.strip(), 'ALTERNATIVE',
+                         actor, now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_recovery_attempts'
+                ' WHERE attempt_id = ?',
+                (attempt_id,)).fetchone()
+        return self._recovery_attempt_view(row)
+
+    def recovery_attempts(self, actor, role, *,
+                          region=None):
+        """The recovery attempts of record (guarded
+        read)."""
+        self._geo(region)
+        self._guard_access(actor, role, 'readiness',
+                           'recovery attempts view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_recovery_attempts'
+                ' ORDER BY recorded_at').fetchall()
+        return {
+            'title': ORR_TITLE,
+            'attempts': [self._recovery_attempt_view(row)
+                         for row in rows],
+            'total': len(rows),
+        }
+
+    @staticmethod
+    def _operational_test_view(row):
+        return {
+            'test_id': row['test_id'],
+            'record_kind': 'TEST',
+            'is_test': True,
+            'capability': row['capability'],
+            'stages': json.loads(row['stages']),
+            'outcome': row['outcome'],
+            'detail_ref': row['detail_ref'],
+            'scope_ref': ORR_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_operational_test(
+            self, actor, capability, stages, outcome,
+            detail_ref, *, region=None):
+        """Record one end-to-end operational test
+        (operator only, item 7): the complete sequence
+        from danger detection through delivery of
+        protective assistance, exercised against one
+        capability and recorded stage by stage. A
+        COMPLETED outcome requires all eight stages of
+        the operational sequence of record. The record
+        is labeled TEST everywhere it appears: a test
+        never counts as a real emergency, never opens
+        or closes a real case, and proves readiness
+        only for the capability it exercised."""
+        self._geo(region)
+        self._require_operator(actor)
+        if capability not in READINESS_CAPABILITIES:
+            raise SandersSentinelDenied(
+                'The readiness capability must be one of: '
+                + ', '.join(READINESS_CAPABILITIES))
+        if outcome not in OPERATIONAL_TEST_OUTCOMES:
+            raise SandersSentinelDenied(
+                'The test outcome must be one of: '
+                + ', '.join(OPERATIONAL_TEST_OUTCOMES))
+        if (not isinstance(stages, (list, tuple))
+                or not stages):
+            raise SandersSentinelDenied(
+                'The exercised stages of the operational'
+                ' sequence are required')
+        stage_list = []
+        for stage in stages:
+            if stage not in OPERATIONAL_SEQUENCE:
+                raise SandersSentinelDenied(
+                    'Each stage must be one of the'
+                    ' operational sequence: '
+                    + ', '.join(OPERATIONAL_SEQUENCE))
+            if stage not in stage_list:
+                stage_list.append(stage)
+        if (outcome == 'COMPLETED'
+                and set(stage_list) != set(OPERATIONAL_SEQUENCE)):
+            raise SandersSentinelDenied(
+                'A completed end-to-end test exercises'
+                ' the complete sequence -- Perceive'
+                ' through Recover, all eight stages')
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersSentinelDenied(
+                'A detail reference is required')
+        now = self._now()
+        test_id = (f'sentinel-operational-test-'
+                   f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_OPERATIONAL_TEST'
+                    '_RECORDED',
+                    actor=actor, test_id=test_id,
+                    record_kind='TEST', capability=capability,
+                    outcome=outcome,
+                    stages=list(stage_list))
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_operational_tests'
+                    ' (test_id, capability, stages, outcome,'
+                    ' detail_ref, recorded_by, recorded_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (test_id, capability,
+                     json.dumps(stage_list), outcome,
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_operational_tests'
+                ' WHERE test_id = ?', (test_id,)).fetchone()
+        return self._operational_test_view(row)
+
+    def operational_tests(self, actor, role, *,
+                          region=None):
+        """The operational tests of record (guarded
+        read) -- every one labeled TEST."""
+        self._geo(region)
+        self._guard_access(actor, role, 'readiness',
+                           'operational tests view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_operational_tests'
+                ' ORDER BY recorded_at').fetchall()
+        views = [self._operational_test_view(row)
+                 for row in rows]
+        return {
+            'title': ORR_TITLE,
+            'record_kind': 'TEST',
+            'tests': views,
+            'total': len(views),
+            'completed_total': sum(
+                1 for view in views
+                if view['outcome'] == 'COMPLETED'),
+        }
+
     def disburse_funds(self, actor, *args, **kwargs):
         """Refused by name, unconditionally. Under the
         Permanent Global Bloodline Protection
@@ -5488,6 +6431,24 @@ class SandersSentinelService:
                 ' sanders_sentinel_perception_channels'
                 " WHERE primary_state = 'FAILED_RECORDED'"
             ).fetchone()['n']
+            orr_readiness = {
+                capability:
+                SandersSentinelService
+                ._readiness_state_for(self, db, capability)
+                for capability in READINESS_CAPABILITIES}
+            orr_visibility_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_visibility_events'
+            ).fetchone()['n']
+            orr_recovery_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_recovery_attempts'
+            ).fetchone()['n']
+            orr_tests_completed = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_operational_tests'
+                " WHERE outcome = 'COMPLETED'"
+            ).fetchone()['n']
         return {
             'identity': IDENTITY.to_dict(),
             'design': self.design_view(),
@@ -5563,6 +6524,26 @@ class SandersSentinelService:
                 'channels_primary_failed':
                     rtpi_channels_primary_failed,
                 'feeds_connected': False,
+            },
+            'operational_readiness': {
+                'title': ORR_TITLE,
+                'established': ORR_ESTABLISHED,
+                'operational_sequence':
+                    OPERATIONAL_SEQUENCE_VERBATIM,
+                'capabilities': {
+                    capability: entry['state']
+                    for capability, entry in
+                    orr_readiness.items()},
+                'operational_capabilities': [
+                    capability for capability, entry
+                    in orr_readiness.items()
+                    if entry['operational']],
+                'visibility_events_total':
+                    orr_visibility_total,
+                'recovery_attempts_total':
+                    orr_recovery_total,
+                'operational_tests_completed':
+                    orr_tests_completed,
             },
             'records_total': sum(by_status.values()),
             'records_by_status': by_status,
