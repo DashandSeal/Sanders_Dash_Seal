@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_global_bloodline_directives.py",
-        "payload_hash": "b7bc54bf60ef65a1e5ce3cc437121858809ce2a69c037775d86b01aa403f9d22",
+        "payload_hash": "97f337a516b68f6266128c708bc3b32751715258ef896fb16f02831cfb1a8d0b",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
