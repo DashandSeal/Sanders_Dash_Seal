@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-headquarters.html",
+        "payload_hash": "256b6537a86bf9ab2dffa67d130d5ffc3cd2c09e8f35783f1943bdc5641869d6",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

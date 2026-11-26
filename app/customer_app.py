@@ -192,6 +192,16 @@ ASSETS = {
     '/headquarters/contact': ('headquarters-contact.html', 'text/html; charset=utf-8'),
     '/headquarters/privacy': ('headquarters-privacy.html', 'text/html; charset=utf-8'),
     '/headquarters/terms': ('headquarters-terms.html', 'text/html; charset=utf-8'),
+    # S & G Security Inc. — the company's own operating website
+    # (founder website-scope directive, 2026-11-25: a separate website
+    # from Sanders Corporate Headquarters, in the same design system).
+    '/sg-security': ('sg-security.html', 'text/html; charset=utf-8'),
+    '/sg-security/services': ('sg-security-services.html', 'text/html; charset=utf-8'),
+    '/sg-security/about': ('sg-security-about.html', 'text/html; charset=utf-8'),
+    '/sg-security/headquarters': ('sg-security-headquarters.html', 'text/html; charset=utf-8'),
+    '/sg-security/contact': ('sg-security-contact.html', 'text/html; charset=utf-8'),
+    '/sg-security/privacy': ('sg-security-privacy.html', 'text/html; charset=utf-8'),
+    '/sg-security/terms': ('sg-security-terms.html', 'text/html; charset=utf-8'),
     '/assets/jade-landing.css': ('jade-landing.css', 'text/css; charset=utf-8'),
     '/assets/jade-landing.js': ('jade-landing.js', 'application/javascript; charset=utf-8'),
     '/assets/sds-founder.png': ('sds-founder.png', 'image/png'),
