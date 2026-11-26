@@ -225,25 +225,38 @@ class FakeSynthesizer(Synthesizer):
 # core_platform/daedalus_knowledge_store.py): runtime state lives under
 # data/ at the repository root.  The whisper model cache follows it
 # because the production service user (deploy/sanders-dash-seal.service:
-# sanders, uid 10001, created --no-create-home) has no home directory,
-# so HuggingFace's default cache under ~/.cache/huggingface is not
-# writable and the one-time model download failed there -- silently,
-# because every construction site catches the exception and degrades
-# to "no transcriber" (/api/voice/status reported transcriber: null
-# while the package itself imported fine).  The cache therefore lives
-# under data/, which the deploy creates owned by the runtime user.
-# FASTER_WHISPER_MODEL_CACHE overrides the location.
+# sanders, uid 10001, created --no-create-home) has no writable home
+# directory, while HuggingFace needs TWO writable trees to fetch a
+# model, and only one of them follows the snapshot cache directory:
+#
+# * the snapshot cache (``WhisperModel``'s ``download_root``), and
+# * the Xet downloader's own chunk cache and logs, which live under
+#   ``HF_HOME`` (default ``~/.cache/huggingface``) regardless of the
+#   snapshot cache directory.
+#
+# With the default home unwritable, the one-time model download died
+# in the Xet transfer (``Permission denied (os error 13)``, deploy log
+# of 2026-11-25, step 5d pre-warm) -- silently in the app, because
+# every construction site catches the exception and degrades to "no
+# transcriber" (/api/voice/status reported transcriber: null while
+# the package itself imported fine).  The whole tree therefore lives
+# under data/, which the deploy creates owned by the runtime user:
+# this directory is used as ``HF_HOME`` (unless the operator already
+# set it) and the snapshot cache is its ``hub/`` child, the standard
+# HuggingFace layout.  FASTER_WHISPER_MODEL_CACHE overrides the root.
 _MODEL_CACHE_ENV = "FASTER_WHISPER_MODEL_CACHE"
 _DEFAULT_MODEL_CACHE = (
-    Path(__file__).resolve().parent.parent / "data" / "faster_whisper_models"
+    Path(__file__).resolve().parent.parent / "data" / "faster_whisper"
 )
 
 
 def default_model_cache() -> Path:
-    """Where faster-whisper downloads and caches its model files.
+    """Root of the faster-whisper model cache tree.
 
     The ``FASTER_WHISPER_MODEL_CACHE`` environment variable wins;
-    otherwise the conventional data path above.
+    otherwise the conventional data path above.  The transcriber
+    points ``HF_HOME`` at this root (when the operator has not set
+    ``HF_HOME``) and uses its ``hub/`` child as the snapshot cache.
     """
     override = os.environ.get(_MODEL_CACHE_ENV)
     return Path(override) if override else _DEFAULT_MODEL_CACHE
@@ -279,15 +292,22 @@ class FasterWhisperTranscriber(Transcriber):
                 "faster-whisper is not installed; install faster-whisper==1.2.1 "
                 "and download the model before using FasterWhisperTranscriber"
             ) from exc
-        cache = (Path(download_root) if download_root is not None
-                 else default_model_cache())
-        cache.mkdir(parents=True, exist_ok=True)
+        root = (Path(download_root) if download_root is not None
+                else default_model_cache())
+        # The Xet downloader ignores the snapshot cache directory for
+        # its own chunk cache and logs -- those live under HF_HOME
+        # (see the model-cache note above).  Point HF_HOME at the same
+        # app-owned tree unless the operator already set it, and use
+        # the standard hub/ layout for the snapshot cache itself.
+        os.environ.setdefault("HF_HOME", str(root))
+        hub_cache = root / "hub"
+        hub_cache.mkdir(parents=True, exist_ok=True)
         self._model = WhisperModel(
             model, device=device, compute_type=compute_type,
-            download_root=str(cache),
+            download_root=str(hub_cache),
         )
         self.model = model
-        self.download_root = cache
+        self.download_root = root
 
     def transcribe(self, audio_bytes: bytes, *, filename: str = "audio.wav") -> str:
         if not audio_bytes:
