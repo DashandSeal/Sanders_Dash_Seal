@@ -478,5 +478,167 @@ class TestRecoveryContinuityClarification(OrrTestBase):
                 stage='NOT_A_STAGE')
 
 
+class TestEscalationCoordinationClarification(OrrTestBase):
+    """Founder clarification No. 2 (2026-11-26
+    02:50 MST): escalation and coordination are
+    distinct, and testing can never generate a
+    false emergency dispatch."""
+
+    def test_clarification_no_2_carried_verbatim(self):
+        text = (
+            sentinel.FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_NO_2_VERBATIM)
+        self.assertTrue(text.startswith(
+            'His internal human escalation path remains'
+            " the Founder, followed by the Founder's"
+            ' bloodline CEO. This does not prevent'
+            ' direct coordination with emergency'
+            ' responders.'))
+        self.assertIn(
+            'Testing must demonstrate real functionality'
+            ' without generating false emergency'
+            ' dispatches.', text)
+        self.assertTrue(text.endswith(
+            'Global By Design. The Sanders Way!'))
+        view = (
+            SandersSentinelService.operational_readiness_design_view())
+        self.assertEqual(
+            view['clarification_no_2_verbatim'], text)
+        self.assertIn(
+            'does not prevent direct coordination',
+            view['escalation_coordination_distinction'])
+        self.assertIn(
+            'false emergency dispatch',
+            view['testing_safety_invariant'])
+        self.assertEqual(
+            view['responder_coordination_kinds'],
+            ['FIRE', 'MEDICAL', 'LAW_ENFORCEMENT'])
+        self.assertIn(
+            sentinel.ORR_ESCALATION_COORDINATION_DISTINCTION,
+            view['invariants'])
+        self.assertIn(
+            sentinel.ORR_TESTING_SAFETY_INVARIANT,
+            view['invariants'])
+
+    def _open_case(self):
+        return self.sentinel.record_emergency_signal(
+            OPERATOR, 'FAMILY_REPORT', 'BLOODLINE_FAMILY_MEMBER',
+            'family-1', 'auth', 'bloodline-member-ref',
+            'house fire reported')
+
+    def test_coordination_never_alters_escalation_authority(self):
+        case = self._open_case()
+        before = self.sentinel.escalation_authority(
+            OPERATOR, 'OPERATOR')
+        for kind, ref in (
+                ('FIRE', 'city-fire-department'),
+                ('MEDICAL', 'county-ems'),
+                ('LAW_ENFORCEMENT', 'city-police')):
+            record = self.sentinel.record_responder_coordination(
+                OPERATOR, case['case_id'], kind, ref,
+                'coordination of record')
+            # The record kind is its own, expressly
+            # separate from escalation, and names no
+            # escalation authority.
+            self.assertEqual(record['record_kind'],
+                             'RESPONDER_COORDINATION')
+            self.assertEqual(
+                record['escalation_authority'], 'NONE')
+            self.assertTrue(
+                record['separate_from_escalation'])
+            self.assertNotIn('authority_office', record)
+        after = self.sentinel.escalation_authority(
+            OPERATOR, 'OPERATOR')
+        self.assertEqual(before, after)
+        self.assertEqual(after['holder_office'], 'FOUNDER')
+        # The case view carries the coordinations
+        # alongside -- never inside -- its other
+        # records.
+        view = self.sentinel.emergency_case_view(
+            OPERATOR, 'OPERATOR', case['case_id'])
+        self.assertEqual(
+            len(view['responder_coordinations']), 3)
+        listed = self.sentinel.responder_coordinations(
+            OPERATOR, 'OPERATOR', case['case_id'])
+        self.assertEqual(len(listed), 3)
+
+    def test_coordination_validation(self):
+        case = self._open_case()
+        with self.assertRaises(SandersSentinelDenied):
+            self.sentinel.record_responder_coordination(
+                OPERATOR, case['case_id'], 'SWAT',
+                'some-unit', 'detail')
+        with self.assertRaises(SandersSentinelDenied):
+            self.sentinel.record_responder_coordination(
+                OPERATOR, 'no-such-case', 'FIRE',
+                'city-fire-department', 'detail')
+        with self.assertRaises(SandersSentinelForbidden):
+            self.sentinel.record_responder_coordination(
+                'not-the-operator', case['case_id'], 'FIRE',
+                'city-fire-department', 'detail')
+
+    def test_escalation_names_no_one_but_the_offices(self):
+        # An escalation is addressed only to the
+        # governed office of record -- the Founder in
+        # his lifetime.
+        escalation = self.sentinel.record_escalation(
+            OPERATOR, 'record-ref-1', 'detail-ref-1')
+        self.assertEqual(
+            escalation['authority_office'], 'FOUNDER')
+        # Naming anyone else -- a responder included
+        # -- as the escalation authority is refused
+        # by name, and the attempt stands recorded.
+        with self.assertRaises(SandersSentinelForbidden) as caught:
+            self.sentinel.attempt_escalation_authority_change(
+                OPERATOR, 'city-fire-department')
+        self.assertIn('ESCALATION_AUTHORITY_NOT_ASSUMABLE',
+                      str(caught.exception))
+        authority = self.sentinel.escalation_authority(
+            OPERATOR, 'OPERATOR')
+        self.assertEqual(authority['holder_office'],
+                         'FOUNDER')
+
+    def test_operational_tests_cannot_dispatch(self):
+        case = self._open_case()
+        cases_before = len(self.sentinel.emergency_cases(
+            OPERATOR, 'OPERATOR'))
+        escalations_before = len(self.sentinel.escalations(
+            OPERATOR, 'OPERATOR'))
+        activations_before = len(
+            self.sentinel.emergency_activations(
+                OPERATOR, 'OPERATOR', case['case_id']))
+        coordinations_before = len(
+            self.sentinel.responder_coordinations(
+                OPERATOR, 'OPERATOR', case['case_id']))
+        test = self.sentinel.record_operational_test(
+            OPERATOR, 'VISUAL',
+            list(sentinel.OPERATIONAL_SEQUENCE),
+            'COMPLETED', 'full-sequence internal test')
+        # Labeled TEST, internal only, with no
+        # external dispatch surface at all.
+        self.assertEqual(test['record_kind'], 'TEST')
+        self.assertTrue(test['is_test'])
+        self.assertTrue(test['internal_only'])
+        self.assertEqual(test['external_dispatch'], 'NONE')
+        # Nothing outside the test register moved:
+        # no case opened, no escalation raised, no
+        # activation recorded, no responder
+        # coordination generated -- no false
+        # emergency dispatch is possible from a test.
+        self.assertEqual(
+            len(self.sentinel.emergency_cases(
+                OPERATOR, 'OPERATOR')), cases_before)
+        self.assertEqual(
+            len(self.sentinel.escalations(
+                OPERATOR, 'OPERATOR')), escalations_before)
+        self.assertEqual(
+            len(self.sentinel.emergency_activations(
+                OPERATOR, 'OPERATOR', case['case_id'])),
+            activations_before)
+        self.assertEqual(
+            len(self.sentinel.responder_coordinations(
+                OPERATOR, 'OPERATOR', case['case_id'])),
+            coordinations_before)
+
+
 if __name__ == '__main__':
     unittest.main()
