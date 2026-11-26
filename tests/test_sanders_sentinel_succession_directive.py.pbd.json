@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "tests/test_sanders_sentinel_succession_directive.py",
+        "payload_hash": "d8344749aeb196e023840a97678adff6a290a6f752ee6f4f3abc7cc3822a8998",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
