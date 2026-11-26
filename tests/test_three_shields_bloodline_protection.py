@@ -367,6 +367,26 @@ class TestSovereignShieldV3(unittest.TestCase):
             pinned['pinned']['foundation_hash'],
             pinned['foundation_current_hash'])
 
+    def test_bindings_contract_carries_the_service(self):
+        # Regression guard for the 2026-11-26 deploy
+        # failure: production_bindings passes
+        # sovereign_shield_v3=... into RuntimeBindings,
+        # a fixed-field dataclass in deploy/deployment.py.
+        # Without the field, bindings construction raises
+        # TypeError and the application cannot boot.
+        deployment_source = (
+            REPO_ROOT / 'deploy' / 'deployment.py').read_text(
+            encoding='utf-8')
+        self.assertIn('sovereign_shield_v3: object = None',
+                      deployment_source)
+        bindings_source = (
+            REPO_ROOT / 'deploy'
+            / 'production_bindings.py').read_text(
+            encoding='utf-8')
+        self.assertIn(
+            'sovereign_shield_v3=sovereign_shield_v3',
+            bindings_source)
+
 
 class TestLabyrinthShieldUpgrades(unittest.TestCase):
     def setUp(self):
