@@ -618,6 +618,7 @@ SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_ACTION_ROUTE = re.compile(r'^/api/sanders
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_COORDINATION_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/coordination$')
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_REQUEST_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/funding-request$')
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_DETERMINATION_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/funding-determination$')
+SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_DISBURSEMENT_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/disbursement$')
 SANDERS_FREEDOM_REVOLUTION_RECORD_ROUTE = re.compile(r'^/api/sanders-freedom-revolution/records/([A-Za-z0-9_-]{1,128})$')
 SANDERS_FREEDOM_REVOLUTION_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-freedom-revolution/records/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_FREEDOM_REVOLUTION_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-freedom-revolution/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -993,6 +994,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         patriot_saint_bloodline_matter_coordination_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_COORDINATION_ROUTE.fullmatch(path)
         patriot_saint_bloodline_matter_funding_request_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_REQUEST_ROUTE.fullmatch(path)
         patriot_saint_bloodline_matter_funding_determination_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_DETERMINATION_ROUTE.fullmatch(path)
+        patriot_saint_bloodline_matter_disbursement_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_DISBURSEMENT_ROUTE.fullmatch(path)
         freedom_revolution_record_match = SANDERS_FREEDOM_REVOLUTION_RECORD_ROUTE.fullmatch(path)
         freedom_revolution_record_action_match = SANDERS_FREEDOM_REVOLUTION_RECORD_ACTION_ROUTE.fullmatch(path)
         freedom_revolution_record_outcome_match = SANDERS_FREEDOM_REVOLUTION_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -1672,7 +1674,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or patriot_saint_bloodline_matter_action_match is not None
                                   or patriot_saint_bloodline_matter_coordination_match is not None
                                   or patriot_saint_bloodline_matter_funding_request_match is not None
-                                  or patriot_saint_bloodline_matter_funding_determination_match is not None)
+                                  or patriot_saint_bloodline_matter_funding_determination_match is not None
+                                  or patriot_saint_bloodline_matter_disbursement_match is not None)
         is_freedom_revolution_route = (path in ('/api/sanders-freedom-revolution/status',
                                                 '/api/sanders-freedom-revolution/records',
                                                 '/api/sanders-freedom-revolution/design',
@@ -5431,6 +5434,11 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         matter = sanders_patriot_saint.record_matter_funding_determination(identity, patriot_saint_bloodline_matter_funding_determination_match.group(1), data['platform'], data['determination_ref'])
                         return respond(start, '200 OK', {'bloodline_matter': matter})
+                    if patriot_saint_bloodline_matter_disbursement_match:
+                        if set(data) != {'purpose', 'amount_ref', 'payee_ref'}:
+                            raise ValueError('unexpected fields')
+                        disbursement = sanders_patriot_saint.execute_disbursement(identity, patriot_saint_bloodline_matter_disbursement_match.group(1), data['purpose'], data['amount_ref'], data['payee_ref'])
+                        return respond(start, '201 Created', {'disbursement': disbursement})
                     if patriot_saint_bloodline_matter_match:
                         matter = sanders_patriot_saint.bloodline_matter_view(identity, patriot_saint_role, patriot_saint_bloodline_matter_match.group(1))
                         return respond(start, '200 OK', {'bloodline_matter': matter})
