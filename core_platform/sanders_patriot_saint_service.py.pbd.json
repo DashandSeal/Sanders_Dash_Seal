@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/sanders_patriot_saint_service.py",
-        "payload_hash": "d34d743a13742f247e668a007bf8264c92883fdca662eb75a9d5a39192bb88c9",
+        "payload_hash": "107e99b4ec97c310f884ef0dd47b469b08310133a0321ea08c63bd9bddc9185d",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
