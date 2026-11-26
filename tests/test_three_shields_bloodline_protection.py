@@ -38,7 +38,7 @@ findings when touched; the amendment's fifteen
 protections derive state from checks of record; the
 crypto environment determination follows the check,
 never the reverse; and the guarded documents stand
-in the watch set (20 documents, 19 required) with
+in the watch set (21 documents, 20 required) with
 sound manifest pairs.
 These tests use only stdlib fakes and temporary
 SQLite files: no network, no keys.
@@ -99,6 +99,9 @@ ARCHITECTURE_DOCUMENT = (
 INHERITANCE_DOCUMENT = (
     'docs/FOUNDER_DIRECTIVE_SHIELDS_INHERIT_MINOTAUR_'
     'DEFENSES_2026-11-26.md')
+BENCHMARK_DOCUMENT = (
+    'docs/FOUNDER_DIRECTIVE_ENSURE_SHIELDS_BEST_'
+    'GLOBALLY_2026-11-26.md')
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 ORDER_LINE = (
@@ -172,7 +175,8 @@ class TestGuardedRecords(unittest.TestCase):
                          AMENDMENT_DOCUMENT,
                          RELATIONSHIP_DOCUMENT,
                          ARCHITECTURE_DOCUMENT,
-                         INHERITANCE_DOCUMENT):
+                         INHERITANCE_DOCUMENT,
+                         BENCHMARK_DOCUMENT):
             doc_bytes = (REPO_ROOT / document).read_bytes()
             manifest = json.loads(
                 (REPO_ROOT / (document + '.pbd.json'))
@@ -224,12 +228,23 @@ class TestGuardedRecords(unittest.TestCase):
         self.assertIn('INHERITED_FUNCTIONING', text)
         self.assertIn('INHERITED_BY_DESIGN', text)
 
+    def test_benchmark_document_of_record(self):
+        text = (REPO_ROOT / BENCHMARK_DOCUMENT).read_text(
+            encoding='utf-8')
+        self.assertIn("We've got to ensure that they are",
+                      text)
+        self.assertIn('control-for-control against the '
+                      'top-tier global standard', text)
+        self.assertIn('never declared as a crown', text)
+        self.assertIn('Forty-two controls in all', text)
+        self.assertIn('X25519MLKEM768', text)
+
     def test_watch_set_counts(self):
         self.assertEqual(len(sentinel.BLOODLINE_WATCH_SET),
-                         20)
+                         21)
         required = [e for e in sentinel.BLOODLINE_WATCH_SET
                     if e['required']]
-        self.assertEqual(len(required), 19)
+        self.assertEqual(len(required), 20)
         watched = {e['document']: e
                    for e in sentinel.BLOODLINE_WATCH_SET}
         self.assertTrue(watched[ORDERS_DOCUMENT]['required'])
@@ -241,6 +256,8 @@ class TestGuardedRecords(unittest.TestCase):
             watched[ARCHITECTURE_DOCUMENT]['required'])
         self.assertTrue(
             watched[INHERITANCE_DOCUMENT]['required'])
+        self.assertTrue(
+            watched[BENCHMARK_DOCUMENT]['required'])
 
 
 class TestVerbatimCoverageConstants(unittest.TestCase):
@@ -1080,6 +1097,79 @@ class TestShieldInheritance(unittest.TestCase):
                     service.record_self_protection_check(
                         OPERATOR, 'DENIAL_OF_SERVICE',
                         'EVIDENCED', 'sim-2', 'operator act')
+
+
+class TestGlobalBenchmark(MinotaurWorkspaceMixin,
+                          unittest.TestCase):
+    """The governing benchmark (founder directive
+    2026-11-26 11:36 MST): every control in the sets
+    gathered in the shield-upgrade research is mapped
+    and marked; no control silently skipped; standing
+    reported control-by-control, never as a crown."""
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        tmp = Path(self._tmp.name)
+        self.root = self.make_workspace(tmp)
+        self.service = MinotaurService(
+            tmp / 'minotaur.db', self.root, _verifier,
+            FakeAudit())
+
+    def test_every_control_mapped_and_marked(self):
+        view = self.service.benchmark_view(
+            OPERATOR, 'OPERATOR')
+        self.assertEqual(
+            view['directive_verbatim'],
+            "We've got to ensure that they are")
+        self.assertEqual(view['total'], 42)
+        self.assertEqual(
+            view['total'],
+            len(minotaur_mod.BENCHMARK_CONTROLS))
+        self.assertEqual(
+            sum(view['standings'].values()), 42)
+        sets = {}
+        for entry in view['benchmark']:
+            self.assertIn(entry['standing'],
+                          minotaur_mod.BENCHMARK_STANDINGS)
+            self.assertTrue(entry['basis'])
+            sets[entry['set']] = sets.get(entry['set'], 0) + 1
+        self.assertEqual(sets, {
+            'OWASP_TOP_10_2025': 10,
+            'OWASP_API_TOP_10_2023': 10,
+            'NIST_SP_800_207': 7,
+            'NIST_SP_800_53': 4,
+            'CISA_PRACTICE': 3,
+            'EDGE_AND_TLS': 3,
+            'POST_QUANTUM_ROUTE': 2,
+            'PCI_DSS_FLOOR': 2,
+            'RUNTIME_DISCIPLINE': 1,
+        })
+
+    def test_environment_limits_name_the_lifting_decision(self):
+        view = self.service.benchmark_view(
+            OPERATOR, 'OPERATOR')
+        limited = [e for e in view['benchmark']
+                   if e['standing'] == 'ENVIRONMENT_LIMITED']
+        self.assertEqual(len(limited), 2)
+        for entry in limited:
+            self.assertTrue(entry['limit'])
+            self.assertTrue(entry['founder_decision'])
+        controls = {e['control'] for e in limited}
+        self.assertEqual(controls, {
+            'HYBRID_PQ_KEY_EXCHANGE_X25519MLKEM768',
+            'FIPS_140_3_VALIDATED_PQC_OPERATION'})
+
+    def test_accounting_carries_the_benchmark(self):
+        view = self.service.completeness_accounting_view(
+            OPERATOR, 'OPERATOR')
+        self.assertEqual(view['benchmark_total'], 42)
+        self.assertEqual(
+            view['benchmark_standings']['FUNCTIONING'], 23)
+        self.assertIn('attack-simulation',
+                      self.service.benchmark_view(
+                          OPERATOR, 'OPERATOR')
+                      ['proof_mechanism'])
 
 
 if __name__ == '__main__':
