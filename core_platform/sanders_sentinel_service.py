@@ -407,6 +407,12 @@ BLOODLINE_WATCH_SET = (
                ' Accounting and the'
                ' Functioning-Defense Standard'),
      'required': True},
+    {'document': ('docs/FOUNDER_DIRECTIVE_ENSURE'
+                  '_SHIELDS_BEST_GLOBALLY_2026-11-26.md'),
+     'title': ('Founder Directive \u2014 Ensure the'
+               ' Shields Are the Best, Most Secure'
+               ' Globally: The Governing Benchmark'),
+     'required': True},
     {'document': ('docs/FOUNDER_DIRECTIVE_SHIELDS'
                   '_INHERIT_MINOTAUR_DEFENSES'
                   '_2026-11-26.md'),
