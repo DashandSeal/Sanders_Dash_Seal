@@ -1,0 +1,59 @@
+name: SC-13 lift - record production check (env handoff fix) + TLS client diagnosis
+on:
+  workflow_dispatch:
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record the production crypto-environment check and diagnose local handshakes
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            echo "=== STEP A: env handoff (values never printed) ==="
+            sudo sh -c 'cat /etc/sanders-dash-seal/environment /etc/sanders-dash-seal/runtime.env > /tmp/sds_env_parsed 2>/dev/null; chown sanders:sanders /tmp/sds_env_parsed; chmod 600 /tmp/sds_env_parsed'
+            ls -la /tmp/sds_env_parsed
+            echo "=== STEP B: record the production check (operator identity, in-process) ==="
+            cat > /tmp/record_check.py <<'PYEOF'
+            import json, os
+            with open('/tmp/sds_env_parsed') as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith('#') or '=' not in line:
+                        continue
+                    k, v = line.split('=', 1)
+                    os.environ[k.strip()] = v.strip().strip('"').strip("'")
+            os.environ.setdefault('SANDERS_RUNTIME_FACTORY', 'deploy.production_bindings:create_production_bindings')
+            from deploy.production_bindings import create_production_bindings
+            b = create_production_bindings()
+            view = b.minotaur.record_crypto_environment_check('RooseveltSanders')
+            print('RECORDED_CHECK ' + json.dumps(view, default=str))
+            PYEOF
+            sudo -u sanders bash -c 'cd /opt/Sanders_Dash_Seal && OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf ./venv/bin/python3 /tmp/record_check.py' 2>&1 | grep -E 'RECORDED_CHECK|Error|Denied|denied|Traceback|PermissionError' | head -6
+            sudo shred -u /tmp/sds_env_parsed 2>/dev/null || sudo rm -f /tmp/sds_env_parsed
+            rm -f /tmp/record_check.py
+            echo "=== STEP C: read back the recorded checks via the machinery (count + latest) ==="
+            cat > /tmp/read_checks.py <<'PYEOF'
+            import json, os, sqlite3
+            db = sqlite3.connect('file:/opt/Sanders_Dash_Seal/data/minotaur.db?mode=ro', uri=True)
+            db.row_factory = sqlite3.Row
+            rows = db.execute('SELECT check_id, openssl_version, determination, recorded_by, recorded_at FROM minotaur_crypto_checks ORDER BY recorded_at').fetchall()
+            print('TOTAL_CHECKS', len(rows))
+            for r in rows[-3:]:
+                print('CHECK', json.dumps(dict(r), default=str))
+            PYEOF
+            sudo -u sanders /opt/Sanders_Dash_Seal/venv/bin/python3 /tmp/read_checks.py 2>&1 | head -6
+            rm -f /tmp/read_checks.py
+            echo "=== STEP D: local handshake diagnosis ==="
+            echo "--- D1: stock-config client ---"
+            echo | openssl s_client -connect 127.0.0.1:443 -servername sandersdashandseal.com 2>/dev/null | grep -iE 'Negotiated|Cipher is|Protocol' | head -3
+            echo "--- D2: edge-config client (stderr shown) ---"
+            echo | OPENSSL_CONF=/etc/pki/tls/sanders_fips_edge.cnf openssl s_client -connect 127.0.0.1:443 -servername sandersdashandseal.com 2>&1 | grep -iE 'Negotiated|Cipher is|Protocol|error|alert' | head -5
+            echo "--- D3: fips-only-config client (stderr shown) ---"
+            echo | OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf openssl s_client -connect 127.0.0.1:443 -servername sandersdashandseal.com 2>&1 | grep -iE 'Negotiated|Cipher is|Protocol|error|alert' | head -5
+            echo "FIX_DONE"
