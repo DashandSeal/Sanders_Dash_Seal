@@ -25,6 +25,12 @@
  * crafted in CSS alone: layered mineral clouds and irregular vein
  * gradients over each company's deep blue base, via color-mix over that
  * company's own tokens. No webfonts, no external assets.
+ *
+ * Founder-approved design targets (2026-11-25, "I love them all"): royal
+ * blue marble heroes with the dual seals flanking the hero's lower band,
+ * and light marble plaque cards — white for Home Healthcare, warm ivory
+ * for Senior Living, white on the deepest navy for Headquarters — the
+ * light stone built from each company's own silver and cream tokens.
  * ========================================================================= */
 
 :root {
@@ -401,20 +407,38 @@ nav a::after {
 nav a:hover { color: var(--co-gold-300); }
 nav a:hover::after { transform: scaleX(1); }
 
-/* ---- Hero --------------------------------------------------------------- */
+/* Senior Living's ivory bar — the warm ivory marble header of its
+   approved concept, navy type on light stone; the dual-seal lockup
+   stays a dark jewel mounted on it. */
+body.co-sl .topbar {
+    background:
+        radial-gradient(ellipse 60% 90% at 8% 0%, color-mix(in srgb, var(--co-gold-200) 50%, transparent), transparent 70%),
+        linear-gradient(180deg, var(--co-silver-bright), color-mix(in srgb, var(--co-silver-bright) 68%, var(--co-silver)));
+    border-bottom: 1px solid color-mix(in srgb, var(--co-gold-600) 65%, transparent);
+    box-shadow:
+        inset 0 -1px 0 color-mix(in srgb, var(--co-gold-700) 45%, transparent),
+        0 12px 30px color-mix(in srgb, var(--co-blue-950) 35%, transparent);
+}
+
+body.co-sl .brand-name { color: var(--co-blue-800); }
+body.co-sl .brand-name span { color: var(--co-gold-700); }
+body.co-sl nav a { color: var(--co-blue-800); }
+body.co-sl nav a::after { background: var(--co-gold-700); }
+body.co-sl nav a:hover { color: var(--co-gold-700); }
+
+/* ---- Hero — centered, the company's name in gold serif, the dual seals
+   flanking the hero's lower band (the founder-approved composition) ----- */
 
 .hero {
     position: relative;
     z-index: 1;
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    align-items: center;
-    gap: 5vw;
     max-width: 1440px;
     margin: auto;
-    min-height: 560px;
-    padding: 70px 6vw;
+    padding: 72px 6vw 56px;
+    text-align: center;
 }
+
+.hero-copy { max-width: 920px; margin: 0 auto; }
 
 .eyebrow {
     color: var(--co-gold);
@@ -443,13 +467,15 @@ h2 {
     margin: 0 0 8px;
 }
 
-h3 { color: var(--co-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
+h3 { color: var(--co-blue-800); font-size: 1.25rem; margin: 0 0 10px; }
 
 .hero-copy > p:not(.eyebrow), .section > p {
     max-width: 640px;
     font-size: 1.08rem;
     color: var(--co-silver-bright);
 }
+
+.hero-copy > p:not(.eyebrow) { margin-left: auto; margin-right: auto; }
 
 .fine {
     font-size: 12px;
@@ -459,6 +485,8 @@ h3 { color: var(--co-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
 }
 
 .actions { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 30px; }
+
+.hero .actions { justify-content: center; }
 
 /* Buttons — gold sheen, a lift on hover, a sweep of light, a press. */
 .button {
@@ -516,29 +544,24 @@ h3 { color: var(--co-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
 
 .button.secondary:hover { border-color: var(--co-gold); color: var(--co-gold-300); }
 
-/* The company's seal, presented the way the flagship presents the
-   founder's portrait — a sculpted double frame, the artwork untouched. */
-.seal-display {
-    padding: 26px 22px 18px;
-    background: var(--co-marble-panel);
-    border: 1px solid color-mix(in srgb, var(--co-gold-700) 78%, transparent);
-    border-radius: 16px;
-    box-shadow:
-        0 0 0 6px color-mix(in srgb, var(--co-blue-900) 88%, transparent),
-        0 0 0 7px color-mix(in srgb, var(--co-gold-700) 70%, transparent),
-        0 0 0 13px color-mix(in srgb, var(--co-blue-900) 55%, transparent),
-        0 0 0 14px color-mix(in srgb, var(--co-gold) 38%, transparent),
-        var(--co-shadow-plaque);
-    text-align: center;
+/* The hero seal band — the dual seals flanking the hero's lower band,
+   headquarters and company, mounted as large medallions with the
+   company's registry line held between them. The artwork is untouched:
+   clipped to its own circle, ringed in gold, nothing redrawn. */
+.hero-seals {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    max-width: 1240px;
+    margin: 56px auto 0;
 }
 
-.seal-display img {
+.hero-seals img {
     display: block;
-    width: min(320px, 72vw);
-    height: auto;
-    aspect-ratio: 1;
+    width: 158px;
+    height: 158px;
     object-fit: cover;
-    margin: 0 auto;
     border-radius: 50%;
     border: 3px solid var(--co-gold);
     background: var(--co-blue-900);
@@ -548,14 +571,39 @@ h3 { color: var(--co-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
         0 16px 34px color-mix(in srgb, var(--co-blue-950) 60%, transparent);
 }
 
-.seal-display p { margin: 16px 0 4px; color: var(--co-gold); font-family: var(--co-serif); font-size: 1.05rem; }
+.hero-seal-note { text-align: center; }
 
-.seal-display span {
+.hero-seal-note p { margin: 0 0 6px; color: var(--co-gold); font-family: var(--co-serif); font-size: 1.15rem; }
+
+.hero-seal-note span {
     display: block;
     color: var(--co-silver);
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 0.13em;
+    letter-spacing: 0.16em;
+    line-height: 1.7;
+}
+
+/* Headquarters' right flank — the founding line, in gold serif. */
+.hero-est { text-align: center; min-width: 158px; }
+
+.hero-est strong {
+    display: block;
+    font-family: var(--co-serif);
+    font-weight: bold;
+    font-size: 1.7rem;
+    letter-spacing: 0.03em;
+    color: var(--co-gold-300);
+}
+
+.hero-est span {
+    display: block;
+    margin-top: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--co-silver);
 }
 
 /* ---- Global By Design — the permanent register ------------------------- */
@@ -610,7 +658,36 @@ h3 { color: var(--co-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
 
 .section > p { margin: 15px auto 40px; text-align: center; }
 
-/* Cards — sculpted marble plaques that rise to the hand. */
+/* Light sections — the white and ivory marble fields the card sections
+   sit on (Home Healthcare and Senior Living, per the approved concepts):
+   the company's own silver and cream, veined in its blue and gold. */
+.section.light {
+    background:
+        radial-gradient(ellipse 62% 46% at 10% 0%, color-mix(in srgb, var(--co-gold-200) 45%, transparent), transparent 70%),
+        radial-gradient(ellipse 50% 40% at 92% 88%, color-mix(in srgb, var(--co-blue-300) 10%, transparent), transparent 70%),
+        repeating-linear-gradient(117deg,
+            transparent 0 168px,
+            color-mix(in srgb, var(--co-blue-300) 7%, transparent) 170px,
+            transparent 173px,
+            transparent 307px,
+            color-mix(in srgb, var(--co-gold-600) 6%, transparent) 309px,
+            transparent 312px),
+        linear-gradient(160deg, var(--co-silver-bright), color-mix(in srgb, var(--co-silver-bright) 68%, var(--co-silver)));
+    border-top: 1px solid color-mix(in srgb, var(--co-gold-600) 55%, transparent);
+}
+
+.section.light > p { color: var(--co-ink); }
+.section.light .eyebrow { color: var(--co-gold-700); }
+.section.light > h2 { color: var(--co-blue-800); }
+.section.light > h2::after {
+    border-top-color: var(--co-gold-700);
+    box-shadow: 0 4px 0 -1px color-mix(in srgb, var(--co-gold-700) 55%, transparent);
+}
+
+/* Cards — light marble plaques that rise to the hand: white stone for
+   Home Healthcare and Headquarters, warm ivory for Senior Living, each
+   built from the company's own silver and cream tokens, veined in its
+   blue and gold, framed by the gold double rule. */
 .cards {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -624,15 +701,29 @@ h3 { color: var(--co-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
     overflow: hidden;
     min-height: 210px;
     padding: 30px 28px;
-    background: var(--co-marble-panel);
-    border: 1px solid color-mix(in srgb, var(--co-gold) 42%, transparent);
+    background:
+        radial-gradient(ellipse 85% 62% at 16% 0%, color-mix(in srgb, var(--co-gold-200) 55%, transparent), transparent 62%),
+        radial-gradient(ellipse 60% 55% at 96% 100%, color-mix(in srgb, var(--co-blue-300) 10%, transparent), transparent 70%),
+        linear-gradient(155deg, var(--co-silver-bright), color-mix(in srgb, var(--co-silver-bright) 70%, var(--co-silver)));
+    border: 1px solid color-mix(in srgb, var(--co-gold-600) 65%, transparent);
     border-radius: 16px;
+    color: var(--co-ink);
     box-shadow:
-        inset 0 1px 0 color-mix(in srgb, var(--co-silver-bright) 20%, transparent),
-        inset 0 0 0 1px color-mix(in srgb, var(--co-gold) 10%, transparent),
-        inset 0 -18px 28px color-mix(in srgb, var(--co-blue-950) 45%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--co-silver-bright) 60%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--co-gold-600) 22%, transparent),
+        inset 0 -18px 28px color-mix(in srgb, var(--co-blue-900) 10%, transparent),
         var(--co-shadow-card);
     transition: transform 0.24s var(--co-ease), box-shadow 0.24s var(--co-ease), border-color 0.24s var(--co-ease);
+}
+
+/* The double-rule inner frame — the plaque gesture, on light stone. */
+.cards article::after {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border: 1px solid color-mix(in srgb, var(--co-gold-600) 45%, transparent);
+    border-radius: 11px;
+    pointer-events: none;
 }
 
 /* One soft vein of light across each card's stone. */
@@ -640,27 +731,27 @@ h3 { color: var(--co-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
     content: "";
     position: absolute;
     inset: 0;
-    background: linear-gradient(112deg, transparent 40%, color-mix(in srgb, var(--co-silver-bright) 5%, transparent) 50%, transparent 60%);
+    background: linear-gradient(112deg, transparent 40%, color-mix(in srgb, var(--co-blue-300) 6%, transparent) 50%, transparent 60%);
     pointer-events: none;
 }
 
 .cards article:hover {
     transform: translateY(-5px);
-    border-color: var(--co-gold);
+    border-color: var(--co-gold-700);
     box-shadow:
-        inset 0 1px 0 color-mix(in srgb, var(--co-silver-bright) 24%, transparent),
-        inset 0 0 0 1px color-mix(in srgb, var(--co-gold) 16%, transparent),
-        inset 0 -18px 28px color-mix(in srgb, var(--co-blue-950) 45%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--co-silver-bright) 70%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--co-gold-600) 30%, transparent),
+        inset 0 -18px 28px color-mix(in srgb, var(--co-blue-900) 10%, transparent),
         var(--co-shadow-card-hover);
 }
 
-.cards article p { position: relative; margin: 0 0 8px; color: var(--co-silver-bright); }
+.cards article p { position: relative; margin: 0 0 8px; color: var(--co-ink); }
 
 .cards article .fact {
     font-family: var(--co-serif);
     font-size: 1.55rem;
     font-weight: bold;
-    color: var(--co-gold);
+    color: var(--co-gold-700);
     margin: 0 0 8px;
 }
 
@@ -687,13 +778,13 @@ h3 { color: var(--co-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: var(--co-gold);
-    border-bottom: 1px solid color-mix(in srgb, var(--co-gold) 45%, transparent);
+    color: var(--co-gold-700);
+    border-bottom: 1px solid color-mix(in srgb, var(--co-gold-700) 45%, transparent);
     padding-bottom: 3px;
     transition: color 0.2s var(--co-ease), border-color 0.2s var(--co-ease);
 }
 
-.cards article .card-link:hover { color: var(--co-gold-300); border-color: var(--co-gold); }
+.cards article .card-link:hover { color: var(--co-gold-800); border-color: var(--co-gold-700); }
 
 .about, .cta { text-align: center; }
 .about > p, .cta > p { margin-left: auto; margin-right: auto; }
@@ -815,8 +906,11 @@ footer {
 /* ---- Responsive ------------------------------------------------------------ */
 
 @media (max-width: 850px) {
-    .hero { grid-template-columns: 1fr; padding: 48px 6vw; min-height: 0; }
-    .seal-display { max-width: 480px; margin: auto; width: 100%; }
+    .hero { padding: 48px 6vw 44px; }
+    .hero-seals { margin-top: 40px; }
+    .hero-seals img { width: 118px; height: 118px; }
+    .hero-est { min-width: 118px; }
+    .hero-est strong { font-size: 1.3rem; }
     .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .topbar { justify-content: center; text-align: center; }
     .brand { flex-direction: column; gap: 10px; }
@@ -829,6 +923,9 @@ footer {
     .seal-medallion { width: 46px; height: 46px; }
     .seal-medallion-hq { width: 50px; height: 50px; }
     .seal-lockup { gap: 10px; padding: 7px 13px 7px 9px; }
+    .hero-seals { flex-wrap: wrap; justify-content: center; }
+    .hero-seals img { width: 104px; height: 104px; }
+    .hero-seal-note { order: 3; width: 100%; }
     .global-register { width: calc(100% - 8vw); padding: 24px 20px 20px; }
     .seal-strip { gap: 20px; }
     .seal-strip figure { width: 118px; }
