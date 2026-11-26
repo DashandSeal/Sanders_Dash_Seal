@@ -1,0 +1,35 @@
+name: SC-13 lift - server hybrid-group capability, corrected harness (read-only)
+on:
+  workflow_dispatch:
+jobs:
+  grp:
+    runs-on: ubuntu-latest
+    steps:
+      - name: s_server with hybrid-first groups, stock config, PID-managed
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            CERT=/etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem
+            KEY=/etc/letsencrypt/live/sandersdashandseal.com/privkey.pem
+            echo "=== G1: server groups hybrid-first (stock provider config) ==="
+            sudo sh -c "nohup openssl s_server -accept 18446 -cert $CERT -key $KEY -tls1_3 -groups X25519MLKEM768:X25519:prime256v1 >/tmp/srv_g1.log 2>&1 & echo \$! > /tmp/srv_g1.pid"
+            sleep 3
+            ss -ltn | grep 18446 || echo "SERVER NOT LISTENING"
+            echo | openssl s_client -connect 127.0.0.1:18446 -groups X25519MLKEM768:X25519 2>&1 | grep -iE 'Negotiated|Cipher is|error|alert' | head -3
+            echo "--- g1 server log (head) ---"
+            head -6 /tmp/srv_g1.log 2>/dev/null
+            sudo kill $(cat /tmp/srv_g1.pid) 2>/dev/null
+            sudo rm -f /tmp/srv_g1.log /tmp/srv_g1.pid
+            echo "=== G2: same server, classical-only client (control) ==="
+            sudo sh -c "nohup openssl s_server -accept 18447 -cert $CERT -key $KEY -tls1_3 -groups X25519MLKEM768:X25519:prime256v1 >/tmp/srv_g2.log 2>&1 & echo \$! > /tmp/srv_g2.pid"
+            sleep 3
+            echo | openssl s_client -connect 127.0.0.1:18447 -groups X25519 2>&1 | grep -iE 'Negotiated|Cipher is|error|alert' | head -3
+            sudo kill $(cat /tmp/srv_g2.pid) 2>/dev/null
+            sudo rm -f /tmp/srv_g2.log /tmp/srv_g2.pid
+            echo "GROUP_TEST2_DONE"
