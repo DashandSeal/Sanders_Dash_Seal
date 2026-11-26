@@ -258,9 +258,38 @@ sudo loginctl enable-linger opc || true
 # (the deployment law: nothing stops deployment); the voice surface
 # keeps answering honestly in the meantime.
 echo "VOICE PREWARM: caching the faster-whisper tiny model as sanders..."
-sudo -u sanders timeout 600 "$REPO_DIR/venv/bin/python" -c \
-  'from core_platform.daedalus_voice import FasterWhisperTranscriber; t = FasterWhisperTranscriber("tiny"); print("VOICE PREWARM OK: tiny model cached at", t.download_root)' \
+sudo -u sanders timeout 600 "$REPO_DIR/venv/bin/python" - <<'VOICE_PREWARM_EOF' \
   || echo "VOICE PREWARM WARNING: the local transcriber could not be constructed at deploy time (traceback above); /api/voice/status will keep reporting transcriber: null until the cause is fixed. The deploy itself is unaffected."
+import subprocess
+import tempfile
+import traceback
+from pathlib import Path
+
+from core_platform.daedalus_voice import FasterWhisperTranscriber
+
+t = FasterWhisperTranscriber("tiny")
+print("VOICE PREWARM OK: tiny model cached at", t.download_root, flush=True)
+
+# Prove inference, not just construction (2026-11-25 follow-up: the
+# status surface flipped to faster-whisper, but POST
+# /api/voice/transcribe answered an unhandled 500 in production --
+# an exception type the voice handler does not catch, invisible from
+# outside).  Synthesize a known sentence with the system espeak-ng
+# and transcribe it back, here, as the runtime user; any failure
+# prints its full traceback into this deploy log.
+try:
+    wav = Path(tempfile.mkdtemp()) / "prewarm.wav"
+    subprocess.run(
+        ["espeak-ng", "-w", str(wav),
+         "The quick brown fox jumps over the lazy dog."],
+        check=True,
+    )
+    text = t.transcribe(wav.read_bytes())
+    print("VOICE PREWARM TRANSCRIBE OK:", text, flush=True)
+except Exception:
+    traceback.print_exc()
+    print("VOICE PREWARM TRANSCRIBE FAILED (traceback above)", flush=True)
+VOICE_PREWARM_EOF
 
 # 6. Bring up Docker Compose stacks if Docker is installed
 if command -v docker >/dev/null 2>&1 && [ -f compose.yaml ]; then
