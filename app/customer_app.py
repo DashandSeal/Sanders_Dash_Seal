@@ -2502,6 +2502,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             allowed = ('GET', 'POST') if path == '/api/appointments' or provider_match or native_match else (
                 ('POST',) if operator_match or case_match else ('GET',)
             )
+        if path in ('/api/sanders-sentinel/bloodline/speech-records',
+                    '/api/sanders-sentinel/bloodline/voice-conversations'):
+            allowed = ('GET', 'POST')
+        if (sentinel_bloodline_emergency_case_match is not None
+                or sentinel_bloodline_emergency_case_activation_match is not None
+                or sentinel_bloodline_emergency_case_coordination_match is not None
+                or sentinel_bloodline_voice_conversation_match is not None):
+            allowed = ('GET', 'POST')
         if path == '/api/sharpshooter/jobs':
             allowed = ('GET', 'POST')
         if path == '/api/labyrinth-shield/blocklist':
