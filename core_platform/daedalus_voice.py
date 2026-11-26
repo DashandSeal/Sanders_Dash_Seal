@@ -50,6 +50,7 @@ import struct
 import tempfile
 import wave
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Any
 
 # ---------------------------------------------------------------------------
@@ -217,11 +218,43 @@ class FakeSynthesizer(Synthesizer):
         return make_silence_wav(self.duration_seconds)
 
 
+# ---------------------------------------------------------------------------
+# faster-whisper model cache
+# ---------------------------------------------------------------------------
+# The codebase's data-directory convention (compare
+# core_platform/daedalus_knowledge_store.py): runtime state lives under
+# data/ at the repository root.  The whisper model cache follows it
+# because the production service user (deploy/sanders-dash-seal.service:
+# sanders, uid 10001, created --no-create-home) has no home directory,
+# so HuggingFace's default cache under ~/.cache/huggingface is not
+# writable and the one-time model download failed there -- silently,
+# because every construction site catches the exception and degrades
+# to "no transcriber" (/api/voice/status reported transcriber: null
+# while the package itself imported fine).  The cache therefore lives
+# under data/, which the deploy creates owned by the runtime user.
+# FASTER_WHISPER_MODEL_CACHE overrides the location.
+_MODEL_CACHE_ENV = "FASTER_WHISPER_MODEL_CACHE"
+_DEFAULT_MODEL_CACHE = (
+    Path(__file__).resolve().parent.parent / "data" / "faster_whisper_models"
+)
+
+
+def default_model_cache() -> Path:
+    """Where faster-whisper downloads and caches its model files.
+
+    The ``FASTER_WHISPER_MODEL_CACHE`` environment variable wins;
+    otherwise the conventional data path above.
+    """
+    override = os.environ.get(_MODEL_CACHE_ENV)
+    return Path(override) if override else _DEFAULT_MODEL_CACHE
+
+
 class FasterWhisperTranscriber(Transcriber):
     """Local/offline transcription with faster-whisper (no key, $0).
 
     Models ``tiny``/``base`` only by default.  The model downloads once
-    (``~75 MB`` for tiny, ``~145 MB`` for base) and then runs offline.
+    (``~75 MB`` for tiny, ``~145 MB`` for base) into the model cache
+    (see :func:`default_model_cache`) and then runs offline.
     """
 
     name = "faster-whisper"
@@ -233,6 +266,7 @@ class FasterWhisperTranscriber(Transcriber):
         *,
         device: str = "cpu",
         compute_type: str = "int8",
+        download_root: str | Path | None = None,
     ) -> None:
         if model not in self.SUPPORTED_MODELS:
             raise ValueError(
@@ -245,8 +279,15 @@ class FasterWhisperTranscriber(Transcriber):
                 "faster-whisper is not installed; install faster-whisper==1.2.1 "
                 "and download the model before using FasterWhisperTranscriber"
             ) from exc
-        self._model = WhisperModel(model, device=device, compute_type=compute_type)
+        cache = (Path(download_root) if download_root is not None
+                 else default_model_cache())
+        cache.mkdir(parents=True, exist_ok=True)
+        self._model = WhisperModel(
+            model, device=device, compute_type=compute_type,
+            download_root=str(cache),
+        )
         self.model = model
+        self.download_root = cache
 
     def transcribe(self, audio_bytes: bytes, *, filename: str = "audio.wav") -> str:
         if not audio_bytes:
@@ -660,6 +701,7 @@ __all__ = [
     "GoogleTTSSynthesizer",
     "ElevenLabsSynthesizer",
     "SystemTTSSynthesizer",
+    "default_model_cache",
     "write_wav_bytes",
     "read_wav_info",
     "wav_duration_seconds",
