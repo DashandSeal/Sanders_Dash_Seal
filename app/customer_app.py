@@ -1281,6 +1281,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                 '/api/minotaur/self-protection/checks',
                                 '/api/minotaur/crypto-environment',
                                 '/api/minotaur/crypto-environment/check',
+                                '/api/minotaur/defensive-relationship',
                                 '/api/minotaur/check-in')
                        or mn_anomaly_match is not None
                        or mn_anomaly_action_match is not None
@@ -2212,6 +2213,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/minotaur/shield-anchor',
                                             '/api/minotaur/self-protection',
                                             '/api/minotaur/crypto-environment',
+                                            '/api/minotaur/defensive-relationship',
                                             '/api/glass-box-audit/status',
                                             '/api/glass-box-audit/anchors',
                                             '/api/glass-box-audit/verifications',
@@ -3699,6 +3701,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = minotaur.record_crypto_environment_check(identity)
                         return respond(start, '201 Created', {'crypto_environment_check': record})
+                    if path == '/api/minotaur/defensive-relationship':
+                        return respond(start, '200 OK', {'defensive_relationship': minotaur.defensive_relationship_view(identity, mn_role)})
                     return check_in(minotaur)
                 if is_gba_route:
                     if glass_box_audit is None:
