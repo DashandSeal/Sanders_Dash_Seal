@@ -854,40 +854,66 @@ COMPLETENESS_ACCOUNTING = (
              ' platform runtime',
      'domain': 'CRYPTOGRAPHIC_PROTECTION',
      'status': 'CONSTRUCTION_REQUIRED',
-     'basis': 'the adopted route (OpenSSL FIPS'
-              ' Provider 3.5.9, certificate #5586)'
-              ' is not present in the build'
-              ' environment; the environment check'
-              ' of record states the gap as'
-              ' environment-blocked. Construction:'
-              ' provision the validated module on'
-              ' the host, then record a new check'},
+     'basis': 'partially closed at the edge,'
+              ' open in the runtime (SC-13 lift,'
+              ' 2026-11-26): ML-KEM key exchange'
+              ' now operates at the TLS edge'
+              ' (X25519MLKEM768 negotiated,'
+              ' evidence of record) on the OS'
+              ' default provider, and the'
+              ' production environment check'
+              ' stands recorded'
+              ' (mn-cryptocheck-ffccbd41c4a04a4a)'
+              ' \u2014 but the platform runtime'
+              ' itself still reaches no PQC'
+              ' algorithm (the probe of record'
+              ' states it), and the validated'
+              ' module operating on the host'
+              ' (certificate #5294) contains no'
+              ' ML-KEM. Construction remaining: a'
+              ' validated module containing'
+              ' ML-KEM \u2014 the adopted route,'
+              ' certificate #5586 \u2014 in the'
+              ' runtime'},
     {'item': 'ML-DSA / SLH-DSA signing via a'
              ' validated module',
      'domain': 'CRYPTOGRAPHIC_PROTECTION',
      'status': 'CONSTRUCTION_REQUIRED',
-     'basis': 'same environment gap; until then'
-              ' his signatures are the native WOTS+'
-              ' hash-based construction, honestly'
-              ' labeled, never claimed as FIPS'
-              ' 204/205'},
+     'basis': 'the environment gap is now'
+              ' bounded exactly (SC-13 lift,'
+              ' 2026-11-26): a validated module'
+              ' operates on the host for the'
+              ' application processes (Oracle'
+              ' Linux 9 OpenSSL FIPS Provider,'
+              ' certificate #5294), but it'
+              ' contains no ML-DSA or SLH-DSA;'
+              ' until a validated module'
+              ' containing them is provisioned,'
+              ' his signatures are the native'
+              ' WOTS+ hash-based construction,'
+              ' honestly labeled, never claimed'
+              ' as FIPS 204/205'},
     {'item': 'Production-environment crypto check'
              ' not yet recorded by the operator',
      'domain': 'CRYPTOGRAPHIC_PROTECTION',
-     'status': 'CONSTRUCTION_REQUIRED',
-     'basis': 'the check is a capability of his'
-              ' platform; the founder-operator'
-              ' records it on the production host'
-              ' (POST /api/minotaur/crypto-'
-              'environment/check) and its'
-              ' determination becomes the production'
-              ' evidence of record. Note: the'
-              ' production host runs OpenSSL 3.5.9'
-              ' (deploy journal of record), but the'
-              ' probe\'s scope is the Python'
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'closed by the SC-13 lift'
+              ' (2026-11-26): the production'
+              ' environment check stands recorded'
+              ' by the operator on the production'
+              ' host \u2014 check'
+              ' mn-cryptocheck-ffccbd41c4a04a4a,'
+              ' OpenSSL 3.5.9, recorded by'
+              ' RooseveltSanders \u2014 and its'
+              ' determination is the production'
+              ' evidence of record within the'
+              ' probe\'s stated scope (the Python'
               ' ssl/hashlib surface, which reaches'
-              ' no PQC algorithm — the claim follows'
-              ' the probe, not the host banner'},
+              ' no PQC algorithm; the claim'
+              ' follows the probe, not the host'
+              ' banner). The instance-level FIPS'
+              ' evidence stands beside it in the'
+              ' benchmark\'s SC_13 entry'},
     {'item': 'Ed25519 deprecation clock (NIST IR'
              ' 8547: deprecated after 2030,'
              ' disallowed after 2035) for Bozly\'s'
@@ -1230,16 +1256,14 @@ BENCHMARK_CONTROLS = (
      'standing': 'RECORDED_WITH_REASON',
      'basis': 'the corrected header set (including X-XSS-Protection: 0 and no Server leak) stands in the same posture checklist of record; header emission is the application/proxy layer\u2019s standing behavior, verified by evidence'},
     {'set': 'EDGE_AND_TLS', 'control': 'HYBRID_PQ_KEY_EXCHANGE_X25519MLKEM768',
-     'standing': 'ENVIRONMENT_LIMITED',
-     'basis': 'the production host\u2019s OpenSSL is 3.5.9, which can offer the hybrid group — but the proxy\u2019s group list of record does not offer it first today',
-     'limit': 'the hybrid post-quantum group is not enabled in the live proxy configuration, so recorded TLS traffic does not yet gain harvest-now-decrypt-later protection at the edge',
-     'founder_decision': 'the founder\u2019s go to set X25519MLKEM768 first in the proxy\u2019s group list on his host — a configuration change, no purchase, no new component'},
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'enabled at the edge on the founder\u2019s go (SC-13 lift, 2026-11-26): X25519MLKEM768 stands first in the serving group list of record (ssl_ecdh_curve in the repository server configuration), classical groups after it for compatibility; an outside handshake against the production host negotiates X25519MLKEM768 over TLS 1.3 (evidence of record, 2026-11-26) — before this change the same offer was refused with TLS alert 47, so TLS traffic at the edge now gains harvest-now-decrypt-later protection'},
     # Post-quantum route (research Areas 3.4, 5.1)
     {'set': 'POST_QUANTUM_ROUTE', 'control': 'FIPS_140_3_VALIDATED_PQC_OPERATION',
      'standing': 'ENVIRONMENT_LIMITED',
-     'basis': 'the adopted route stands of record (OpenSSL FIPS Provider 3.5.9, FIPS 140-3 certificate #5586, ML-KEM/ML-DSA/SLH-DSA approved); the environment check of record proves the runtime reaches no PQC algorithm and no FIPS provider stands loaded, so validated operation is not claimed',
-     'limit': 'post-quantum key establishment and validated-module signatures cannot run in the current runtime environment; the native hash-based construction stands in their place',
-     'founder_decision': 'the founder\u2019s direction to provision the validated module in approved mode on the production host (and to record the production environment check), or to designate another runtime that reaches it'},
+     'basis': 'the adopted route stands of record (OpenSSL FIPS Provider 3.5.9, FIPS 140-3 certificate #5586, ML-KEM/ML-DSA/SLH-DSA approved); a validated module now operates in approved mode for the production application processes, but that module (the OS vendor\u2019s Oracle Linux 9 OpenSSL FIPS Provider 3.0.7, certificate #5294) contains no post-quantum algorithms, and the ML-KEM the edge negotiates runs in the OS default provider without the FIPS claim \u2014 so post-quantum operation INSIDE a validated module is still not claimed',
+     'limit': 'no FIPS-validated module containing the post-quantum algorithms operates on this host',
+     'founder_decision': 'the founder\u2019s direction to provision The OpenSSL Corporation\u2019s FIPS Provider 3.5.9 (certificate #5586) \u2014 the adopted route of record \u2014 on the production host, or to designate another runtime whose validated module contains the post-quantum algorithms'},
     {'set': 'POST_QUANTUM_ROUTE', 'control': 'NIST_IR_8547_ED25519_DEPRECATION_CLOCK',
      'standing': 'RECORDED_WITH_REASON',
      'basis': 'recorded as a design intention only, per the founder\u2019s boundary for this build: Ed25519 (Bozly receipts, platform credentials) is deprecated after 2030 and disallowed after 2035; no cryptography is migrated in this build and Bozly is untouched'},
@@ -1326,15 +1350,11 @@ BENCHMARK_CONTROLS = (
      'standing': 'RECORDED_WITH_REASON',
      'basis': 'transmission protection is the host TLS layer, carried in the posture checklist of record at the edge entries above; these platforms add no plaintext channel of their own'},
     {'set': 'FEDERAL_NASA_TIER', 'control': 'SC_12_CRYPTOGRAPHIC_KEY_ESTABLISHMENT_AND_MANAGEMENT',
-     'standing': 'ENVIRONMENT_LIMITED',
-     'basis': 'key establishment at the validated standard (ML-KEM via the adopted route) cannot run in the current runtime environment — the environment check of record reaches no PQC algorithm; the native signing seed is derived deterministically and held in the patrol store, never in records',
-     'limit': 'standards-based post-quantum key establishment is not available to these platforms in the current environment',
-     'founder_decision': 'the founder\u2019s direction to provision the validated module in approved mode on the production host (and record the production environment check), or to designate another runtime that reaches it — the same decision that lifts the FIPS requirement line below'},
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'key establishment at the transmission layer now runs the standards-based post-quantum hybrid: X25519MLKEM768 (ML-KEM-768, FIPS 203) stands first in the edge group list of record and an outside handshake negotiates it (evidence of record, SC-13 lift, 2026-11-26) \u2014 claimed as a system algorithm without the FIPS claim, per the adopted claim rule, because the validated module operating on this host contains no ML-KEM; within the platform processes the native signing seed remains derived deterministically and held in the patrol store, never in records, now under the validated module\u2019s provider configuration (see SC_13)'},
     {'set': 'FEDERAL_NASA_TIER', 'control': 'SC_13_CRYPTOGRAPHIC_PROTECTION_FIPS_VALIDATED',
-     'standing': 'ENVIRONMENT_LIMITED',
-     'basis': 'THE HARD REQUIREMENT LINE of this tier: cryptographic protection must be FIPS 140-3 validated (the adopted route: OpenSSL FIPS Provider 3.5.9, certificate #5586). It is satisfied only to the extent the environment check proves the validated module — and the check of record proves the runtime reaches no FIPS provider today, so the requirement stands UNMET in the current environment and is recorded as such, not papered over; the native hash-based construction stands beneath it',
-     'limit': 'no FIPS-validated cryptographic module is operating in the current runtime environment',
-     'founder_decision': 'the founder\u2019s direction to provision OpenSSL FIPS Provider 3.5.9 in approved mode on the production host and to record the production environment check — on that evidence, and only on it, this line\u2019s standing rises'},
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'THE HARD REQUIREMENT LINE of this tier: cryptographic protection must be FIPS 140-3 validated. Standing after the SC-13 lift (founder-approved, executed 2026-11-26): the production application processes run on a FIPS 140-3 validated module in approved mode \u2014 the OS packaged Oracle Linux 9 OpenSSL FIPS Provider (version 3.0.7-00e2ac1f1ba8060b as the module reports itself; FIPS 140-3 certificate #5294, Oracle Corporation, active) \u2014 activated with the base provider only in the application\u2019s OpenSSL configuration (deploy unit of record), so its cryptography is served by the validated module or refused. Evidence of record: the provider listing under that configuration (FIPS provider active), SHA-256 and SHA3-256 served, MD5 refused, the service healthy on that configuration, and the production environment check mn-cryptocheck-ffccbd41c4a04a4a recorded by the operator. Two bounds stand in plain words: (1) the module operating is the OS vendor\u2019s validated module (certificate #5294), not the adopted route of record (The OpenSSL Corporation\u2019s provider 3.5.9, certificate #5586) \u2014 the requirement is met by a validated module, under a different certificate than the route named; (2) the TLS edge does not run on the validated module \u2014 co-loading it there breaks ML-KEM key generation (error of record, 2026-11-26), so the edge runs the OS OpenSSL 3.5.9 default provider to carry the founder-directed hybrid groups (SC_12). The platform\u2019s own probe scope (the Python ssl/hashlib surface) cannot prove FIPS operation, and its recorded determination stands exactly as the probe states it; this standing rests on the instance evidence above, not on the probe'},
     {'set': 'FEDERAL_NASA_TIER', 'control': 'SC_28_PROTECTION_OF_INFORMATION_AT_REST',
      'standing': 'RECORDED_WITH_REASON',
      'basis': 'platform stores are local databases under the host\u2019s filesystem protections; encryption at rest is a host property, of record — the platforms add no unprotected copy of anything'},
