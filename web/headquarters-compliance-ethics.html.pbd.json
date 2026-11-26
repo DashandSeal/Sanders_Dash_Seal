@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-compliance-ethics.html",
+        "payload_hash": "8919988973cb88201af7f9931a4e3aa812856a0932067c3f5fb5196026dc70c9",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

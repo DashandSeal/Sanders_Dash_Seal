@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-stakeholder-relations.html",
+        "payload_hash": "dd916491a34f518a80e24c3c9237fd31e35e3f38878c6f191c95988095bbdb49",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

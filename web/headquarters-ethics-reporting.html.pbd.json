@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-ethics-reporting.html",
+        "payload_hash": "6722ade039d756464ab1ed24cfdb0a463239a633fc78c8ac393a111a6840c436",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

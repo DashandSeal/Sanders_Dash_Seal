@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-visits.html",
+        "payload_hash": "1ac305d9864e1fcdcae08591ff0e9ff8fe9fb6672e2e68d110d6910a2264bc64",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

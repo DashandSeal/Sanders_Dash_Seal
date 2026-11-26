@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-ecosystem.html",
+        "payload_hash": "9c0f706d555515868ee875af9de229e98c573179c4d9cf6b6fc496d1e43ecbc9",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

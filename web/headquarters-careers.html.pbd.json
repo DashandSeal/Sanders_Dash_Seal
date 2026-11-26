@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-careers.html",
+        "payload_hash": "c4fdc7e58ddee1d5ec1f360f7938c1455e9f760b63149a8d07d5f62f04aaf705",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

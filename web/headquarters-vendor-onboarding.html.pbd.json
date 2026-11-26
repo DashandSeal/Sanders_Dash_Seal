@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/headquarters-vendor-onboarding.html",
+        "payload_hash": "027192c86d1e6457a1df32f3fd2b030759aeae915599864f2b13f21fd7fc9c21",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
