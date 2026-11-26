@@ -1,12 +1,18 @@
 """Tests for the Sanders Patriot Saint bloodline support
 remit (founder's rulings, 2026-11-25 23:44 and 23:56 MST).
 
-The remit is coordination only, under the founder's five
-additional duties: the platform never disburses family
-funds, bloodline matters live in a segregated store the
-commercial operations never read, and every matter is
-born AWAITING_HUMAN_REVIEW. These tests use only stdlib
-fakes and temporary SQLite files: no network, no keys.
+The remit is coordination-centered, under the founder's
+five additional duties: bloodline matters live in a
+segregated store the commercial operations never read,
+and every matter is born AWAITING_HUMAN_REVIEW.
+Disbursement is governed by the Founder's Amendment to
+Article III (2026-11-26): the platform disburses for
+its assigned private duties only through a governed
+disbursement record against the recorded joint
+Godfather + Sanders Sentinel funding approval, and
+ungoverned disbursement is refused by name. These
+tests use only stdlib fakes and temporary SQLite
+files: no network, no keys.
 Run: python3 -m unittest tests.test_sanders_patriot_saint_bloodline -v
 (from the repo root).
 """
@@ -96,7 +102,12 @@ class TestRulingOfRecord(unittest.TestCase):
                          patriot.FOUNDER_RULING_BLOODLINE_ROLE)
         self.assertEqual(view['discipline'],
                          'PATRIOT_SAINT_COORDINATION_ONLY')
-        self.assertFalse(view['funds_disbursed'])
+        self.assertEqual(view['disbursement_discipline'],
+                         'PATRIOT_SAINT_PRIVATE_DUTY_DISBURSEMENT')
+        self.assertTrue(
+            view['funds_disbursed_recorded_per_matter'])
+        self.assertIn('hereby superseded',
+                      view['amendment']['amendment_verbatim'])
         self.assertTrue(view['segregated_store'])
         design = SandersPatriotSaintService.design_view()
         self.assertIn('bloodline_support', design)
@@ -168,13 +179,14 @@ class TestMatterLifecycle(PatriotSaintBloodlineTestBase):
         self.assertTrue(view['receipt_id'].startswith('receipt-'))
 
 
-class TestCoordinationOnly(PatriotSaintBloodlineTestBase):
+class TestDisbursementDiscipline(PatriotSaintBloodlineTestBase):
     def test_disburse_funds_refused_by_name(self):
         matter = self.open_matter()
         with self.assertRaises(SandersPatriotSaintDenied) as ctx:
             self.service.disburse_funds(OPERATOR, matter['matter_id'])
-        self.assertIn('PATRIOT_SAINT_COORDINATION_ONLY',
-                      str(ctx.exception))
+        self.assertIn(
+            'PATRIOT_SAINT_DISBURSEMENT_GOVERNED_PATH_ONLY',
+            str(ctx.exception))
 
     def test_operation_check_refuses_disbursement_by_name(self):
         for operation in ('disburse_funds', 'pay_ticket',
@@ -182,10 +194,11 @@ class TestCoordinationOnly(PatriotSaintBloodlineTestBase):
             with self.assertRaises(SandersPatriotSaintDenied) as ctx:
                 self.service.operation_check(
                     OPERATOR, 'OPERATOR', operation)
-            self.assertIn('PATRIOT_SAINT_COORDINATION_ONLY',
-                          str(ctx.exception))
+            self.assertIn(
+                'PATRIOT_SAINT_DISBURSEMENT_GOVERNED_PATH_ONLY',
+                str(ctx.exception))
 
-    def test_funds_disbursed_false_everywhere(self):
+    def test_funds_disbursed_false_absent_disbursement(self):
         matter = self.open_matter()
         self.service.bloodline_matter_action(
             OPERATOR, matter['matter_id'], 'approve')
@@ -219,8 +232,10 @@ class TestSegregation(PatriotSaintBloodlineTestBase):
                       commercial_tables)
         self.assertNotIn('sanders_patriot_saint_bloodline_matters',
                          commercial_tables)
-        self.assertEqual(bloodline_tables,
-                         {'sanders_patriot_saint_bloodline_matters'})
+        self.assertEqual(
+            bloodline_tables,
+            {'sanders_patriot_saint_bloodline_matters',
+             'sanders_patriot_saint_bloodline_disbursements'})
 
     def test_commercial_views_never_show_bloodline_matters(self):
         matter = self.open_matter()
