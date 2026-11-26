@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_the_godfather_human_survival.py",
-        "payload_hash": "385f5938a9be03759954482bc4afc5e4c533281c92fe2a1b5592f861ea2b28ad",
+        "payload_hash": "12afaaaff4e7b721a6d2864895a6b22efd0745d042840631fdd1fa517b56ea43",
         "scope": {
             "endpoint": "local://development",
             "method": "TEST",
