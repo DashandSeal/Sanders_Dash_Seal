@@ -540,6 +540,10 @@ SANDERS_SENTINEL_BLOODLINE_ESCALATION_ROUTE = re.compile(r'^/api/sanders-sentine
 SANDERS_SENTINEL_BLOODLINE_ESCALATION_DELIVERY_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/escalations/([A-Za-z0-9_-]{1,128})/delivery$')
 SANDERS_SENTINEL_BLOODLINE_ESCALATION_CLOSE_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/escalations/([A-Za-z0-9_-]{1,128})/close$')
 SANDERS_SENTINEL_BLOODLINE_FULFILLMENT_CONFIRM_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/fulfillment/([A-Za-z0-9_-]{1,128})/confirm$')
+SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/emergency-cases/([A-Za-z0-9_-]{1,128})$')
+SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ARRIVAL_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/emergency-cases/([A-Za-z0-9_-]{1,128})/arrival$')
+SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_CLOSE_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/emergency-cases/([A-Za-z0-9_-]{1,128})/close$')
+SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ACTIVATION_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/emergency-cases/([A-Za-z0-9_-]{1,128})/activations$')
 LIL_MAMA_RECORD_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})$')
 LIL_MAMA_RECORD_ACTION_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/action$')
 LIL_MAMA_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -924,6 +928,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         sentinel_bloodline_escalation_delivery_match = SANDERS_SENTINEL_BLOODLINE_ESCALATION_DELIVERY_ROUTE.fullmatch(path)
         sentinel_bloodline_escalation_close_match = SANDERS_SENTINEL_BLOODLINE_ESCALATION_CLOSE_ROUTE.fullmatch(path)
         sentinel_bloodline_fulfillment_confirm_match = SANDERS_SENTINEL_BLOODLINE_FULFILLMENT_CONFIRM_ROUTE.fullmatch(path)
+        sentinel_bloodline_emergency_case_match = SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ROUTE.fullmatch(path)
+        sentinel_bloodline_emergency_case_arrival_match = SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ARRIVAL_ROUTE.fullmatch(path)
+        sentinel_bloodline_emergency_case_close_match = SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_CLOSE_ROUTE.fullmatch(path)
+        sentinel_bloodline_emergency_case_activation_match = SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ACTIVATION_ROUTE.fullmatch(path)
         lil_mama_record_match = LIL_MAMA_RECORD_ROUTE.fullmatch(path)
         lil_mama_record_action_match = LIL_MAMA_RECORD_ACTION_ROUTE.fullmatch(path)
         lil_mama_record_outcome_match = LIL_MAMA_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -1469,6 +1477,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                       '/api/sanders-sentinel/bloodline/escalation-authority/succession',
                                       '/api/sanders-sentinel/bloodline/escalation-authority/claim',
                                       '/api/sanders-sentinel/bloodline/emergency-actions',
+                                      '/api/sanders-sentinel/bloodline/emergency-cases',
+                                      '/api/sanders-sentinel/bloodline/emergency-cases/verify',
                                       '/api/sanders-sentinel/bloodline/fulfillment',
                                       '/api/sanders-sentinel/bloodline/fulfillment/verify',
                                       '/api/sanders-sentinel/check-in')
@@ -1485,7 +1495,11 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or sentinel_bloodline_escalation_match is not None
                                   or sentinel_bloodline_escalation_delivery_match is not None
                                   or sentinel_bloodline_escalation_close_match is not None
-                                  or sentinel_bloodline_fulfillment_confirm_match is not None)
+                                  or sentinel_bloodline_fulfillment_confirm_match is not None
+                                  or sentinel_bloodline_emergency_case_match is not None
+                                  or sentinel_bloodline_emergency_case_arrival_match is not None
+                                  or sentinel_bloodline_emergency_case_close_match is not None
+                                  or sentinel_bloodline_emergency_case_activation_match is not None)
         is_lil_mama_route = (path in ('/api/lil-mama/status',
                                       '/api/lil-mama/records',
                                       '/api/lil-mama/design',
@@ -2532,6 +2546,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             allowed = ('GET',)
         if path == '/api/sanders-sentinel/bloodline/fulfillment':
             allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/emergency-cases':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/emergency-cases/verify':
+            allowed = ('POST',)
         if path == '/api/lil-mama/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/records':
@@ -4494,6 +4512,38 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = sanders_sentinel.record_emergency_protective_action(identity, data['action_ref'], data['detail_ref'], data['authority_ref'], data['escalation_ref'])
                         return respond(start, '201 Created', {'emergency_action': record})
+                    if path == '/api/sanders-sentinel/bloodline/emergency-cases/verify':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.verify_emergency_cases(identity)
+                        return respond(start, '200 OK', {'emergency_verification': record})
+                    if path == '/api/sanders-sentinel/bloodline/emergency-cases':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'emergency_cases': sanders_sentinel.emergency_cases(identity, sentinel_role)})
+                        if set(data) != {'signal_kind', 'source_kind', 'source_ref', 'authorization_ref', 'member_ref', 'detail_ref', 'authorized_location_ref', 'assistance_due_at'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_emergency_signal(identity, data['signal_kind'], data['source_kind'], data['source_ref'], data['authorization_ref'], data['member_ref'], data['detail_ref'], data['authorized_location_ref'], data['assistance_due_at'])
+                        return respond(start, '201 Created', {'emergency_case': record})
+                    if sentinel_bloodline_emergency_case_arrival_match:
+                        if set(data) != {'arrival_ref', 'delivered_detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.confirm_emergency_arrival(identity, sentinel_bloodline_emergency_case_arrival_match.group(1), data['arrival_ref'], data['delivered_detail_ref'])
+                        return respond(start, '200 OK', {'emergency_case': record})
+                    if sentinel_bloodline_emergency_case_close_match:
+                        if set(data) != {'resolution_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.close_emergency_case(identity, sentinel_bloodline_emergency_case_close_match.group(1), data['resolution_ref'])
+                        return respond(start, '200 OK', {'emergency_case': record})
+                    if sentinel_bloodline_emergency_case_activation_match:
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'emergency_activations': sanders_sentinel.emergency_activations(identity, sentinel_role, sentinel_bloodline_emergency_case_activation_match.group(1))})
+                        if set(data) != {'activation_kind', 'target_ref', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_emergency_activation(identity, sentinel_bloodline_emergency_case_activation_match.group(1), data['activation_kind'], data['target_ref'], data['detail_ref'])
+                        return respond(start, '201 Created', {'emergency_activation': record})
+                    if sentinel_bloodline_emergency_case_match:
+                        record = sanders_sentinel.emergency_case_view(identity, sentinel_role, sentinel_bloodline_emergency_case_match.group(1))
+                        return respond(start, '200 OK', {'emergency_case': record})
                     if path == '/api/sanders-sentinel/bloodline/fulfillment':
                         if method == 'GET':
                             return respond(start, '200 OK', {'fulfillment': sanders_sentinel.fulfillment_view(identity, sentinel_role)})
