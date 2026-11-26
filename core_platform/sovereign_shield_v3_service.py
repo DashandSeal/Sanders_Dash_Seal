@@ -79,7 +79,6 @@ to exist without one.
 from __future__ import annotations
 
 import hashlib
-import importlib.util
 import json
 import sqlite3
 import time
@@ -165,23 +164,22 @@ class SovereignShieldV3Forbidden(Exception):
     """The actor lacks authority for the requested operation."""
 
 
-def _load_foundation():
-    """Load the recovered foundation module by path, or None.
-
-    The foundation lives outside the ``core_platform`` package;
-    loading by path reads its real code without moving or
-    copying it. A foundation that cannot be loaded is reported
+def _foundation_source():
+    """Read the recovered foundation module's source, or
+    None. The foundation lives outside the
+    ``core_platform`` package; it is verified from its
+    hash-pinned source and NEVER imported by this
+    service: its optional ``import oqs`` can trigger a
+    from-source liboqs build on hosts without a
+    prebuilt library, and that must never gate this
+    platform's construction or the application's
+    boot. A foundation that cannot be read is reported
     by the integrity views, never silently trusted.
     """
     try:
-        spec = importlib.util.spec_from_file_location(
-            'sovereign_shield_v3_foundation', FOUNDATION_FILE)
-        if spec is None or spec.loader is None:
-            return None
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        return module
-    except Exception:
+        return Path(FOUNDATION_FILE).read_text(
+            encoding='utf-8')
+    except OSError:
         return None
 
 
@@ -208,7 +206,6 @@ class SovereignShieldV3Service:
             'OPERATOR': {'SHIELD'},
             'AUDITOR': {'SHIELD'},
         })
-        self._foundation = _load_foundation()
         with self._connect() as db:
             ensure_checkin_schema(db)
             db.executescript(
@@ -707,18 +704,21 @@ class SovereignShieldV3Service:
             return 'FILE_MISSING'
 
     def _foundation_state(self) -> dict:
-        module = self._foundation
-        if module is None:
-            return {'loaded': False, 'constants_match': False}
-        cls = getattr(module, 'SovereignShieldV3', None)
+        source = _foundation_source()
+        if source is None:
+            return {'loaded': False,
+                    'constants_match': False,
+                    'verification': 'FOUNDATION_FILE_MISSING',
+                    'imported': False}
+        constants_match = (
+            f'JURISDICTION_BASELINE = "{JURISDICTION_BASELINE}"'
+            in source
+            and f'PQC_ALGORITHM = "{PQC_ALGORITHM}"' in source)
         return {
-            'loaded': cls is not None,
-            'constants_match': bool(
-                cls is not None
-                and getattr(cls, 'JURISDICTION_BASELINE', None)
-                == JURISDICTION_BASELINE
-                and getattr(cls, 'PQC_ALGORITHM', None)
-                == PQC_ALGORITHM),
+            'loaded': constants_match,
+            'constants_match': constants_match,
+            'verification': 'SOURCE_CONSTANTS',
+            'imported': False,
         }
 
     def integrity_status(self, actor, role, *, region=None):
