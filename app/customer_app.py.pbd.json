@@ -4,8 +4,8 @@
         "platform": "Sanders Dash & Seal",
         "artifact": "app/customer_app.py",
         "payload_hash": "701425f2c76bb5d1c9998515f6895ccb94ecf30e62d7bb526bf129d801841cbe",
-        "scope": "source-manifest"
-    },
-    "signatures": {},
-    "status": "UNSIGNED_SOURCE_MANIFEST"
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }
