@@ -1,0 +1,43 @@
+name: SC-13 lift - live TLS group capability tests (read-only)
+on:
+  workflow_dispatch:
+jobs:
+  tlstest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test hybrid group negotiation against live nginx and a scratch s_server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            echo "=== T0: recorded check, full row ==="
+            cat > /tmp/read_check2.py <<'PYEOF'
+            import json, sqlite3
+            db = sqlite3.connect('file:/opt/Sanders_Dash_Seal/data/minotaur.db?mode=ro', uri=True)
+            db.row_factory = sqlite3.Row
+            r = db.execute('SELECT check_id, openssl_version, determination, probe_scope, recorded_by, recorded_at, receipt_id FROM minotaur_crypto_checks ORDER BY recorded_at DESC LIMIT 1').fetchone()
+            print('LATEST_CHECK', json.dumps(dict(r), default=str))
+            PYEOF
+            sudo -u sanders /opt/Sanders_Dash_Seal/venv/bin/python3 /tmp/read_check2.py 2>&1 | head -3
+            rm -f /tmp/read_check2.py
+            echo "=== T1: stock client, hybrid offered first, against LIVE nginx ==="
+            echo | openssl s_client -connect 127.0.0.1:443 -servername sandersdashandseal.com -groups X25519MLKEM768:X25519 2>&1 | grep -iE 'Negotiated|Cipher is|error' | head -3
+            echo "=== T2: stock client, default groups, against LIVE nginx ==="
+            echo | openssl s_client -connect 127.0.0.1:443 -servername sandersdashandseal.com 2>&1 | grep -iE 'Negotiated|Cipher is|error' | head -3
+            echo "=== T3: scratch s_server under EDGE config (logs preserved) ==="
+            CERT=/etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem
+            KEY=/etc/letsencrypt/live/sandersdashandseal.com/privkey.pem
+            sudo sh -c "OPENSSL_CONF=/etc/pki/tls/sanders_fips_edge.cnf nohup openssl s_server -accept 18444 -cert $CERT -key $KEY -tls1_3 >/tmp/srv_edge.log 2>&1 &"
+            sleep 3
+            ss -ltn | grep 18444 || echo "SERVER NOT LISTENING"
+            echo | openssl s_client -connect 127.0.0.1:18444 -groups X25519MLKEM768:X25519 2>&1 | grep -iE 'Negotiated|Cipher is|error|alert' | head -4
+            echo "--- edge server log ---"
+            head -12 /tmp/srv_edge.log 2>/dev/null
+            sudo pkill -f 's_server -accept 18444' 2>/dev/null
+            sudo rm -f /tmp/srv_edge.log
+            echo "TLS_TEST_DONE"
