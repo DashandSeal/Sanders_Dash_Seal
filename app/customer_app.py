@@ -529,6 +529,12 @@ IT_SUPPORT_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/it-support-agent/records/([
 SANDERS_SENTINEL_RECORD_ROUTE = re.compile(r'^/api/sanders-sentinel/records/([A-Za-z0-9_-]{1,128})$')
 SANDERS_SENTINEL_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-sentinel/records/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_SENTINEL_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-sentinel/records/([A-Za-z0-9_-]{1,128})/outcome$')
+SANDERS_SENTINEL_BLOODLINE_FUNDING_REQUEST_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/funding-requests/([A-Za-z0-9_-]{1,128})$')
+SANDERS_SENTINEL_BLOODLINE_FUNDING_DETERMINATION_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/funding-requests/([A-Za-z0-9_-]{1,128})/determination$')
+SANDERS_SENTINEL_BLOODLINE_FUNDING_COUNTERPART_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/funding-requests/([A-Za-z0-9_-]{1,128})/counterpart$')
+SANDERS_SENTINEL_BLOODLINE_RESERVE_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/reserves/([A-Za-z0-9_-]{1,128})$')
+SANDERS_SENTINEL_BLOODLINE_RESERVE_ACTION_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/reserves/([A-Za-z0-9_-]{1,128})/action$')
+SANDERS_SENTINEL_BLOODLINE_RESERVE_COUNTERPART_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/reserves/([A-Za-z0-9_-]{1,128})/counterpart$')
 LIL_MAMA_RECORD_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})$')
 LIL_MAMA_RECORD_ACTION_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/action$')
 LIL_MAMA_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -610,6 +616,8 @@ SANDERS_PATRIOT_SAINT_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-patriot-
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})$')
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_ACTION_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_COORDINATION_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/coordination$')
+SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_REQUEST_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/funding-request$')
+SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_DETERMINATION_ROUTE = re.compile(r'^/api/sanders-patriot-saint/bloodline/matters/([A-Za-z0-9_-]{1,128})/funding-determination$')
 SANDERS_FREEDOM_REVOLUTION_RECORD_ROUTE = re.compile(r'^/api/sanders-freedom-revolution/records/([A-Za-z0-9_-]{1,128})$')
 SANDERS_FREEDOM_REVOLUTION_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-freedom-revolution/records/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_FREEDOM_REVOLUTION_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-freedom-revolution/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -691,6 +699,15 @@ SANDERS_HEALTHCARE_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-healthcare/
 THE_GODFATHER_RECORD_ROUTE = re.compile(r'^/api/the-godfather/records/([A-Za-z0-9_-]{1,128})$')
 THE_GODFATHER_RECORD_ACTION_ROUTE = re.compile(r'^/api/the-godfather/records/([A-Za-z0-9_-]{1,128})/action$')
 THE_GODFATHER_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/the-godfather/records/([A-Za-z0-9_-]{1,128})/outcome$')
+THE_GODFATHER_BLOODLINE_TRANSPORT_MATTER_ROUTE = re.compile(r'^/api/the-godfather/bloodline/transport-matters/([A-Za-z0-9_-]{1,128})$')
+THE_GODFATHER_BLOODLINE_TRANSPORT_MATTER_ACTION_ROUTE = re.compile(r'^/api/the-godfather/bloodline/transport-matters/([A-Za-z0-9_-]{1,128})/action$')
+THE_GODFATHER_BLOODLINE_TRANSPORT_MATTER_COORDINATION_ROUTE = re.compile(r'^/api/the-godfather/bloodline/transport-matters/([A-Za-z0-9_-]{1,128})/coordination$')
+THE_GODFATHER_BLOODLINE_FUNDING_REQUEST_ROUTE = re.compile(r'^/api/the-godfather/bloodline/funding-requests/([A-Za-z0-9_-]{1,128})$')
+THE_GODFATHER_BLOODLINE_FUNDING_DETERMINATION_ROUTE = re.compile(r'^/api/the-godfather/bloodline/funding-requests/([A-Za-z0-9_-]{1,128})/determination$')
+THE_GODFATHER_BLOODLINE_FUNDING_COUNTERPART_ROUTE = re.compile(r'^/api/the-godfather/bloodline/funding-requests/([A-Za-z0-9_-]{1,128})/counterpart$')
+THE_GODFATHER_BLOODLINE_RESERVE_ROUTE = re.compile(r'^/api/the-godfather/bloodline/reserves/([A-Za-z0-9_-]{1,128})$')
+THE_GODFATHER_BLOODLINE_RESERVE_ACTION_ROUTE = re.compile(r'^/api/the-godfather/bloodline/reserves/([A-Za-z0-9_-]{1,128})/action$')
+THE_GODFATHER_BLOODLINE_RESERVE_COUNTERPART_ROUTE = re.compile(r'^/api/the-godfather/bloodline/reserves/([A-Za-z0-9_-]{1,128})/counterpart$')
 SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ROUTE = re.compile(r'^/api/sanders-ethics-impact-collective/records/([A-Za-z0-9_-]{1,128})$')
 SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-ethics-impact-collective/records/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-ethics-impact-collective/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -887,6 +904,12 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         sentinel_record_match = SANDERS_SENTINEL_RECORD_ROUTE.fullmatch(path)
         sentinel_record_action_match = SANDERS_SENTINEL_RECORD_ACTION_ROUTE.fullmatch(path)
         sentinel_record_outcome_match = SANDERS_SENTINEL_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        sentinel_bloodline_funding_request_match = SANDERS_SENTINEL_BLOODLINE_FUNDING_REQUEST_ROUTE.fullmatch(path)
+        sentinel_bloodline_funding_determination_match = SANDERS_SENTINEL_BLOODLINE_FUNDING_DETERMINATION_ROUTE.fullmatch(path)
+        sentinel_bloodline_funding_counterpart_match = SANDERS_SENTINEL_BLOODLINE_FUNDING_COUNTERPART_ROUTE.fullmatch(path)
+        sentinel_bloodline_reserve_match = SANDERS_SENTINEL_BLOODLINE_RESERVE_ROUTE.fullmatch(path)
+        sentinel_bloodline_reserve_action_match = SANDERS_SENTINEL_BLOODLINE_RESERVE_ACTION_ROUTE.fullmatch(path)
+        sentinel_bloodline_reserve_counterpart_match = SANDERS_SENTINEL_BLOODLINE_RESERVE_COUNTERPART_ROUTE.fullmatch(path)
         lil_mama_record_match = LIL_MAMA_RECORD_ROUTE.fullmatch(path)
         lil_mama_record_action_match = LIL_MAMA_RECORD_ACTION_ROUTE.fullmatch(path)
         lil_mama_record_outcome_match = LIL_MAMA_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -968,6 +991,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         patriot_saint_bloodline_matter_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_ROUTE.fullmatch(path)
         patriot_saint_bloodline_matter_action_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_ACTION_ROUTE.fullmatch(path)
         patriot_saint_bloodline_matter_coordination_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_COORDINATION_ROUTE.fullmatch(path)
+        patriot_saint_bloodline_matter_funding_request_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_REQUEST_ROUTE.fullmatch(path)
+        patriot_saint_bloodline_matter_funding_determination_match = SANDERS_PATRIOT_SAINT_BLOODLINE_MATTER_FUNDING_DETERMINATION_ROUTE.fullmatch(path)
         freedom_revolution_record_match = SANDERS_FREEDOM_REVOLUTION_RECORD_ROUTE.fullmatch(path)
         freedom_revolution_record_action_match = SANDERS_FREEDOM_REVOLUTION_RECORD_ACTION_ROUTE.fullmatch(path)
         freedom_revolution_record_outcome_match = SANDERS_FREEDOM_REVOLUTION_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -1049,6 +1074,15 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         the_godfather_record_match = THE_GODFATHER_RECORD_ROUTE.fullmatch(path)
         the_godfather_record_action_match = THE_GODFATHER_RECORD_ACTION_ROUTE.fullmatch(path)
         the_godfather_record_outcome_match = THE_GODFATHER_RECORD_OUTCOME_ROUTE.fullmatch(path)
+        the_godfather_bloodline_transport_matter_match = THE_GODFATHER_BLOODLINE_TRANSPORT_MATTER_ROUTE.fullmatch(path)
+        the_godfather_bloodline_transport_matter_action_match = THE_GODFATHER_BLOODLINE_TRANSPORT_MATTER_ACTION_ROUTE.fullmatch(path)
+        the_godfather_bloodline_transport_matter_coordination_match = THE_GODFATHER_BLOODLINE_TRANSPORT_MATTER_COORDINATION_ROUTE.fullmatch(path)
+        the_godfather_bloodline_funding_request_match = THE_GODFATHER_BLOODLINE_FUNDING_REQUEST_ROUTE.fullmatch(path)
+        the_godfather_bloodline_funding_determination_match = THE_GODFATHER_BLOODLINE_FUNDING_DETERMINATION_ROUTE.fullmatch(path)
+        the_godfather_bloodline_funding_counterpart_match = THE_GODFATHER_BLOODLINE_FUNDING_COUNTERPART_ROUTE.fullmatch(path)
+        the_godfather_bloodline_reserve_match = THE_GODFATHER_BLOODLINE_RESERVE_ROUTE.fullmatch(path)
+        the_godfather_bloodline_reserve_action_match = THE_GODFATHER_BLOODLINE_RESERVE_ACTION_ROUTE.fullmatch(path)
+        the_godfather_bloodline_reserve_counterpart_match = THE_GODFATHER_BLOODLINE_RESERVE_COUNTERPART_ROUTE.fullmatch(path)
         sanders_ethics_impact_collective_record_match = SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ROUTE.fullmatch(path)
         sanders_ethics_impact_collective_record_action_match = SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ACTION_ROUTE.fullmatch(path)
         sanders_ethics_impact_collective_record_outcome_match = SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -1409,10 +1443,19 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                       '/api/sanders-sentinel/operation-check',
                                       '/api/sanders-sentinel/bloodline/verify',
                                       '/api/sanders-sentinel/bloodline/coverage',
+                                      '/api/sanders-sentinel/bloodline/funding-requests',
+                                      '/api/sanders-sentinel/bloodline/reserves',
+                                      '/api/sanders-sentinel/bloodline/coordination',
                                       '/api/sanders-sentinel/check-in')
                                   or sentinel_record_match is not None
                                   or sentinel_record_action_match is not None
-                                  or sentinel_record_outcome_match is not None)
+                                  or sentinel_record_outcome_match is not None
+                                  or sentinel_bloodline_funding_request_match is not None
+                                  or sentinel_bloodline_funding_determination_match is not None
+                                  or sentinel_bloodline_funding_counterpart_match is not None
+                                  or sentinel_bloodline_reserve_match is not None
+                                  or sentinel_bloodline_reserve_action_match is not None
+                                  or sentinel_bloodline_reserve_counterpart_match is not None)
         is_lil_mama_route = (path in ('/api/lil-mama/status',
                                       '/api/lil-mama/records',
                                       '/api/lil-mama/design',
@@ -1627,7 +1670,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or patriot_saint_record_outcome_match is not None
                                   or patriot_saint_bloodline_matter_match is not None
                                   or patriot_saint_bloodline_matter_action_match is not None
-                                  or patriot_saint_bloodline_matter_coordination_match is not None)
+                                  or patriot_saint_bloodline_matter_coordination_match is not None
+                                  or patriot_saint_bloodline_matter_funding_request_match is not None
+                                  or patriot_saint_bloodline_matter_funding_determination_match is not None)
         is_freedom_revolution_route = (path in ('/api/sanders-freedom-revolution/status',
                                                 '/api/sanders-freedom-revolution/records',
                                                 '/api/sanders-freedom-revolution/design',
@@ -1840,10 +1885,23 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                            '/api/the-godfather/records',
                                            '/api/the-godfather/design',
                                            '/api/the-godfather/operation-check',
+                                           '/api/the-godfather/bloodline/remit',
+                                           '/api/the-godfather/bloodline/transport-matters',
+                                           '/api/the-godfather/bloodline/funding-requests',
+                                           '/api/the-godfather/bloodline/reserves',
                                            '/api/the-godfather/check-in')
                                   or the_godfather_record_match is not None
                                   or the_godfather_record_action_match is not None
-                                  or the_godfather_record_outcome_match is not None)
+                                  or the_godfather_record_outcome_match is not None
+                                  or the_godfather_bloodline_transport_matter_match is not None
+                                  or the_godfather_bloodline_transport_matter_action_match is not None
+                                  or the_godfather_bloodline_transport_matter_coordination_match is not None
+                                  or the_godfather_bloodline_funding_request_match is not None
+                                  or the_godfather_bloodline_funding_determination_match is not None
+                                  or the_godfather_bloodline_funding_counterpart_match is not None
+                                  or the_godfather_bloodline_reserve_match is not None
+                                  or the_godfather_bloodline_reserve_action_match is not None
+                                  or the_godfather_bloodline_reserve_counterpart_match is not None)
         is_sanders_ethics_impact_collective_route = (path in ('/api/sanders-ethics-impact-collective/status',
                                                               '/api/sanders-ethics-impact-collective/records',
                                                               '/api/sanders-ethics-impact-collective/design',
@@ -2238,6 +2296,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/the-godfather/status',
                                             '/api/the-godfather/records',
                                             '/api/the-godfather/design',
+                                            '/api/the-godfather/bloodline/remit',
                                             '/api/sanders-ethics-impact-collective/status',
                                             '/api/sanders-ethics-impact-collective/records',
                                             '/api/sanders-ethics-impact-collective/design')
@@ -2293,6 +2352,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or configuration_record_match is not None
                                    or it_support_record_match is not None
                                    or sentinel_record_match is not None
+                                   or sentinel_bloodline_funding_request_match is not None
+                                   or sentinel_bloodline_reserve_match is not None
                                    or lil_mama_record_match is not None
                                    or baby_girl_record_match is not None
                                    or baby_girl_custody_match is not None
@@ -2348,6 +2409,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or sanders_global_relations_record_match is not None
                                    or sanders_healthcare_record_match is not None
                                    or the_godfather_record_match is not None
+                                   or the_godfather_bloodline_transport_matter_match is not None
+                                   or the_godfather_bloodline_funding_request_match is not None
+                                   or the_godfather_bloodline_reserve_match is not None
                                    or sanders_ethics_impact_collective_record_match is not None) else ('POST',)
         elif is_rooms_route:
             allowed = ('GET', 'POST') if path == '/api/rooms' else (
@@ -2421,6 +2485,12 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             allowed = ('POST',)
         if path == '/api/sanders-sentinel/bloodline/coverage':
             allowed = ('GET',)
+        if path == '/api/sanders-sentinel/bloodline/funding-requests':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/reserves':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/coordination':
+            allowed = ('GET', 'POST')
         if path == '/api/lil-mama/records':
             allowed = ('GET', 'POST')
         if path == '/api/baby-girl/records':
@@ -2528,6 +2598,12 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-healthcare/records':
             allowed = ('GET', 'POST')
         if path == '/api/the-godfather/records':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/transport-matters':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/funding-requests':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/reserves':
             allowed = ('GET', 'POST')
         if path == '/api/sanders-ethics-impact-collective/records':
             allowed = ('GET', 'POST')
@@ -4331,6 +4407,53 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         if method != 'GET':
                             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
                         return respond(start, '200 OK', {'bloodline_coverage': sanders_sentinel.bloodline_coverage(identity, sentinel_role)})
+                    if path == '/api/sanders-sentinel/bloodline/coordination':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'bloodline_coordination': sanders_sentinel.bloodline_coordination(identity, sentinel_role)})
+                        if set(data) != {'subject_ref', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_bloodline_coordination(identity, data['subject_ref'], data['detail_ref'])
+                        return respond(start, '201 Created', {'bloodline_coordination': record})
+                    if path == '/api/sanders-sentinel/bloodline/funding-requests':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'funding_requests': sanders_sentinel.funding_requests_list(identity, sentinel_role)})
+                        if set(data) != {'matter_ref', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.open_funding_request(identity, data['matter_ref'], data['detail_ref'])
+                        return respond(start, '201 Created', {'funding_request': record})
+                    if sentinel_bloodline_funding_determination_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_funding_determination(identity, sentinel_bloodline_funding_determination_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'funding_request': record})
+                    if sentinel_bloodline_funding_counterpart_match:
+                        if set(data) != {'counterpart_determination_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_counterpart_funding_determination(identity, sentinel_bloodline_funding_counterpart_match.group(1), data['counterpart_determination_ref'])
+                        return respond(start, '200 OK', {'funding_request': record})
+                    if sentinel_bloodline_funding_request_match:
+                        record = sanders_sentinel.funding_request_view(identity, sentinel_role, sentinel_bloodline_funding_request_match.group(1))
+                        return respond(start, '200 OK', {'funding_request': record})
+                    if path == '/api/sanders-sentinel/bloodline/reserves':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'reserves': sanders_sentinel.reserves_list(identity, sentinel_role)})
+                        if set(data) != {'designation_ref', 'purpose_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.designate_reserve(identity, data['designation_ref'], data['purpose_ref'])
+                        return respond(start, '201 Created', {'reserve': record})
+                    if sentinel_bloodline_reserve_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.reserve_action(identity, sentinel_bloodline_reserve_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'reserve': record})
+                    if sentinel_bloodline_reserve_counterpart_match:
+                        if set(data) != {'counterpart_approval_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_counterpart_reserve_approval(identity, sentinel_bloodline_reserve_counterpart_match.group(1), data['counterpart_approval_ref'])
+                        return respond(start, '200 OK', {'reserve': record})
+                    if sentinel_bloodline_reserve_match:
+                        record = sanders_sentinel.reserve_view(identity, sentinel_role, sentinel_bloodline_reserve_match.group(1))
+                        return respond(start, '200 OK', {'reserve': record})
                     if sentinel_record_action_match:
                         if set(data) != {'action'}:
                             raise ValueError('unexpected fields')
@@ -5297,6 +5420,16 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         if set(data) != {'coordination_ref'}:
                             raise ValueError('unexpected fields')
                         matter = sanders_patriot_saint.record_bloodline_coordination(identity, patriot_saint_bloodline_matter_coordination_match.group(1), data['coordination_ref'])
+                        return respond(start, '200 OK', {'bloodline_matter': matter})
+                    if patriot_saint_bloodline_matter_funding_request_match:
+                        if set(data) != {'funding_ref'}:
+                            raise ValueError('unexpected fields')
+                        matter = sanders_patriot_saint.request_matter_funding(identity, patriot_saint_bloodline_matter_funding_request_match.group(1), data['funding_ref'])
+                        return respond(start, '200 OK', {'bloodline_matter': matter})
+                    if patriot_saint_bloodline_matter_funding_determination_match:
+                        if set(data) != {'platform', 'determination_ref'}:
+                            raise ValueError('unexpected fields')
+                        matter = sanders_patriot_saint.record_matter_funding_determination(identity, patriot_saint_bloodline_matter_funding_determination_match.group(1), data['platform'], data['determination_ref'])
                         return respond(start, '200 OK', {'bloodline_matter': matter})
                     if patriot_saint_bloodline_matter_match:
                         matter = sanders_patriot_saint.bloodline_matter_view(identity, patriot_saint_role, patriot_saint_bloodline_matter_match.group(1))
@@ -6273,6 +6406,70 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = the_godfather.create_record(identity, data['subject_ref'], data['matter_refs'], data['scope_ref'])
                         return respond(start, '201 Created', {'record': record})
+                    if path == '/api/the-godfather/bloodline/remit':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'bloodline_remit': the_godfather.bloodline_remit(identity, the_godfather_role)})
+                    if path == '/api/the-godfather/bloodline/transport-matters':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'transport_matters': the_godfather.transport_matters_list(identity, the_godfather_role)})
+                        if set(data) != {'matter_kind', 'member_ref', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        matter = the_godfather.open_transport_matter(identity, data['matter_kind'], data['member_ref'], data['detail_ref'])
+                        return respond(start, '201 Created', {'transport_matter': matter})
+                    if the_godfather_bloodline_transport_matter_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        matter = the_godfather.transport_matter_action(identity, the_godfather_bloodline_transport_matter_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'transport_matter': matter})
+                    if the_godfather_bloodline_transport_matter_coordination_match:
+                        if set(data) != {'coordination_ref'}:
+                            raise ValueError('unexpected fields')
+                        matter = the_godfather.record_transport_coordination(identity, the_godfather_bloodline_transport_matter_coordination_match.group(1), data['coordination_ref'])
+                        return respond(start, '200 OK', {'transport_matter': matter})
+                    if the_godfather_bloodline_transport_matter_match:
+                        matter = the_godfather.transport_matter_view(identity, the_godfather_role, the_godfather_bloodline_transport_matter_match.group(1))
+                        return respond(start, '200 OK', {'transport_matter': matter})
+                    if path == '/api/the-godfather/bloodline/funding-requests':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'funding_requests': the_godfather.funding_requests_list(identity, the_godfather_role)})
+                        if set(data) != {'matter_ref', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.open_funding_request(identity, data['matter_ref'], data['detail_ref'])
+                        return respond(start, '201 Created', {'funding_request': record})
+                    if the_godfather_bloodline_funding_determination_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_funding_determination(identity, the_godfather_bloodline_funding_determination_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'funding_request': record})
+                    if the_godfather_bloodline_funding_counterpart_match:
+                        if set(data) != {'counterpart_determination_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_counterpart_funding_determination(identity, the_godfather_bloodline_funding_counterpart_match.group(1), data['counterpart_determination_ref'])
+                        return respond(start, '200 OK', {'funding_request': record})
+                    if the_godfather_bloodline_funding_request_match:
+                        record = the_godfather.funding_request_view(identity, the_godfather_role, the_godfather_bloodline_funding_request_match.group(1))
+                        return respond(start, '200 OK', {'funding_request': record})
+                    if path == '/api/the-godfather/bloodline/reserves':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'reserves': the_godfather.reserves_list(identity, the_godfather_role)})
+                        if set(data) != {'designation_ref', 'purpose_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.designate_reserve(identity, data['designation_ref'], data['purpose_ref'])
+                        return respond(start, '201 Created', {'reserve': record})
+                    if the_godfather_bloodline_reserve_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.reserve_action(identity, the_godfather_bloodline_reserve_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'reserve': record})
+                    if the_godfather_bloodline_reserve_counterpart_match:
+                        if set(data) != {'counterpart_approval_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_counterpart_reserve_approval(identity, the_godfather_bloodline_reserve_counterpart_match.group(1), data['counterpart_approval_ref'])
+                        return respond(start, '200 OK', {'reserve': record})
+                    if the_godfather_bloodline_reserve_match:
+                        record = the_godfather.reserve_view(identity, the_godfather_role, the_godfather_bloodline_reserve_match.group(1))
+                        return respond(start, '200 OK', {'reserve': record})
                     if the_godfather_record_action_match:
                         if set(data) != {'action'}:
                             raise ValueError('unexpected fields')
