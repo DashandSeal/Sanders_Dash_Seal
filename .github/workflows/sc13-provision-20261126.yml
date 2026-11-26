@@ -1,0 +1,75 @@
+name: SC-13 lift - FIPS provisioning on the production instance (founder-approved)
+on:
+  workflow_dispatch:
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Provision FIPS provider for app + edge, record the production check
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 30m
+          script: |
+            set +e
+            echo "=== STEP 0: shipped module config (headers only) ==="
+            grep -E '^\[|^# ' /etc/pki/tls/fips_local.cnf 2>/dev/null | head -8
+            echo "=== STEP 1: write platform FIPS configs ==="
+            printf '%s\n' '# Sanders Dash & Seal - platform FIPS configuration (SC-13 lift, founder-approved 2026-11-26)' '# App processes: the OS packaged FIPS provider (Oracle Linux 9 OpenSSL FIPS Provider)' '# plus the base provider only. No default provider is loaded: every cryptographic' '# operation is served by the FIPS provider or refused.' 'openssl_conf = openssl_init' '[openssl_init]' 'providers = provider_sect' '[provider_sect]' 'fips = fips_sect' 'base = base_sect' '[fips_sect]' 'activate = 1' '[base_sect]' 'activate = 1' | sudo tee /etc/pki/tls/sanders_fips.cnf >/dev/null
+            printf '%s\n' '# Sanders Dash & Seal - edge FIPS configuration (SC-13 lift, founder-approved 2026-11-26)' '# nginx: the OS packaged FIPS provider is activated first and the default provider' '# second. The post-quantum TLS groups (ML-KEM, FIPS 203) exist only in the OS' '# OpenSSL 3.5.9 default provider and are served by it - named plainly in the record.' 'openssl_conf = openssl_init' '[openssl_init]' 'providers = provider_sect' '[provider_sect]' 'fips = fips_sect' 'base = base_sect' 'default = default_sect' '[fips_sect]' 'activate = 1' '[base_sect]' 'activate = 1' '[default_sect]' 'activate = 1' | sudo tee /etc/pki/tls/sanders_fips_edge.cnf >/dev/null
+            ls -la /etc/pki/tls/sanders_fips.cnf /etc/pki/tls/sanders_fips_edge.cnf
+            echo "=== STEP 2: CLI proof under the app config (fips + base only) ==="
+            OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf openssl list -providers 2>&1
+            echo -n test | OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf openssl dgst -sha256 2>&1 | head -1
+            echo -n test | OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf openssl dgst -sha3-256 2>&1 | head -1
+            echo -n test | OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf openssl dgst -md5 2>&1 | head -1
+            echo "=== STEP 2b: CLI proof under the edge config (fips first + default) ==="
+            OPENSSL_CONF=/etc/pki/tls/sanders_fips_edge.cnf openssl list -providers 2>&1
+            echo "=== STEP 3: app venv python under the app config ==="
+            OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf /opt/Sanders_Dash_Seal/venv/bin/python3 -c "import ssl,hashlib; a=sorted(hashlib.algorithms_available); print(ssl.OPENSSL_VERSION); print('digest count:', len(a)); print('md5 available:', 'md5' in a); print('sha3_256 ok:', hashlib.sha3_256(b'x').hexdigest()[:16])" 2>&1
+            echo "=== STEP 4: app service onto the FIPS config (interim drop-in) ==="
+            sudo mkdir -p /etc/systemd/system/sanders-dash-seal.service.d
+            printf '[Service]\nEnvironment=OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf\n' | sudo tee /etc/systemd/system/sanders-dash-seal.service.d/60-fips.conf >/dev/null
+            sudo systemctl daemon-reload
+            sudo systemctl restart sanders-dash-seal.service
+            APP_OK=0
+            for i in $(seq 1 18); do sleep 10; CODE=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/healthz 2>/dev/null); echo "poll $i: $CODE"; if [ "$CODE" = "200" ]; then APP_OK=1; break; fi; done
+            if [ "$APP_OK" = "1" ]; then echo "APP_ON_FIPS: healthy"; else echo "APP_ON_FIPS: FAILED - rolling back"; sudo rm -f /etc/systemd/system/sanders-dash-seal.service.d/60-fips.conf; sudo systemctl daemon-reload; sudo systemctl restart sanders-dash-seal.service; for i in $(seq 1 18); do sleep 10; CODE=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8000/healthz 2>/dev/null); if [ "$CODE" = "200" ]; then echo "APP_ROLLED_BACK: healthy"; break; fi; done; fi
+            echo "=== STEP 5: record the production crypto-environment check (in-process, operator identity, no secret printed) ==="
+            cat > /tmp/record_check.py <<'PYEOF'
+            import json, os
+            for path in ('/etc/sanders-dash-seal/environment', '/etc/sanders-dash-seal/runtime.env'):
+                try:
+                    with open(path) as fh:
+                        for line in fh:
+                            line = line.strip()
+                            if not line or line.startswith('#') or '=' not in line:
+                                continue
+                            k, v = line.split('=', 1)
+                            os.environ[k.strip()] = v.strip().strip('"').strip("'")
+                except FileNotFoundError:
+                    pass
+            os.environ.setdefault('SANDERS_RUNTIME_FACTORY', 'deploy.production_bindings:create_production_bindings')
+            from deploy.production_bindings import create_production_bindings
+            b = create_production_bindings()
+            view = b.minotaur.record_crypto_environment_check('RooseveltSanders')
+            print('RECORDED_CHECK ' + json.dumps(view, default=str))
+            PYEOF
+            sudo -u sanders bash -c 'cd /opt/Sanders_Dash_Seal && OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf ./venv/bin/python3 /tmp/record_check.py' 2>&1 | grep -E 'RECORDED_CHECK|Error|Denied|denied|Traceback' | head -6
+            rm -f /tmp/record_check.py
+            echo "=== STEP 6: nginx onto the edge FIPS config (drop-in) ==="
+            sudo mkdir -p /etc/systemd/system/nginx.service.d
+            printf '[Service]\nEnvironment=OPENSSL_CONF=/etc/pki/tls/sanders_fips_edge.cnf\n' | sudo tee /etc/systemd/system/nginx.service.d/60-fips.conf >/dev/null
+            sudo systemctl daemon-reload
+            sudo nginx -t 2>&1 | tail -2
+            sudo systemctl restart nginx.service
+            sleep 3
+            NGX_CODE=$(curl -sk -o /dev/null -w '%{http_code}' --resolve sandersdashandseal.com:443:127.0.0.1 https://sandersdashandseal.com/healthz 2>/dev/null)
+            echo "nginx local https healthz: $NGX_CODE"
+            if [ "$NGX_CODE" = "200" ]; then echo "NGINX_ON_EDGE_FIPS: healthy"; else echo "NGINX_ON_EDGE_FIPS: FAILED - rolling back"; sudo rm -f /etc/systemd/system/nginx.service.d/60-fips.conf; sudo systemctl daemon-reload; sudo systemctl restart nginx.service; sleep 3; curl -sk -o /dev/null -w 'after rollback: %{http_code}\n' --resolve sandersdashandseal.com:443:127.0.0.1 https://sandersdashandseal.com/healthz; fi
+            echo "=== STEP 7: local handshake under the edge config ==="
+            echo | OPENSSL_CONF=/etc/pki/tls/sanders_fips_edge.cnf openssl s_client -connect 127.0.0.1:443 -servername sandersdashandseal.com 2>/dev/null | grep -iE 'Protocol|Cipher|group' | head -5
+            echo "PROVISION_DONE"
