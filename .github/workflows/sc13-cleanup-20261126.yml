@@ -1,0 +1,42 @@
+name: SC-13 lift - drop-in cleanup and check read-back (one-time)
+on:
+  workflow_dispatch: {}
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup and read-back over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          command_timeout: 10m
+          script: |
+            set +e
+            echo "== RECORDED CHECK ROW =="
+            sudo -u sanders python3 -c "
+            import sqlite3, datetime
+            db = sqlite3.connect('file:/opt/Sanders_Dash_Seal/data/minotaur.db?mode=ro', uri=True)
+            for row in db.execute('SELECT check_id, openssl_version, determination, recorded_by, recorded_at, receipt_id FROM minotaur_crypto_checks'):
+                print('CHECK', row[0], '|', row[1], '|', row[2], '| by', row[3], '| at', datetime.datetime.fromtimestamp(row[4], datetime.timezone.utc).isoformat(), '| receipt', row[5])
+            print('TOTAL', db.execute('SELECT COUNT(*) FROM minotaur_crypto_checks').fetchone()[0])
+            "
+            echo "== UNIT OF RECORD =="
+            grep "OPENSSL_CONF" /opt/Sanders_Dash_Seal/deploy/sanders-dash-seal.service | cut -c1-120
+            echo "== REMOVE INTERIM DROP-IN =="
+            sudo rm -f /etc/systemd/system/sanders-dash-seal.service.d/60-fips.conf
+            sudo rmdir /etc/systemd/system/sanders-dash-seal.service.d 2>/dev/null
+            sudo systemctl daemon-reload
+            sudo systemctl restart sanders-dash-seal
+            sleep 3
+            for i in 1 2 3 4 5 6; do
+              code=$(curl -s -o /dev/null -w "%{http_code}" https://sandersdashandseal.com/healthz 2>/dev/null || echo 000)
+              echo "APP_POLL_$i $code"
+              [ "$code" = "200" ] && break
+              sleep 5
+            done
+            echo "== APP ENVIRONMENT AFTER CLEANUP =="
+            systemctl show sanders-dash-seal -p Environment | cut -c1-200
+            echo "== NGINX ENVIRONMENT =="
+            systemctl show nginx -p Environment | cut -c1-120
