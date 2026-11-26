@@ -183,6 +183,7 @@ from core_platform.juggernaut_service import JuggernautService
 from core_platform.bozly_service import BozlyService
 from core_platform.fraud_rtsa_service import FraudRtsaService
 from core_platform.operations_rtsa_service import OperationsRtsaService
+from core_platform.surn_service import SurnService
 from core_platform.uptime_agent_service import UptimeAgentService
 from core_platform.application_agent_service import ApplicationAgentService
 from core_platform.database_agent_service import DatabaseAgentService
@@ -679,6 +680,19 @@ def create_production_bindings():
     # dispatches no one), on its own store.
     operations_rtsa = OperationsRtsaService(
         data_dir / 'operations_rtsa.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
+    # SURN (RTSA Build Program Q131, Band 4): the disaster and
+    # emergency intelligence role contract built as its own
+    # platform — governed emergency-preparedness assessment
+    # records under the contract's discipline (subjects, plans,
+    # and scopes by reference only; an assessment with no
+    # recovery plan stands EMERGENCY_PLAN_MISSING and cannot be
+    # determined DRILL_VERIFIED; it dispatches no responders,
+    # issues no alerts, and contacts no agency), on its own
+    # store.
+    surn = SurnService(
+        data_dir / 'surn.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
     # Uptime Agent (RTSA Build Program): the first agent of the
@@ -1354,6 +1368,7 @@ def create_production_bindings():
         bozly=bozly,
         fraud_rtsa=fraud_rtsa,
         operations_rtsa=operations_rtsa,
+        surn=surn,
         uptime_agent=uptime_agent,
         application_agent=application_agent,
         database_agent=database_agent,

@@ -57,6 +57,7 @@ from core_platform.juggernaut_service import JuggernautDenied, JuggernautForbidd
 from core_platform.bozly_service import BozlyDenied, BozlyForbidden
 from core_platform.fraud_rtsa_service import FraudRtsaDenied, FraudRtsaForbidden
 from core_platform.operations_rtsa_service import OperationsRtsaDenied, OperationsRtsaForbidden
+from core_platform.surn_service import SurnDenied, SurnForbidden
 from core_platform.uptime_agent_service import UptimeAgentDenied, UptimeAgentForbidden
 from core_platform.application_agent_service import ApplicationAgentDenied, ApplicationAgentForbidden
 from core_platform.database_agent_service import DatabaseAgentDenied, DatabaseAgentForbidden
@@ -271,6 +272,9 @@ FRAUD_CASE_DETERMINATION_ROUTE = re.compile(r'^/api/fraud-rtsa/cases/([A-Za-z0-9
 OPS_INCIDENT_ROUTE = re.compile(r'^/api/operations-rtsa/incidents/([A-Za-z0-9_-]{1,128})$')
 OPS_INCIDENT_ACTION_ROUTE = re.compile(r'^/api/operations-rtsa/incidents/([A-Za-z0-9_-]{1,128})/action$')
 OPS_INCIDENT_OUTCOME_ROUTE = re.compile(r'^/api/operations-rtsa/incidents/([A-Za-z0-9_-]{1,128})/outcome$')
+SURN_ASSESSMENT_ROUTE = re.compile(r'^/api/surn/assessments/([A-Za-z0-9_-]{1,128})$')
+SURN_ASSESSMENT_ACTION_ROUTE = re.compile(r'^/api/surn/assessments/([A-Za-z0-9_-]{1,128})/action$')
+SURN_ASSESSMENT_DETERMINATION_ROUTE = re.compile(r'^/api/surn/assessments/([A-Za-z0-9_-]{1,128})/determination$')
 UPTIME_RECORD_ROUTE = re.compile(r'^/api/uptime-agent/records/([A-Za-z0-9_-]{1,128})$')
 UPTIME_RECORD_ACTION_ROUTE = re.compile(r'^/api/uptime-agent/records/([A-Za-z0-9_-]{1,128})/action$')
 UPTIME_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/uptime-agent/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -482,7 +486,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None, sanders_sports=None, sanders_wellness=None, sanders_steward_sentinel=None, sanders_patriot_saint=None, sanders_freedom_revolution=None, sanders_strategy_hub=None, sanders_global_freedom=None, sanders_coordinator=None, sanders_intelligence=None, sanders_ai_research=None, sanders_research=None, sanders_communications=None, sanders_banking_hub=None, sanders_legal_services=None, sanders_strategy_intel=None, sanders_analytics=None, sanders_innovation_lab=None, sanders_supply_chain=None, sanders_logical_framework=None, sanders_infrastructure=None, sanders_technology=None, sanders_cloud_services=None, showtime=None, sanders_marketing=None, sanders_sales=None, sanders_customer_support=None, sanders_human_resources=None, sanders_security_ops=None, sanders_global_relations=None, sanders_healthcare=None, the_godfather=None, sanders_ethics_impact_collective=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, surn=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None, sanders_sports=None, sanders_wellness=None, sanders_steward_sentinel=None, sanders_patriot_saint=None, sanders_freedom_revolution=None, sanders_strategy_hub=None, sanders_global_freedom=None, sanders_coordinator=None, sanders_intelligence=None, sanders_ai_research=None, sanders_research=None, sanders_communications=None, sanders_banking_hub=None, sanders_legal_services=None, sanders_strategy_intel=None, sanders_analytics=None, sanders_innovation_lab=None, sanders_supply_chain=None, sanders_logical_framework=None, sanders_infrastructure=None, sanders_technology=None, sanders_cloud_services=None, showtime=None, sanders_marketing=None, sanders_sales=None, sanders_customer_support=None, sanders_human_resources=None, sanders_security_ops=None, sanders_global_relations=None, sanders_healthcare=None, the_godfather=None, sanders_ethics_impact_collective=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -623,6 +627,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         ops_incident_match = OPS_INCIDENT_ROUTE.fullmatch(path)
         ops_incident_action_match = OPS_INCIDENT_ACTION_ROUTE.fullmatch(path)
         ops_incident_outcome_match = OPS_INCIDENT_OUTCOME_ROUTE.fullmatch(path)
+        surn_assessment_match = SURN_ASSESSMENT_ROUTE.fullmatch(path)
+        surn_assessment_action_match = SURN_ASSESSMENT_ACTION_ROUTE.fullmatch(path)
+        surn_assessment_determination_match = SURN_ASSESSMENT_DETERMINATION_ROUTE.fullmatch(path)
         uptime_record_match = UPTIME_RECORD_ROUTE.fullmatch(path)
         uptime_record_action_match = UPTIME_RECORD_ACTION_ROUTE.fullmatch(path)
         uptime_record_outcome_match = UPTIME_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -1071,6 +1078,14 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         or ops_incident_match is not None
                         or ops_incident_action_match is not None
                         or ops_incident_outcome_match is not None)
+        is_surn_route = (path in ('/api/surn/status',
+                                  '/api/surn/assessments',
+                                  '/api/surn/contract',
+                                  '/api/surn/operation-check',
+                                  '/api/surn/check-in')
+                         or surn_assessment_match is not None
+                         or surn_assessment_action_match is not None
+                         or surn_assessment_determination_match is not None)
         is_uptime_route = (path in ('/api/uptime-agent/status',
                                     '/api/uptime-agent/records',
                                     '/api/uptime-agent/design',
@@ -1638,6 +1653,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                              or is_bozly_route
                              or is_fraud_route
                              or is_ops_route
+                             or is_surn_route
                              or is_uptime_route
                              or is_application_route
                              or is_database_route
@@ -1794,6 +1810,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/operations-rtsa/status',
                                             '/api/operations-rtsa/incidents',
                                             '/api/operations-rtsa/contract',
+                                            '/api/surn/status',
+                                            '/api/surn/assessments',
+                                            '/api/surn/contract',
                                             '/api/uptime-agent/status',
                                             '/api/uptime-agent/records',
                                             '/api/uptime-agent/design',
@@ -2035,6 +2054,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or bozly_officer_receipt_match is not None
                                    or fraud_case_match is not None
                                    or ops_incident_match is not None
+                                   or surn_assessment_match is not None
                                    or uptime_record_match is not None
                                    or app_assessment_match is not None
                                    or db_assessment_match is not None
@@ -2142,6 +2162,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/fraud-rtsa/cases':
             allowed = ('GET', 'POST')
         if path == '/api/operations-rtsa/incidents':
+            allowed = ('GET', 'POST')
+        if path == '/api/surn/assessments':
             allowed = ('GET', 'POST')
         if path == '/api/uptime-agent/records':
             allowed = ('GET', 'POST')
@@ -3572,6 +3594,42 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         record = operations_rtsa.incident_view(identity, ops_role, ops_incident_match.group(1))
                         return respond(start, '200 OK', {'incident': record})
                     return check_in(operations_rtsa)
+                if is_surn_route:
+                    if surn is None:
+                        return respond(start, '503 Service Unavailable', {'error': 'surn_unavailable'})
+                    surn_role = 'OPERATOR' if is_operator() else 'AUDITOR'
+                    if path == '/api/surn/status':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'status': surn.status()})
+                    if path == '/api/surn/contract':
+                        return respond(start, '200 OK', {'contract': surn.contract_view()})
+                    if path == '/api/surn/operation-check':
+                        if set(data) != {'operation'}:
+                            raise ValueError('unexpected fields')
+                        record = surn.operation_check(identity, surn_role, data['operation'])
+                        return respond(start, '200 OK', {'operation_check': record})
+                    if path == '/api/surn/assessments':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'assessments': surn.assessments_list(identity, surn_role)})
+                        if not {'subject_ref', 'scope_ref'} <= set(data) <= {'subject_ref', 'recovery_plan_ref', 'scope_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = surn.create_assessment(identity, data['subject_ref'], data.get('recovery_plan_ref'), data['scope_ref'])
+                        return respond(start, '201 Created', {'assessment': record})
+                    if surn_assessment_action_match:
+                        if set(data) != {'action'}:
+                            raise ValueError('unexpected fields')
+                        record = surn.assessment_action(identity, surn_assessment_action_match.group(1), data['action'])
+                        return respond(start, '200 OK', {'assessment': record})
+                    if surn_assessment_determination_match:
+                        if set(data) != {'determination', 'evidence_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = surn.record_determination(identity, surn_assessment_determination_match.group(1), data['determination'], data['evidence_ref'])
+                        return respond(start, '200 OK', {'assessment': record})
+                    if surn_assessment_match:
+                        record = surn.assessment_view(identity, surn_role, surn_assessment_match.group(1))
+                        return respond(start, '200 OK', {'assessment': record})
+                    return check_in(surn)
                 if is_uptime_route:
                     if uptime_agent is None:
                         return respond(start, '503 Service Unavailable', {'error': 'uptime_agent_unavailable'})
@@ -6148,6 +6206,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             return respond(start, '403 Forbidden', {'error': 'operations_rtsa_forbidden'})
         except OperationsRtsaDenied as exc:
             return respond(start, '400 Bad Request', {'error': 'operations_rtsa_denied', 'detail': str(exc)})
+        except SurnForbidden:
+            return respond(start, '403 Forbidden', {'error': 'surn_forbidden'})
+        except SurnDenied as exc:
+            return respond(start, '400 Bad Request', {'error': 'surn_denied', 'detail': str(exc)})
         except UptimeAgentForbidden:
             return respond(start, '403 Forbidden', {'error': 'uptime_agent_forbidden'})
         except UptimeAgentDenied as exc:

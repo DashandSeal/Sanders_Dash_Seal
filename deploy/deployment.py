@@ -73,6 +73,7 @@ class RuntimeBindings:
     bozly: object = None
     fraud_rtsa: object = None
     operations_rtsa: object = None
+    surn: object = None
     uptime_agent: object = None
     application_agent: object = None
     database_agent: object = None
@@ -324,6 +325,7 @@ PLATFORM_HEALTHZ_PATHS = (
     '/api/bozly/healthz',
     '/api/fraud-rtsa/healthz',
     '/api/operations-rtsa/healthz',
+    '/api/surn/healthz',
     '/api/uptime-agent/healthz',
     '/api/application-agent/healthz',
     '/api/database-agent/healthz',
@@ -422,6 +424,7 @@ PLATFORM_HEALTH = {
     '/api/bozly/healthz': ('bozly', 'bozly', 'bozly_unavailable'),
     '/api/fraud-rtsa/healthz': ('fraud_rtsa', 'fraud_rtsa', 'fraud_rtsa_unavailable'),
     '/api/operations-rtsa/healthz': ('operations_rtsa', 'operations_rtsa', 'operations_rtsa_unavailable'),
+    '/api/surn/healthz': ('surn', 'surn', 'surn_unavailable'),
     '/api/uptime-agent/healthz': ('uptime_agent', 'uptime_agent', 'uptime_agent_unavailable'),
     '/api/application-agent/healthz': ('application_agent', 'application_agent', 'application_agent_unavailable'),
     '/api/database-agent/healthz': ('database_agent', 'database_agent', 'database_agent_unavailable'),
@@ -685,6 +688,7 @@ def create_application(bindings=None):
             bozly=getattr(bindings, 'bozly', None),
             fraud_rtsa=getattr(bindings, 'fraud_rtsa', None),
             operations_rtsa=getattr(bindings, 'operations_rtsa', None),
+            surn=getattr(bindings, 'surn', None),
             uptime_agent=getattr(bindings, 'uptime_agent', None),
             application_agent=getattr(bindings, 'application_agent', None),
             database_agent=getattr(bindings, 'database_agent', None),
@@ -1208,6 +1212,8 @@ def create_application(bindings=None):
                 or path.startswith('/api/fraud-rtsa/')
                 or path == '/api/operations-rtsa'
                 or path.startswith('/api/operations-rtsa/')
+                or path == '/api/surn'
+                or path.startswith('/api/surn/')
                 or path == '/api/uptime-agent'
                 or path.startswith('/api/uptime-agent/')
                 or path == '/api/application-agent'

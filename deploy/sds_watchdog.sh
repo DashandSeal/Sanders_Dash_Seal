@@ -72,6 +72,7 @@
 #   bozly                                  system  http://127.0.0.1:8000/api/bozly/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   fraud-rtsa                             system  http://127.0.0.1:8000/api/fraud-rtsa/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   operations-rtsa                        system  http://127.0.0.1:8000/api/operations-rtsa/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
+#   surn                                   system  http://127.0.0.1:8000/api/surn/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   uptime-agent                           system  http://127.0.0.1:8000/api/uptime-agent/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   application-agent                      system  http://127.0.0.1:8000/api/application-agent/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
 #   database-agent                         system  http://127.0.0.1:8000/api/database-agent/healthz (in-process surface of sanders-dash-seal.service, checked over loopback)
@@ -601,6 +602,7 @@ main() {
   check_http "bozly" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/bozly/healthz"
   check_http "fraud-rtsa" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/fraud-rtsa/healthz"
   check_http "operations-rtsa" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/operations-rtsa/healthz"
+  check_http "surn" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/surn/healthz"
   check_http "uptime-agent" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/uptime-agent/healthz"
   check_http "application-agent" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/application-agent/healthz"
   check_http "database-agent" "sanders-dash-seal.service" "system" "http://127.0.0.1:8000/api/database-agent/healthz"

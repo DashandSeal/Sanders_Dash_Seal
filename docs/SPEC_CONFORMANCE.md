@@ -5832,3 +5832,117 @@ recorded in the tranche 14 entry of the build queue.
 **Capability truth.** Declared inventory is now 26. Three founder-directed additions are declared in `core_platform/daedalus_l15_capabilities.py` with the founder's words in `CAPABILITY_SOURCES`: `labyrinth_shield_binding`, `minotaur_integrity_patrol`, `quantum_protection_protocols`. By live probe in `describe()`: those three are ACTIVE, and the previously declared `signed_executable_measurement` is ACTIVE (signed Minotaur measurements of Daedalus's executable modules, verified against current bytes; a forged digest is rejected). Eleven capabilities are now ACTIVE in total (the seven from the native-core and learning builds, plus these four). `shield_sss`, `shield_sssv3`, and `shield_gss` remain UNAVAILABLE: the founder's 2026-10-23 design record names SSS, SSSV3, and GSS as separately named owner-defined components to preserve, no implementation under those names exists in any examined record, and the Labyrinth Shield binding is not renamed into them. `fully_active` remains false.
 
 **Verification.** Local exercise only (never committed; recorded here as evidence, not as a delivery condition), against main at a4878b07 with this build's files — 26 of 26 checks passed: (a) Shield gating through the core's real operation face — `generate` with a clean objective returned its computed answer; `generate` with a payload carrying the Shield's rejection indicators ("DROP TABLE") raised `ShieldBlockedError` naming the Shield (`LABYRINTH-SHIELD-v1.0.0-LE35`); a teaching write carrying an indicator was likewise blocked and nothing was learned. (b) Patrol: baselines pinned over the patrol set, patrol reported `clean`, the Shield's patrolled file hash matched its own `compute_shield_hash()` self-audit, the ledger chain verified, and a patrol over a store holding one legitimate learned record also reported `clean` with the record's evidence hash valid. (c) Tamper: one byte flipped in a sandbox copy of `daedalus_native_core.py` — patrol reported `tamper_detected` naming `core_platform/daedalus_native_core.py` in `altered`, `require_intact()` raised `DaedalusTamperError` naming the file, and a core operating under that protection refused `generate` (fail closed); separately, a learned record altered directly in the store's SQLite file was detected by the content patrol, its record id named in `invalid`. (d) Signatures: WOTS+ sign/verify round-trip true; tampered message rejected; wrong Merkle root rejected; successive signatures consumed distinct one-time leaves (0, 1); the 32-leaf pool exhausted fail-closed (`ProtectionError` after exactly 32 signatures, no reuse). (e) Chain: three sealed/anchored records verified clean; after one ledger line's payload was altered, verification reported `valid: False, broken_at: 1, reason: record content altered (hash mismatch)`. (f) Prior proofs with the protection layer on: identical `generate` calls returned identical request ids and text; synthesis answered "The registry records 107 platforms. Cost tiers: free 105, free_first 1, paid 1."; the planning sample's dependency order held (`ai_doctor`, `sanders_senior_living`, `sanders_home_healthcare`); generated Bozly source executed (`{'platform': 'bozly', 'status': 'ok'}`); real-time learning still incorporated on the next call with provenance shown; the declaration surfaced the binding (shield platform `sanders_labyrinth_shield`, attached, shield id reported). Engine `describe()` observed the eleven ACTIVE states listed above with `fully_active` false. Board checker: before/after `check_all` comparison in both environments (approval flag absent / present) shows zero platforms changed in status or missing lists; Daedalus remains `MISSING_APPROVAL` without the flag and `LINKED` with it, and its `modules_compiled` rises 7 -> 8 with the protection module in its registry local modules. Existing repo tests were not run and not edited (repo rule 8); tests referencing the capability inventory count will not match the extended 26-capability declaration unchanged.
+
+## RTSA Build Program Q131 — SURN (2026-11-25)
+
+**Scope**: build the SURN role contract whole as its own
+platform service (canonical catalog row #37, Band 4 — the
+other platforms; founder order 2026-11-25: "The other 33
+platforms must be built too"; the verified count is 35 and
+SURN stands first in the band as its only class-(a)
+platform), per the established Band 2B tranche pattern,
+under the standards gate: Fortune 500 governs end to end,
+the MASTER architecture within it, and the Sanders Royal
+Enterprise Standard for presentation within it. Fortune 500
+judgment: the platform meets the standard within its honest
+scope limits — it is an internal operator/auditor record
+surface over governed emergency-preparedness assessment
+records; no public or customer surface exists for it by
+design, so the Royal Enterprise presentation layer does not
+apply, and no security internals are exposed anywhere.
+Scope limits stated plainly: the platform dispatches no
+responders, issues no alerts, contacts no agency, and
+monitors no live feed; subjects, recovery plans, and scopes
+are carried by reference only. SURN is distinct from
+Operations RTSA (Q35) and from Emergency Global
+Communication (catalog row #142, a domain-named platform
+with no design record, unbuilt) — the three are never
+merged. The corrected Grantwriter + SURN architecture
+record (core_platform/grantwriter_surn_architecture.py) is
+a design record: this build activates no event bus and no
+Grantwriter drafting or submission (the grantwriter_purpose
+approval gate remains UNAPPROVED), and SURN's external
+build on Hercules is a separate build, neither claimed nor
+merged by this one. The role contract in
+core_platform/rtsa_registry.py remains SPECIFIED and
+enabled: False, byte-untouched.
+
+**Built**: core_platform/surn_service.py (SurnService over
+core_platform/rtsa_foundation.py; independent identity
+surn; contract view of the SURN role contract; fail-closed
+operation check refusing the contract's prohibited
+operations by name — external_execution, credential_access,
+notarization, legal_filing, financial_transfer,
+production_deployment — and unknown operations;
+emergency-preparedness assessments carried as durable,
+receipted records over a subject reference, a recovery-plan
+reference where one exists, and a scope reference, with
+lifecycle REQUESTED → APPROVED / REJECTED (the recorded
+human decision the contract requires) →
+DETERMINATION_RECORDED; the designed emergency discipline
+enforced in the record model — an assessment presented
+with no recovery plan stands EMERGENCY_PLAN_MISSING in
+every view and in the status tallies and a DRILL_VERIFIED
+determination on it is refused, while an assessment with a
+recovery plan stands EMERGENCY_DRILL_REQUIRED;
+determinations recorded only for APPROVED records and only
+against a presented evidence reference, with a closed
+determination set — DRILL_VERIFIED / DRILL_DEFICIENT /
+INCONCLUSIVE; a determination is a record inside this
+platform, not a dispatch and not a declaration of any
+real-world emergency; every state change writes its
+Glass-Box receipt inside the same transaction;
+operator-only check-in bound to the identity integrity
+digest). Route family /api/surn/ wired through
+app/customer_app.py (create_customer_app parameter surn),
+deploy/deployment.py (RuntimeBindings.surn, health route
+/api/surn/healthz, forwarding through create_application,
+customer-API path family), and deploy/production_bindings.py
+(construction on its own store surn.db); watchdog
+check_http entry in deploy/sds_watchdog.sh; registry entry
+in core_platform/ai_platform_links.json (registry now 108).
+
+**Pricing/teaching audit** (examined set: canonical
+catalog row #37; Set B database_schema.sql +
+tier_pricing_global.py; Set C catalog; the MASTER; the SURN
+role contract; the corrected Grantwriter + SURN
+architecture record): the design carries NO price for
+SURN — none built, none invented, no blocker figure
+attaches to this name. NACI: the 2026-11-25 NACI mapping
+carries PROPOSED codes only for SURN (624230, 541512,
+518210, 517919, 541690, 922190) — proposed, not attested
+and not owner-ruled, so none are carried and none are
+invented. The design carries NO teaching function for
+SURN — none built, none invented.
+
+**Verification**: scratch drive (never committed) — 51/51
+checks: identity and contract view (canonical name SURN,
+slug surn, mission disaster and emergency intelligence,
+SPECIFIED, enabled: False); constructor refuses a missing
+audit adapter; operation check (record operation
+RECORD_ONLY; all six prohibited operations refused by
+name; unknown operation refused); assessment lifecycle
+(operator-only creation; subject/scope references required;
+determination refused before approval; DRILL_VERIFIED on a
+no-plan record refused with EMERGENCY_PLAN_MISSING in the
+detail; determination without evidence refused;
+determination set closed; a no-plan record stands
+EMERGENCY_PLAN_MISSING and a with-plan record stands
+EMERGENCY_DRILL_REQUIRED in every view; reject terminal;
+unknown record denied; geofence refuses an undeclared
+region); status tallies including records_plan_missing and
+records_drill_required; operator-only check-in; WSGI
+through create_customer_app (signed-out 401, status 200,
+contract 200, prohibited operation 400 surn_denied, create
+refused for non-operator 403 surn_forbidden, create 201
+with no plan standing EMERGENCY_PLAN_MISSING, approve 200,
+DRILL_VERIFIED on the no-plan record refused 400,
+determination 200, assessments list 200, assessment view
+200, unexpected fields 400, wrong origin 403, check-in
+201, unwired service 503 surn_unavailable); dispatcher
+healthz through create_application with no bindings
+answers the honest 503 surn_unavailable; board checker —
+surn LINKED with no missing items, the registry covers 108
+platforms, and a before/after check_all comparison shows
+the other 107 platforms' verdicts and missing lists
+identical to the pre-build registry (zero regressions).
