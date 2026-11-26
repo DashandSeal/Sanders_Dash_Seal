@@ -25,3 +25,11 @@ The objective is actual protection of human life, not the production of records 
 Operational readiness must be demonstrated through functioning connections and successful end-to-end testing.
 Global By Design.
 The Sanders Way!"
+
+## Founder clarification No. 2 — ESCALATION AND COORDINATION; TESTING SAFETY, 2026-11-26 02:50 MST, verbatim as given:
+
+"His internal human escalation path remains the Founder, followed by the Founder's bloodline CEO. This does not prevent direct coordination with emergency responders.
+No existing authority, responsibility, business model, or protective mission is diminished.
+The reported build changes still require independent verification. Testing must demonstrate real functionality without generating false emergency dispatches.
+The objective is actual protection of human life, not the production of records describing protection.
+Global By Design. The Sanders Way!"
