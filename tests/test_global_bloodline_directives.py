@@ -8,11 +8,15 @@ Protection Directive; they do not amend it. Funding
 approval is a recorded determination requiring BOTH
 Godfather's and Sanders Sentinel's determinations;
 Patriot Saint's matters read NOT FUNDED until both
-determinations are recorded against them; no platform
-disburses or holds funds; reserves are a register of
-designations and joint approvals. These tests use only
-stdlib fakes and temporary SQLite files: no network, no
-keys.
+determinations are recorded against them; Godfather
+and Sanders Sentinel disburse and hold no funds, and
+reserves are a register of designations and joint
+approvals. Under the Founder's Amendment to Article
+III (2026-11-26), Patriot Saint disburses for his
+assigned private duties against the recorded joint
+approval, through a governed disbursement record.
+These tests use only stdlib fakes and temporary
+SQLite files: no network, no keys.
 Run: python3 -m unittest tests.test_global_bloodline_directives -v
 (from the repo root).
 """
@@ -170,8 +174,10 @@ class TestRulingsOfRecord(unittest.TestCase):
                 module.GLOBAL_DIRECTIVES_INVARIANTS)
             self.assertIn('Global By Design', invariants)
             self.assertIn('bloodline exclusivity', invariants)
-            self.assertIn('No platform disburses or holds'
-                          ' funds', invariants)
+            self.assertIn('disburse and hold no funds',
+                          invariants)
+            self.assertIn('Patriot Saint alone disburses',
+                          invariants)
             self.assertEqual(module.DIRECTIVES_EFFECTIVE_DATE,
                              '2026-11-26')
 
@@ -433,8 +439,9 @@ class TestDisbursementRefusals(DirectivesTestBase):
         with self.assertRaises(SandersPatriotSaintDenied) as ctx:
             self.patriot.disburse_funds(
                 OPERATOR, matter['matter_id'])
-        self.assertIn('PATRIOT_SAINT_COORDINATION_ONLY',
-                      str(ctx.exception))
+        self.assertIn(
+            'PATRIOT_SAINT_DISBURSEMENT_GOVERNED_PATH_ONLY',
+            str(ctx.exception))
 
     def test_operation_checks_refuse_execution_by_name(self):
         with self.assertRaises(TheGodfatherDenied) as ctx:
@@ -461,6 +468,172 @@ class TestDisbursementRefusals(DirectivesTestBase):
             ['funds_held'])
         self.assertFalse(
             self.patriot.status()['bloodline_funds_disbursed'])
+
+
+class TestPatriotSaintDisbursement(DirectivesTestBase):
+    """The Founder's Amendment to Article III
+    (2026-11-26): Patriot Saint disburses for his
+    assigned private duties — only against the recorded
+    joint Godfather + Sanders Sentinel funding approval,
+    only through a governed disbursement record in the
+    segregated bloodline store."""
+
+    def _funded_matter(self, approve=True):
+        matter = self.patriot.open_bloodline_matter(
+            OPERATOR, 'BAIL_AND_BOND_ASSISTANCE',
+            'bloodline-member-ref-1', 'matter-detail-ref-1')
+        if approve:
+            self.patriot.bloodline_matter_action(
+                OPERATOR, matter['matter_id'], 'approve')
+        self.patriot.request_matter_funding(
+            OPERATOR, matter['matter_id'], 'funding-ref-1')
+        self.patriot.record_matter_funding_determination(
+            OPERATOR, matter['matter_id'], 'the_godfather',
+            'godfather-determination-ref')
+        self.patriot.record_matter_funding_determination(
+            OPERATOR, matter['matter_id'], 'sanders_sentinel',
+            'sentinel-determination-ref')
+        return matter['matter_id']
+
+    def test_amendment_carried_verbatim_with_supersession(self):
+        text = patriot.FOUNDER_AMENDMENT_ARTICLE_III_VERBATIM
+        self.assertIn('hereby amend Article III', text)
+        self.assertIn('the necessary controls have been'
+                      ' put in place', text)
+        self.assertIn('hereby superseded as it applies to'
+                      " Patriot Saint's assigned private"
+                      ' responsibilities', text)
+        self.assertIn('Godfather and Sanders Sentinel'
+                      ' shall retain their established'
+                      ' funding approval responsibilities',
+                      text)
+        view = SandersPatriotSaintService.amendment_design_view()
+        self.assertEqual(view['effective_date'], '2026-11-26')
+        self.assertFalse(view['payment_rail_attached'])
+        self.assertEqual(view['disbursement_discipline'],
+                         'PATRIOT_SAINT_PRIVATE_DUTY_DISBURSEMENT')
+        self.assertEqual(len(patriot.DISBURSEMENT_PURPOSES), 6)
+        design = SandersPatriotSaintService.bloodline_design_view()
+        self.assertIn('amendment', design)
+        directives = SandersPatriotSaintService.directives_design_view()
+        self.assertIn('amendment', directives)
+
+    def test_disbursement_executes_against_joint_approval(self):
+        matter_id = self._funded_matter()
+        record = self.patriot.execute_disbursement(
+            OPERATOR, matter_id, 'BAIL_AND_BOND_PAYMENTS',
+            'amount-ref-1', 'payee-ref-1')
+        self.assertTrue(record['funds_disbursed'])
+        self.assertTrue(record['receipt_id'].startswith('receipt-'))
+        self.assertFalse(record['payment_rail_attached'])
+        self.assertEqual(record['godfather_determination_ref'],
+                         'godfather-determination-ref')
+        self.assertEqual(record['sentinel_determination_ref'],
+                         'sentinel-determination-ref')
+        events = [name for name, _ in self.audit.events]
+        self.assertIn(
+            'SANDERS_PATRIOT_SAINT_BLOODLINE_DISBURSEMENT_EXECUTED',
+            events)
+        view = self.patriot.bloodline_matter_view(
+            OPERATOR, 'OPERATOR', matter_id)
+        self.assertTrue(view['funds_disbursed'])
+        self.assertTrue(view['funding']['funds_disbursed'])
+        status = self.patriot.status()
+        self.assertTrue(status['bloodline_funds_disbursed'])
+        self.assertEqual(status['bloodline_disbursements_total'], 1)
+        with sqlite3.connect(self.patriot._bloodline_path) as db:
+            row = db.execute(
+                'SELECT funds_disbursed FROM'
+                ' sanders_patriot_saint_bloodline_matters'
+                ' WHERE matter_id = ?', (matter_id,)).fetchone()
+        self.assertEqual(row[0], 1)
+        remit = self.patriot.bloodline_remit(OPERATOR, 'OPERATOR')
+        self.assertTrue(remit['funds_disbursed'])
+        self.assertEqual(remit['disbursements_total'], 1)
+        listed = self.patriot.bloodline_disbursements_list(
+            OPERATOR, 'OPERATOR')
+        self.assertEqual(len(listed), 1)
+        self.assertEqual(listed[0]['purpose'],
+                         'BAIL_AND_BOND_PAYMENTS')
+
+    def test_disbursement_refused_without_joint_approval(self):
+        matter = self.patriot.open_bloodline_matter(
+            OPERATOR, 'EMERGENCY_LEGAL_ASSISTANCE',
+            'member-ref', 'detail-ref')
+        self.patriot.bloodline_matter_action(
+            OPERATOR, matter['matter_id'], 'approve')
+        with self.assertRaises(SandersPatriotSaintDenied) as ctx:
+            self.patriot.execute_disbursement(
+                OPERATOR, matter['matter_id'],
+                'EMERGENCY_LEGAL_ASSISTANCE',
+                'amount-ref', 'payee-ref')
+        self.assertIn('REQUIRES_JOINT_APPROVAL',
+                      str(ctx.exception))
+        self.patriot.request_matter_funding(
+            OPERATOR, matter['matter_id'], 'funding-ref')
+        self.patriot.record_matter_funding_determination(
+            OPERATOR, matter['matter_id'], 'the_godfather',
+            'godfather-determination-ref')
+        # One determination alone never authorizes a
+        # disbursement.
+        with self.assertRaises(SandersPatriotSaintDenied) as ctx:
+            self.patriot.execute_disbursement(
+                OPERATOR, matter['matter_id'],
+                'EMERGENCY_LEGAL_ASSISTANCE',
+                'amount-ref', 'payee-ref')
+        self.assertIn('REQUIRES_JOINT_APPROVAL',
+                      str(ctx.exception))
+
+    def test_disbursement_refused_outside_private_duties(self):
+        matter_id = self._funded_matter()
+        with self.assertRaises(SandersPatriotSaintDenied) as ctx:
+            self.patriot.execute_disbursement(
+                OPERATOR, matter_id,
+                'COMMERCIAL_VENDOR_PAYMENT',
+                'amount-ref', 'payee-ref')
+        self.assertIn('PRIVATE_DUTIES_ONLY', str(ctx.exception))
+        view = self.patriot.bloodline_matter_view(
+            OPERATOR, 'OPERATOR', matter_id)
+        self.assertFalse(view['funds_disbursed'])
+
+    def test_disbursement_refused_before_matter_approval(self):
+        matter_id = self._funded_matter(approve=False)
+        with self.assertRaises(SandersPatriotSaintDenied):
+            self.patriot.execute_disbursement(
+                OPERATOR, matter_id, 'BAIL_AND_BOND_PAYMENTS',
+                'amount-ref', 'payee-ref')
+
+    def test_disbursement_records_segregated(self):
+        matter_id = self._funded_matter()
+        self.patriot.execute_disbursement(
+            OPERATOR, matter_id,
+            'ATTORNEY_FEES_AND_LEGAL_REPRESENTATION',
+            'amount-ref', 'payee-ref')
+        with sqlite3.connect(self.patriot._path) as db:
+            commercial = {row[0] for row in db.execute(
+                "SELECT name FROM sqlite_master"
+                " WHERE type='table'")}
+        with sqlite3.connect(self.patriot._bloodline_path) as db:
+            bloodline = {row[0] for row in db.execute(
+                "SELECT name FROM sqlite_master"
+                " WHERE type='table'")}
+        self.assertNotIn(
+            'sanders_patriot_saint_bloodline_disbursements',
+            commercial)
+        self.assertIn(
+            'sanders_patriot_saint_bloodline_disbursements',
+            bloodline)
+        # The governed operation is a carried operation;
+        # the ungoverned ones stay refused by name.
+        self.patriot.operation_check(
+            OPERATOR, 'OPERATOR', 'execute_bloodline_disbursement')
+        with self.assertRaises(SandersPatriotSaintDenied):
+            self.patriot.operation_check(
+                OPERATOR, 'OPERATOR', 'disburse_funds')
+        # The commercial side carries no disbursement:
+        # its records are untouched by the execution.
+        self.assertEqual(
+            self.patriot.records_list(OPERATOR, 'OPERATOR'), [])
 
 
 class TestSegregation(DirectivesTestBase):
