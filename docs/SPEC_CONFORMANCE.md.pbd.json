@@ -3,8 +3,13 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "docs/SPEC_CONFORMANCE.md",
-        "payload_hash": "72611197c9491bfeaee10adeac48440b78cc9ff57114c79da7e7df987509be3b",
-        "scope": "source-manifest"
+        "payload_hash": "8b8ec7b9c7d6194b3f74e45caac0b26fca3dc1e77a02e84be7e04843e33d9a51",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
     },
     "signatures": {},
     "status": "UNSIGNED_SOURCE_MANIFEST"
