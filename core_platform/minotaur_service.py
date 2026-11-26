@@ -1106,6 +1106,9 @@ COMPLETENESS_ACCOUNTING = (
 # silently skipped; no standing is overstated. The
 # internal attack-simulation suites are the
 # continuous proof mechanism.
+FOUNDER_NASA_DECLARATION_VERBATIM = (
+    'They are now the most secure on the market and'
+    " that's about become NASA standards")
 FOUNDER_BENCHMARK_DIRECTIVE_VERBATIM = (
     "We've got to ensure that they are")
 BENCHMARK_STANDINGS = (
@@ -1251,6 +1254,102 @@ BENCHMARK_CONTROLS = (
     {'set': 'RUNTIME_DISCIPLINE', 'control': 'STDLIB_CVE_AND_PARSER_SURFACE_DISCIPLINE',
      'standing': 'RECORDED_WITH_REASON',
      'basis': 'no untrusted archive extraction exists in these platforms; presented payloads are bounded governed records, which blunts the parser-DoS class; the interpreter patch level stands as a host record — the discipline is of record, not exercised by these suites'},
+    # FEDERAL / NASA TIER (founder declaration and
+    # direction, 2026-11-26 11:46 MST): the NIST SP
+    # 800-53 controls at the federal baseline level
+    # NASA operates under (FISMA; baselines per SP
+    # 800-53B — the moderate baseline is the
+    # reference frame for most operational systems),
+    # FIPS 140-3 validated cryptography carried as a
+    # HARD REQUIREMENT line, and the NIST IR 8547
+    # post-quantum migration timeline as the
+    # crypto-agility reference. The founder's
+    # declaration stands as his stated standard in
+    # the guarded record; standing here is verified
+    # control-by-control, never declared beyond its
+    # evidence.
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'BASELINE_FRAME_FIPS_199_AND_SP_800_53B',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the tier\u2019s reference frame is of record: FISMA categorization per FIPS 199 with controls selected from the SP 800-53B baselines, the moderate baseline as the frame NASA applies to most operational systems; formal categorization of these platforms is the founder\u2019s organizational act, not a function these suites exercise'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'AC_2_ACCOUNT_MANAGEMENT',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'one operator account of record (RooseveltSanders) with its setup route closed; account lifecycle administration is the founder\u2019s, of record — the platforms hold no account store of their own'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'AC_3_ACCESS_ENFORCEMENT',
+     'standing': 'FUNCTIONING',
+     'basis': 'access is enforced by each platform\u2019s guard before any record is read or written — exercised across the suites, including the application gate answering 401 before dispatch'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'AC_6_LEAST_PRIVILEGE',
+     'standing': 'FUNCTIONING',
+     'basis': 'role scopes are minimal and fixed per platform; guarded reads cannot write; state-changing acts are operator-only — exercised'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'AC_7_UNSUCCESSFUL_LOGON_ATTEMPTS',
+     'standing': 'FUNCTIONING',
+     'basis': 'this baseline control is the lockout itself: failed verifications bucket per actor and lock out at the threshold until the window clears — exercised by simulation in the Minotaur and in every shield'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'AC_11_AC_12_SESSION_LOCK_AND_TERMINATION',
+     'standing': 'NOT_APPLICABLE_WITH_REASON',
+     'basis': 'no session stands in these platforms to lock or terminate — authority is verified at the moment of every act, which is the stronger form this control family aims at'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'AU_2_AU_3_AUDIT_EVENTS_AND_RECORD_CONTENT',
+     'standing': 'FUNCTIONING',
+     'basis': 'every state change writes its Glass-Box receipt — actor, action, record, outcome — in the same transaction as the act — exercised'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'AU_6_AUDIT_REVIEW_ANALYSIS_AND_REPORTING',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'audit and anomaly records surface on the operator\u2019s boards for review; the review itself is the operator\u2019s act of record, not an automated function'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'AU_9_PROTECTION_OF_AUDIT_INFORMATION',
+     'standing': 'FUNCTIONING',
+     'basis': 'the tier carries the AU-9 line at the federal baseline: receipts plus patrol alerting on alteration — exercised by tamper simulation (also mapped in the SP 800-53 set above)'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'CA_2_CONTROL_ASSESSMENTS',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the internal attack-simulation suites and the continuous patrol are the standing internal assessment mechanism of record; no external assessor engagement stands, and none is represented'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'CM_2_BASELINE_CONFIGURATION',
+     'standing': 'FUNCTIONING',
+     'basis': 'known-good baselines are pinned from the artifacts of record at build/deploy time, never by trusting a live scan; drift against the baseline is an anomaly — exercised'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'CM_6_CONFIGURATION_SETTINGS',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the edge posture checklist stands of record in the Labyrinth Shield\u2019s posture view; host configuration settings are verified by presented evidence, outside these platforms\u2019 machinery'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'CM_7_LEAST_FUNCTIONALITY',
+     'standing': 'FUNCTIONING',
+     'basis': 'prohibited operations are refused by name in every platform contract; Sovereign Shield V3 exposes no public surface at all — exercised via the operation checks'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'CP_9_SYSTEM_BACKUP',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the code of record stands off-host in the repository of record; platform data stores are host-local, and their backup cadence is a host operations record — named here so the tier does not silently pass over it'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'IA_2_IDENTIFICATION_AND_AUTHENTICATION',
+     'standing': 'FUNCTIONING',
+     'basis': 'the operator is identified and authenticated at the moment of every state-changing act in these platforms — exercised'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'IA_5_AUTHENTICATOR_MANAGEMENT',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'authenticator custody is the founder\u2019s alone; these platforms store no operator secrets — verification is delegated to the operator verifier of record and secrets never enter the records'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'IR_4_INCIDENT_HANDLING',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the anomaly lifecycle (DETECTED \u2192 ACKNOWLEDGED / ESCALATED \u2192 CLEARED) is the handling record in the Minotaur\u2019s machinery; organizational incident reporting duties stand at the founder\u2019s layer'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'RA_5_VULNERABILITY_MONITORING_AND_SCANNING',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the runtime discipline entry above carries the stdlib CVE posture of record; dedicated scanning tooling is outside the native build and is not represented as present'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'SC_8_TRANSMISSION_CONFIDENTIALITY_AND_INTEGRITY',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'transmission protection is the host TLS layer, carried in the posture checklist of record at the edge entries above; these platforms add no plaintext channel of their own'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'SC_12_CRYPTOGRAPHIC_KEY_ESTABLISHMENT_AND_MANAGEMENT',
+     'standing': 'ENVIRONMENT_LIMITED',
+     'basis': 'key establishment at the validated standard (ML-KEM via the adopted route) cannot run in the current runtime environment — the environment check of record reaches no PQC algorithm; the native signing seed is derived deterministically and held in the patrol store, never in records',
+     'limit': 'standards-based post-quantum key establishment is not available to these platforms in the current environment',
+     'founder_decision': 'the founder\u2019s direction to provision the validated module in approved mode on the production host (and record the production environment check), or to designate another runtime that reaches it — the same decision that lifts the FIPS requirement line below'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'SC_13_CRYPTOGRAPHIC_PROTECTION_FIPS_VALIDATED',
+     'standing': 'ENVIRONMENT_LIMITED',
+     'basis': 'THE HARD REQUIREMENT LINE of this tier: cryptographic protection must be FIPS 140-3 validated (the adopted route: OpenSSL FIPS Provider 3.5.9, certificate #5586). It is satisfied only to the extent the environment check proves the validated module — and the check of record proves the runtime reaches no FIPS provider today, so the requirement stands UNMET in the current environment and is recorded as such, not papered over; the native hash-based construction stands beneath it',
+     'limit': 'no FIPS-validated cryptographic module is operating in the current runtime environment',
+     'founder_decision': 'the founder\u2019s direction to provision OpenSSL FIPS Provider 3.5.9 in approved mode on the production host and to record the production environment check — on that evidence, and only on it, this line\u2019s standing rises'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'SC_28_PROTECTION_OF_INFORMATION_AT_REST',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'platform stores are local databases under the host\u2019s filesystem protections; encryption at rest is a host property, of record — the platforms add no unprotected copy of anything'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'SI_2_FLAW_REMEDIATION',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the deploy pipeline rebuilds from the main branch of record on every landing, so remediated code reaches production by construction; the interpreter patch level stands as a host record'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'SI_4_SYSTEM_MONITORING',
+     'standing': 'FUNCTIONING',
+     'basis': 'the simultaneous patrol, posture views, and anomaly surfacing are continuous monitoring in these platforms\u2019 own machinery — exercised'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'SI_7_SOFTWARE_FIRMWARE_AND_INFORMATION_INTEGRITY',
+     'standing': 'FUNCTIONING',
+     'basis': 'the tier carries the SI-7 line at the federal baseline: file-integrity patrol over known-good baselines with authorized re-baseline only — exercised, including the tamper simulation (also mapped in the SP 800-53 set above)'},
+    {'set': 'FEDERAL_NASA_TIER', 'control': 'NIST_IR_8547_POST_QUANTUM_MIGRATION_TIMELINE',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the tier\u2019s crypto-agility reference, of record: quantum-vulnerable public-key algorithms are deprecated after 2030 and disallowed after 2035; the Ed25519 clock (Bozly receipts, platform credentials) stands recorded as a design intention only — no migration in this build, Bozly untouched'},
 )
 
 
@@ -3227,6 +3326,21 @@ class MinotaurService:
             'proof_mechanism': (
                 'the internal attack-simulation suites '
                 'and the Minotaur\'s continuous patrol'),
+            'federal_nasa_tier': {
+                'declaration_verbatim':
+                    FOUNDER_NASA_DECLARATION_VERBATIM,
+                'total': sum(
+                    1 for e in entries
+                    if e['set'] == 'FEDERAL_NASA_TIER'),
+                'standings': {
+                    s: sum(1 for e in entries
+                           if e['set'] == 'FEDERAL_NASA_TIER'
+                           and e['standing'] == s)
+                    for s in BENCHMARK_STANDINGS},
+                'hard_requirement': (
+                    'SC_13_CRYPTOGRAPHIC_PROTECTION_'
+                    'FIPS_VALIDATED'),
+            },
             'part': 'GLOBAL_BENCHMARK_MAPPING',
             'ladder_state': 'CONSTRUCTED',
         }
