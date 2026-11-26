@@ -547,6 +547,10 @@ SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_ACTIVATION_ROUTE = re.compile(r'^/api/
 SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_COORDINATION_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/emergency-cases/([A-Za-z0-9_-]{1,128})/responder-coordination$')
 SANDERS_SENTINEL_BLOODLINE_PERCEPTION_CHANNEL_FAILURE_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/perception-channels/([A-Za-z0-9_-]{1,128})/failure$')
 SANDERS_SENTINEL_BLOODLINE_READINESS_CONNECTION_DISCONNECT_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/readiness-connections/([A-Za-z0-9_-]{1,128})/disconnect$')
+SANDERS_SENTINEL_BLOODLINE_SPEECH_DELIVERY_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/speech-records/([A-Za-z0-9_-]{1,128})/delivery$')
+SANDERS_SENTINEL_BLOODLINE_VOICE_CONVERSATION_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/voice-conversations/([A-Za-z0-9_-]{1,128})$')
+SANDERS_SENTINEL_BLOODLINE_VOICE_CONVERSATION_TURNS_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/voice-conversations/([A-Za-z0-9_-]{1,128})/turns$')
+SANDERS_SENTINEL_BLOODLINE_VOICE_CONVERSATION_CLOSE_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/voice-conversations/([A-Za-z0-9_-]{1,128})/close$')
 LIL_MAMA_RECORD_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})$')
 LIL_MAMA_RECORD_ACTION_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/action$')
 LIL_MAMA_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -938,6 +942,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         sentinel_bloodline_emergency_case_coordination_match = SANDERS_SENTINEL_BLOODLINE_EMERGENCY_CASE_COORDINATION_ROUTE.fullmatch(path)
         sentinel_bloodline_perception_channel_failure_match = SANDERS_SENTINEL_BLOODLINE_PERCEPTION_CHANNEL_FAILURE_ROUTE.fullmatch(path)
         sentinel_bloodline_readiness_connection_disconnect_match = SANDERS_SENTINEL_BLOODLINE_READINESS_CONNECTION_DISCONNECT_ROUTE.fullmatch(path)
+        sentinel_bloodline_speech_delivery_match = SANDERS_SENTINEL_BLOODLINE_SPEECH_DELIVERY_ROUTE.fullmatch(path)
+        sentinel_bloodline_voice_conversation_match = SANDERS_SENTINEL_BLOODLINE_VOICE_CONVERSATION_ROUTE.fullmatch(path)
+        sentinel_bloodline_voice_conversation_turns_match = SANDERS_SENTINEL_BLOODLINE_VOICE_CONVERSATION_TURNS_ROUTE.fullmatch(path)
+        sentinel_bloodline_voice_conversation_close_match = SANDERS_SENTINEL_BLOODLINE_VOICE_CONVERSATION_CLOSE_ROUTE.fullmatch(path)
         lil_mama_record_match = LIL_MAMA_RECORD_ROUTE.fullmatch(path)
         lil_mama_record_action_match = LIL_MAMA_RECORD_ACTION_ROUTE.fullmatch(path)
         lil_mama_record_outcome_match = LIL_MAMA_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -1495,6 +1503,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                       '/api/sanders-sentinel/bloodline/visibility-events',
                                       '/api/sanders-sentinel/bloodline/recovery-attempts',
                                       '/api/sanders-sentinel/bloodline/operational-tests',
+                                      '/api/sanders-sentinel/bloodline/speech-records',
+                                      '/api/sanders-sentinel/bloodline/voice-conversations',
                                       '/api/sanders-sentinel/bloodline/fulfillment',
                                       '/api/sanders-sentinel/bloodline/fulfillment/verify',
                                       '/api/sanders-sentinel/check-in')
@@ -1518,7 +1528,11 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or sentinel_bloodline_emergency_case_activation_match is not None
                                   or sentinel_bloodline_emergency_case_coordination_match is not None
                                   or sentinel_bloodline_perception_channel_failure_match is not None
-                                  or sentinel_bloodline_readiness_connection_disconnect_match is not None)
+                                  or sentinel_bloodline_readiness_connection_disconnect_match is not None
+                                  or sentinel_bloodline_speech_delivery_match is not None
+                                  or sentinel_bloodline_voice_conversation_match is not None
+                                  or sentinel_bloodline_voice_conversation_turns_match is not None
+                                  or sentinel_bloodline_voice_conversation_close_match is not None)
         is_lil_mama_route = (path in ('/api/lil-mama/status',
                                       '/api/lil-mama/records',
                                       '/api/lil-mama/design',
@@ -4551,6 +4565,38 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = sanders_sentinel.record_emergency_protective_action(identity, data['action_ref'], data['detail_ref'], data['authority_ref'], data['escalation_ref'])
                         return respond(start, '201 Created', {'emergency_action': record})
+                    if path == '/api/sanders-sentinel/bloodline/speech-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'speech_records': sanders_sentinel.speech_records(identity, sentinel_role)})
+                        if set(data) != {'subject_kind', 'subject_ref', 'spoken_text', 'native_path'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_speech(identity, data['subject_kind'], data['subject_ref'], data['spoken_text'], data['native_path'])
+                        return respond(start, '201 Created', {'speech_record': record})
+                    if sentinel_bloodline_speech_delivery_match:
+                        if set(data) != {'delivery_confirmation_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.confirm_speech_delivery(identity, sentinel_bloodline_speech_delivery_match.group(1), data['delivery_confirmation_ref'])
+                        return respond(start, '200 OK', {'speech_record': record})
+                    if path == '/api/sanders-sentinel/bloodline/voice-conversations':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'voice_conversations': sanders_sentinel.voice_conversations(identity, sentinel_role)})
+                        if set(data) != {'subject_kind', 'subject_ref', 'language', 'native_path'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.open_voice_conversation(identity, data['subject_kind'], data['subject_ref'], data['language'], data['native_path'])
+                        return respond(start, '201 Created', {'voice_conversation': record})
+                    if sentinel_bloodline_voice_conversation_turns_match:
+                        if set(data) != {'direction', 'spoken_text'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_voice_turn(identity, sentinel_bloodline_voice_conversation_turns_match.group(1), data['direction'], data['spoken_text'])
+                        return respond(start, '201 Created', {'voice_turn': record})
+                    if sentinel_bloodline_voice_conversation_close_match:
+                        if set(data) != {'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.close_voice_conversation(identity, sentinel_bloodline_voice_conversation_close_match.group(1), data['detail_ref'])
+                        return respond(start, '200 OK', {'voice_conversation': record})
+                    if sentinel_bloodline_voice_conversation_match:
+                        record = sanders_sentinel.voice_conversation_view(identity, sentinel_role, sentinel_bloodline_voice_conversation_match.group(1))
+                        return respond(start, '200 OK', {'voice_conversation': record})
                     if path == '/api/sanders-sentinel/bloodline/readiness':
                         if method != 'GET':
                             return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
