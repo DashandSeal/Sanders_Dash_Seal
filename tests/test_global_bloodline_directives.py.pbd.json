@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "tests/test_global_bloodline_directives.py",
+        "payload_hash": "5308b592d401ff72bfe3f025d6add539477787dbf1f45757cda43a59a3c83bda",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
