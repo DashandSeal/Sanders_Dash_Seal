@@ -3,9 +3,14 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_the_godfather_human_survival.py",
-        "payload_hash": "f00ed7e6a27c7ba5b5f472c6b60772f3a896b6221f63b41ac8194cbdcdf1f51e",
-        "scope": "source-manifest",
-        "signatures": {},
-        "status": "UNSIGNED_SOURCE_MANIFEST"
-    }
+        "payload_hash": "385f5938a9be03759954482bc4afc5e4c533281c92fe2a1b5592f861ea2b28ad",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
 }
