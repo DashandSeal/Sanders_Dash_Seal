@@ -554,6 +554,7 @@ SANDERS_SENTINEL_BLOODLINE_VOICE_CONVERSATION_CLOSE_ROUTE = re.compile(r'^/api/s
 SANDERS_SENTINEL_BLOODLINE_PROGRAM_DESIGNATION_END_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/program-designations/([A-Za-z0-9_-]{1,128})/end$')
 SANDERS_SENTINEL_BLOODLINE_FAMILY_NOTIFICATION_DELIVERY_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/family-notifications/([A-Za-z0-9_-]{1,128})/delivery$')
 SANDERS_SENTINEL_BLOODLINE_RECOVERY_ASSISTANCE_COMPLETE_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/recovery-assistance/([A-Za-z0-9_-]{1,128})/complete$')
+SANDERS_SENTINEL_BLOODLINE_HLP_DESIGNATION_END_ROUTE = re.compile(r'^/api/sanders-sentinel/bloodline/hlp-designations/([A-Za-z0-9_-]{1,128})/end$')
 LIL_MAMA_RECORD_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})$')
 LIL_MAMA_RECORD_ACTION_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/action$')
 LIL_MAMA_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/lil-mama/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -952,6 +953,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         sentinel_bloodline_program_designation_end_match = SANDERS_SENTINEL_BLOODLINE_PROGRAM_DESIGNATION_END_ROUTE.fullmatch(path)
         sentinel_bloodline_family_notification_delivery_match = SANDERS_SENTINEL_BLOODLINE_FAMILY_NOTIFICATION_DELIVERY_ROUTE.fullmatch(path)
         sentinel_bloodline_recovery_assistance_complete_match = SANDERS_SENTINEL_BLOODLINE_RECOVERY_ASSISTANCE_COMPLETE_ROUTE.fullmatch(path)
+        sentinel_bloodline_hlp_designation_end_match = SANDERS_SENTINEL_BLOODLINE_HLP_DESIGNATION_END_ROUTE.fullmatch(path)
         lil_mama_record_match = LIL_MAMA_RECORD_ROUTE.fullmatch(path)
         lil_mama_record_action_match = LIL_MAMA_RECORD_ACTION_ROUTE.fullmatch(path)
         lil_mama_record_outcome_match = LIL_MAMA_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -1515,6 +1517,13 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                       '/api/sanders-sentinel/bloodline/assistance-coordination',
                                       '/api/sanders-sentinel/bloodline/family-notifications',
                                       '/api/sanders-sentinel/bloodline/recovery-assistance',
+                                      '/api/sanders-sentinel/bloodline/human-life-protection',
+                                      '/api/sanders-sentinel/bloodline/hlp-designations',
+                                      '/api/sanders-sentinel/bloodline/hlp-tests',
+                                      '/api/sanders-sentinel/bloodline/threat-records',
+                                      '/api/sanders-sentinel/bloodline/prevention-records',
+                                      '/api/sanders-sentinel/bloodline/handover-records',
+                                      '/api/sanders-sentinel/bloodline/telephony-components',
                                       '/api/sanders-sentinel/bloodline/speech-records',
                                       '/api/sanders-sentinel/bloodline/voice-conversations',
                                       '/api/sanders-sentinel/bloodline/fulfillment',
@@ -1547,7 +1556,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or sentinel_bloodline_voice_conversation_close_match is not None
                                   or sentinel_bloodline_program_designation_end_match is not None
                                   or sentinel_bloodline_family_notification_delivery_match is not None
-                                  or sentinel_bloodline_recovery_assistance_complete_match is not None)
+                                  or sentinel_bloodline_recovery_assistance_complete_match is not None
+                                  or sentinel_bloodline_hlp_designation_end_match is not None)
         is_lil_mama_route = (path in ('/api/lil-mama/status',
                                       '/api/lil-mama/records',
                                       '/api/lil-mama/design',
@@ -2637,6 +2647,20 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/sanders-sentinel/bloodline/family-notifications':
             allowed = ('GET', 'POST')
         if path == '/api/sanders-sentinel/bloodline/recovery-assistance':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/human-life-protection':
+            allowed = ('GET',)
+        if path == '/api/sanders-sentinel/bloodline/hlp-designations':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/hlp-tests':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/threat-records':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/prevention-records':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/handover-records':
+            allowed = ('GET', 'POST')
+        if path == '/api/sanders-sentinel/bloodline/telephony-components':
             allowed = ('GET', 'POST')
         if path == '/api/lil-mama/records':
             allowed = ('GET', 'POST')
@@ -4723,6 +4747,57 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = sanders_sentinel.complete_recovery_assistance(identity, sentinel_bloodline_recovery_assistance_complete_match.group(1), data['detail_ref'])
                         return respond(start, '200 OK', {'recovery_assistance': record})
+                    if path == '/api/sanders-sentinel/bloodline/human-life-protection':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'human_life_protection': sanders_sentinel.human_life_protection_view(identity, sentinel_role)})
+                    if path == '/api/sanders-sentinel/bloodline/hlp-designations':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'hlp_designations': sanders_sentinel.hlp_designations(identity, sentinel_role)})
+                        if set(data) != {'part_key', 'designation_ref', 'kind', 'authorization_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_hlp_designation(identity, data['part_key'], data['designation_ref'], data['kind'], data['authorization_ref'])
+                        return respond(start, '201 Created', {'hlp_designation': record})
+                    if sentinel_bloodline_hlp_designation_end_match:
+                        if set(data) != {'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.end_hlp_designation(identity, sentinel_bloodline_hlp_designation_end_match.group(1), data['detail_ref'])
+                        return respond(start, '200 OK', {'hlp_designation': record})
+                    if path == '/api/sanders-sentinel/bloodline/hlp-tests':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'hlp_tests': sanders_sentinel.hlp_tests(identity, sentinel_role)})
+                        if set(data) != {'part_key', 'stages', 'outcome', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_hlp_test(identity, data['part_key'], data['stages'], data['outcome'], data['detail_ref'])
+                        return respond(start, '201 Created', {'hlp_test': record})
+                    if path == '/api/sanders-sentinel/bloodline/threat-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'threat_records': sanders_sentinel.threat_records(identity, sentinel_role)})
+                        if set(data) != {'category', 'subject_ref', 'evidence_ref', 'detail_ref', 'case_id', 'coordination_kind', 'counterpart_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_threat_record(identity, data['category'], data['subject_ref'], data['evidence_ref'], data['detail_ref'], data['case_id'], data['coordination_kind'], data['counterpart_ref'])
+                        return respond(start, '201 Created', {'threat_record': record})
+                    if path == '/api/sanders-sentinel/bloodline/prevention-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'prevention_records': sanders_sentinel.prevention_records(identity, sentinel_role)})
+                        if set(data) != {'anticipation_kind', 'subject_ref', 'detail_ref', 'evidence_ref', 'linked_machinery_kind', 'linked_record_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_prevention_record(identity, data['anticipation_kind'], data['subject_ref'], data['detail_ref'], data['evidence_ref'], data['linked_machinery_kind'], data['linked_record_ref'])
+                        return respond(start, '201 Created', {'prevention_record': record})
+                    if path == '/api/sanders-sentinel/bloodline/handover-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'handover_records': sanders_sentinel.handover_records(identity, sentinel_role)})
+                        if set(data) != {'case_id', 'coordination_id', 'jurisdiction_ref', 'detail_ref', 'conditions_allergies_ref', 'medications_ref', 'equipment_ref', 'observations_onset_ref', 'measurements_ref', 'assistance_ref', 'accessibility_ref', 'directives_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_handover_record(identity, data['case_id'], data['coordination_id'], data['jurisdiction_ref'], data['detail_ref'], data['conditions_allergies_ref'], data['medications_ref'], data['equipment_ref'], data['observations_onset_ref'], data['measurements_ref'], data['assistance_ref'], data['accessibility_ref'], data['directives_ref'])
+                        return respond(start, '201 Created', {'handover_record': record})
+                    if path == '/api/sanders-sentinel/bloodline/telephony-components':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'telephony_components': sanders_sentinel.telephony_components(identity, sentinel_role)})
+                        if set(data) != {'component', 'component_ref', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = sanders_sentinel.record_telephony_component(identity, data['component'], data['component_ref'], data['detail_ref'])
+                        return respond(start, '201 Created', {'telephony_component': record})
                     if path == '/api/sanders-sentinel/bloodline/perception-channels':
                         if method == 'GET':
                             return respond(start, '200 OK', {'perception_channels': sanders_sentinel.perception_channels(identity, sentinel_role)})
