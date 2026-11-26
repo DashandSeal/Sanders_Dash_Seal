@@ -340,6 +340,57 @@ class _RealtimeSynthesizerAdapter:
         return self._speaker.speak(text).audio
 
 
+def _daedalus_platform_status() -> dict:
+    """Daedalus's actual platform state, probed live in this process.
+
+    The probe mirrors the platform board's native-core checker
+    (``core_platform.ai_platform_links._check_daedalus``): import the
+    native reasoning core, construct it over the live registry, and
+    require a deterministic synthesis. The capability posture is the
+    engine's observed profile — the same report
+    ``/api/daedalus/describe`` serves. A failure is reported, never
+    hidden: ``live`` stays False and the error is named.
+    """
+    status: dict = {"reasoning_core": "daedalus_native_core", "live": False}
+    try:
+        from .daedalus_native_core import DaedalusNativeCore
+
+        core = DaedalusNativeCore()
+        declaration = core.declaration()
+        first = core.synthesize("How many platforms are in the registry?")
+        second = core.synthesize("How many platforms are in the registry?")
+        deterministic = bool(first.strip() and first == second)
+        status.update({
+            "core": declaration.get("core"),
+            "logic_level": declaration.get("logic_level"),
+            "head_capability": declaration.get("head_capability"),
+            "deterministic": deterministic,
+            "registry_platforms": declaration.get("registry_platforms"),
+            "external_network_calls": declaration.get("external_network_calls"),
+            "provider_keys_required": declaration.get("provider_keys_required"),
+            "learning_capability": declaration.get("learning_capability"),
+            "live": deterministic,
+        })
+    except Exception as exc:  # a status surface reports; it never raises
+        status["error"] = f"{type(exc).__name__}: {exc}"
+        return status
+    try:
+        from .daedalus_engine import describe
+
+        report = describe()
+        capabilities = report.get("capabilities", {}).get("capabilities", {})
+        status["capabilities_declared"] = len(capabilities)
+        status["capabilities_active"] = sum(
+            1 for state in capabilities.values() if state == "active")
+        status["capabilities_active_names"] = sorted(
+            name for name, state in capabilities.items() if state == "active")
+        status["fully_active"] = bool(report.get("fully_active"))
+    except Exception as exc:  # a status surface reports; it never raises
+        status["capabilities_error"] = f"{type(exc).__name__}: {exc}"
+    status["full_report"] = "/api/daedalus/describe"
+    return status
+
+
 def create_daedalus_voice_app(
     runtime=None,
     transcriber: Transcriber | None = None,
@@ -355,6 +406,14 @@ def create_daedalus_voice_app(
     component answers 503 with a named ``error`` code. This app does
     not include the plain ``/api/voice/transcribe`` and ``/api/voice/speak``
     routes — compose it with :func:`create_voice_app` if both are needed.
+
+    ``GET /api/voice/daedalus/status`` reports two different things,
+    kept in separate sections: the Daedalus platform's actual state
+    (his native reasoning core, probed live — see
+    :func:`_daedalus_platform_status`) and this voice-turn pipeline's
+    components. A spoken turn is a voice_audio_video platform
+    function, not a Daedalus capability, and the pipeline fields say
+    nothing about whether Daedalus himself is live.
     """
     from .daedalus_voice import voice_generate_source
 
@@ -363,7 +422,9 @@ def create_daedalus_voice_app(
         path = env.get("PATH_INFO", "")
 
         if path == "/api/voice/daedalus/status" and method in ("GET", "HEAD"):
-            payload = {
+            voice_turn = {
+                "belongs_to_platform": "voice_audio_video",
+                "daedalus_capability": False,
                 "runtime": "daedalus" if runtime is not None else None,
                 "transcriber": transcriber.name if transcriber else None,
                 "synthesizer": synthesizer.name if synthesizer else None,
@@ -371,10 +432,30 @@ def create_daedalus_voice_app(
                 "live_turn_possible": bool(
                     runtime is not None and transcriber is not None and synthesizer is not None
                 ),
+            }
+            payload = {
+                "platform": "daedalus",
+                "daedalus": _daedalus_platform_status(),
+                "voice_turn": voice_turn,
+                # Legacy top-level fields, kept with their original
+                # meaning for existing consumers: they describe the
+                # voice-turn pipeline above, not the Daedalus platform.
+                "runtime": voice_turn["runtime"],
+                "transcriber": voice_turn["transcriber"],
+                "synthesizer": voice_turn["synthesizer"],
+                "synthesizer_audio_format": voice_turn["synthesizer_audio_format"],
+                "live_turn_possible": voice_turn["live_turn_possible"],
                 "notes": (
-                    "Turns run transcribe -> Daedalus generate_source -> speak. "
-                    "UnifiedDaedalusEngine.execute() is not used: it returns only "
-                    "a source hash, with no reply text to speak."
+                    "Daedalus's reasoning is served by his native "
+                    "deterministic core; the daedalus section above is "
+                    "probed live in this process, and the full observed "
+                    "report is at /api/daedalus/describe. A spoken voice "
+                    "turn is a voice_audio_video platform function, not "
+                    "a Daedalus capability: the voice_turn section "
+                    "reports that pipeline's components. Its legacy "
+                    "turn runtime is not wired in this deployment, so "
+                    "POST /api/voice/turn answers 503 "
+                    "daedalus_runtime_not_configured."
                 ),
             }
             if method == "HEAD":

@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/voice_api.py",
-        "payload_hash": "964b65d8d0b48ef15b115be22c0fcd9e670a5fc466509f8ee06579d62d8ac3bb",
+        "payload_hash": "370b351e1e60cdc9ca5d173c8fd2a80a8123fc00ef9b4577d8be3e9e33f5cf73",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
