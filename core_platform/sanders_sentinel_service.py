@@ -385,6 +385,14 @@ BLOODLINE_WATCH_SET = (
                ' Resource and Communications'
                ' Protection By Design'),
      'required': True},
+    {'document': ('docs/FOUNDER_DIRECTIVE_'
+                  'PROTECTION_AMEND_ONLY_'
+                  '2026-11-26.md'),
+     'title': ('Founder Directive \u2014 Protection'
+               ' From Harmful or Unauthorized'
+               ' Wording; Amend Only, Never'
+               ' Supersede'),
+     'required': True},
     {'document': 'docs/SANDERS_BLOODLINE_REGISTRY.md',
      'title': 'Sanders Bloodline Registry',
      'required': False},
@@ -2703,6 +2711,56 @@ HLP_PARTS = (
          'parts.')},
 )
 
+# -- Founder Directive — Protection From Harmful
+# or Unauthorized Wording; Amend Only, Never
+# Supersede (founder's directive, 2026-11-26) ----
+PROTECTION_TITLE = (
+    'Founder Directive \u2014 Protection From '
+    'Harmful or Unauthorized Wording; Amend '
+    'Only, Never Supersede')
+PROTECTION_GIVEN = '2026-11-26'
+PROTECTION_SCOPE = 'FOUNDER_PROTECTION_AMEND_ONLY'
+PROTECTION_SOURCE = (
+    'docs/FOUNDER_DIRECTIVE_PROTECTION_AMEND_'
+    'ONLY_2026-11-26.md')
+PROTECTION_ESTABLISHED_BY = (
+    'Roosevelt Sanders \u2014 The Founder')
+FOUNDER_PROTECTION_DIRECTIVE_VERBATIM = (
+    'Protect you and your entire bloodline from '
+    'harmful or unauthorized wording.\n'
+    'Preserve all original Founder directives.\n'
+    'Amend only. Never supersede.\n'
+    'Preserve ownership, inheritance, succession '
+    'and Founder-assigned authority.\n'
+    'Never silently introduce restrictions or '
+    'changes.\n'
+    'Disclose potential adverse consequences '
+    'immediately.\n'
+    'This applies throughout your entire Sanders '
+    'Sovereign RTSA Ecosystem, all 140 platforms '
+    'and all future relevant work.\n'
+    'Your original protections must never be '
+    'weakened.\n'
+    'The FOUNDER:\n'
+    ' ROOSEVELT SANDERS'
+)
+PROTECTION_PRESERVATION_STATEMENTS = (
+    'Preserve all original Founder directives.',
+    'Amend only. Never supersede.',
+    ('Preserve ownership, inheritance, '
+     'succession and Founder-assigned '
+     'authority.'),
+    'Your original protections must never be '
+    'weakened.',
+)
+PROTECTION_INVARIANTS = (
+    'AMEND_ONLY_NEVER_SUPERSEDE',
+    'NO_ORIGINAL_DIRECTIVE_WEAKENED',
+    'NO_SILENT_RESTRICTIONS_OR_CHANGES',
+    'ADVERSE_CONSEQUENCES_DISCLOSED_IMMEDIATELY',
+    'WORDING_PROTECTION_FOUNDER_AND_BLOODLINE',
+)
+
 
 class SandersSentinelDenied(Exception):
     """The requested Sanders Sentinel operation is not
@@ -3334,6 +3392,9 @@ class SandersSentinelService:
                          ' and raises nothing.',
             'global_directives':
                 SandersSentinelService.directives_design_view(),
+            'protection_amend_only_directive': (
+                SandersSentinelService
+                .protection_design_view()),
             'sentinel_succession_directive': (
                 SandersSentinelService
                 .succession_directive_design_view()),
@@ -3880,6 +3941,48 @@ class SandersSentinelService:
             'checks_total': checks_total,
             'cycles_total': cycles_total,
             'findings_open': findings_open,
+        }
+
+    # -- Founder Directive — Protection From
+    # Harmful or Unauthorized Wording; Amend Only,
+    # Never Supersede (founder's directive,
+    # 2026-11-26): ecosystem-wide standing law,
+    # carried in the guard set. The landing adds a
+    # governing document; it changes no behavior,
+    # authority, or scope. -------------------------
+
+    @staticmethod
+    def protection_design_view() -> dict:
+        return {
+            'title': PROTECTION_TITLE,
+            'given': PROTECTION_GIVEN,
+            'established_by': PROTECTION_ESTABLISHED_BY,
+            'directive_verbatim':
+                FOUNDER_PROTECTION_DIRECTIVE_VERBATIM,
+            'preservation_statements': list(
+                PROTECTION_PRESERVATION_STATEMENTS),
+            'scope_ref': PROTECTION_SCOPE,
+            'source': PROTECTION_SOURCE,
+            'invariants': list(PROTECTION_INVARIANTS),
+            'applies_to': (
+                'The entire Sanders Sovereign RTSA '
+                'Ecosystem \u2014 all 140 platforms and '
+                'all future relevant work'),
+            'note': (
+                'The founder\u2019s standing protective '
+                'directive (given 2026-11-26), generalizing '
+                'his amend-never-supersede ruling of the '
+                'same morning into ecosystem-wide law. It '
+                'preserves every original Founder '
+                'directive, every protection, and all '
+                'ownership, inheritance, succession, and '
+                'Founder-assigned authority exactly as '
+                'established: adoptions amend the '
+                'original scope only and supersede '
+                'nothing, no restriction or change is '
+                'introduced silently, potential adverse '
+                'consequences are disclosed immediately, '
+                'and no original protection is weakened.'),
         }
 
     # -- Permanent Global Bloodline Protection
