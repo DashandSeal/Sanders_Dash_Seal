@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/minotaur_service.py",
-        "payload_hash": "96ad1d033a9398f9566abda73ea948df0c60413cc4583ac53465effc8883f765",
+        "payload_hash": "02e8c8212dd153416a1c341e37ffed13b101ea6705d0bb1c74362f32a20bbfde",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
