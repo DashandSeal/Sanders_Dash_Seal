@@ -407,6 +407,12 @@ BLOODLINE_WATCH_SET = (
                ' Accounting and the'
                ' Functioning-Defense Standard'),
      'required': True},
+    {'document': ('docs/FOUNDER_DECLARATION_SHIELDS'
+                  '_NASA_STANDARDS_2026-11-26.md'),
+     'title': ('Founder Declaration \u2014 The Shields'
+               ' at NASA Standards: The Federal/NASA'
+               ' Tier'),
+     'required': True},
     {'document': ('docs/FOUNDER_DIRECTIVE_SHIELDS'
                   '_THEMSELVES_PROTECTED_2026-11-26.md'),
      'title': ('Founder Directive \u2014 The Shields'
