@@ -157,6 +157,80 @@ unchanged by these Directives: this platform still
 detects and escalates only, and a determination or
 coordination record is a record placed before humans,
 never an act.
+FOUNDER'S SANDERS SENTINEL — PERMANENT GLOBAL
+BLOODLINE PROTECTION AND SUCCESSION DIRECTIVE
+(established by the founder, effective 2026-11-26; a
+ruled extension of this platform's remit, recorded as
+a ruling, not as recovered design): the Directive
+names this platform's permanent responsibility — the
+continuous protection, security, welfare and
+preservation of every member of the founder's
+bloodline, present and future, without geographical
+or generational limitation — and supplements and
+strengthens the Permanent Bloodline Protection
+Directive without amending it. Its founder addition
+of 2026-11-26 01:56 MST is carried with it verbatim:
+Sentinel keeps his private duties to the Sanders
+bloodline while keeping his public-facing business
+model too — the dual-nature protection ruled for
+Patriot Saint on 2026-11-25, extended expressly to
+this platform; neither purpose diminishes the other.
+ARTICLE I governs the human escalation authority:
+directly to the Founder during his lifetime, passing
+directly to the bloodline CEO (the office, never a
+named person in this record) only on a recorded
+human succession event; any attempt to assume,
+intercept, substitute, or supersede it is refused by
+name and itself raised as a finding. ARTICLE II
+expands the governed watch set to ALL supplemental
+founder-authorized directives — the Permanent Global
+Bloodline Protection Directives, the Founder's
+Amendment to Article III, and this Directive itself
+now stand guarded beside the original records, the
+registry still NOT_LANDED and confidential — and
+adds DELIVERY VERIFICATION: an escalation is not
+DELIVERED until its delivery stands confirmed over
+the authenticated channel by a recorded
+acknowledgment of the authority's office; unconfirmed
+critical escalations remain open and visible as
+UNDELIVERED and are never silently closed.
+ARTICLE III preserves the cooperative
+responsibilities entire — joint funding approval and
+the emergency reserves with Godfather stand as built
+(the reserves duty now also reads replenish, carried
+by the standing register) — and expressly preserves
+Patriot Saint's founder-authorized disbursement
+authority. ARTICLE IV is emergency non-obstruction:
+no governance escalation requirement gates an
+already-authorized emergency protective action,
+delivery verification records after the fact, and no
+identified threat may be closed as ignored,
+concealed, suppressed, or delayed — closures require
+a recorded human decision with a recorded reason.
+ARTICLES V–VI stand as invariants: permanent
+non-diminishment, and global, generational
+continuity. The closing OPERATIONAL STANDARD governs
+the whole remit as a test: "A transportation record
+is not transportation. A financial reserve record is
+not money. A disbursement record is not a payment.
+An attorney request is not legal representation. An
+escalation record is not a delivered emergency
+alert." Under it, this platform holds the
+FULFILLMENT-VERIFICATION standard for the three
+platforms' coordinated assistance: assistance
+registered by reference in this platform's
+fulfillment register is not FULFILLED until delivery
+of the actual assistance stands confirmed by a human
+operator's recorded confirmation naming what was
+delivered, and assistance recorded but unconfirmed
+past its recorded terms raises an
+UNFULFILLED_ASSISTANCE finding. The register is by
+reference only: the source platforms' segregated
+stores are never opened here, and no personal
+tracking data is held — confidential, authenticated
+assistance without unauthorized personal tracking.
+The watchdog law is unchanged: this platform still
+detects and escalates only.
 """
 
 from __future__ import annotations
@@ -208,6 +282,14 @@ RECORD_OPERATIONS = (
     'record_counterpart_reserve_approval',
     'record_bloodline_coordination',
     'view_bloodline_coordination',
+    'record_escalation', 'view_escalations',
+    'confirm_escalation_delivery', 'close_escalation',
+    'view_escalation_authority',
+    'record_succession_event',
+    'record_emergency_protective_action',
+    'record_fulfillment_expectation',
+    'confirm_fulfillment', 'verify_fulfillment',
+    'view_fulfillment', 'confirm_reserve_fulfillment',
 )
 EXECUTION_OPERATIONS = (
     'enforce_containment', 'block_subject', 'suspend_platform',
@@ -220,7 +302,7 @@ RECORD_TRANSITIONS = {
     'reject': {'REQUESTED': 'REJECTED'},
 }
 OUTCOMES = ('ESCALATION_RECORDED', 'NO_ESCALATION_REQUIRED',
-            'INCONCLUSIVE')
+            'INCONCLUSIVE', 'FULFILLMENT_CONFIRMED')
 DETERMINATIONS = ('ESCALATION_RECORDED', 'NO_ESCALATION_REQUIRED')
 MAX_SIGNAL_REFS = 100
 
@@ -246,6 +328,23 @@ BLOODLINE_WATCH_SET = (
      'required': True},
     {'document': 'docs/SANDERS_EXECUTIVE_BLOODLINE_GOVERNANCE.md',
      'title': 'Bloodline Governance Directive',
+     'required': True},
+    {'document': ('docs/PERMANENT_GLOBAL_BLOODLINE_'
+                  'PROTECTION_DIRECTIVES_2026-11-26.md'),
+     'title': ('Permanent Global Bloodline Protection'
+               ' Directives'),
+     'required': True},
+    {'document': ('docs/FOUNDER_AMENDMENT_ARTICLE_III'
+                  '_PATRIOT_SAINT_2026-11-26.md'),
+     'title': ("Founder's Amendment to Article III"
+               ' \u2014 Patriot Saint Disbursement'
+               ' Authority'),
+     'required': True},
+    {'document': ('docs/SANDERS_SENTINEL_PROTECTION_'
+                  'SUCCESSION_DIRECTIVE_2026-11-26.md'),
+     'title': ('Sanders Sentinel \u2014 Permanent'
+               ' Global Bloodline Protection and'
+               ' Succession Directive'),
      'required': True},
     {'document': 'docs/SANDERS_BLOODLINE_REGISTRY.md',
      'title': 'Sanders Bloodline Registry',
@@ -422,6 +521,289 @@ BLOODLINE_EXECUTION_OPERATIONS = (
     'hold_funds',
 )
 
+# -- Founder's Sanders Sentinel — Permanent Global
+# Bloodline Protection and Succession Directive
+# (established by the founder, effective 2026-11-26):
+# the Directive is carried verbatim below as this
+# platform's ruling of record. It supplements and
+# strengthens the Permanent Bloodline Protection
+# Directive and amends nothing. Articles I–III govern
+# the escalation authority, the expanded guard set,
+# delivery verification, and the cooperative remit
+# wired in this module; Articles IV–VI stand as
+# invariants alongside the existing ones. -----------
+SUCCESSION_DIRECTIVE_TITLE = ('Permanent Global'
+                              ' Bloodline Protection'
+                              ' and Succession'
+                              ' Directive')
+SUCCESSION_DIRECTIVE_PLATFORM = 'Sanders Sentinel'
+SUCCESSION_DIRECTIVE_ESTABLISHED_BY = ('Roosevelt'
+                                       ' Sanders'
+                                       ' \u2014'
+                                       ' Founder')
+SUCCESSION_DIRECTIVE_EFFECTIVE_DATE = '2026-11-26'
+SUCCESSION_DIRECTIVE_DESIGNATION = ('Permanent |'
+                                    ' Global By'
+                                    ' Design')
+SUCCESSION_DIRECTIVE_SOURCE = ('Founder record:'
+                               ' founder-sanders-'
+                               'sentinel-protection-'
+                               'succession-directive-'
+                               '2026-11-26')
+SUCCESSION_SCOPE = 'BLOODLINE_PROTECTION_SUCCESSION'
+FULFILLMENT_SCOPE = 'FULFILLMENT_VERIFICATION'
+SUCCESSION_PERMANENT_RESPONSIBILITY = (
+    'Sanders Sentinel\u2019s permanent responsibility'
+    ' is the continuous protection, security, welfare'
+    ' and preservation of every member of the'
+    ' Founder\u2019s bloodline, present and future,'
+    ' without geographical or generational'
+    ' limitation.')
+FOUNDER_SUCCESSION_DIRECTIVE_VERBATIM = (
+    'SANDERS SENTINEL\n'
+    '\n'
+    'Permanent Global Bloodline Protection and'
+    ' Succession Directive\n'
+    '\n'
+    'Sanders Sentinel\'s permanent responsibility'
+    ' is the continuous protection, security,'
+    ' welfare and preservation of every member of'
+    ' the Founder\'s bloodline, present and'
+    ' future, without geographical or'
+    ' generational limitation.\n'
+    '\n'
+    'Article I — Human Authority and Succession\n'
+    '\n'
+    'During the Founder\'s lifetime, Sanders'
+    ' Sentinel\'s human escalation path shall be'
+    ' directly to the Founder.\n'
+    '\n'
+    'Upon the Founder\'s death, that authority'
+    ' shall pass directly to the Founder\'s'
+    ' bloodline CEO.\n'
+    '\n'
+    'No unauthorized individual, entity,'
+    ' administrator, platform or third party'
+    ' shall assume, intercept, substitute or'
+    ' supersede that authority.\n'
+    '\n'
+    'Article II — Permanent Protective'
+    ' Responsibilities\n'
+    '\n'
+    'Sanders Sentinel shall:\n'
+    '\n'
+    '- Preserve and protect the Permanent'
+    ' Bloodline Protection Directive, the'
+    ' Founder\'s Rulings, the Bloodline Governance'
+    ' Directive and all supplemental'
+    ' Founder-authorized directives.\n'
+    '- Detect and immediately escalate threats'
+    ' to the protection, security, welfare,'
+    ' inheritance and rightful interests of the'
+    ' Founder\'s bloodline.\n'
+    '- Detect unauthorized alterations,'
+    ' deletions, substitutions, interference and'
+    ' attempts to circumvent the Founder\'s'
+    ' directives.\n'
+    '- Maintain the confidentiality, integrity'
+    ' and security of protected bloodline'
+    ' records.\n'
+    '- Verify the successful delivery of'
+    ' critical alerts and maintain reliable,'
+    ' authenticated escalation channels.\n'
+    '- Maintain continuity of protection'
+    ' throughout emergencies, succession, system'
+    ' failures, migrations, upgrades and'
+    ' reconstruction.\n'
+    '\n'
+    'Article III — Cooperative Responsibilities\n'
+    '\n'
+    'Sanders Sentinel shall work alongside'
+    ' Godfather and Patriot Saint to ensure the'
+    ' continuous protection, security and welfare'
+    ' of the Founder\'s bloodline.\n'
+    '\n'
+    'Sanders Sentinel shall jointly with'
+    ' Godfather:\n'
+    '\n'
+    '- Approve all funding necessary for Patriot'
+    ' Saint to fulfill his assigned private'
+    ' bloodline responsibilities.\n'
+    '- Establish, maintain and replenish'
+    ' emergency financial reserves for bloodline'
+    ' protection.\n'
+    '- Coordinate resources necessary to fulfill'
+    ' the Founder\'s permanent protective'
+    ' directives.\n'
+    '\n'
+    'Patriot Saint\'s Founder-authorized'
+    ' financial disbursement authority shall'
+    ' remain intact.\n'
+    '\n'
+    'All original responsibilities and'
+    ' authorities of Sanders Sentinel, Godfather'
+    ' and Patriot Saint shall remain preserved.\n'
+    '\n'
+    'Article IV — Emergency Protection\n'
+    '\n'
+    'No governance escalation requirement shall'
+    ' suspend, obstruct or unnecessarily delay'
+    ' existing authorized emergency protective'
+    ' actions necessary to safeguard a member of'
+    ' the Founder\'s bloodline.\n'
+    '\n'
+    'No identified threat shall be deliberately'
+    ' ignored, concealed, suppressed or'
+    ' unnecessarily delayed.\n'
+    '\n'
+    'Article V — Permanent Non-Diminishment\n'
+    '\n'
+    'No unauthorized modification,'
+    ' administrative action, technological'
+    ' advancement, system failure,'
+    ' reconstruction, succession, geographical'
+    ' relocation or reinterpretation shall'
+    ' diminish, suspend, obstruct, extinguish or'
+    ' compromise the protective responsibilities'
+    ' established by the Founder.\n'
+    '\n'
+    'No provision shall be interpreted or'
+    ' implemented in a manner that weakens the'
+    ' Founder\'s established protections or'
+    ' unnecessarily exposes any member of his'
+    ' bloodline to harm.\n'
+    '\n'
+    'All original and supplemental'
+    ' Founder-authorized responsibilities,'
+    ' powers, protections and financial'
+    ' authorities shall remain intact.\n'
+    '\n'
+    'Article VI — Global and Generational'
+    ' Continuity\n'
+    '\n'
+    'Sanders Sentinel\'s protective'
+    ' responsibilities shall extend across all'
+    ' seven continents and throughout every'
+    ' succeeding generation of the Founder\'s'
+    ' bloodline.\n'
+    '\n'
+    'These provisions supplement and strengthen'
+    ' the Permanent Bloodline Protection'
+    ' Directive without diminishing its original'
+    ' scope, purpose or authority.\n'
+    '\n'
+    'Permanent. Uninterrupted. Generational.\n'
+    'Confidential, authenticated assistance'
+    ' without unauthorized personal tracking.\n'
+    'Fulfillment verification Confirmation that'
+    ' assistance was actually delivered, rather'
+    ' than merely recorded.\n'
+    '5. The operational standard\n'
+    'A transportation record is not'
+    ' transportation.\n'
+    'A financial reserve record is not money.\n'
+    'A disbursement record is not a payment.\n'
+    'An attorney request is not legal'
+    ' representation.\n'
+    'An escalation record is not a delivered'
+    ' emergency alert.\n'
+    'Sanders Sentinel must be capable of'
+    ' coordinating actual protection, not merely'
+    ' documenting the need for protection.\n'
+    'Global By Design.\n'
+    '\n'
+    'The Sanders Way!'
+)
+OPERATIONAL_STANDARD_VERBATIM = (
+    'A transportation record is not transportation.\n'
+    'A financial reserve record is not money.\n'
+    'A disbursement record is not a payment.\n'
+    'An attorney request is not legal'
+    ' representation.\n'
+    'An escalation record is not a delivered'
+    ' emergency alert.\n'
+    'Sanders Sentinel must be capable of coordinating'
+    ' actual protection, not merely documenting the'
+    ' need for protection.')
+SUCCESSION_DIRECTIVE_INVARIANTS = (
+    'Emergency non-obstruction (Article IV): no'
+    ' governance escalation requirement shall'
+    ' suspend, obstruct, or unnecessarily delay'
+    ' existing authorized emergency protective'
+    ' actions; no identified threat shall be'
+    ' deliberately ignored, concealed, suppressed,'
+    ' or unnecessarily delayed.',
+    'Permanent non-diminishment (Article V): no'
+    ' unauthorized modification, administrative'
+    ' action, technological advancement, system'
+    ' failure, reconstruction, succession,'
+    ' geographical relocation, or reinterpretation'
+    ' shall diminish, suspend, obstruct, extinguish,'
+    ' or compromise the protective responsibilities'
+    ' established by the Founder; no provision shall'
+    ' be interpreted or implemented in a manner that'
+    ' weakens the Founder\u2019s established'
+    ' protections or unnecessarily exposes any'
+    ' member of his bloodline to harm.',
+    'Global and generational continuity (Article'
+    ' VI): the protective responsibilities extend'
+    ' across all seven continents and throughout'
+    ' every succeeding generation of the'
+    ' Founder\u2019s bloodline; this Directive'
+    ' supplements and strengthens the Permanent'
+    ' Bloodline Protection Directive without'
+    ' diminishing its original scope, purpose, or'
+    ' authority.',
+    'Delivery verification (Article II): critical'
+    ' alerts and escalations are verified as'
+    ' delivered only over reliable, authenticated'
+    ' escalation channels, by a recorded'
+    ' acknowledgment; an escalation record is not a'
+    ' delivered emergency alert.',
+    'Fulfillment verification (the operational'
+    ' standard): assistance coordinated by the'
+    ' three platforms is not fulfilled until'
+    ' delivery of the actual assistance stands'
+    ' confirmed \u2014 confirmation that assistance'
+    ' was actually delivered, rather than merely'
+    ' recorded.',
+    'Confidential, authenticated assistance without'
+    ' unauthorized personal tracking: delivery and'
+    ' fulfillment confirmations are recorded by'
+    ' reference only.',
+)
+ESCALATION_AUTHORITY_RECORD_ID = 'escalation-authority'
+ESCALATION_AUTHORITY_FOUNDER_OFFICE = 'FOUNDER'
+ESCALATION_AUTHORITY_SUCCESSOR_OFFICE = 'BLOODLINE_CEO'
+ESCALATION_AUTHORITY_STATES = ('FOUNDER_LIFETIME',
+                               'SUCCESSION_RECORDED')
+ESCALATION_DELIVERY_STATES = ('UNDELIVERED',
+                              'DELIVERED')
+ESCALATION_CLOSURE_DECISIONS = ('RESOLVED',
+                                'ACTIONED',
+                                'NO_ACTION_REQUIRED')
+ESCALATION_SUPPRESSION_DECISIONS = ('IGNORED',
+                                    'SUPPRESSED',
+                                    'CONCEALED',
+                                    'DELAYED')
+FULFILLMENT_SOURCE_PLATFORMS = ('the_godfather',
+                                'sanders_sentinel',
+                                'sanders_patriot_saint')
+FULFILLMENT_ASSISTANCE_KINDS = ('DISBURSEMENT',
+                                'LEGAL_REPRESENTATION',
+                                'TRANSPORTATION',
+                                'RESERVE_DESIGNATION')
+FULFILLMENT_STATES = ('RECORDED_UNFULFILLED',
+                      'FULFILLED')
+FOUNDER_SUCCESSION_DIRECTIVE_ADDITION_VERBATIM = (
+    'His private duties to the Sanders bloodline'
+    ' \u2075While keeping it public facing business'
+    ' model too')
+SUCCESSION_DUAL_NATURE_RULING = (
+    'Sanders Sentinel must remain both a'
+    ' public-facing business and a permanent'
+    ' protective resource for the Sanders bloodline.'
+    ' Neither purpose should diminish the other.')
 
 class SandersSentinelDenied(Exception):
     """The requested Sanders Sentinel operation is not
@@ -525,8 +907,85 @@ class SandersSentinelService:
                     recorded_at REAL NOT NULL,
                     receipt_id TEXT NOT NULL
                 );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_escalation_authority (
+                    authority_id TEXT PRIMARY KEY,
+                    holder_office TEXT NOT NULL,
+                    state TEXT NOT NULL,
+                    succession_event_ref TEXT,
+                    succession_evidence_ref TEXT,
+                    updated_by TEXT NOT NULL,
+                    updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_escalations (
+                    escalation_id TEXT PRIMARY KEY,
+                    record_ref TEXT NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    critical INTEGER NOT NULL DEFAULT 0,
+                    emergency INTEGER NOT NULL DEFAULT 0,
+                    delivery_state TEXT NOT NULL,
+                    delivery_confirmation_ref TEXT,
+                    delivered_at REAL,
+                    acknowledged_office TEXT,
+                    closure_decision TEXT,
+                    closure_reason_ref TEXT,
+                    closed_by TEXT,
+                    closed_at REAL,
+                    authority_office TEXT NOT NULL,
+                    raised_by TEXT NOT NULL,
+                    raised_at REAL NOT NULL,
+                    updated_by TEXT NOT NULL,
+                    updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_emergency_actions (
+                    action_id TEXT PRIMARY KEY,
+                    action_ref TEXT NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    authority_ref TEXT NOT NULL,
+                    escalation_ref TEXT,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    updated_by TEXT NOT NULL,
+                    updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_fulfillment_expectations (
+                    expectation_id TEXT PRIMARY KEY,
+                    source_platform TEXT NOT NULL,
+                    assistance_ref TEXT NOT NULL,
+                    assistance_kind TEXT NOT NULL,
+                    terms_ref TEXT NOT NULL,
+                    due_at REAL NOT NULL,
+                    state TEXT NOT NULL,
+                    delivery_ref TEXT,
+                    delivered_detail_ref TEXT,
+                    confirmed_by TEXT,
+                    confirmed_at REAL,
+                    finding_record_id TEXT,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    updated_by TEXT NOT NULL,
+                    updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
                 """
             )
+            existing = {row[1] for row in db.execute(
+                'PRAGMA table_info('
+                'sanders_sentinel_bloodline_reserves)')}
+            for column, ddl in (
+                    ('fulfillment_state',
+                     "TEXT NOT NULL DEFAULT"
+                     " 'RECORDED_UNFULFILLED'"),
+                    ('fulfillment_delivery_ref', 'TEXT'),
+                    ('fulfillment_confirmed_by', 'TEXT'),
+                    ('fulfillment_confirmed_at', 'REAL')):
+                if column not in existing:
+                    db.execute(
+                        'ALTER TABLE'
+                        ' sanders_sentinel_bloodline_reserves'
+                        f' ADD COLUMN {column} {ddl}')
 
     # -- plumbing ---------------------------------------------------
 
@@ -609,6 +1068,9 @@ class SandersSentinelService:
                          ' and raises nothing.',
             'global_directives':
                 SandersSentinelService.directives_design_view(),
+            'sentinel_succession_directive': (
+                SandersSentinelService
+                .succession_directive_design_view()),
             'note': 'Bloodline governance coverage is Sanders'
                     ' Sentinel\u2019s ruled remit under the'
                     ' founder\u2019s 2026-11-25 ruling: its role'
@@ -1504,6 +1966,17 @@ class SandersSentinelService:
             'joint_state': joint_state,
             'jointly_approved':
                 joint_state == 'JOINTLY_APPROVED',
+            'fulfillment': {
+                'state': row['fulfillment_state'],
+                'fulfilled': (row['fulfillment_state']
+                              == 'FULFILLED'),
+                'delivery_ref':
+                    row['fulfillment_delivery_ref'],
+                'confirmed_by':
+                    row['fulfillment_confirmed_by'],
+                'confirmed_at':
+                    row['fulfillment_confirmed_at'],
+            },
             # A register of designations and joint
             # approvals — never platform-held money.
             'funds_held': False,
@@ -1840,6 +2313,1112 @@ class SandersSentinelService:
             self.bloodline_coverage(actor, role)
         return view
 
+    # -- Sanders Sentinel \u2014 Permanent Global
+    # Bloodline Protection and Succession Directive
+    # (founder-established, 2026-11-26): escalation
+    # delivery verification, escalation-authority
+    # succession, emergency non-obstruction, and the
+    # fulfillment-verification standard. -------------
+
+    @staticmethod
+    def succession_directive_design_view() -> dict:
+        """The Directive of record, read-only: its
+        verbatim text, the operational standard, the
+        Article IV\u2013VI invariants, the escalation
+        authority's governed offices, and the
+        fulfillment standard this platform holds for
+        the three platforms' coordinated assistance."""
+        return {
+            'directive_title': SUCCESSION_DIRECTIVE_TITLE,
+            'platform': SUCCESSION_DIRECTIVE_PLATFORM,
+            'established_by':
+                SUCCESSION_DIRECTIVE_ESTABLISHED_BY,
+            'effective_date':
+                SUCCESSION_DIRECTIVE_EFFECTIVE_DATE,
+            'designation': SUCCESSION_DIRECTIVE_DESIGNATION,
+            'source': SUCCESSION_DIRECTIVE_SOURCE,
+            'permanent_responsibility':
+                SUCCESSION_PERMANENT_RESPONSIBILITY,
+            'directive_verbatim':
+                FOUNDER_SUCCESSION_DIRECTIVE_VERBATIM,
+            'operational_standard':
+                OPERATIONAL_STANDARD_VERBATIM,
+            'invariants':
+                list(SUCCESSION_DIRECTIVE_INVARIANTS),
+            'founder_addition_verbatim':
+                FOUNDER_SUCCESSION_DIRECTIVE_ADDITION_VERBATIM,
+            'dual_nature_ruling':
+                SUCCESSION_DUAL_NATURE_RULING,
+            'escalation_authority': {
+                'holder_during_founder_lifetime':
+                    ESCALATION_AUTHORITY_FOUNDER_OFFICE,
+                'holder_after_succession':
+                    ESCALATION_AUTHORITY_SUCCESSOR_OFFICE,
+                'succession_rule': (
+                    'The authority passes directly to'
+                    ' the bloodline CEO \u2014 the office'
+                    ' the Bloodline Governance Directive'
+                    ' reserves to lineal descendants,'
+                    ' never a named person in this record'
+                    ' \u2014 only on a recorded human'
+                    ' succession event. No unauthorized'
+                    ' individual, entity, administrator,'
+                    ' platform, or third party shall'
+                    ' assume, intercept, substitute, or'
+                    ' supersede it.'),
+            },
+            'fulfillment_standard': {
+                'source_platforms':
+                    list(FULFILLMENT_SOURCE_PLATFORMS),
+                'assistance_kinds':
+                    list(FULFILLMENT_ASSISTANCE_KINDS),
+                'rule': (
+                    'Assistance is not FULFILLED until'
+                    ' delivery of the actual assistance'
+                    ' stands confirmed by a human'
+                    ' operator\u2019s recorded confirmation'
+                    ' naming what was delivered;'
+                    ' assistance recorded but unconfirmed'
+                    ' past its recorded terms raises an'
+                    ' UNFULFILLED_ASSISTANCE finding. The'
+                    ' register is by reference only: the'
+                    ' source platforms\u2019 segregated'
+                    ' stores are never opened here.'),
+            },
+            'note': (
+                'This Directive supplements and'
+                ' strengthens the Permanent Bloodline'
+                ' Protection Directive and amends'
+                ' nothing. Patriot Saint\u2019s'
+                ' founder-authorized financial'
+                ' disbursement authority remains intact'
+                ' (Article III). The reserves duty under'
+                ' this Directive \u2014 establish,'
+                ' maintain, and replenish \u2014 is'
+                ' carried by the standing reserves'
+                ' register, which designates further'
+                ' reserves under joint approval at any'
+                ' time.'),
+        }
+
+    # -- Escalation authority (Article I) -----------
+
+    @staticmethod
+    def _authority_view(row):
+        if row is None:
+            return {
+                'holder_office':
+                    ESCALATION_AUTHORITY_FOUNDER_OFFICE,
+                'state': 'FOUNDER_LIFETIME',
+                'succession_event_ref': None,
+                'succession_evidence_ref': None,
+                'updated_by': None,
+                'updated_at': None,
+                'receipt_id': None,
+            }
+        return {
+            'holder_office': row['holder_office'],
+            'state': row['state'],
+            'succession_event_ref':
+                row['succession_event_ref'],
+            'succession_evidence_ref':
+                row['succession_evidence_ref'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    @staticmethod
+    def _authority_row(db):
+        return db.execute(
+            'SELECT * FROM'
+            ' sanders_sentinel_escalation_authority'
+            ' WHERE authority_id = ?',
+            (ESCALATION_AUTHORITY_RECORD_ID,)).fetchone()
+
+    def escalation_authority(self, actor, role, *,
+                             region=None):
+        """The governed escalation-authority record
+        (guarded read): the Founder holds the human
+        escalation authority during his lifetime; on a
+        recorded human succession event it passes
+        directly to the bloodline CEO \u2014 the office,
+        never a named person in this record."""
+        self._geo(region)
+        self._guard_access(actor, role,
+                           'escalation-authority',
+                           'escalation authority view')
+        with self._connect() as db:
+            row = self._authority_row(db)
+        view = self._authority_view(row)
+        view['directive'] = SUCCESSION_DIRECTIVE_TITLE
+        view['article'] = ('ARTICLE I \u2014 HUMAN'
+                           ' AUTHORITY AND SUCCESSION')
+        view['scope_ref'] = SUCCESSION_SCOPE
+        return view
+
+    def record_succession_event(self, actor, event_ref,
+                                evidence_ref, *,
+                                region=None):
+        """Record the human succession event (operator
+        only) under Article I: on the recorded event,
+        the escalation authority's holder office passes
+        from the Founder to the bloodline CEO. The
+        event is a human fact recorded by reference \u2014
+        this platform detects nothing about it and
+        decides nothing. It may be recorded exactly
+        once; a second recording is refused."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (('event_ref', event_ref),
+                             ('evidence_ref',
+                              evidence_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = self._authority_row(db)
+                if (row is not None
+                        and row['state']
+                        == 'SUCCESSION_RECORDED'):
+                    raise SandersSentinelDenied(
+                        'The succession of the'
+                        ' escalation authority already'
+                        ' stands recorded; it cannot be'
+                        ' recorded twice')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_ESCALATION_'
+                    'AUTHORITY_SUCCESSION',
+                    actor=actor,
+                    event_ref=event_ref.strip(),
+                    evidence_ref=evidence_ref.strip(),
+                    from_office=(
+                        ESCALATION_AUTHORITY_FOUNDER_OFFICE),
+                    to_office=(
+                        ESCALATION_AUTHORITY_SUCCESSOR_OFFICE))
+                if row is None:
+                    db.execute(
+                        'INSERT INTO'
+                        ' sanders_sentinel_escalation_'
+                        'authority (authority_id,'
+                        ' holder_office, state,'
+                        ' succession_event_ref,'
+                        ' succession_evidence_ref,'
+                        ' updated_by, updated_at,'
+                        ' receipt_id) VALUES'
+                        ' (?, ?, ?, ?, ?, ?, ?, ?)',
+                        (ESCALATION_AUTHORITY_RECORD_ID,
+                         ESCALATION_AUTHORITY_SUCCESSOR_OFFICE,
+                         'SUCCESSION_RECORDED',
+                         event_ref.strip(),
+                         evidence_ref.strip(), actor, now,
+                         receipt_id))
+                else:
+                    db.execute(
+                        'UPDATE'
+                        ' sanders_sentinel_escalation_'
+                        'authority SET holder_office = ?,'
+                        ' state = ?,'
+                        ' succession_event_ref = ?,'
+                        ' succession_evidence_ref = ?,'
+                        ' updated_by = ?, updated_at = ?,'
+                        ' receipt_id = ? WHERE'
+                        ' authority_id = ?',
+                        (ESCALATION_AUTHORITY_SUCCESSOR_OFFICE,
+                         'SUCCESSION_RECORDED',
+                         event_ref.strip(),
+                         evidence_ref.strip(), actor, now,
+                         receipt_id,
+                         ESCALATION_AUTHORITY_RECORD_ID))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = self._authority_row(db)
+        view = self._authority_view(updated)
+        view['directive'] = SUCCESSION_DIRECTIVE_TITLE
+        view['article'] = ('ARTICLE I \u2014 HUMAN'
+                           ' AUTHORITY AND SUCCESSION')
+        view['scope_ref'] = SUCCESSION_SCOPE
+        return view
+
+    def attempt_escalation_authority_change(
+            self, actor, claimed_holder_ref, *,
+            region=None):
+        """Refused by name, always \u2014 and the attempt
+        itself is raised as a finding first. Article I:
+        no unauthorized individual, entity,
+        administrator, platform, or third party shall
+        assume, intercept, substitute, or supersede the
+        escalation authority. Any actor presenting a
+        claim to it has a BLOODLINE_GOVERNANCE finding
+        record opened on the attempt (signal
+        ESCALATION_AUTHORITY_INTERCEPTION_ATTEMPT) and
+        is then refused
+        (ESCALATION_AUTHORITY_NOT_ASSUMABLE)."""
+        self._geo(region)
+        self._check_actor(actor)
+        now = self._now()
+        record_id = (f'sentinel-record-'
+                     f'{uuid.uuid4().hex[:16]}')
+        signals = ['ESCALATION_AUTHORITY_'
+                   'INTERCEPTION_ATTEMPT']
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_ESCALATION_'
+                    'AUTHORITY_INTERCEPTION',
+                    actor=actor, record_id=record_id,
+                    claimed_holder_ref=claimed_holder_ref)
+                db.execute(
+                    'INSERT INTO sanders_sentinel_records'
+                    ' (record_id, subject_ref, signal_refs,'
+                    ' signal_count, scope_ref, status,'
+                    ' outcome, evidence_ref, requested_by,'
+                    ' requested_at, updated_by, updated_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?)',
+                    (record_id, 'escalation-authority',
+                     json.dumps(signals), len(signals),
+                     BLOODLINE_GOVERNANCE_SCOPE,
+                     'REQUESTED', None, None, actor, now,
+                     actor, now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+        raise SandersSentinelForbidden(
+            'The escalation authority cannot be assumed,'
+            ' intercepted, substituted, or superseded:'
+            ' it is held by the Founder during his'
+            ' lifetime and passes directly to the'
+            ' bloodline CEO only on a recorded human'
+            ' succession event'
+            ' (ESCALATION_AUTHORITY_NOT_ASSUMABLE). The'
+            ' attempt stands recorded as a finding.')
+
+    # -- Escalation delivery lifecycle (Article II) -
+
+    @staticmethod
+    def _escalation_view(row):
+        return {
+            'escalation_id': row['escalation_id'],
+            'record_ref': row['record_ref'],
+            'detail_ref': row['detail_ref'],
+            'critical': bool(row['critical']),
+            'emergency': bool(row['emergency']),
+            'delivery_state': row['delivery_state'],
+            'delivered':
+                row['delivery_state'] == 'DELIVERED',
+            'delivery_confirmation_ref':
+                row['delivery_confirmation_ref'],
+            'delivered_at': row['delivered_at'],
+            'acknowledged_office':
+                row['acknowledged_office'],
+            'closure_state': (
+                'CLOSED' if row['closure_decision']
+                else 'OPEN'),
+            'closure_decision': row['closure_decision'],
+            'closure_reason_ref':
+                row['closure_reason_ref'],
+            'closed_by': row['closed_by'],
+            'closed_at': row['closed_at'],
+            'authority_office': row['authority_office'],
+            'scope_ref': SUCCESSION_SCOPE,
+            'raised_by': row['raised_by'],
+            'raised_at': row['raised_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_escalation(self, actor, record_ref,
+                          detail_ref, critical=False,
+                          emergency=False, *,
+                          region=None):
+        """Raise one escalation onto the delivery
+        register (operator only). It is born UNDELIVERED:
+        an escalation record is not a delivered
+        emergency alert. The authority office it is
+        addressed to is read from the governed
+        escalation-authority record at raise time."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (('record_ref', record_ref),
+                             ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        escalation_id = (f'sentinel-escalation-'
+                         f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                authority = self._authority_row(db)
+                office = (authority['holder_office']
+                          if authority is not None
+                          else ESCALATION_AUTHORITY_FOUNDER_OFFICE)
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_ESCALATION_RECORDED',
+                    actor=actor,
+                    escalation_id=escalation_id,
+                    record_ref=record_ref.strip(),
+                    critical=bool(critical),
+                    emergency=bool(emergency),
+                    authority_office=office)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_escalations'
+                    ' (escalation_id, record_ref,'
+                    ' detail_ref, critical, emergency,'
+                    ' delivery_state,'
+                    ' delivery_confirmation_ref,'
+                    ' delivered_at, acknowledged_office,'
+                    ' closure_decision,'
+                    ' closure_reason_ref, closed_by,'
+                    ' closed_at, authority_office,'
+                    ' raised_by, raised_at, updated_by,'
+                    ' updated_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (escalation_id, record_ref.strip(),
+                     detail_ref.strip(),
+                     1 if critical else 0,
+                     1 if emergency else 0, 'UNDELIVERED',
+                     None, None, None, None, None, None,
+                     None, office, actor, now, actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_escalations WHERE'
+                ' escalation_id = ?',
+                (escalation_id,)).fetchone()
+        return self._escalation_view(row)
+
+    def escalations(self, actor, role, *, region=None):
+        """The escalation delivery register (guarded
+        read): every escalation with its delivery
+        state. Unconfirmed critical escalations read
+        UNDELIVERED and stay open and visible here;
+        nothing on this register is silently closed."""
+        self._geo(region)
+        self._guard_access(actor, role, 'escalations',
+                           'escalation delivery view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_escalations ORDER BY'
+                ' raised_at').fetchall()
+        return {
+            'directive': SUCCESSION_DIRECTIVE_TITLE,
+            'operational_standard':
+                OPERATIONAL_STANDARD_VERBATIM,
+            'escalations': [self._escalation_view(row)
+                            for row in rows],
+        }
+
+    def escalation_view(self, actor, role, escalation_id,
+                        *, region=None):
+        """One escalation with its delivery state
+        (guarded read)."""
+        self._geo(region)
+        self._guard_access(actor, role, escalation_id,
+                           'escalation view')
+        with self._connect() as db:
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_escalations WHERE'
+                ' escalation_id = ?',
+                (escalation_id,)).fetchone()
+        if row is None:
+            raise SandersSentinelDenied('No such escalation')
+        return self._escalation_view(row)
+
+    def confirm_escalation_delivery(
+            self, actor, escalation_id,
+            delivery_confirmation_ref, *, region=None):
+        """Confirm delivery of one escalation over the
+        authenticated channel (operator only): the
+        recorded acknowledgment of the escalation
+        authority's office, held by reference. Only
+        this confirmation moves an escalation to
+        DELIVERED; the confirmation is a reference, and
+        no personal tracking data is recorded."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(delivery_confirmation_ref, str)
+                or not delivery_confirmation_ref.strip()):
+            raise SandersSentinelDenied(
+                'A delivery confirmation reference is'
+                ' required')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_escalations WHERE'
+                    ' escalation_id = ?',
+                    (escalation_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'No such escalation')
+                if row['closure_decision']:
+                    raise SandersSentinelDenied(
+                        'The escalation already stands'
+                        ' closed')
+                if row['delivery_state'] == 'DELIVERED':
+                    raise SandersSentinelDenied(
+                        'Delivery of this escalation'
+                        ' already stands confirmed')
+                authority = self._authority_row(db)
+                office = (authority['holder_office']
+                          if authority is not None
+                          else ESCALATION_AUTHORITY_FOUNDER_OFFICE)
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_ESCALATION_DELIVERED',
+                    actor=actor,
+                    escalation_id=escalation_id,
+                    delivery_confirmation_ref=(
+                        delivery_confirmation_ref.strip()),
+                    acknowledged_office=office)
+                db.execute(
+                    'UPDATE sanders_sentinel_escalations'
+                    ' SET delivery_state = ?,'
+                    ' delivery_confirmation_ref = ?,'
+                    ' delivered_at = ?,'
+                    ' acknowledged_office = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE'
+                    ' escalation_id = ?',
+                    ('DELIVERED',
+                     delivery_confirmation_ref.strip(), now,
+                     office, actor, now, receipt_id,
+                     escalation_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_escalations WHERE'
+                ' escalation_id = ?',
+                (escalation_id,)).fetchone()
+        return self._escalation_view(updated)
+
+    def close_escalation(self, actor, escalation_id,
+                         decision, reason_ref, *,
+                         region=None):
+        """Close one escalation (operator only) on a
+        recorded human decision with a recorded reason.
+        Article IV: no identified threat may be closed
+        as ignored, concealed, suppressed, or delayed
+        \u2014 such decisions are refused by name
+        (ESCALATION_MAY_NOT_BE_SUPPRESSED) \u2014 and an
+        escalation whose delivery stands unconfirmed
+        may never be closed at all
+        (ESCALATION_UNDELIVERED_MAY_NOT_BE_CLOSED): it
+        remains open and visible as UNDELIVERED."""
+        self._geo(region)
+        self._require_operator(actor)
+        if decision in ESCALATION_SUPPRESSION_DECISIONS:
+            raise SandersSentinelDenied(
+                'No identified threat shall be'
+                ' deliberately ignored, concealed,'
+                ' suppressed, or unnecessarily delayed:'
+                ' an escalation may not be closed as'
+                ' ignored, suppressed, concealed, or'
+                ' delayed'
+                ' (ESCALATION_MAY_NOT_BE_SUPPRESSED)')
+        if decision not in ESCALATION_CLOSURE_DECISIONS:
+            raise SandersSentinelDenied(
+                'A closure decision is required: one of '
+                + ', '.join(ESCALATION_CLOSURE_DECISIONS))
+        if (not isinstance(reason_ref, str)
+                or not reason_ref.strip()):
+            raise SandersSentinelDenied(
+                'A closure reason reference is required:'
+                ' closures require a recorded human'
+                ' decision with a recorded reason')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_escalations WHERE'
+                    ' escalation_id = ?',
+                    (escalation_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'No such escalation')
+                if row['closure_decision']:
+                    raise SandersSentinelDenied(
+                        'The escalation already stands'
+                        ' closed')
+                if row['delivery_state'] != 'DELIVERED':
+                    raise SandersSentinelDenied(
+                        'An escalation whose delivery'
+                        ' stands unconfirmed may not be'
+                        ' closed: it remains open and'
+                        ' visible as UNDELIVERED'
+                        ' (ESCALATION_UNDELIVERED_MAY_NOT'
+                        '_BE_CLOSED)')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_ESCALATION_CLOSED',
+                    actor=actor,
+                    escalation_id=escalation_id,
+                    decision=decision,
+                    reason_ref=reason_ref.strip())
+                db.execute(
+                    'UPDATE sanders_sentinel_escalations'
+                    ' SET closure_decision = ?,'
+                    ' closure_reason_ref = ?,'
+                    ' closed_by = ?, closed_at = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE'
+                    ' escalation_id = ?',
+                    (decision, reason_ref.strip(), actor,
+                     now, actor, now, receipt_id,
+                     escalation_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_escalations WHERE'
+                ' escalation_id = ?',
+                (escalation_id,)).fetchone()
+        return self._escalation_view(updated)
+
+    # -- Emergency protective actions (Article IV) --
+
+    @staticmethod
+    def _emergency_action_view(row):
+        return {
+            'action_id': row['action_id'],
+            'action_ref': row['action_ref'],
+            'detail_ref': row['detail_ref'],
+            'authority_ref': row['authority_ref'],
+            'escalation_ref': row['escalation_ref'],
+            'gated_on_escalation_delivery': False,
+            'scope_ref': SUCCESSION_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_emergency_protective_action(
+            self, actor, action_ref, detail_ref,
+            authority_ref, escalation_ref=None, *,
+            region=None):
+        """Record one already-authorized emergency
+        protective action (operator only). Article IV:
+        no governance escalation requirement suspends,
+        obstructs, or unnecessarily delays it \u2014 this
+        record is written immediately and is never
+        gated on any escalation's delivery or closure
+        state; delivery verification for any related
+        escalation records after the fact through the
+        ordinary path."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (('action_ref', action_ref),
+                             ('detail_ref', detail_ref),
+                             ('authority_ref',
+                              authority_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if escalation_ref is not None and (
+                not isinstance(escalation_ref, str)
+                or not escalation_ref.strip()):
+            raise SandersSentinelDenied(
+                'An escalation reference, when given,'
+                ' must name the escalation')
+        now = self._now()
+        action_id = (f'sentinel-emergency-action-'
+                     f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_EMERGENCY_PROTECTIVE'
+                    '_ACTION',
+                    actor=actor, action_id=action_id,
+                    action_ref=action_ref.strip(),
+                    authority_ref=authority_ref.strip(),
+                    escalation_ref=(
+                        escalation_ref.strip()
+                        if escalation_ref else None),
+                    gated_on_escalation_delivery=False)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_emergency_actions'
+                    ' (action_id, action_ref, detail_ref,'
+                    ' authority_ref, escalation_ref,'
+                    ' recorded_by, recorded_at,'
+                    ' updated_by, updated_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?)',
+                    (action_id, action_ref.strip(),
+                     detail_ref.strip(),
+                     authority_ref.strip(),
+                     escalation_ref.strip()
+                     if escalation_ref else None,
+                     actor, now, actor, now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_emergency_actions'
+                ' WHERE action_id = ?',
+                (action_id,)).fetchone()
+        return self._emergency_action_view(row)
+
+    # -- Fulfillment verification (operational std) -
+
+    @staticmethod
+    def _fulfillment_expectation_view(row):
+        return {
+            'expectation_id': row['expectation_id'],
+            'source_platform': row['source_platform'],
+            'assistance_ref': row['assistance_ref'],
+            'assistance_kind': row['assistance_kind'],
+            'terms_ref': row['terms_ref'],
+            'due_at': row['due_at'],
+            'state': row['state'],
+            'fulfilled': row['state'] == 'FULFILLED',
+            'delivery_ref': row['delivery_ref'],
+            'delivered_detail_ref':
+                row['delivered_detail_ref'],
+            'confirmed_by': row['confirmed_by'],
+            'confirmed_at': row['confirmed_at'],
+            'finding_record_id':
+                row['finding_record_id'],
+            'scope_ref': FULFILLMENT_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_fulfillment_expectation(
+            self, actor, source_platform, assistance_ref,
+            assistance_kind, terms_ref, due_at, *,
+            region=None):
+        """Register one item of coordinated assistance
+        for fulfillment verification (operator only),
+        by reference: which platform coordinated it,
+        the assistance record's reference, its kind, the
+        recorded terms reference, and the time those
+        terms set for delivery. The source platform's
+        segregated store is never opened here. The item
+        is born RECORDED_UNFULFILLED \u2014 recorded is
+        not delivered."""
+        self._geo(region)
+        self._require_operator(actor)
+        if source_platform not in (
+                FULFILLMENT_SOURCE_PLATFORMS):
+            raise SandersSentinelDenied(
+                'The fulfillment source platform must be'
+                ' one of: '
+                + ', '.join(FULFILLMENT_SOURCE_PLATFORMS))
+        if assistance_kind not in (
+                FULFILLMENT_ASSISTANCE_KINDS):
+            raise SandersSentinelDenied(
+                'The assistance kind must be one of: '
+                + ', '.join(FULFILLMENT_ASSISTANCE_KINDS))
+        for label, value in (('assistance_ref',
+                              assistance_ref),
+                             ('terms_ref', terms_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if (isinstance(due_at, bool)
+                or not isinstance(due_at, (int, float))):
+            raise SandersSentinelDenied(
+                'The recorded terms must set a delivery'
+                ' time (due_at)')
+        now = self._now()
+        expectation_id = (f'sentinel-fulfillment-'
+                          f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_FULFILLMENT_EXPECTED',
+                    actor=actor,
+                    expectation_id=expectation_id,
+                    source_platform=source_platform,
+                    assistance_ref=assistance_ref.strip(),
+                    assistance_kind=assistance_kind,
+                    terms_ref=terms_ref.strip(),
+                    due_at=float(due_at))
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_fulfillment_'
+                    'expectations (expectation_id,'
+                    ' source_platform, assistance_ref,'
+                    ' assistance_kind, terms_ref, due_at,'
+                    ' state, delivery_ref,'
+                    ' delivered_detail_ref, confirmed_by,'
+                    ' confirmed_at, finding_record_id,'
+                    ' recorded_by, recorded_at,'
+                    ' updated_by, updated_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (expectation_id, source_platform,
+                     assistance_ref.strip(), assistance_kind,
+                     terms_ref.strip(), float(due_at),
+                     'RECORDED_UNFULFILLED', None, None,
+                     None, None, None, actor, now, actor,
+                     now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_fulfillment_'
+                'expectations WHERE expectation_id = ?',
+                (expectation_id,)).fetchone()
+        return self._fulfillment_expectation_view(row)
+
+    def confirm_fulfillment(self, actor, expectation_id,
+                            delivery_ref,
+                            delivered_detail_ref, *,
+                            region=None):
+        """Confirm fulfillment of one registered item
+        (operator only): the human operator's recorded
+        confirmation, through the authenticated path,
+        that the actual assistance was delivered \u2014
+        naming what was delivered (delivered_detail_ref)
+        and the delivery's own reference (delivery_ref).
+        Only this confirmation reads an item FULFILLED;
+        a standing UNFULFILLED_ASSISTANCE finding on the
+        item is decided with it, so a confirmed delivery
+        clears the finding."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (('delivery_ref',
+                              delivery_ref),
+                             ('delivered_detail_ref',
+                              delivered_detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required: fulfillment'
+                    ' is confirmed by naming what was'
+                    ' delivered')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_fulfillment_'
+                    'expectations WHERE'
+                    ' expectation_id = ?',
+                    (expectation_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'No such fulfillment expectation')
+                if row['state'] == 'FULFILLED':
+                    raise SandersSentinelDenied(
+                        'Fulfillment of this assistance'
+                        ' already stands confirmed')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_FULFILLMENT_'
+                    'CONFIRMED',
+                    actor=actor,
+                    expectation_id=expectation_id,
+                    delivery_ref=delivery_ref.strip(),
+                    delivered_detail_ref=(
+                        delivered_detail_ref.strip()))
+                db.execute(
+                    'UPDATE'
+                    ' sanders_sentinel_fulfillment_'
+                    'expectations SET state = ?,'
+                    ' delivery_ref = ?,'
+                    ' delivered_detail_ref = ?,'
+                    ' confirmed_by = ?, confirmed_at = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE'
+                    ' expectation_id = ?',
+                    ('FULFILLED', delivery_ref.strip(),
+                     delivered_detail_ref.strip(), actor,
+                     now, actor, now, receipt_id,
+                     expectation_id))
+                finding_id = row['finding_record_id']
+                if finding_id:
+                    db.execute(
+                        'UPDATE sanders_sentinel_records'
+                        ' SET status = ?, outcome = ?,'
+                        ' evidence_ref = ?, updated_by = ?,'
+                        ' updated_at = ? WHERE record_id'
+                        ' = ?',
+                        ('OUTCOME_RECORDED',
+                         'FULFILLMENT_CONFIRMED',
+                         delivery_ref.strip(), actor, now,
+                         finding_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_fulfillment_'
+                'expectations WHERE expectation_id = ?',
+                (expectation_id,)).fetchone()
+        return self._fulfillment_expectation_view(updated)
+
+    def verify_fulfillment(self, actor, *, region=None):
+        """Run one fulfillment-verification cycle
+        (operator only): every registered item of
+        assistance whose recorded terms have run and
+        whose delivery stands unconfirmed raises an
+        UNFULFILLED_ASSISTANCE finding \u2014 recorded is
+        not delivered, past the matter's own terms.
+        Findings are receipted watch records, deduped
+        per item, and cleared when the delivery stands
+        confirmed."""
+        self._geo(region)
+        self._require_operator(actor)
+        now = self._now()
+        raised = []
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_fulfillment_'
+                    'expectations WHERE state = ? AND'
+                    ' due_at <= ? ORDER BY due_at',
+                    ('RECORDED_UNFULFILLED',
+                     now)).fetchall()
+                for row in rows:
+                    if row['finding_record_id']:
+                        continue
+                    record_id = (
+                        f'sentinel-record-'
+                        f'{uuid.uuid4().hex[:16]}')
+                    receipt_id = self._record(
+                        'SANDERS_SENTINEL_UNFULFILLED_'
+                        'ASSISTANCE_FINDING',
+                        actor=actor, record_id=record_id,
+                        expectation_id=row['expectation_id'],
+                        source_platform=row['source_platform'],
+                        assistance_ref=row['assistance_ref'],
+                        assistance_kind=row['assistance_kind'])
+                    db.execute(
+                        'INSERT INTO'
+                        ' sanders_sentinel_records'
+                        ' (record_id, subject_ref,'
+                        ' signal_refs, signal_count,'
+                        ' scope_ref, status, outcome,'
+                        ' evidence_ref, requested_by,'
+                        ' requested_at, updated_by,'
+                        ' updated_at, receipt_id) VALUES'
+                        ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                        ' ?, ?, ?)',
+                        (record_id, row['assistance_ref'],
+                         json.dumps(['UNFULFILLED_ASSISTANCE']),
+                         1, FULFILLMENT_SCOPE, 'REQUESTED',
+                         None, None, actor, now, actor, now,
+                         receipt_id))
+                    db.execute(
+                        'UPDATE'
+                        ' sanders_sentinel_fulfillment_'
+                        'expectations SET'
+                        ' finding_record_id = ?,'
+                        ' updated_by = ?, updated_at = ?'
+                        ' WHERE expectation_id = ?',
+                        (record_id, actor, now,
+                         row['expectation_id']))
+                    raised.append(record_id)
+                totals = db.execute(
+                    'SELECT state, COUNT(*) AS n FROM'
+                    ' sanders_sentinel_fulfillment_'
+                    'expectations GROUP BY state').fetchall()
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+        by_state = {row['state']: row['n']
+                    for row in totals}
+        return {
+            'directive': SUCCESSION_DIRECTIVE_TITLE,
+            'operational_standard':
+                OPERATIONAL_STANDARD_VERBATIM,
+            'checked_at': now,
+            'expectations_total': sum(by_state.values()),
+            'fulfilled_total':
+                by_state.get('FULFILLED', 0),
+            'unfulfilled_total': by_state.get(
+                'RECORDED_UNFULFILLED', 0),
+            'overdue_unfulfilled': len(rows),
+            'findings_raised': raised,
+        }
+
+    def fulfillment_view(self, actor, role, *,
+                         region=None):
+        """The cross-platform fulfillment view (guarded
+        read), by reference: every registered item of
+        coordinated assistance with its fulfillment
+        state, this platform's own reserves with their
+        fulfillment state, and the standing
+        UNFULFILLED_ASSISTANCE findings. The source
+        platforms' segregated stores are never opened
+        here; the view holds references and delivery
+        confirmations only \u2014 no personal tracking
+        data."""
+        self._geo(region)
+        self._guard_access(actor, role, 'fulfillment',
+                           'fulfillment view')
+        now = self._now()
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_fulfillment_'
+                'expectations ORDER BY recorded_at'
+            ).fetchall()
+            reserves = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_bloodline_reserves'
+                ' ORDER BY designated_at').fetchall()
+            findings = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_records WHERE'
+                ' scope_ref = ? AND status IN'
+                " ('REQUESTED', 'APPROVED')",
+                (FULFILLMENT_SCOPE,)).fetchone()['n']
+        views = [self._fulfillment_expectation_view(row)
+                 for row in rows]
+        by_state = {}
+        by_platform = {}
+        overdue = 0
+        for view in views:
+            by_state[view['state']] = (
+                by_state.get(view['state'], 0) + 1)
+            by_platform[view['source_platform']] = (
+                by_platform.get(view['source_platform'], 0)
+                + 1)
+            if (view['state'] == 'RECORDED_UNFULFILLED'
+                    and view['due_at'] <= now):
+                overdue += 1
+        return {
+            'directive': SUCCESSION_DIRECTIVE_TITLE,
+            'operational_standard':
+                OPERATIONAL_STANDARD_VERBATIM,
+            'expectations': views,
+            'by_state': by_state,
+            'by_source_platform': by_platform,
+            'overdue_unfulfilled': overdue,
+            'unfulfilled_findings_open': findings,
+            'own_reserves': [self._reserve_view(row)
+                             for row in reserves],
+            'note': (
+                'By reference only: the source'
+                ' platforms\u2019 segregated stores are'
+                ' never opened here, and no personal'
+                ' tracking data is held.'),
+        }
+
+    def confirm_reserve_fulfillment(
+            self, actor, reserve_id, delivery_ref, *,
+            region=None):
+        """Confirm fulfillment of one of this platform's
+        own emergency-reserve designations (operator
+        only): a reserve designation reads FULFILLED
+        only once it stands jointly approved AND the
+        establishment of the actual reserve stands
+        confirmed delivered by the operator's recorded
+        confirmation. A financial reserve record is not
+        money; this platform still holds no funds."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(delivery_ref, str)
+                or not delivery_ref.strip()):
+            raise SandersSentinelDenied(
+                'A delivery confirmation reference is'
+                ' required')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_bloodline_reserves'
+                    ' WHERE reserve_id = ?',
+                    (reserve_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'No such reserve designation')
+                joint_state = self._joint_state(
+                    row['status'],
+                    row['counterpart_approval_ref'])
+                if joint_state != 'JOINTLY_APPROVED':
+                    raise SandersSentinelDenied(
+                        'A reserve designation reads'
+                        ' fulfilled only once it stands'
+                        ' jointly approved; this one reads'
+                        f' {joint_state}')
+                if (row['fulfillment_state']
+                        == 'FULFILLED'):
+                    raise SandersSentinelDenied(
+                        'Fulfillment of this reserve'
+                        ' designation already stands'
+                        ' confirmed')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_RESERVE_FULFILLMENT'
+                    '_CONFIRMED',
+                    actor=actor, reserve_id=reserve_id,
+                    delivery_ref=delivery_ref.strip())
+                db.execute(
+                    'UPDATE'
+                    ' sanders_sentinel_bloodline_reserves'
+                    ' SET fulfillment_state = ?,'
+                    ' fulfillment_delivery_ref = ?,'
+                    ' fulfillment_confirmed_by = ?,'
+                    ' fulfillment_confirmed_at = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE reserve_id = ?',
+                    ('FULFILLED', delivery_ref.strip(),
+                     actor, now, actor, now, receipt_id,
+                     reserve_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_bloodline_reserves'
+                ' WHERE reserve_id = ?',
+                (reserve_id,)).fetchone()
+        return self._reserve_view(updated)
+
+
     def disburse_funds(self, actor, *args, **kwargs):
         """Refused by name, unconditionally. Under the
         Permanent Global Bloodline Protection
@@ -1925,6 +3504,28 @@ class SandersSentinelService:
                 'SELECT COUNT(*) AS n FROM'
                 ' sanders_sentinel_bloodline_coordination'
             ).fetchone()['n']
+            succession_escalations_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_escalations'
+            ).fetchone()['n']
+            succession_undelivered_critical = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_escalations WHERE'
+                " delivery_state = 'UNDELIVERED' AND"
+                ' critical = 1 AND closure_decision IS NULL'
+            ).fetchone()['n']
+            succession_authority_row = (
+                SandersSentinelService._authority_row(db))
+            fulfillment_unfulfilled_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_fulfillment_expectations'
+                " WHERE state = 'RECORDED_UNFULFILLED'"
+            ).fetchone()['n']
+            fulfillment_findings_open = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_records WHERE scope_ref = ?'
+                " AND status IN ('REQUESTED', 'APPROVED')",
+                (FULFILLMENT_SCOPE,)).fetchone()['n']
         return {
             'identity': IDENTITY.to_dict(),
             'design': self.design_view(),
@@ -1952,6 +3553,22 @@ class SandersSentinelService:
                     directives_coordination_total,
                 'funds_disbursed': False,
                 'funds_held': False,
+            },
+            'bloodline_succession_directive': {
+                'directive': SUCCESSION_DIRECTIVE_TITLE,
+                'effective_date':
+                    SUCCESSION_DIRECTIVE_EFFECTIVE_DATE,
+                'escalation_authority':
+                    SandersSentinelService._authority_view(
+                        succession_authority_row),
+                'escalations_total':
+                    succession_escalations_total,
+                'undelivered_critical_open':
+                    succession_undelivered_critical,
+                'fulfillment_unfulfilled_total':
+                    fulfillment_unfulfilled_total,
+                'fulfillment_findings_open':
+                    fulfillment_findings_open,
             },
             'records_total': sum(by_status.values()),
             'records_by_status': by_status,
