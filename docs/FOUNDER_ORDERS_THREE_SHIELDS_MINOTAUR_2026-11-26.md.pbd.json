@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/FOUNDER_ORDERS_THREE_SHIELDS_MINOTAUR_2026-11-26.md",
+        "payload_hash": "472b78721d3279b8b87647fc87972caa7f4fd0035a73bf42e3fc18fa70c56705",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
