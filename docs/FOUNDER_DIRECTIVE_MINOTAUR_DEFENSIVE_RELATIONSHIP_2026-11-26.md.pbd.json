@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/FOUNDER_DIRECTIVE_MINOTAUR_DEFENSIVE_RELATIONSHIP_2026-11-26.md",
+        "payload_hash": "cfb5ea794e21c033860db1e0a59803a8d86733f09b3581c705a8900e0d634a80",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
