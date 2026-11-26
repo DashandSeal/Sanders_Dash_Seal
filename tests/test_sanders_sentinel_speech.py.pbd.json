@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "tests/test_sanders_sentinel_speech.py",
+        "payload_hash": "3876c9bc3fb00c9fdb9f3f1fbb3fc2423e516907ef4cc57dcfbfa9b41d18e8e9",
+        "scope": "source-manifest"
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
