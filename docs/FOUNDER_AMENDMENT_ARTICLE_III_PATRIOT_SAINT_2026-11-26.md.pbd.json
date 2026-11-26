@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/FOUNDER_AMENDMENT_ARTICLE_III_PATRIOT_SAINT_2026-11-26.md",
+    "payload_hash": "fa59f4315cb0eeaa902904a735440e88c62d431a94739237db4a3b239f4cbcb7",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
