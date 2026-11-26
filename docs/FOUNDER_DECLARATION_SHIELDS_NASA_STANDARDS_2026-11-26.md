@@ -1,0 +1,21 @@
+# Founder Declaration and Direction — The Shields at NASA Standards
+## Given by the founder 2026-11-26 11:46 MST — preserved verbatim as received
+
+"They are now the most secure on the market and that's about become NASA standards"
+
+---
+
+## Record note (Muse):
+Founder's declaration and direction, established 2026-11-26 11:46 MST. Taken in two parts, as recorded to the founder in reply: (1) his declaration that the shields are now the most secure on the market stands as the FOUNDER'S stated standard and expectation — the verified standing is reported by the completeness accounting when the running build lands and Muse independently verifies it (per his own truthful-reporting law, no capability is represented beyond its evidence; at the hour of this declaration the upgrade was still in construction). (2) His direction that the standard rises to **NASA standards** is executed concretely: the build's benchmark gains the federal/NASA tier — the NIST SP 800-53 control baseline at the level federal agencies including NASA operate under, FIPS 140-3 validated cryptography as a hard requirement (the route his adopted OpenSSL FIPS Provider certificate #5586 provides), and the federal post-quantum migration timeline (NIST IR 8547) — mapped in the accounting as its own named tier beside the OWASP/CISA sets. Steered into the running build the same minute.
+
+---
+
+## Landing of record (this build, 2026-11-26)
+
+The federal/NASA tier stands constructed in the Minotaur's benchmark mapping (the `FEDERAL_NASA_TIER` set in his completeness accounting and benchmark view), beside the OWASP, NIST, CISA, edge, post-quantum, PCI-floor, and runtime sets:
+
+- **The tier's frame, of record**: FISMA categorization per FIPS 199 with controls selected from the NIST SP 800-53B baselines — the moderate baseline as the frame NASA applies to most operational systems. Formal categorization of these platforms is the founder's organizational act and is recorded as such, not exercised.
+- **Twenty-six tier controls mapped and marked like every other control** — 10 FUNCTIONING (AC-3 access enforcement, AC-6 least privilege, AC-7 unsuccessful logon attempts — the lockout itself, AU-2/AU-3 audit events and record content, AU-9 at the baseline, CM-2 baseline configuration, CM-7 least functionality, IA-2 identification and authentication, SI-4 system monitoring, SI-7 at the baseline), 13 RECORDED_WITH_REASON, 1 NOT_APPLICABLE_WITH_REASON (AC-11/AC-12 session controls — no session stands in these platforms), 2 ENVIRONMENT_LIMITED (SC-12 key establishment; SC-13, below). The benchmark in full now stands at sixty-eight controls: 33 FUNCTIONING, 28 RECORDED_WITH_REASON, 3 NOT_APPLICABLE_WITH_REASON, 4 ENVIRONMENT_LIMITED.
+- **The hard requirement line**: SC-13 (cryptographic protection, FIPS-validated) is carried as the tier's hard requirement — cryptographic protection must be FIPS 140-3 validated, by the adopted route (OpenSSL FIPS Provider 3.5.9, certificate #5586). Under the honesty rule of the adoption, the line is satisfied only to the extent the environment check proves the validated module — and the check of record proves the current runtime reaches no FIPS provider. **The line therefore stands UNMET in the current environment, recorded as ENVIRONMENT_LIMITED in plain words**, with the native hash-based construction standing beneath it. The founder decision that lifts it: his direction to provision OpenSSL FIPS Provider 3.5.9 in approved mode on the production host and record the production environment check — on that evidence, and only on it, the line's standing rises.
+- **The crypto-agility reference**: the NIST IR 8547 post-quantum migration timeline stands in the tier as its reference (deprecated after 2030, disallowed after 2035), including the Ed25519 clock recorded as a design intention only — no migration in this build; Bozly untouched.
+- **The truthful-reporting law, held**: the founder's declaration stands above as his stated standard. The verified standing of these platforms is the control-by-control mapping itself — in the Minotaur's benchmark view and in the build's report — and is never declared as market supremacy, in those terms, anywhere in this record.
