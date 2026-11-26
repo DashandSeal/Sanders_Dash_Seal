@@ -53,9 +53,11 @@ one.
 
 from __future__ import annotations
 
+import json
 import sqlite3
 import time
 import uuid
+from collections import deque
 from pathlib import Path
 
 from .rtsa_foundation import (
@@ -89,6 +91,8 @@ CONTRACT = RTSA_ROLES['LABYRINTH']
 RECORD_OPERATIONS = (
     'record_analysis', 'approve_analysis', 'record_result',
     'view_analysis', 'view_contract',
+    'record_graph', 'record_edge', 'view_graph',
+    'record_policy', 'flow_check',
 )
 ANALYSIS_STATUSES = ('REQUESTED', 'APPROVED', 'REJECTED',
                      'RESULT_RECORDED')
@@ -145,6 +149,58 @@ class LabyrinthService:
                     requested_at REAL NOT NULL,
                     updated_by TEXT NOT NULL,
                     updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS lab_graphs (
+                    graph_ref TEXT PRIMARY KEY,
+                    entry_refs TEXT NOT NULL,
+                    crown_refs TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS lab_graph_edges (
+                    edge_id TEXT PRIMARY KEY,
+                    graph_ref TEXT NOT NULL,
+                    from_ref TEXT NOT NULL,
+                    to_ref TEXT NOT NULL,
+                    relationship TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS lab_graph_edges_graph_idx
+                    ON lab_graph_edges (graph_ref);
+                CREATE TABLE IF NOT EXISTS lab_graph_findings (
+                    finding_id TEXT PRIMARY KEY,
+                    graph_ref TEXT NOT NULL,
+                    kind TEXT NOT NULL,
+                    detail TEXT NOT NULL,
+                    detected_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS lab_policies (
+                    policy_id TEXT PRIMARY KEY,
+                    from_platform TEXT NOT NULL,
+                    to_platform TEXT NOT NULL,
+                    endpoint_ref TEXT NOT NULL,
+                    mode TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    updated_by TEXT NOT NULL,
+                    updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS lab_flow_checks (
+                    check_id TEXT PRIMARY KEY,
+                    from_platform TEXT NOT NULL,
+                    to_platform TEXT NOT NULL,
+                    endpoint_ref TEXT NOT NULL,
+                    determination TEXT NOT NULL,
+                    mode TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
                     receipt_id TEXT NOT NULL
                 );
                 """
@@ -438,6 +494,449 @@ class LabyrinthService:
                 (analysis_id,)).fetchone()
         return self._analysis_view(updated)
 
+    # -- attack-path graph (shield upgrade, 2026-11-26) --------------
+    #
+    # The graph discipline of the shield-upgrade research (Area
+    # 2.4) made native over declared inventories: nodes are
+    # identities, platforms, credentials, and data stores named
+    # by reference; edges are traversable relationships an
+    # operator records. The platform computes shortest paths
+    # from declared entry nodes to declared crown (Tier 0)
+    # nodes, ranks choke points — the edges whose removal
+    # disconnects the most entry-to-crown pairs — and treats
+    # edge creation itself as a detection event: an edge that
+    # creates a new entry-to-crown path raises a finding in
+    # the same transaction. The graph reasons over the declared
+    # model only; it scans nothing and reaches into no live
+    # system.
+
+    @staticmethod
+    def _graph_paths(entry_refs, crown_refs, edges):
+        """All (entry, crown) pairs with one shortest path each,
+        over the declared edges. ``edges`` is a list of
+        (from_ref, to_ref) pairs."""
+        adjacency = {}
+        for from_ref, to_ref in edges:
+            adjacency.setdefault(from_ref, []).append(to_ref)
+        paths = []
+        for entry in entry_refs:
+            for crown in crown_refs:
+                if entry == crown:
+                    continue
+                previous = {entry: None}
+                queue = deque([entry])
+                while queue:
+                    node = queue.popleft()
+                    if node == crown:
+                        break
+                    for nxt in adjacency.get(node, []):
+                        if nxt not in previous:
+                            previous[nxt] = node
+                            queue.append(nxt)
+                if crown not in previous:
+                    continue
+                path = []
+                node = crown
+                while node is not None:
+                    path.append(node)
+                    node = previous[node]
+                paths.append({
+                    'entry_ref': entry,
+                    'crown_ref': crown,
+                    'path': list(reversed(path)),
+                    'hops': len(path) - 1,
+                })
+        return paths
+
+    @classmethod
+    def _connected_pairs(cls, entry_refs, crown_refs, edges):
+        return {
+            (p['entry_ref'], p['crown_ref'])
+            for p in cls._graph_paths(entry_refs, crown_refs,
+                                      edges)
+        }
+
+    @staticmethod
+    def _edge_view(row):
+        return {
+            'edge_id': row['edge_id'],
+            'graph_ref': row['graph_ref'],
+            'from_ref': row['from_ref'],
+            'to_ref': row['to_ref'],
+            'relationship': row['relationship'],
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def _graph_rows(self, db, graph_ref):
+        graph = db.execute(
+            'SELECT * FROM lab_graphs WHERE graph_ref = ?',
+            (graph_ref,)).fetchone()
+        if graph is None:
+            raise LabyrinthDenied('Graph not found')
+        edges = db.execute(
+            'SELECT * FROM lab_graph_edges WHERE graph_ref = ?'
+            ' ORDER BY recorded_at', (graph_ref,)).fetchall()
+        return graph, edges
+
+    def record_graph(self, actor, graph_ref, entry_refs,
+                     crown_refs, *, region=None):
+        """Declare one attack-path graph (operator only): its
+        low-trust entry nodes and its crown (Tier 0) nodes, all
+        by reference."""
+        self._geo(region)
+        self._require_operator(actor)
+        if not isinstance(graph_ref, str) or not graph_ref.strip():
+            raise LabyrinthDenied('A graph reference is required')
+        for label, refs in (('entry_refs', entry_refs),
+                            ('crown_refs', crown_refs)):
+            if not isinstance(refs, (list, tuple)) or not refs \
+                    or any(not isinstance(r, str) or not r.strip()
+                           for r in refs):
+                raise LabyrinthDenied(
+                    f'The graph {label} must be a non-empty list'
+                    ' of references')
+        now = self._now()
+        graph_ref = graph_ref.strip()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'LABYRINTH_GRAPH_RECORDED', actor=actor,
+                    graph_ref=graph_ref,
+                    entry_refs=list(entry_refs),
+                    crown_refs=list(crown_refs))
+                db.execute(
+                    'INSERT INTO lab_graphs (graph_ref, entry_refs,'
+                    ' crown_refs, recorded_by, recorded_at,'
+                    ' receipt_id) VALUES (?, ?, ?, ?, ?, ?)'
+                    ' ON CONFLICT(graph_ref) DO UPDATE SET'
+                    ' entry_refs = excluded.entry_refs,'
+                    ' crown_refs = excluded.crown_refs,'
+                    ' recorded_by = excluded.recorded_by,'
+                    ' recorded_at = excluded.recorded_at,'
+                    ' receipt_id = excluded.receipt_id',
+                    (graph_ref, json.dumps(list(entry_refs)),
+                     json.dumps(list(crown_refs)), actor, now,
+                     receipt_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+        return {
+            'graph_ref': graph_ref,
+            'entry_refs': list(entry_refs),
+            'crown_refs': list(crown_refs),
+            'recorded_by': actor,
+            'recorded_at': now,
+        }
+
+    def record_edge(self, actor, graph_ref, from_ref, to_ref,
+                    relationship, *, region=None):
+        """Record one traversable edge in a declared graph
+        (operator only). If the edge creates an entry-to-crown
+        path that did not exist before it, a NEW_PATH_TO_CROWN
+        finding is raised in the same transaction — edge
+        creation is itself a detection event."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (('from_ref', from_ref),
+                             ('to_ref', to_ref),
+                             ('relationship', relationship)):
+            if not isinstance(value, str) or not value.strip():
+                raise LabyrinthDenied(f'A {label} is required')
+        now = self._now()
+        edge_id = f'lab-edge-{uuid.uuid4().hex[:16]}'
+        finding = None
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                graph, rows = self._graph_rows(db, graph_ref)
+                entry_refs = json.loads(graph['entry_refs'])
+                crown_refs = json.loads(graph['crown_refs'])
+                before = self._connected_pairs(
+                    entry_refs, crown_refs,
+                    [(r['from_ref'], r['to_ref']) for r in rows])
+                receipt_id = self._record(
+                    'LABYRINTH_EDGE_RECORDED', actor=actor,
+                    edge_id=edge_id, graph_ref=graph_ref,
+                    from_ref=from_ref.strip(),
+                    to_ref=to_ref.strip())
+                db.execute(
+                    'INSERT INTO lab_graph_edges (edge_id,'
+                    ' graph_ref, from_ref, to_ref, relationship,'
+                    ' recorded_by, recorded_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (edge_id, graph_ref, from_ref.strip(),
+                     to_ref.strip(), relationship.strip(), actor,
+                     now, receipt_id),
+                )
+                after = self._connected_pairs(
+                    entry_refs, crown_refs,
+                    [(r['from_ref'], r['to_ref']) for r in rows]
+                    + [(from_ref.strip(), to_ref.strip())])
+                new_pairs = sorted(after - before)
+                if new_pairs:
+                    finding_id = (
+                        f'lab-finding-{uuid.uuid4().hex[:16]}')
+                    detail = (
+                        'Edge ' + from_ref.strip() + ' -> '
+                        + to_ref.strip()
+                        + ' created new entry-to-crown path(s): '
+                        + ', '.join(
+                            f'{a} -> {b}' for a, b in new_pairs))
+                    f_receipt = self._record(
+                        'LABYRINTH_GRAPH_FINDING', actor=actor,
+                        finding_id=finding_id, graph_ref=graph_ref,
+                        kind='NEW_PATH_TO_CROWN', detail=detail)
+                    db.execute(
+                        'INSERT INTO lab_graph_findings'
+                        ' (finding_id, graph_ref, kind, detail,'
+                        ' detected_at, receipt_id) VALUES'
+                        ' (?, ?, ?, ?, ?, ?)',
+                        (finding_id, graph_ref,
+                         'NEW_PATH_TO_CROWN', detail, now,
+                         f_receipt),
+                    )
+                    finding = {
+                        'finding_id': finding_id,
+                        'graph_ref': graph_ref,
+                        'kind': 'NEW_PATH_TO_CROWN',
+                        'detail': detail,
+                        'detected_at': now,
+                        'receipt_id': f_receipt,
+                    }
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM lab_graph_edges WHERE edge_id = ?',
+                (edge_id,)).fetchone()
+        view = self._edge_view(row)
+        view['new_path_finding'] = finding
+        return view
+
+    def graph_view(self, actor, role, graph_ref, *, region=None):
+        """One declared graph with its computed attack paths
+        and choke points. A path binds only to the declared
+        model; NO path in the view is a claim about a live
+        environment."""
+        self._geo(region)
+        self._guard_access(actor, role, graph_ref, 'graph view')
+        with self._connect() as db:
+            graph, rows = self._graph_rows(db, graph_ref)
+            findings = db.execute(
+                'SELECT * FROM lab_graph_findings'
+                ' WHERE graph_ref = ? ORDER BY detected_at',
+                (graph_ref,)).fetchall()
+        entry_refs = json.loads(graph['entry_refs'])
+        crown_refs = json.loads(graph['crown_refs'])
+        edges = [(r['from_ref'], r['to_ref']) for r in rows]
+        paths = self._graph_paths(entry_refs, crown_refs, edges)
+        connected = {(p['entry_ref'], p['crown_ref'])
+                     for p in paths}
+        choke_points = []
+        for row in rows:
+            remaining = [e for e in edges
+                         if e != (row['from_ref'], row['to_ref'])]
+            still = self._connected_pairs(entry_refs, crown_refs,
+                                          remaining)
+            disconnected = len(connected - still)
+            if disconnected:
+                choke_points.append({
+                    'edge_id': row['edge_id'],
+                    'from_ref': row['from_ref'],
+                    'to_ref': row['to_ref'],
+                    'pairs_disconnected': disconnected,
+                })
+        choke_points.sort(
+            key=lambda c: -c['pairs_disconnected'])
+        return {
+            'graph_ref': graph_ref,
+            'entry_refs': entry_refs,
+            'crown_refs': crown_refs,
+            'edges': [self._edge_view(r) for r in rows],
+            'paths': paths,
+            'choke_points': choke_points,
+            'findings': [
+                {'finding_id': f['finding_id'],
+                 'kind': f['kind'], 'detail': f['detail'],
+                 'detected_at': f['detected_at'],
+                 'receipt_id': f['receipt_id']}
+                for f in findings],
+            'note': 'Computed over the declared model only:'
+                    ' paths, choke points, and findings bind'
+                    ' to the recorded edges and the declared'
+                    ' entry and crown nodes, never to a live'
+                    ' environment.',
+        }
+
+    # -- communication policies (shield upgrade, 2026-11-26) ---------
+    #
+    # Per-platform communication policy on the CISA
+    # observe-then-enforce method (research Area 2.3): an
+    # operator records which platform may call which endpoint;
+    # new policies begin in OBSERVE (a non-listed flow is
+    # recorded as an observed violation, not refused) and are
+    # moved to ENFORCE by a further recorded policy, where a
+    # non-listed flow is refused. LABYRINTH carries the policy
+    # and the flow-check records; it enforces nothing on live
+    # traffic — the determination is the record.
+
+    @staticmethod
+    def _policy_view(row):
+        return {
+            'policy_id': row['policy_id'],
+            'from_platform': row['from_platform'],
+            'to_platform': row['to_platform'],
+            'endpoint_ref': row['endpoint_ref'],
+            'mode': row['mode'],
+            'status': row['status'],
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_policy(self, actor, from_platform, to_platform,
+                      endpoint_ref, mode, *, region=None):
+        """Record one allowed inter-platform flow (operator
+        only) with its rollout mode: OBSERVE or ENFORCE."""
+        self._geo(region)
+        self._require_operator(actor)
+        if mode not in ('OBSERVE', 'ENFORCE'):
+            raise LabyrinthDenied(
+                f'Unknown policy mode: {mode!r}')
+        for label, value in (
+                ('from_platform', from_platform),
+                ('to_platform', to_platform),
+                ('endpoint_ref', endpoint_ref)):
+            if not isinstance(value, str) or not value.strip():
+                raise LabyrinthDenied(f'A {label} is required')
+        now = self._now()
+        policy_id = f'lab-policy-{uuid.uuid4().hex[:16]}'
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'LABYRINTH_POLICY_RECORDED', actor=actor,
+                    policy_id=policy_id,
+                    from_platform=from_platform.strip(),
+                    to_platform=to_platform.strip(),
+                    endpoint_ref=endpoint_ref.strip(), mode=mode)
+                db.execute(
+                    'INSERT INTO lab_policies (policy_id,'
+                    ' from_platform, to_platform, endpoint_ref,'
+                    ' mode, status, recorded_by, recorded_at,'
+                    ' updated_by, updated_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (policy_id, from_platform.strip(),
+                     to_platform.strip(), endpoint_ref.strip(),
+                     mode, 'ACTIVE', actor, now, actor, now,
+                     receipt_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM lab_policies WHERE policy_id = ?',
+                (policy_id,)).fetchone()
+        return self._policy_view(row)
+
+    def policies_list(self, actor, role, *, region=None):
+        self._geo(region)
+        self._guard_access(actor, role, 'policies',
+                           'policies view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM lab_policies ORDER BY recorded_at',
+            ).fetchall()
+        return [self._policy_view(row) for row in rows]
+
+    def flow_check(self, actor, from_platform, to_platform,
+                   endpoint_ref, *, region=None):
+        """Record one flow determination against the policy
+        set (operator only). A listed flow is ALLOWED. An
+        unlisted flow is an OBSERVED_VIOLATION while any
+        governing policy stands in OBSERVE, and REFUSED once
+        the governing mode is ENFORCE; with no policy at all
+        the default is OBSERVE — observe-then-enforce begins
+        by observing."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (
+                ('from_platform', from_platform),
+                ('to_platform', to_platform),
+                ('endpoint_ref', endpoint_ref)):
+            if not isinstance(value, str) or not value.strip():
+                raise LabyrinthDenied(f'A {label} is required')
+        now = self._now()
+        check_id = f'lab-flow-{uuid.uuid4().hex[:16]}'
+        with self._connect() as db:
+            listed = db.execute(
+                "SELECT * FROM lab_policies WHERE status ="
+                " 'ACTIVE' AND from_platform = ? AND"
+                ' to_platform = ? AND endpoint_ref = ?',
+                (from_platform.strip(), to_platform.strip(),
+                 endpoint_ref.strip()),
+            ).fetchone()
+            governing = db.execute(
+                "SELECT mode FROM lab_policies WHERE status ="
+                " 'ACTIVE' AND from_platform = ?",
+                (from_platform.strip(),),
+            ).fetchall()
+        if listed is not None:
+            determination = 'ALLOWED'
+            mode = listed['mode']
+        else:
+            mode = ('ENFORCE' if any(
+                row['mode'] == 'ENFORCE' for row in governing)
+                else 'OBSERVE')
+            determination = (
+                'REFUSED' if mode == 'ENFORCE'
+                else 'OBSERVED_VIOLATION')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'LABYRINTH_FLOW_CHECK', actor=actor,
+                    check_id=check_id,
+                    from_platform=from_platform.strip(),
+                    to_platform=to_platform.strip(),
+                    endpoint_ref=endpoint_ref.strip(),
+                    determination=determination, mode=mode)
+                db.execute(
+                    'INSERT INTO lab_flow_checks (check_id,'
+                    ' from_platform, to_platform, endpoint_ref,'
+                    ' determination, mode, recorded_by,'
+                    ' recorded_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (check_id, from_platform.strip(),
+                     to_platform.strip(), endpoint_ref.strip(),
+                     determination, mode, actor, now, receipt_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM lab_flow_checks WHERE check_id = ?',
+                (check_id,)).fetchone()
+        return {
+            'check_id': row['check_id'],
+            'from_platform': row['from_platform'],
+            'to_platform': row['to_platform'],
+            'endpoint_ref': row['endpoint_ref'],
+            'determination': row['determination'],
+            'mode': row['mode'],
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
     # -- status / check-in ----------------------------------------------
 
     def status(self) -> dict:
@@ -452,6 +951,22 @@ class LabyrinthService:
                     'SELECT verdict, COUNT(*) AS n FROM lab_analyses'
                     ' WHERE verdict IS NOT NULL GROUP BY verdict'):
                 by_verdict[row['verdict']] = row['n']
+            graphs_total = db.execute(
+                'SELECT COUNT(*) AS n FROM lab_graphs',
+            ).fetchone()['n']
+            edges_total = db.execute(
+                'SELECT COUNT(*) AS n FROM lab_graph_edges',
+            ).fetchone()['n']
+            findings_total = db.execute(
+                'SELECT COUNT(*) AS n FROM lab_graph_findings',
+            ).fetchone()['n']
+            policies_total = db.execute(
+                "SELECT COUNT(*) AS n FROM lab_policies"
+                " WHERE status = 'ACTIVE'",
+            ).fetchone()['n']
+            flow_checks_total = db.execute(
+                'SELECT COUNT(*) AS n FROM lab_flow_checks',
+            ).fetchone()['n']
             latest = _foundation_latest_check_in(db,
                                                  IDENTITY.platform_id)
         return {
@@ -460,6 +975,11 @@ class LabyrinthService:
             'analyses_total': sum(by_status.values()),
             'analyses_by_status': by_status,
             'analyses_by_verdict': by_verdict,
+            'graphs_total': graphs_total,
+            'graph_edges_total': edges_total,
+            'graph_findings_total': findings_total,
+            'policies_active': policies_total,
+            'flow_checks_total': flow_checks_total,
             'latest_check_in': latest,
         }
 
