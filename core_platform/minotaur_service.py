@@ -1039,6 +1039,56 @@ COMPLETENESS_ACCOUNTING = (
               ' above it — the two are named'
               ' distinctly and neither impersonates'
               ' the other'},
+    {'item': 'Shield self-protection — Sanders'
+             ' Labyrinth Shield (its own identity,'
+             ' code, configuration, intelligence,'
+             ' credentials, recovery mechanisms)',
+     'domain': 'SELF_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'functioning in its own machinery:'
+              ' the inherited lockout exercised by'
+              ' simulation; its foundation self-hash'
+              ' audit pinned and compared in its'
+              ' integrity machinery; governed'
+              ' self-protection checks of record in'
+              ' its own store; the Minotaur patrols'
+              ' its core as the independent'
+              ' verification layer (founder'
+              ' acceptance criterion, 2026-11-26)'},
+    {'item': 'Shield self-protection — LABYRINTH'
+             ' (its own identity, code,'
+             ' configuration, intelligence,'
+             ' credentials, recovery mechanisms)',
+     'domain': 'SELF_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'functioning in its own machinery:'
+              ' the inherited lockout exercised by'
+              ' simulation; its own core integrity'
+              ' pin (SHA-256 of its module, compared'
+              ' in constant time — a tampered or'
+              ' rolled-back core reads MISMATCH);'
+              ' governed self-protection checks of'
+              ' record in its own store; the'
+              ' Minotaur patrols its core as the'
+              ' independent verification layer'
+              ' (founder acceptance criterion,'
+              ' 2026-11-26)'},
+    {'item': 'Shield self-protection — Sovereign'
+             ' Shield V3 (its own identity, code,'
+             ' configuration, intelligence,'
+             ' credentials, recovery mechanisms)',
+     'domain': 'SELF_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'functioning in its own machinery:'
+              ' the inherited lockout exercised by'
+              ' simulation; its integrity pin over'
+              ' foundation and service hashes,'
+              ' compared in constant time; governed'
+              ' self-protection checks of record in'
+              ' its own store; the Minotaur patrols'
+              ' its core as the independent'
+              ' verification layer (founder'
+              ' acceptance criterion, 2026-11-26)'},
 )
 
 # -- Global benchmark mapping (founder directive,
