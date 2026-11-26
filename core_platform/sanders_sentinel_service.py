@@ -361,6 +361,11 @@ BLOODLINE_WATCH_SET = (
      'title': ('Founder Ruling \u2014 Every Platform'
                ' Must Be Able to Speak'),
      'required': True},
+    {'document': ('docs/SANDERS_SENTINEL_'
+                  'CONSTRUCTION_PROGRAM_2026-11-26.md'),
+     'title': ('Sanders Sentinel \u2014 Construction '
+               'Program'),
+     'required': True},
     {'document': 'docs/SANDERS_BLOODLINE_REGISTRY.md',
      'title': 'Sanders Bloodline Registry',
      'required': False},
@@ -1499,6 +1504,504 @@ FOUNDER_OPERATIONAL_READINESS_VERBATIM = (
     'identity, business model, funding authority, '
     'or human escalation path.'
 )
+# -- Sentinel Construction Program (founder's
+# adoption, 2026-11-26) --------------------------
+CONSTRUCTION_PROGRAM_TITLE = (
+    'Sanders Sentinel \u2014 Construction Program')
+CONSTRUCTION_PROGRAM_ADOPTED = '2026-11-26'
+CONSTRUCTION_PROGRAM_SCOPE = 'SENTINEL_CONSTRUCTION_PROGRAM'
+CONSTRUCTION_PROGRAM_SOURCE = (
+    'docs/SANDERS_SENTINEL_CONSTRUCTION_PROGRAM'
+    '_2026-11-26.md')
+FOUNDER_CONSTRUCTION_PROGRAM_ITEMS_VERBATIM = (
+    '39 Emergency shelter acquisition\n'
+    '40 Domestic emergency relocation\n'
+    '41 International emergency evacuation\n'
+    '42 Emergency medical repatriation\n'
+    '43 Mental health crisis intervention through '
+    'qualified professionals\n'
+    '44 Emergency counseling and de-escalation\n'
+    '45 Financial exploitation detection and '
+    'assistance\n'
+    '46 Identity theft and fraud intervention\n'
+    '47 Emergency legal representation '
+    'coordination\n'
+    '48 Emergency funding activation\n'
+    '49 Emergency family notification\n'
+    '50 Multilingual emergency communication\n'
+    '51 Deaf and hard-of-hearing emergency '
+    'accessibility\n'
+    '52 Satellite emergency communication\n'
+    '53 Communications failure recovery\n'
+    '54 Emergency responder coordination\n'
+    '55 Continuous assistance and arrival '
+    'verification\n'
+    '56 Post-emergency recovery assistance'
+)
+FOUNDER_CONSTRUCTION_PROGRAM_PRIORITIES_VERBATIM = (
+    'Live perception connections \u2014 Receive '
+    'genuine emergency signals\n'
+    'Independent danger recognition \u2014 Evaluate '
+    'actual incoming evidence\n'
+    'Emergency communication \u2014 Reach functioning '
+    'human assistance channels\n'
+    'Medical device integration \u2014 Receive '
+    'supported physiological alerts\n'
+    'Physical intervention coordination \u2014 Request '
+    'actual emergency assistance\n'
+    'Global warning connectivity \u2014 Receive '
+    'authoritative disaster warnings\n'
+    'Communication redundancy \u2014 Maintain '
+    'assistance during network failures\n'
+    'Operational verification \u2014 Establish that '
+    'assistance was genuinely requested, received '
+    'and delivered'
+)
+FOUNDER_CONSTRUCTION_PROGRAM_ADOPTION_VERBATIM = (
+    'Adopt items 39\u201356 and the eight priorities '
+    'as Sentinel\u2019s construction program'
+)
+CONSTRUCTION_PROGRAM_LADDER = (
+    'DESIGNED', 'CONSTRUCTED', 'CONNECTED', 'TESTED',
+    'OPERATIONAL')
+CONSTRUCTION_PROGRAM_LADDER_FRAME = (
+    'The truthful-verification ladder of the '
+    'founder\u2019s Universal Founder Holographic '
+    'Projection Standard (requirement 12), adopted '
+    'as this program\u2019s reporting frame: designed '
+    '\u2192 constructed \u2192 connected \u2192 tested \u2192 '
+    'operational. An item\u2019s state is derived from '
+    'the records -- a founder designation of record '
+    'and a completed end-to-end test of record -- '
+    'and is never settable by any caller.')
+CONSTRUCTION_PROGRAM_DESIGNATION_KINDS = (
+    'LIVE', 'SIMULATED')
+CONSTRUCTION_PROGRAM_DESIGNATION_STATES = (
+    'ACTIVE', 'ENDED')
+CONSTRUCTION_PROGRAM_NO_CONNECTION_INVARIANT = (
+    'This construction connects nothing external: '
+    'no commercial response network, no medical '
+    'device, no warning feed, and no satellite '
+    'service is connected or represented as '
+    'connected. Every connection is a founder '
+    'designation of record; an item awaiting its '
+    'designation stands CONSTRUCTED at best, never '
+    'CONNECTED or OPERATIONAL.')
+CONSTRUCTION_PROGRAM_PROFESSIONAL_INVARIANT = (
+    'Items 43 and 44 intervene only through '
+    'qualified human professionals: Sentinel '
+    'coordinates to the professional by reference '
+    'and never treats, counsels, or de-escalates '
+    'as the clinician.')
+CONSTRUCTION_PROGRAM_LANGUAGE_INVARIANT = (
+    'Item 50: language is a recorded capability '
+    'field on the communication records. No '
+    'translation capability exists in this '
+    'construction and none is claimed.')
+CONSTRUCTION_PROGRAM_REPORTING_ONLY_INVARIANT = (
+    'Program states are reporting only: they gate '
+    'nothing. No activation, coordination, or '
+    'protective path consults a program state -- '
+    'the discipline of founder clarification No. 3, '
+    'carried into this program.')
+CONSTRUCTION_PROGRAM_TEST_INVARIANT = (
+    'Program tests are internal records labeled '
+    'TEST, incapable of external dispatch -- '
+    'founder clarification No. 2, carried into '
+    'this program.')
+CONSTRUCTION_PROGRAM_ITEMS = (
+    {'item': 39,
+     'title': 'Emergency shelter acquisition',
+     'platform': 'the_godfather',
+     'mechanism': (
+         'The Godfather\u2019s coordination matter kind '
+         'EMERGENCY_SHELTER_ACQUISITION, opened '
+         'against an open emergency case through '
+         'Sentinel\u2019s RELOCATION activation; the '
+         'matter is born AWAITING_HUMAN_REVIEW and '
+         'is approved or rejected by a human '
+         'decision-maker.'),
+     'designation': (
+         'A shelter provider or placement channel '
+         'for the Godfather to coordinate with; '
+         'until designated, shelter acquisition is '
+         'a coordination record awaiting a human '
+         'decision, not a placement.')},
+    {'item': 40,
+     'title': 'Domestic emergency relocation',
+     'platform': 'the_godfather',
+     'mechanism': (
+         'The Godfather\u2019s '
+         'TRANSPORTATION_PROVISION_DOMESTIC and '
+         'EMERGENCY_TRANSPORTATION coordination '
+         'matters, opened through Sentinel\u2019s '
+         'RELOCATION activation against an open '
+         'emergency case.'),
+     'designation': (
+         'A domestic transportation provider or '
+         'channel; until designated, relocation is '
+         'a coordination record, not a movement.')},
+    {'item': 41,
+     'title': 'International emergency evacuation',
+     'platform': 'the_godfather',
+     'mechanism': (
+         'The Godfather\u2019s '
+         'TRANSPORTATION_PROVISION_INTERNATIONAL '
+         'and EMERGENCY_EVACUATION_ARRANGEMENT '
+         'coordination matters, opened through '
+         'Sentinel\u2019s RELOCATION activation against '
+         'an open emergency case.'),
+     'designation': (
+         'An international evacuation provider or '
+         'channel; until designated, evacuation is '
+         'a coordination record, not a movement.')},
+    {'item': 42,
+     'title': 'Emergency medical repatriation',
+     'platform': 'the_godfather',
+     'mechanism': (
+         'The Godfather\u2019s MEDICAL_TRANSPORTATION '
+         'and REPATRIATION_ARRANGEMENT coordination '
+         'matters, opened through Sentinel\u2019s '
+         'RELOCATION activation against an open '
+         'emergency case.'),
+     'designation': (
+         'A medical transport or repatriation '
+         'provider; until designated, repatriation '
+         'is a coordination record, not a '
+         'movement.')},
+    {'item': 43,
+     'title': (
+         'Mental health crisis intervention through '
+         'qualified professionals'),
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'Sentinel assistance-coordination records '
+         'to a QUALIFIED_MENTAL_HEALTH_PROFESSIONAL '
+         'by reference. Sentinel coordinates only: '
+         'the intervention is the qualified human '
+         'professional\u2019s; Sentinel never treats.'),
+     'designation': (
+         'The qualified mental-health professionals '
+         'or crisis services Sentinel coordinates '
+         'to; until designated, a coordination '
+         'record names no provider.')},
+    {'item': 44,
+     'title': 'Emergency counseling and de-escalation',
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'Sentinel assistance-coordination records '
+         'to a TRAINED_CRISIS_COUNSELOR by '
+         'reference. Counseling and de-escalation '
+         'are the human professional\u2019s; Sentinel '
+         'coordinates only.'),
+     'designation': (
+         'The trained crisis counselors or '
+         'services Sentinel coordinates to; until '
+         'designated, a coordination record names '
+         'no provider.')},
+    {'item': 45,
+     'title': (
+         'Financial exploitation detection and '
+         'assistance'),
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'Sentinel assistance-coordination records '
+         'resting on an evidence reference of '
+         'record -- detection is a determination '
+         'over evidence presented, never an '
+         'inference -- coordinated to '
+         'ADULT_PROTECTIVE_SERVICES, a '
+         'FINANCIAL_INSTITUTION_FRAUD_DEPARTMENT, '
+         'or a VICTIM_ASSISTANCE_ORGANIZATION by '
+         'reference.'),
+     'designation': (
+         'The protective-services, fraud-'
+         'department, or victim-assistance '
+         'counterparts Sentinel coordinates with.')},
+    {'item': 46,
+     'title': 'Identity theft and fraud intervention',
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'Sentinel assistance-coordination records '
+         'to a FINANCIAL_INSTITUTION_FRAUD_'
+         'DEPARTMENT or a VICTIM_ASSISTANCE_'
+         'ORGANIZATION by reference.'),
+     'designation': (
+         'The fraud-department or victim-'
+         'assistance counterparts Sentinel '
+         'coordinates with.')},
+    {'item': 47,
+     'title': (
+         'Emergency legal representation '
+         'coordination'),
+     'platform': 'sanders_patriot_saint',
+     'mechanism': (
+         'Sanders Patriot Saint\u2019s '
+         'LEGAL_REPRESENTATION_COORDINATION and '
+         'EMERGENCY_LEGAL_ASSISTANCE bloodline '
+         'matters, opened through Sentinel\u2019s LEGAL '
+         'activation against an open emergency '
+         'case.'),
+     'designation': (
+         'The attorneys or legal-aid channels '
+         'Patriot Saint coordinates with; '
+         'coordination is a record, not '
+         'representation.')},
+    {'item': 48,
+     'title': 'Emergency funding activation',
+     'platform': 'sanders_sentinel + the_godfather',
+     'mechanism': (
+         'The joint funding flow of record: a '
+         'Sentinel funding determination joined '
+         'with the Godfather\u2019s counterpart '
+         'determination under the Permanent Global '
+         'Bloodline Protection Directives. No '
+         'platform disburses or holds funds, and '
+         'no payment rail is attached.'),
+     'designation': (
+         'Nothing external to connect: the flow is '
+         'internal. A payment rail, if ever '
+         'wanted, is a separate founder '
+         'designation; none exists and none is '
+         'represented.')},
+    {'item': 49,
+     'title': 'Emergency family notification',
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'Sentinel family-notification records: a '
+         'notification to a family recipient by '
+         'reference over a recorded channel, born '
+         'UNDELIVERED and marked DELIVERED only on '
+         'an operator-recorded delivery '
+         'confirmation by reference -- the '
+         'speech-record discipline.'),
+     'designation': (
+         'A functioning notification channel; '
+         'until one is designated and connected, '
+         'notifications are records born '
+         'UNDELIVERED and are never represented '
+         'as sent.')},
+    {'item': 50,
+     'title': 'Multilingual emergency communication',
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'The language of an emergency '
+         'communication is a recorded field on '
+         'Sentinel\u2019s family-notification and '
+         'assistance-coordination records, as it '
+         'already is on voice conversations.'),
+     'designation': (
+         'No translation capability exists or is '
+         'claimed; a language capability, if '
+         'wanted, is a separate founder '
+         'designation.')},
+    {'item': 51,
+     'title': (
+         'Deaf and hard-of-hearing emergency '
+         'accessibility'),
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'Family notifications carry an '
+         'accessibility field; a notification '
+         'recorded DEAF_OR_HARD_OF_HEARING refuses '
+         'the VOICE channel by name '
+         '(ACCESSIBLE_CHANNEL_REQUIRED) and '
+         'proceeds over TEXT, VISUAL, or SILENT -- '
+         'the channels the founder\u2019s speech '
+         'specification preserves, alongside the '
+         'SILENT_DISTRESS_SIGNAL.'),
+     'designation': (
+         'An accessible delivery channel (text, '
+         'visual, or silent) for notification '
+         'records to be delivered over.')},
+    {'item': 52,
+     'title': 'Satellite emergency communication',
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'A designated channel record in the '
+         'redundancy set: satellite stands as a '
+         'program designation slot alongside the '
+         'perception channels\u2019 primary/alternative '
+         'failover discipline. No satellite '
+         'service is connected by this '
+         'construction; the item\u2019s satellite state '
+         'is NOT_CONNECTED until designated.'),
+     'designation': (
+         'A satellite communication service and '
+         'its authorization; until designated, '
+         'satellite communication does not exist '
+         'here and is never represented.')},
+    {'item': 53,
+     'title': 'Communications failure recovery',
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'The operational-readiness recovery '
+         'machinery of record: loss-of-visibility '
+         'events, automatic recovery attempts, and '
+         'perception-channel failover records.'),
+     'designation': (
+         'The alternative channels themselves are '
+         'the perception designations of record; '
+         'recovery is machinery over whatever '
+         'channels are designated.')},
+    {'item': 54,
+     'title': 'Emergency responder coordination',
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'Responder coordination records of record '
+         '(founder clarification No. 2): FIRE, '
+         'MEDICAL, and LAW_ENFORCEMENT responders '
+         'coordinated against an open case; '
+         'coordination is not escalation and '
+         'carries escalation authority NONE.'),
+     'designation': (
+         'The responder agencies or dispatch '
+         'channels Sentinel coordinates with; '
+         'until designated, coordination is a '
+         'record of the coordination decision, not '
+         'a dispatch.')},
+    {'item': 55,
+     'title': (
+         'Continuous assistance and arrival '
+         'verification'),
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'Fulfillment expectations of record: an '
+         'activation\u2019s expected protective '
+         'assistance is recorded unfulfilled, '
+         'verified on confirmation, and arrival is '
+         'confirmed before a case may close '
+         'CLOSED_RESOLVED; an unfulfilled '
+         'expectation blocks closure by name.'),
+     'designation': (
+         'Nothing external to connect: '
+         'verification is internal machinery over '
+         'the coordination records.')},
+    {'item': 56,
+     'title': 'Post-emergency recovery assistance',
+     'platform': 'sanders_sentinel',
+     'mechanism': (
+         'Post-emergency recovery-assistance '
+         'records, recorded only against a case '
+         'closed CLOSED_RESOLVED: follow-up '
+         'assistance, restoration coordination, '
+         'and recovery follow-through by '
+         'reference, completed by operator '
+         'record.'),
+     'designation': (
+         'The follow-up and restoration '
+         'counterparts, where a record names one; '
+         'the records themselves are internal.')},
+)
+CONSTRUCTION_PROGRAM_PRIORITIES = (
+    {'priority': 1,
+     'title': 'Live perception connections',
+     'required_outcome': (
+         'Receive genuine emergency signals'),
+     'mechanisms': (
+         'The perception channels of record '
+         '(VISUAL, ENVIRONMENTAL, ACOUSTIC, '
+         'MEDICAL_WEARABLE, OFFICIAL_WARNING) and '
+         'their readiness connections; program '
+         'designations extend the same discipline '
+         'to this program\u2019s items.')},
+    {'priority': 2,
+     'title': 'Independent danger recognition',
+     'required_outcome': (
+         'Evaluate actual incoming evidence'),
+     'mechanisms': (
+         'Situation assessments over recorded '
+         'observations, hazard flags, and '
+         'protective initiations of record.')},
+    {'priority': 3,
+     'title': 'Emergency communication',
+     'required_outcome': (
+         'Reach functioning human assistance '
+         'channels'),
+     'mechanisms': (
+         'Emergency activations, responder '
+         'coordination, assistance coordination '
+         '(items 43\u201346), and family notification '
+         'records (item 49).')},
+    {'priority': 4,
+     'title': 'Medical device integration',
+     'required_outcome': (
+         'Receive supported physiological alerts'),
+     'mechanisms': (
+         'The MEDICAL_WEARABLE perception channel '
+         'of record. No medical device is '
+         'connected by this construction; a device '
+         'integration is a founder designation.')},
+    {'priority': 5,
+     'title': 'Physical intervention coordination',
+     'required_outcome': (
+         'Request actual emergency assistance'),
+     'mechanisms': (
+         'Responder coordination and the '
+         'Godfather\u2019s and Patriot Saint\u2019s '
+         'coordination matters (items 39\u201342 and '
+         '47).')},
+    {'priority': 6,
+     'title': 'Global warning connectivity',
+     'required_outcome': (
+         'Receive authoritative disaster warnings'),
+     'mechanisms': (
+         'The OFFICIAL_WARNING perception channel '
+         'and the DISASTER_WARNING_EXPOSURE signal '
+         'of record, which requires an authorized '
+         'location reference. No warning feed is '
+         'connected by this construction.')},
+    {'priority': 7,
+     'title': 'Communication redundancy',
+     'required_outcome': (
+         'Maintain assistance during network '
+         'failures'),
+     'mechanisms': (
+         'Perception primary/alternative failover, '
+         'visibility events and recovery attempts '
+         '(item 53), and the satellite designation '
+         'slot (item 52, NOT_CONNECTED until '
+         'designated).')},
+    {'priority': 8,
+     'title': 'Operational verification',
+     'required_outcome': (
+         'Establish that assistance was genuinely '
+         'requested, received and delivered'),
+     'mechanisms': (
+         'Fulfillment expectations and arrival '
+         'verification (item 55), delivery-'
+         'confirmed speech and family-notification '
+         'records, operational tests, and this '
+         'program\u2019s per-item ladder, derived from '
+         'records only.')},
+)
+ASSISTANCE_COORDINATION_KINDS = {
+    43: ('QUALIFIED_MENTAL_HEALTH_PROFESSIONAL',),
+    44: ('TRAINED_CRISIS_COUNSELOR',),
+    45: ('ADULT_PROTECTIVE_SERVICES',
+         'FINANCIAL_INSTITUTION_FRAUD_DEPARTMENT',
+         'VICTIM_ASSISTANCE_ORGANIZATION'),
+    46: ('FINANCIAL_INSTITUTION_FRAUD_DEPARTMENT',
+         'VICTIM_ASSISTANCE_ORGANIZATION'),
+}
+ASSISTANCE_COORDINATION_ROLE = 'COORDINATION_ONLY'
+ASSISTANCE_INTERVENTION_BY = (
+    'QUALIFIED_HUMAN_PROFESSIONAL')
+FAMILY_NOTIFICATION_CHANNELS = (
+    'VOICE', 'TEXT', 'VISUAL', 'SILENT')
+FAMILY_NOTIFICATION_ACCESSIBILITY = (
+    'STANDARD', 'DEAF_OR_HARD_OF_HEARING')
+FAMILY_NOTIFICATION_DELIVERY_STATES = (
+    'UNDELIVERED', 'DELIVERED')
+RECOVERY_ASSISTANCE_KINDS = (
+    'FOLLOW_UP_ASSISTANCE',
+    'RESTORATION_COORDINATION',
+    'RECOVERY_FOLLOW_THROUGH')
+RECOVERY_ASSISTANCE_STATES = ('RECORDED', 'COMPLETED')
+RECOVERY_ASSISTANCE_PLATFORMS = (
+    'sanders_sentinel', 'the_godfather',
+    'sanders_patriot_saint')
+
 
 class SandersSentinelDenied(Exception):
     """The requested Sanders Sentinel operation is not
@@ -1913,6 +2416,69 @@ class SandersSentinelService:
                 ' recorded_by TEXT NOT NULL,'
                 ' recorded_at TEXT NOT NULL,'
                 ' receipt_id TEXT NOT NULL)')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_program_designations ('
+                ' designation_id TEXT PRIMARY KEY,'
+                ' item_no INTEGER NOT NULL,'
+                ' designation_ref TEXT NOT NULL,'
+                ' kind TEXT NOT NULL,'
+                ' authorization_ref TEXT NOT NULL,'
+                ' state TEXT NOT NULL,'
+                ' ended_detail_ref TEXT,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' updated_by TEXT NOT NULL,'
+                ' updated_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_assistance_coordination ('
+                ' coordination_id TEXT PRIMARY KEY,'
+                ' item_no INTEGER NOT NULL,'
+                ' case_id TEXT,'
+                ' coordination_kind TEXT NOT NULL,'
+                ' counterpart_ref TEXT NOT NULL,'
+                ' evidence_ref TEXT,'
+                ' language TEXT,'
+                ' detail_ref TEXT NOT NULL,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_family_notifications ('
+                ' notification_id TEXT PRIMARY KEY,'
+                ' case_id TEXT NOT NULL,'
+                ' recipient_ref TEXT NOT NULL,'
+                ' channel TEXT NOT NULL,'
+                ' language TEXT,'
+                ' accessibility TEXT NOT NULL,'
+                ' detail_ref TEXT NOT NULL,'
+                ' delivery_state TEXT NOT NULL,'
+                ' delivery_confirmation_ref TEXT,'
+                ' delivered_at TEXT,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' updated_by TEXT NOT NULL,'
+                ' updated_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_recovery_assistance ('
+                ' assistance_id TEXT PRIMARY KEY,'
+                ' case_id TEXT NOT NULL,'
+                ' assistance_kind TEXT NOT NULL,'
+                ' target_platform TEXT,'
+                ' target_ref TEXT NOT NULL,'
+                ' detail_ref TEXT NOT NULL,'
+                ' state TEXT NOT NULL,'
+                ' completion_detail_ref TEXT,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' updated_by TEXT NOT NULL,'
+                ' updated_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
 
     # -- plumbing ---------------------------------------------------
 
@@ -2000,6 +2566,9 @@ class SandersSentinelService:
                 .succession_directive_design_view()),
             'sentinel_speech': (
                 SandersSentinelService.speech_design_view()),
+            'sentinel_construction_program': (
+                SandersSentinelService
+                .construction_program_design_view()),
             'note': 'Bloodline governance coverage is Sanders'
                     ' Sentinel\u2019s ruled remit under the'
                     ' founder\u2019s 2026-11-25 ruling: its role'
@@ -7437,6 +8006,1094 @@ class SandersSentinelService:
                 if view['outcome'] == 'COMPLETED'),
         }
 
+    # -- construction program (founder's adoption,
+    # 2026-11-26) ------------------------------------
+
+    @staticmethod
+    def construction_program_design_view() -> dict:
+        return {
+            'title': CONSTRUCTION_PROGRAM_TITLE,
+            'adopted': CONSTRUCTION_PROGRAM_ADOPTED,
+            'adoption':
+                FOUNDER_CONSTRUCTION_PROGRAM_ADOPTION_VERBATIM,
+            'items_verbatim':
+                FOUNDER_CONSTRUCTION_PROGRAM_ITEMS_VERBATIM,
+            'priorities_verbatim':
+                FOUNDER_CONSTRUCTION_PROGRAM_PRIORITIES_VERBATIM,
+            'source': CONSTRUCTION_PROGRAM_SOURCE,
+            'ladder': list(CONSTRUCTION_PROGRAM_LADDER),
+            'ladder_frame':
+                CONSTRUCTION_PROGRAM_LADDER_FRAME,
+            'items': [
+                {'item': entry['item'],
+                 'title': entry['title'],
+                 'platform': entry['platform'],
+                 'mechanism': entry['mechanism'],
+                 'designation_required':
+                     entry['designation']}
+                for entry in CONSTRUCTION_PROGRAM_ITEMS],
+            'priorities': [
+                {'priority': entry['priority'],
+                 'title': entry['title'],
+                 'required_outcome':
+                     entry['required_outcome'],
+                 'mechanisms': entry['mechanisms']}
+                for entry in CONSTRUCTION_PROGRAM_PRIORITIES],
+            'no_connection_invariant':
+                CONSTRUCTION_PROGRAM_NO_CONNECTION_INVARIANT,
+            'professional_invariant':
+                CONSTRUCTION_PROGRAM_PROFESSIONAL_INVARIANT,
+            'language_invariant':
+                CONSTRUCTION_PROGRAM_LANGUAGE_INVARIANT,
+            'reporting_only_invariant':
+                CONSTRUCTION_PROGRAM_REPORTING_ONLY_INVARIANT,
+            'test_invariant':
+                CONSTRUCTION_PROGRAM_TEST_INVARIANT,
+            'funds_disbursed': False,
+            'funds_held': False,
+        }
+
+    @staticmethod
+    def _program_entry(item_no):
+        for entry in CONSTRUCTION_PROGRAM_ITEMS:
+            if entry['item'] == item_no:
+                return entry
+        raise SandersSentinelDenied(
+            'The construction program item must be one '
+            'of items 39\u201356 of the adopted program')
+
+    @staticmethod
+    def _program_capability(item_no):
+        return f'PROGRAM_ITEM_{item_no}'
+
+    def _program_item_state(self, db, entry):
+        """Derive one program item's truthful ladder
+        state from the records -- and only from the
+        records. No caller sets a ladder state. An
+        ACTIVE LIVE designation of record is the
+        item's connection; a SIMULATED designation
+        never counts as a connection. A COMPLETED
+        end-to-end program test of record is the
+        item's test. OPERATIONAL requires both."""
+        item_no = entry['item']
+        designation = db.execute(
+            'SELECT * FROM'
+            ' sanders_sentinel_program_designations'
+            ' WHERE item_no = ? AND state = ? ORDER BY'
+            ' recorded_at DESC, rowid DESC LIMIT 1',
+            (item_no, 'ACTIVE')).fetchone()
+        tested = db.execute(
+            'SELECT COUNT(*) AS n FROM'
+            ' sanders_sentinel_operational_tests WHERE'
+            ' capability = ? AND outcome = ?',
+            (self._program_capability(item_no),
+             'COMPLETED')).fetchone()['n'] > 0
+        connected = (designation is not None
+                     and designation['kind'] == 'LIVE')
+        simulated = (designation is not None
+                     and designation['kind'] == 'SIMULATED')
+        if not entry['mechanism']:
+            state = 'DESIGNED'
+        elif connected and tested:
+            state = 'OPERATIONAL'
+        elif tested:
+            state = 'TESTED'
+        elif connected:
+            state = 'CONNECTED'
+        else:
+            state = 'CONSTRUCTED'
+        basis = {
+            'item': item_no,
+            'title': entry['title'],
+            'platform': entry['platform'],
+            'mechanism': entry['mechanism'],
+            'designation_required': entry['designation'],
+            'ladder_state': state,
+            'designation_id': (
+                designation['designation_id']
+                if designation else None),
+            'designation_kind': (
+                designation['kind']
+                if designation else None),
+            'simulated_designation': simulated,
+            'end_to_end_test_completed': tested,
+            'reporting_only': True,
+            'gates_activation': False,
+        }
+        if item_no == 52:
+            basis['satellite_state'] = (
+                'CONNECTED' if connected
+                else 'NOT_CONNECTED')
+        return basis
+
+    def construction_program_view(self, actor, role, *,
+                                  region=None):
+        """The construction program board (guarded
+        read): every adopted item with its derived
+        ladder state and the records the state rests
+        on, and the eight construction priorities
+        with the machinery that carries each. States
+        are reporting only and gate nothing."""
+        self._geo(region)
+        self._guard_access(actor, role,
+                           'construction-program',
+                           'construction program view')
+        with self._connect() as db:
+            items = [
+                self._program_item_state(db, entry)
+                for entry in CONSTRUCTION_PROGRAM_ITEMS]
+            channel_states = {
+                capability:
+                self._readiness_state_for(
+                    db, capability)['state']
+                for capability in PERCEPTION_CHANNELS}
+        priorities = []
+        for entry in CONSTRUCTION_PROGRAM_PRIORITIES:
+            view = {
+                'priority': entry['priority'],
+                'title': entry['title'],
+                'required_outcome':
+                    entry['required_outcome'],
+                'mechanisms': entry['mechanisms'],
+            }
+            if entry['priority'] == 1:
+                view['perception_channel_states'] = (
+                    channel_states)
+            priorities.append(view)
+        return {
+            'title': CONSTRUCTION_PROGRAM_TITLE,
+            'adopted': CONSTRUCTION_PROGRAM_ADOPTED,
+            'design':
+                SandersSentinelService
+                .construction_program_design_view(),
+            'items': items,
+            'priorities': priorities,
+            'items_operational': [
+                entry['item'] for entry in items
+                if entry['ladder_state'] == 'OPERATIONAL'],
+            'external_connections': 'NONE',
+            'funds_disbursed': False,
+            'funds_held': False,
+        }
+
+    @staticmethod
+    def _program_designation_view(row):
+        return {
+            'designation_id': row['designation_id'],
+            'item': row['item_no'],
+            'designation_ref': row['designation_ref'],
+            'kind': row['kind'],
+            'authorization_ref':
+                row['authorization_ref'],
+            'state': row['state'],
+            'ended_detail_ref': row['ended_detail_ref'],
+            'scope_ref': CONSTRUCTION_PROGRAM_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_program_designation(
+            self, actor, item_no, designation_ref, kind,
+            authorization_ref, *, region=None):
+        """Record one founder designation for a
+        program item (operator only): the designated
+        counterpart or channel and its authorization
+        basis, by reference, labeled LIVE or
+        SIMULATED exactly as it is. A designation
+        record designates and records; the item's
+        ladder state is derived from it, and a
+        SIMULATED designation can never support a
+        CONNECTED or OPERATIONAL reading. Recording
+        a designation connects nothing by itself --
+        it is the record of the founder's
+        designation, the only path by which an item
+        may read CONNECTED."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (isinstance(item_no, bool)
+                or not isinstance(item_no, int)):
+            raise SandersSentinelDenied(
+                'The construction program item number '
+                'is required')
+        self._program_entry(item_no)
+        if kind not in (
+                CONSTRUCTION_PROGRAM_DESIGNATION_KINDS):
+            raise SandersSentinelDenied(
+                'The designation kind must be one of: '
+                + ', '.join(
+                    CONSTRUCTION_PROGRAM_DESIGNATION_KINDS))
+        for label, value in (
+                ('designation_ref', designation_ref),
+                ('authorization_ref', authorization_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        designation_id = (
+            f'sentinel-program-designation-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_PROGRAM_DESIGNATION'
+                    '_RECORDED',
+                    actor=actor,
+                    designation_id=designation_id,
+                    item_no=item_no, kind=kind)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_program_designations'
+                    ' (designation_id, item_no,'
+                    ' designation_ref, kind,'
+                    ' authorization_ref, state,'
+                    ' ended_detail_ref, recorded_by,'
+                    ' recorded_at, updated_by, updated_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (designation_id, item_no,
+                     designation_ref.strip(), kind,
+                     authorization_ref.strip(), 'ACTIVE',
+                     None, actor, now, actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_program_designations'
+                ' WHERE designation_id = ?',
+                (designation_id,)).fetchone()
+        return self._program_designation_view(row)
+
+    def end_program_designation(
+            self, actor, designation_id, detail_ref, *,
+            region=None):
+        """End one ACTIVE program designation
+        (operator only): the designation stops
+        counting toward the item's ladder state from
+        this record forward. The record is never
+        deleted; the item's state re-derives from
+        what remains."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersSentinelDenied(
+                'A detail reference is required')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_program_designations'
+                    ' WHERE designation_id = ?',
+                    (designation_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'Unknown program designation')
+                if row['state'] != 'ACTIVE':
+                    raise SandersSentinelDenied(
+                        'Only an ACTIVE designation can '
+                        'be ended')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_PROGRAM_DESIGNATION'
+                    '_ENDED',
+                    actor=actor,
+                    designation_id=designation_id,
+                    item_no=row['item_no'])
+                db.execute(
+                    'UPDATE'
+                    ' sanders_sentinel_program_designations'
+                    ' SET state = ?, ended_detail_ref = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE'
+                    ' designation_id = ?',
+                    ('ENDED', detail_ref.strip(), actor,
+                     now, receipt_id, designation_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_program_designations'
+                ' WHERE designation_id = ?',
+                (designation_id,)).fetchone()
+        return self._program_designation_view(row)
+
+    def program_designations(self, actor, role, *,
+                             item_no=None, region=None):
+        """The program designations of record
+        (guarded read)."""
+        self._geo(region)
+        self._guard_access(actor, role,
+                           'construction-program',
+                           'program designations view')
+        with self._connect() as db:
+            if item_no is None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_program_designations'
+                    ' ORDER BY recorded_at').fetchall()
+            else:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_program_designations'
+                    ' WHERE item_no = ? ORDER BY'
+                    ' recorded_at', (item_no,)).fetchall()
+        views = [self._program_designation_view(row)
+                 for row in rows]
+        return {
+            'title': CONSTRUCTION_PROGRAM_TITLE,
+            'designations': views,
+            'total': len(views),
+            'active_total': sum(
+                1 for view in views
+                if view['state'] == 'ACTIVE'),
+        }
+
+    def record_program_test(
+            self, actor, item_no, stages, outcome,
+            detail_ref, *, region=None):
+        """Record one end-to-end operational test of
+        a construction program item (operator only):
+        the complete sequence from danger detection
+        through delivery of protective assistance,
+        exercised against the item and recorded
+        stage by stage in the operational tests of
+        record under the item's program capability.
+        A COMPLETED outcome requires all eight
+        stages of the operational sequence. The
+        record is labeled TEST everywhere it
+        appears: a test never counts as a real
+        emergency, never opens or closes a real
+        case, and is incapable of external
+        dispatch."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (isinstance(item_no, bool)
+                or not isinstance(item_no, int)):
+            raise SandersSentinelDenied(
+                'The construction program item number '
+                'is required')
+        self._program_entry(item_no)
+        if outcome not in OPERATIONAL_TEST_OUTCOMES:
+            raise SandersSentinelDenied(
+                'The test outcome must be one of: '
+                + ', '.join(OPERATIONAL_TEST_OUTCOMES))
+        if (not isinstance(stages, (list, tuple))
+                or not stages):
+            raise SandersSentinelDenied(
+                'The exercised stages of the operational'
+                ' sequence are required')
+        stage_list = []
+        for stage in stages:
+            if stage not in OPERATIONAL_SEQUENCE:
+                raise SandersSentinelDenied(
+                    'Each stage must be one of the'
+                    ' operational sequence: '
+                    + ', '.join(OPERATIONAL_SEQUENCE))
+            if stage not in stage_list:
+                stage_list.append(stage)
+        if (outcome == 'COMPLETED'
+                and set(stage_list)
+                != set(OPERATIONAL_SEQUENCE)):
+            raise SandersSentinelDenied(
+                'A completed end-to-end test exercises'
+                ' the complete sequence -- Perceive'
+                ' through Recover, all eight stages')
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersSentinelDenied(
+                'A detail reference is required')
+        capability = self._program_capability(item_no)
+        now = self._now()
+        test_id = (f'sentinel-operational-test-'
+                   f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_OPERATIONAL_TEST'
+                    '_RECORDED',
+                    actor=actor, test_id=test_id,
+                    record_kind='TEST',
+                    capability=capability,
+                    outcome=outcome,
+                    stages=list(stage_list))
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_operational_tests'
+                    ' (test_id, capability, stages, outcome,'
+                    ' detail_ref, recorded_by, recorded_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (test_id, capability,
+                     json.dumps(stage_list), outcome,
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_operational_tests'
+                ' WHERE test_id = ?', (test_id,)).fetchone()
+        view = self._operational_test_view(row)
+        view['item'] = item_no
+        return view
+
+    def program_tests(self, actor, role, *,
+                      region=None):
+        """The construction program tests of record
+        (guarded read) -- every one labeled TEST."""
+        self._geo(region)
+        self._guard_access(actor, role,
+                           'construction-program',
+                           'program tests view')
+        capabilities = [
+            self._program_capability(entry['item'])
+            for entry in CONSTRUCTION_PROGRAM_ITEMS]
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_operational_tests'
+                ' ORDER BY recorded_at').fetchall()
+        views = []
+        for row in rows:
+            if row['capability'] not in capabilities:
+                continue
+            view = self._operational_test_view(row)
+            view['item'] = int(
+                row['capability'].rsplit('_', 1)[1])
+            views.append(view)
+        return {
+            'title': CONSTRUCTION_PROGRAM_TITLE,
+            'record_kind': 'TEST',
+            'tests': views,
+            'total': len(views),
+            'completed_total': sum(
+                1 for view in views
+                if view['outcome'] == 'COMPLETED'),
+        }
+
+    @staticmethod
+    def _assistance_coordination_view(row):
+        return {
+            'coordination_id': row['coordination_id'],
+            'item': row['item_no'],
+            'case_id': row['case_id'],
+            'coordination_kind':
+                row['coordination_kind'],
+            'counterpart_ref': row['counterpart_ref'],
+            'evidence_ref': row['evidence_ref'],
+            'language': row['language'],
+            'detail_ref': row['detail_ref'],
+            'sentinel_role':
+                ASSISTANCE_COORDINATION_ROLE,
+            'intervention_by':
+                ASSISTANCE_INTERVENTION_BY,
+            'treatment_by_sentinel': False,
+            'scope_ref': CONSTRUCTION_PROGRAM_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_assistance_coordination(
+            self, actor, item_no, coordination_kind,
+            counterpart_ref, detail_ref, case_id=None,
+            evidence_ref=None, language=None, *,
+            region=None):
+        """Record one assistance coordination for
+        items 43\u201346 (operator only): Sentinel
+        coordinates the protected person to a
+        qualified human professional or assistance
+        counterpart, by reference. Sentinel's role
+        on every such record is COORDINATION_ONLY:
+        the intervention, counseling, and
+        de-escalation are the qualified human
+        professional's -- Sentinel never treats,
+        counsels, or de-escalates as the clinician.
+        Item 45 rests on evidence: an evidence
+        reference is required, because detection is
+        a determination over evidence of record,
+        never an inference. The language of the
+        communication is a recorded field (item
+        50); no translation capability exists or is
+        claimed. Where a case is named for items 43
+        and 44, the case must stand open -- crisis
+        coordination belongs to a live emergency."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (isinstance(item_no, bool)
+                or not isinstance(item_no, int)
+                or item_no not in
+                ASSISTANCE_COORDINATION_KINDS):
+            raise SandersSentinelDenied(
+                'Assistance coordination covers items '
+                '43\u201346 of the adopted construction '
+                'program')
+        if coordination_kind not in (
+                ASSISTANCE_COORDINATION_KINDS[item_no]):
+            raise SandersSentinelDenied(
+                'The coordination kind for item '
+                f'{item_no} must be one of: '
+                + ', '.join(
+                    ASSISTANCE_COORDINATION_KINDS[
+                        item_no]))
+        for label, value in (
+                ('counterpart_ref', counterpart_ref),
+                ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if item_no == 45 and (
+                not isinstance(evidence_ref, str)
+                or not evidence_ref.strip()):
+            raise SandersSentinelDenied(
+                'FINANCIAL_EXPLOITATION_DETECTION rests '
+                'on evidence of record: an evidence '
+                'reference is required for item 45')
+        for label, value in (
+                ('evidence_ref', evidence_ref),
+                ('language', language)):
+            if value is not None and (
+                    not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label}, when given, must name'
+                    ' the record it rests on')
+        now = self._now()
+        coordination_id = (
+            f'sentinel-assistance-coordination-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                if case_id is not None:
+                    case = self._emergency_case_row(
+                        db, case_id)
+                    if case is None:
+                        raise SandersSentinelDenied(
+                            'Unknown emergency case')
+                    if (item_no in (43, 44)
+                            and case['state'] != 'OPEN'):
+                        raise SandersSentinelDenied(
+                            'EMERGENCY_CASE_NOT_OPEN: '
+                            'crisis coordination under '
+                            'items 43 and 44 is recorded '
+                            'against an open emergency '
+                            'case')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_ASSISTANCE'
+                    '_COORDINATION_RECORDED',
+                    actor=actor,
+                    coordination_id=coordination_id,
+                    item_no=item_no,
+                    coordination_kind=coordination_kind,
+                    sentinel_role=(
+                        ASSISTANCE_COORDINATION_ROLE))
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_assistance'
+                    '_coordination (coordination_id,'
+                    ' item_no, case_id, coordination_kind,'
+                    ' counterpart_ref, evidence_ref,'
+                    ' language, detail_ref, recorded_by,'
+                    ' recorded_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (coordination_id, item_no, case_id,
+                     coordination_kind,
+                     counterpart_ref.strip(),
+                     evidence_ref.strip()
+                     if evidence_ref else None,
+                     language.strip() if language else None,
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_assistance_coordination'
+                ' WHERE coordination_id = ?',
+                (coordination_id,)).fetchone()
+        return self._assistance_coordination_view(row)
+
+    def assistance_coordinations(self, actor, role, *,
+                                 case_id=None,
+                                 region=None):
+        """The assistance coordination records
+        (guarded read) -- every one coordination
+        only, intervention by the qualified human
+        professional of record."""
+        self._geo(region)
+        self._guard_access(actor, role,
+                           'assistance-coordination',
+                           'assistance coordination view')
+        with self._connect() as db:
+            if case_id is None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_assistance'
+                    '_coordination ORDER BY recorded_at'
+                ).fetchall()
+            else:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_assistance'
+                    '_coordination WHERE case_id = ?'
+                    ' ORDER BY recorded_at',
+                    (case_id,)).fetchall()
+        views = [self._assistance_coordination_view(row)
+                 for row in rows]
+        return {
+            'title': CONSTRUCTION_PROGRAM_TITLE,
+            'sentinel_role':
+                ASSISTANCE_COORDINATION_ROLE,
+            'intervention_by':
+                ASSISTANCE_INTERVENTION_BY,
+            'treatment_by_sentinel': False,
+            'coordinations': views,
+            'total': len(views),
+        }
+
+    @staticmethod
+    def _family_notification_view(row):
+        return {
+            'notification_id': row['notification_id'],
+            'case_id': row['case_id'],
+            'recipient_ref': row['recipient_ref'],
+            'channel': row['channel'],
+            'language': row['language'],
+            'accessibility': row['accessibility'],
+            'detail_ref': row['detail_ref'],
+            'delivery_state': row['delivery_state'],
+            'delivery_confirmation_ref':
+                row['delivery_confirmation_ref'],
+            'delivered_at': row['delivered_at'],
+            'scope_ref': CONSTRUCTION_PROGRAM_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_family_notification(
+            self, actor, case_id, recipient_ref,
+            channel, detail_ref, language=None,
+            accessibility='STANDARD', *, region=None):
+        """Record one emergency family notification
+        (operator only, item 49) against an open
+        emergency case: the family recipient and the
+        channel, by reference. The record is born
+        UNDELIVERED and is never represented as
+        sent; it reads DELIVERED only on an
+        operator-recorded delivery confirmation by
+        reference. The language of the notification
+        is a recorded field (item 50) -- no
+        translation capability exists or is claimed.
+        Accessibility (item 51): a notification
+        recorded DEAF_OR_HARD_OF_HEARING refuses
+        the VOICE channel by name
+        (ACCESSIBLE_CHANNEL_REQUIRED); TEXT, VISUAL,
+        and SILENT are the preserved accessible
+        channels."""
+        self._geo(region)
+        self._require_operator(actor)
+        if channel not in FAMILY_NOTIFICATION_CHANNELS:
+            raise SandersSentinelDenied(
+                'The notification channel must be one '
+                'of: ' + ', '.join(
+                    FAMILY_NOTIFICATION_CHANNELS))
+        if accessibility not in (
+                FAMILY_NOTIFICATION_ACCESSIBILITY):
+            raise SandersSentinelDenied(
+                'The accessibility of record must be '
+                'one of: ' + ', '.join(
+                    FAMILY_NOTIFICATION_ACCESSIBILITY))
+        if (accessibility == 'DEAF_OR_HARD_OF_HEARING'
+                and channel == 'VOICE'):
+            raise SandersSentinelDenied(
+                'ACCESSIBLE_CHANNEL_REQUIRED: a '
+                'notification recorded for a deaf or '
+                'hard-of-hearing recipient cannot '
+                'proceed over the VOICE channel; TEXT, '
+                'VISUAL, and SILENT channels are '
+                'preserved')
+        for label, value in (
+                ('recipient_ref', recipient_ref),
+                ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if language is not None and (
+                not isinstance(language, str)
+                or not language.strip()):
+            raise SandersSentinelDenied(
+                'A language, when given, must name the'
+                ' language of record')
+        now = self._now()
+        notification_id = (
+            f'sentinel-family-notification-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                case = self._emergency_case_row(
+                    db, case_id)
+                if case is None:
+                    raise SandersSentinelDenied(
+                        'Unknown emergency case')
+                if case['state'] != 'OPEN':
+                    raise SandersSentinelDenied(
+                        'EMERGENCY_CASE_NOT_OPEN: a family'
+                        ' notification is recorded against'
+                        ' an open emergency case')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_FAMILY_NOTIFICATION'
+                    '_RECORDED',
+                    actor=actor,
+                    notification_id=notification_id,
+                    case_id=case_id, channel=channel)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_family_notifications'
+                    ' (notification_id, case_id,'
+                    ' recipient_ref, channel, language,'
+                    ' accessibility, detail_ref,'
+                    ' delivery_state,'
+                    ' delivery_confirmation_ref,'
+                    ' delivered_at, recorded_by,'
+                    ' recorded_at, updated_by,'
+                    ' updated_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?, ?, ?)',
+                    (notification_id, case_id,
+                     recipient_ref.strip(), channel,
+                     language.strip() if language
+                     else None,
+                     accessibility, detail_ref.strip(),
+                     'UNDELIVERED', None, None, actor,
+                     now, actor, now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_family_notifications'
+                ' WHERE notification_id = ?',
+                (notification_id,)).fetchone()
+        return self._family_notification_view(row)
+
+    def confirm_family_notification_delivery(
+            self, actor, notification_id,
+            delivery_confirmation_ref, *, region=None):
+        """Confirm one family notification's delivery
+        (operator only) on a delivery confirmation
+        of record, by reference. An UNDELIVERED
+        notification is never represented as sent;
+        this record is the only path by which one
+        reads DELIVERED."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(delivery_confirmation_ref,
+                           str)
+                or not delivery_confirmation_ref.strip()):
+            raise SandersSentinelDenied(
+                'A delivery confirmation reference is '
+                'required')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_family_notifications'
+                    ' WHERE notification_id = ?',
+                    (notification_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'Unknown family notification')
+                if row['delivery_state'] == 'DELIVERED':
+                    raise SandersSentinelDenied(
+                        'The family notification already '
+                        'stands DELIVERED on a '
+                        'confirmation of record')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_FAMILY_NOTIFICATION'
+                    '_DELIVERED',
+                    actor=actor,
+                    notification_id=notification_id,
+                    case_id=row['case_id'])
+                db.execute(
+                    'UPDATE'
+                    ' sanders_sentinel_family_notifications'
+                    ' SET delivery_state = ?,'
+                    ' delivery_confirmation_ref = ?,'
+                    ' delivered_at = ?, updated_by = ?,'
+                    ' updated_at = ?, receipt_id = ?'
+                    ' WHERE notification_id = ?',
+                    ('DELIVERED',
+                     delivery_confirmation_ref.strip(),
+                     now, actor, now, receipt_id,
+                     notification_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_family_notifications'
+                ' WHERE notification_id = ?',
+                (notification_id,)).fetchone()
+        return self._family_notification_view(row)
+
+    def family_notifications(self, actor, role, *,
+                             case_id=None, region=None):
+        """The family notification records (guarded
+        read), with their delivery states exactly as
+        recorded."""
+        self._geo(region)
+        self._guard_access(actor, role,
+                           'family-notifications',
+                           'family notifications view')
+        with self._connect() as db:
+            if case_id is None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_family_notifications'
+                    ' ORDER BY recorded_at').fetchall()
+            else:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_family_notifications'
+                    ' WHERE case_id = ? ORDER BY'
+                    ' recorded_at', (case_id,)).fetchall()
+        views = [self._family_notification_view(row)
+                 for row in rows]
+        return {
+            'title': CONSTRUCTION_PROGRAM_TITLE,
+            'notifications': views,
+            'total': len(views),
+            'undelivered_total': sum(
+                1 for view in views
+                if view['delivery_state']
+                == 'UNDELIVERED'),
+        }
+
+    @staticmethod
+    def _recovery_assistance_view(row):
+        return {
+            'assistance_id': row['assistance_id'],
+            'case_id': row['case_id'],
+            'assistance_kind': row['assistance_kind'],
+            'target_platform': row['target_platform'],
+            'target_ref': row['target_ref'],
+            'detail_ref': row['detail_ref'],
+            'state': row['state'],
+            'completion_detail_ref':
+                row['completion_detail_ref'],
+            'scope_ref': CONSTRUCTION_PROGRAM_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_recovery_assistance(
+            self, actor, case_id, assistance_kind,
+            target_ref, detail_ref, target_platform=None,
+            *, region=None):
+        """Record one post-emergency recovery
+        assistance (operator only, item 56) against
+        a case closed CLOSED_RESOLVED: follow-up
+        assistance, restoration coordination, or
+        recovery follow-through, by reference,
+        optionally naming the platform that carries
+        the follow-through. Recovery assistance
+        belongs after the emergency: a case that has
+        not closed resolved cannot carry one. The
+        record is born RECORDED and stands COMPLETED
+        only on an operator completion record."""
+        self._geo(region)
+        self._require_operator(actor)
+        if assistance_kind not in (
+                RECOVERY_ASSISTANCE_KINDS):
+            raise SandersSentinelDenied(
+                'The recovery assistance kind must be '
+                'one of: ' + ', '.join(
+                    RECOVERY_ASSISTANCE_KINDS))
+        if (target_platform is not None
+                and target_platform not in
+                RECOVERY_ASSISTANCE_PLATFORMS):
+            raise SandersSentinelDenied(
+                'The target platform must be one of: '
+                + ', '.join(RECOVERY_ASSISTANCE_PLATFORMS))
+        for label, value in (
+                ('target_ref', target_ref),
+                ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        assistance_id = (
+            f'sentinel-recovery-assistance-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                case = self._emergency_case_row(
+                    db, case_id)
+                if case is None:
+                    raise SandersSentinelDenied(
+                        'Unknown emergency case')
+                if case['state'] != 'CLOSED_RESOLVED':
+                    raise SandersSentinelDenied(
+                        'POST_EMERGENCY_RECOVERY_ASSISTANCE'
+                        ' is recorded against a case '
+                        'closed CLOSED_RESOLVED; this case '
+                        'stands ' + case['state'])
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_RECOVERY_ASSISTANCE'
+                    '_RECORDED',
+                    actor=actor,
+                    assistance_id=assistance_id,
+                    case_id=case_id,
+                    assistance_kind=assistance_kind)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_recovery_assistance'
+                    ' (assistance_id, case_id,'
+                    ' assistance_kind, target_platform,'
+                    ' target_ref, detail_ref, state,'
+                    ' completion_detail_ref, recorded_by,'
+                    ' recorded_at, updated_by,'
+                    ' updated_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?)',
+                    (assistance_id, case_id,
+                     assistance_kind, target_platform,
+                     target_ref.strip(),
+                     detail_ref.strip(), 'RECORDED',
+                     None, actor, now, actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_recovery_assistance'
+                ' WHERE assistance_id = ?',
+                (assistance_id,)).fetchone()
+        return self._recovery_assistance_view(row)
+
+    def complete_recovery_assistance(
+            self, actor, assistance_id, detail_ref, *,
+            region=None):
+        """Complete one recovery assistance record
+        (operator only) on a completion detail of
+        record. Only a RECORDED assistance can be
+        completed; the record is never deleted."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersSentinelDenied(
+                'A detail reference is required')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_recovery_assistance'
+                    ' WHERE assistance_id = ?',
+                    (assistance_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'Unknown recovery assistance')
+                if row['state'] != 'RECORDED':
+                    raise SandersSentinelDenied(
+                        'Only a RECORDED recovery '
+                        'assistance can be completed')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_RECOVERY_ASSISTANCE'
+                    '_COMPLETED',
+                    actor=actor,
+                    assistance_id=assistance_id,
+                    case_id=row['case_id'])
+                db.execute(
+                    'UPDATE'
+                    ' sanders_sentinel_recovery_assistance'
+                    ' SET state = ?,'
+                    ' completion_detail_ref = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE'
+                    ' assistance_id = ?',
+                    ('COMPLETED', detail_ref.strip(),
+                     actor, now, receipt_id,
+                     assistance_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_recovery_assistance'
+                ' WHERE assistance_id = ?',
+                (assistance_id,)).fetchone()
+        return self._recovery_assistance_view(row)
+
+    def recovery_assistance_records(
+            self, actor, role, *, case_id=None,
+            region=None):
+        """The post-emergency recovery assistance
+        records (guarded read)."""
+        self._geo(region)
+        self._guard_access(actor, role,
+                           'recovery-assistance',
+                           'recovery assistance view')
+        with self._connect() as db:
+            if case_id is None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_recovery_assistance'
+                    ' ORDER BY recorded_at').fetchall()
+            else:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_recovery_assistance'
+                    ' WHERE case_id = ? ORDER BY'
+                    ' recorded_at', (case_id,)).fetchall()
+        views = [self._recovery_assistance_view(row)
+                 for row in rows]
+        return {
+            'title': CONSTRUCTION_PROGRAM_TITLE,
+            'recovery_assistance': views,
+            'total': len(views),
+            'completed_total': sum(
+                1 for view in views
+                if view['state'] == 'COMPLETED'),
+        }
+
     def disburse_funds(self, actor, *args, **kwargs):
         """Refused by name, unconditionally. Under the
         Permanent Global Bloodline Protection
@@ -7614,6 +9271,35 @@ class SandersSentinelService:
                 ' sanders_sentinel_operational_tests'
                 " WHERE outcome = 'COMPLETED'"
             ).fetchone()['n']
+            program_item_states = {
+                entry['item']:
+                SandersSentinelService
+                ._program_item_state(self, db, entry)
+                ['ladder_state']
+                for entry in CONSTRUCTION_PROGRAM_ITEMS}
+            program_designations_active = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_program_designations'
+                " WHERE state = 'ACTIVE'"
+            ).fetchone()['n']
+            program_assistance_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_assistance_coordination'
+            ).fetchone()['n']
+            program_notifications_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_family_notifications'
+            ).fetchone()['n']
+            program_notifications_undelivered = (
+                db.execute(
+                    'SELECT COUNT(*) AS n FROM'
+                    ' sanders_sentinel_family_notifications'
+                    " WHERE delivery_state = 'UNDELIVERED'"
+                ).fetchone()['n'])
+            program_recovery_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_recovery_assistance'
+            ).fetchone()['n']
         return {
             'identity': IDENTITY.to_dict(),
             'design': self.design_view(),
@@ -7709,6 +9395,29 @@ class SandersSentinelService:
                     orr_recovery_total,
                 'operational_tests_completed':
                     orr_tests_completed,
+            },
+            'construction_program': {
+                'title': CONSTRUCTION_PROGRAM_TITLE,
+                'adopted': CONSTRUCTION_PROGRAM_ADOPTED,
+                'items_by_ladder_state':
+                    program_item_states,
+                'items_operational': [
+                    item for item, state
+                    in program_item_states.items()
+                    if state == 'OPERATIONAL'],
+                'designations_active':
+                    program_designations_active,
+                'assistance_coordination_total':
+                    program_assistance_total,
+                'family_notifications_total':
+                    program_notifications_total,
+                'family_notifications_undelivered':
+                    program_notifications_undelivered,
+                'recovery_assistance_total':
+                    program_recovery_total,
+                'external_connections': 'NONE',
+                'funds_disbursed': False,
+                'funds_held': False,
             },
             'records_total': sum(by_status.values()),
             'records_by_status': by_status,
