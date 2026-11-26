@@ -53,6 +53,8 @@ one.
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 import json
 import sqlite3
 import time
@@ -171,8 +173,8 @@ INHERITED_PROTECTIONS = (
      'applicability': 'INHERITED_BY_DESIGN',
      'basis': 'this shield generates no key material; the Minotaur\'s deterministic derivation standard covers the signing layer above it'},
     {'protection': 'MALICIOUS_SOFTWARE_ROLLBACK',
-     'applicability': 'INHERITED_BY_DESIGN',
-     'basis': 'this shield\'s core is hash-pinned by the Minotaur\'s patrol; a rolled-back module reads MISMATCH there and raises his anomaly'},
+     'applicability': 'INHERITED_FUNCTIONING',
+     'basis': 'this shield pins its own core: a rolled-back module reads MISMATCH against its own integrity pin, compared in constant time — and the Minotaur\u2019s patrol verifies the same core from his layer'},
     {'protection': 'UNAUTHORIZED_DISABLING_OF_DEFENSIVE_FUNCTIONS',
      'applicability': 'INHERITED_FUNCTIONING',
      'basis': 'this service exposes no operation that disables a defensive function'},
@@ -329,6 +331,13 @@ class LabyrinthService:
                     recorded_at REAL NOT NULL,
                     updated_by TEXT NOT NULL,
                     updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS lab_integrity (
+                    id INTEGER PRIMARY KEY CHECK (id = 1),
+                    pinned_file_hash TEXT NOT NULL,
+                    pinned_by TEXT NOT NULL,
+                    pinned_at REAL NOT NULL,
                     receipt_id TEXT NOT NULL
                 );
                 CREATE TABLE IF NOT EXISTS lab_flow_checks (
@@ -1116,6 +1125,82 @@ class LabyrinthService:
             'receipt_id': row['receipt_id'],
         }
 
+
+    # -- self-integrity (founder directive,
+    # 2026-11-26 11:42: the shields must themselves
+    # be protected) ----------------------------------
+    #
+    # LABYRINTH pins its own core: the SHA-256 of
+    # this service's module file, held in its own
+    # store and compared in constant time — a
+    # tampered or rolled-back core reads MISMATCH
+    # against its pin. The Minotaur's patrol stands
+    # over this self-protection as its independent
+    # verification layer.
+
+    def _current_file_hash(self) -> str:
+        return hashlib.sha256(
+            Path(__file__).read_bytes()).hexdigest()
+
+    def integrity_status(self, actor, role, *,
+                         region=None):
+        """Compare this service's own module file
+        against its pin of record."""
+        self._geo(region)
+        self._guard_access(actor, role, 'integrity',
+                           'integrity view')
+        current = self._current_file_hash()
+        with self._connect() as db:
+            row = db.execute(
+                'SELECT * FROM lab_integrity WHERE id = 1',
+            ).fetchone()
+        if row is None:
+            state, pinned = 'UNPINNED', None
+        else:
+            pinned = row['pinned_file_hash']
+            state = ('MATCH' if hmac.compare_digest(
+                pinned, current) else 'MISMATCH')
+        return {
+            'service_file': Path(__file__).name,
+            'state': state,
+            'pinned_file_hash': pinned,
+            'current_file_hash': current,
+            'platform_id': 'labyrinth',
+        }
+
+    def integrity_pin(self, actor, *, region=None):
+        """Pin this service's current module file hash
+        (operator only)."""
+        self._geo(region)
+        self._require_operator(actor)
+        current = self._current_file_hash()
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'LAB_INTEGRITY_PIN', actor=actor,
+                    service_file=Path(__file__).name,
+                    pinned_file_hash=current)
+                db.execute(
+                    'INSERT INTO lab_integrity (id,'
+                    ' pinned_file_hash, pinned_by,'
+                    ' pinned_at, receipt_id)'
+                    ' VALUES (1, ?, ?, ?, ?)'
+                    ' ON CONFLICT(id) DO UPDATE SET'
+                    ' pinned_file_hash ='
+                    ' excluded.pinned_file_hash,'
+                    ' pinned_by = excluded.pinned_by,'
+                    ' pinned_at = excluded.pinned_at,'
+                    ' receipt_id = excluded.receipt_id',
+                    (current, actor, now, receipt_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+        return self.integrity_status(
+            actor, 'OPERATOR', region=region)
 
     # -- inherited defenses (founder directive,
     # 2026-11-26) --------------------------------
