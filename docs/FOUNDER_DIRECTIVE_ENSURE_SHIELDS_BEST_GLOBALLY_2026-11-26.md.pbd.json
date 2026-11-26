@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/FOUNDER_DIRECTIVE_ENSURE_SHIELDS_BEST_GLOBALLY_2026-11-26.md",
+        "payload_hash": "fd7c94c246fbc7c7f48e0b38e37bd2674689ecc9640e77308850001f3282c1a2",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
