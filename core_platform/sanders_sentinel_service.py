@@ -401,6 +401,20 @@ BLOODLINE_WATCH_SET = (
                ' Shields; Minotaur Upgrade'),
      'required': True},
     {'document': ('docs/FOUNDER_DIRECTIVE_MINOTAUR'
+                  '_COMPLETE_ARCHITECTURE_2026-11-26.md'),
+     'title': ('Founder Directive \u2014 The'
+               ' Minotaur: Complete Architecture'
+               ' Accounting and the'
+               ' Functioning-Defense Standard'),
+     'required': True},
+    {'document': ('docs/FOUNDER_DIRECTIVE_SHIELDS'
+                  '_INHERIT_MINOTAUR_DEFENSES'
+                  '_2026-11-26.md'),
+     'title': ('Founder Directive \u2014 Every'
+               ' Shield Inherits the Minotaur\u2019s'
+               ' New Defenses'),
+     'required': True},
+    {'document': ('docs/FOUNDER_DIRECTIVE_MINOTAUR'
                   '_DEFENSIVE_RELATIONSHIP_2026-11-26.md'),
      'title': ('Founder Directive \u2014 The'
                ' Minotaur: The Completed Defensive'
