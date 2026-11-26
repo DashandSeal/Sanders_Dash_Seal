@@ -149,11 +149,18 @@ ASSETS = {
     # the only route that ever served them.
     '/assets/auth.js': ('auth.js', 'application/javascript; charset=utf-8'),
     '/landing': ('jade-landing.html', 'text/html; charset=utf-8'),
+    # The company surfaces of the Sanders Companies (2026-11-25
+    # transformation): each company at a clean route, in its own
+    # colors, on the shared companies.css presentation system.
+    '/home-healthcare': ('home-healthcare.html', 'text/html; charset=utf-8'),
+    '/senior-living': ('senior-living.html', 'text/html; charset=utf-8'),
+    '/headquarters': ('headquarters.html', 'text/html; charset=utf-8'),
     '/labyrinth-shield': ('labyrinth-shield.html', 'text/html; charset=utf-8'),
     '/assets/labyrinth-shield.css': ('labyrinth-shield.css', 'text/css; charset=utf-8'),
     '/lil-mama': ('lil-mama.html', 'text/html; charset=utf-8'),
     '/baby-girl': ('baby-girl.html', 'text/html; charset=utf-8'),
     '/assets/business-faces.css': ('business-faces.css', 'text/css; charset=utf-8'),
+    '/assets/companies.css': ('companies.css', 'text/css; charset=utf-8'),
     '/assets/jade-landing.css': ('jade-landing.css', 'text/css; charset=utf-8'),
     '/assets/jade-landing.js': ('jade-landing.js', 'application/javascript; charset=utf-8'),
     '/assets/sds-founder.png': ('sds-founder.png', 'image/png'),
