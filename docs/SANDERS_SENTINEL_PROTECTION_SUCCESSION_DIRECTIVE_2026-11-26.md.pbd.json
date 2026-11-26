@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/SANDERS_SENTINEL_PROTECTION_SUCCESSION_DIRECTIVE_2026-11-26.md",
+    "payload_hash": "966ec2e43a004754c42dd828d6eb0c29bb11542beace88435d09fcc6ab3cea52",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
