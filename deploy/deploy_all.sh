@@ -274,21 +274,29 @@ print("VOICE PREWARM OK: tiny model cached at", t.download_root, flush=True)
 # status surface flipped to faster-whisper, but POST
 # /api/voice/transcribe answered an unhandled 500 in production --
 # an exception type the voice handler does not catch, invisible from
-# outside).  Synthesize a known sentence with the system espeak-ng
-# and transcribe it back, here, as the runtime user; any failure
-# prints its full traceback into this deploy log.
+# outside).  Synthesize a known sentence with the platform's own
+# SystemTTSSynthesizer and transcribe it back, here, as the runtime
+# user; each side reports separately and any failure prints its full
+# traceback into this deploy log.  (The espeak-ng CLI is not on the
+# host -- tranche 1 added it to the Docker image only -- so the
+# proof goes through pyttsx3, the same path the app uses.)
 try:
-    wav = Path(tempfile.mkdtemp()) / "prewarm.wav"
-    subprocess.run(
-        ["espeak-ng", "-w", str(wav),
-         "The quick brown fox jumps over the lazy dog."],
-        check=True,
-    )
-    text = t.transcribe(wav.read_bytes())
-    print("VOICE PREWARM TRANSCRIBE OK:", text, flush=True)
+    from core_platform.daedalus_voice import SystemTTSSynthesizer
+
+    audio = SystemTTSSynthesizer().synthesize(
+        "The quick brown fox jumps over the lazy dog.")
+    print("VOICE PREWARM SYNTHESIZE OK:", len(audio), "bytes", flush=True)
 except Exception:
     traceback.print_exc()
-    print("VOICE PREWARM TRANSCRIBE FAILED (traceback above)", flush=True)
+    print("VOICE PREWARM SYNTHESIZE FAILED (traceback above)", flush=True)
+    audio = None
+if audio:
+    try:
+        text = t.transcribe(audio)
+        print("VOICE PREWARM TRANSCRIBE OK:", text, flush=True)
+    except Exception:
+        traceback.print_exc()
+        print("VOICE PREWARM TRANSCRIBE FAILED (traceback above)", flush=True)
 VOICE_PREWARM_EOF
 
 # 6. Bring up Docker Compose stacks if Docker is installed
