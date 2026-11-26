@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "docs/SANDERS_SENTINEL_PROTECTION_SUCCESSION_DIRECTIVE_2026-11-26.md",
-    "payload_hash": "966ec2e43a004754c42dd828d6eb0c29bb11542beace88435d09fcc6ab3cea52",
+    "payload_hash": "19ec69f8efd24c1baa0313b4fcb4203999ee81f38871be955cef9b5de4bd5772",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
