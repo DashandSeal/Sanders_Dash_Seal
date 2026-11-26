@@ -6232,3 +6232,33 @@ Our Family Will Take Great Care Of Your Family.
 The Sanders Way! 💙🩶
 
 **Recorded.** Entered into this record on 2026-11-25 as the governing design-system declaration of record for the Sanders companies and the RTSA platform program, under the founder's directives: Native by Design. Global by Design.
+
+## Founder Directive — Website Development Scope (founder directive, 2026-11-25)
+
+**Scope.** This entry records the founder's Website Development Scope directive, supplied by Roosevelt Sanders on 2026-11-25 (20:10 MST) and preserved verbatim at the time of receipt. It governs as the development scope of record for the companies' websites: five websites — Sanders Corporate Headquarters, Sanders Home Healthcare & Caregivers LLC, Sanders Senior Living LLC, Sanders Legal Helpers LLC — Sanders Dash & Seal, and S & G Security Inc. — each of thirty pages minimum, an enterprise total of 150 pages minimum; thirty pages is the minimum, not the maximum, and each website must expand according to its company's actual operational requirements. Every page is held to the directive's mandatory development standard: a legitimate, distinct purpose; no placeholders, unfinished pages, dead links or artificial page duplication; complete customer journeys from discovery through service delivery; fully operational scheduling, communications, customer portals and applicable payment systems; responsive desktop, tablet and mobile experiences; preservation of existing company policies, services, identities and official seals; both marble and jade throughout, preserving established corporate colors; native architecture, global privacy protections and accessibility; full integration with the Sovereign RTSA ecosystem; and The Sanders Royal Enterprise Standard — Fortune 500 professionalism, five-star luxury and royal distinction — on every page. As the founder's closing line states, this establishes the development scope, not a claim that construction has been completed. The earlier entries in this record remain undisturbed.
+
+**Founder's directive (verbatim, 2026-11-25).**
+
+Sanders Corporate Headquarters 30
+Sanders Home Healthcare & Caregivers LLC 30
+Sanders Senior Living LLC 30
+Sanders Legal Helpers LLC — Sanders Dash & Seal 30
+S & G Security Inc. 30
+Enterprise total 150 minimum
+Mandatory development standard
+Every page
+Every page must serve a legitimate, distinct purpose.
+No placeholders, unfinished pages, dead links or artificial page duplication.
+Complete customer journeys from discovery through service delivery.
+Fully operational scheduling, communications, customer portals and applicable payment systems.
+Responsive desktop, tablet and mobile experiences.
+Preserve existing company policies, services, identities and official seals.
+Both marble and jade throughout, preserving established corporate colors.
+Native architecture, global privacy protections and accessibility.
+Full integration with the Sovereign RTSA ecosystem.
+Thirty pages is the minimum, not the maximum. Each website must expand according to its company's actual operational requirements.
+Every page must meet The Sanders Royal Enterprise Standard — Fortune 500 professionalism, five-star luxury and royal distinction.
+Global By Design. The Sanders Way!
+This establishes the development scope, not a claim that construction has been completed.
+
+**Recorded.** Entered into this record on 2026-11-25 as the governing website development scope of record for the Sanders companies, under the founder's directives: Native by Design. Global by Design.
