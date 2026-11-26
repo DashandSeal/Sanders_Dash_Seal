@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_sanders_sentinel_succession_directive.py",
-        "payload_hash": "d8344749aeb196e023840a97678adff6a290a6f752ee6f4f3abc7cc3822a8998",
+        "payload_hash": "3c1a75d921a6a515b3e80a772920a350e2693612e0f29abcf8955cc3b859fcbb",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
