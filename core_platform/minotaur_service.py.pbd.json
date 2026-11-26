@@ -3,9 +3,14 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/minotaur_service.py",
-        "payload_hash": "b264c8d47a2bfef81120c275089d983ea4b37532822e4d77ac8a3bf15b1dffe4",
-        "scope": "source-manifest",
-        "signatures": {},
-        "status": "UNSIGNED_SOURCE_MANIFEST"
-    }
+        "payload_hash": "536c928c56b9080c8d80268d8912d0888b6cc3c4f2a701e6ead9f8ae921e384f",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
 }
