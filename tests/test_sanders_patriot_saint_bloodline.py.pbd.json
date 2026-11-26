@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "tests/test_sanders_patriot_saint_bloodline.py",
+        "payload_hash": "b7c172c3a6c790e7e92d167a0ef0fb025b3126a640794c7fbdd868e0b64df74b",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
