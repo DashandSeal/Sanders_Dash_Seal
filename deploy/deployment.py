@@ -74,6 +74,7 @@ class RuntimeBindings:
     fraud_rtsa: object = None
     operations_rtsa: object = None
     surn: object = None
+    ai_role_workers: object = None
     uptime_agent: object = None
     application_agent: object = None
     database_agent: object = None
@@ -326,6 +327,7 @@ PLATFORM_HEALTHZ_PATHS = (
     '/api/fraud-rtsa/healthz',
     '/api/operations-rtsa/healthz',
     '/api/surn/healthz',
+    '/api/ai-role-workers/healthz',
     '/api/uptime-agent/healthz',
     '/api/application-agent/healthz',
     '/api/database-agent/healthz',
@@ -425,6 +427,7 @@ PLATFORM_HEALTH = {
     '/api/fraud-rtsa/healthz': ('fraud_rtsa', 'fraud_rtsa', 'fraud_rtsa_unavailable'),
     '/api/operations-rtsa/healthz': ('operations_rtsa', 'operations_rtsa', 'operations_rtsa_unavailable'),
     '/api/surn/healthz': ('surn', 'surn', 'surn_unavailable'),
+    '/api/ai-role-workers/healthz': ('ai_role_workers', 'ai_role_workers', 'ai_role_workers_unavailable'),
     '/api/uptime-agent/healthz': ('uptime_agent', 'uptime_agent', 'uptime_agent_unavailable'),
     '/api/application-agent/healthz': ('application_agent', 'application_agent', 'application_agent_unavailable'),
     '/api/database-agent/healthz': ('database_agent', 'database_agent', 'database_agent_unavailable'),

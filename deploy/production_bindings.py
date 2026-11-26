@@ -184,6 +184,7 @@ from core_platform.bozly_service import BozlyService
 from core_platform.fraud_rtsa_service import FraudRtsaService
 from core_platform.operations_rtsa_service import OperationsRtsaService
 from core_platform.surn_service import SurnService
+from core_platform.tech_team_dispatch import TechTeamDispatcher
 from core_platform.uptime_agent_service import UptimeAgentService
 from core_platform.application_agent_service import ApplicationAgentService
 from core_platform.database_agent_service import DatabaseAgentService
@@ -694,6 +695,16 @@ def create_production_bindings():
     surn = SurnService(
         data_dir / 'surn.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+
+    # AI role workers (founder approval recorded 2026-11-25):
+    # the IT AI Manager agent matrix's live dispatch core --
+    # the TechTeamDispatcher the read-only technical worker
+    # claims bounded tasks from, on its own store. The 12
+    # registered agents of core_platform.agent_registry stay
+    # interface-only; the dispatcher holds the durable task
+    # record and executes nothing itself.
+    ai_role_workers = TechTeamDispatcher(
+        data_dir / 'ai_role_workers.db', CORE_LAWS, audit)
 
     # Uptime Agent (RTSA Build Program): the first agent of the
     # MASTER §7 IT AI agent matrix built as its own platform —
@@ -1369,6 +1380,7 @@ def create_production_bindings():
         fraud_rtsa=fraud_rtsa,
         operations_rtsa=operations_rtsa,
         surn=surn,
+        ai_role_workers=ai_role_workers,
         uptime_agent=uptime_agent,
         application_agent=application_agent,
         database_agent=database_agent,
