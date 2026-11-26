@@ -37,8 +37,8 @@ hash-signed with one-time discipline, his decoys are
 findings when touched; the amendment's fifteen
 protections derive state from checks of record; the
 crypto environment determination follows the check,
-never the reverse; and both guarded documents stand
-in the watch set (17 documents, 16 required) with
+never the reverse; and the guarded documents stand
+in the watch set (18 documents, 17 required) with
 sound manifest pairs.
 These tests use only stdlib fakes and temporary
 SQLite files: no network, no keys.
@@ -75,7 +75,8 @@ from core_platform.sanders_patriot_saint_service import (
 )
 from core_platform.minotaur_service import (
     MinotaurService, MinotaurDenied,
-    SELF_PROTECTIONS, CRYPTO_ROUTE)
+    SELF_PROTECTIONS, ANTI_PROBING_PROTECTIONS,
+    DEFENSIVE_RELATIONSHIP, CRYPTO_ROUTE)
 from core_platform.labyrinth_service import LabyrinthService
 from core_platform.labyrinth_shield_service import (
     LabyrinthShieldService)
@@ -89,6 +90,9 @@ ORDERS_DOCUMENT = (
 AMENDMENT_DOCUMENT = (
     'docs/FOUNDER_AMENDMENT_MINOTAUR_SELF_PROTECTION_'
     '2026-11-26.md')
+RELATIONSHIP_DOCUMENT = (
+    'docs/FOUNDER_DIRECTIVE_MINOTAUR_DEFENSIVE_'
+    'RELATIONSHIP_2026-11-26.md')
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
 ORDER_LINE = (
@@ -159,7 +163,8 @@ class TestGuardedRecords(unittest.TestCase):
 
     def test_manifest_pairs_sound(self):
         for document in (ORDERS_DOCUMENT,
-                         AMENDMENT_DOCUMENT):
+                         AMENDMENT_DOCUMENT,
+                         RELATIONSHIP_DOCUMENT):
             doc_bytes = (REPO_ROOT / document).read_bytes()
             manifest = json.loads(
                 (REPO_ROOT / (document + '.pbd.json'))
@@ -170,17 +175,32 @@ class TestGuardedRecords(unittest.TestCase):
                 manifest['body']['payload_hash'],
                 hashlib.sha256(doc_bytes).hexdigest())
 
+    def test_relationship_document_of_record(self):
+        text = (REPO_ROOT / RELATIONSHIP_DOCUMENT).read_text(
+            encoding='utf-8')
+        self.assertIn('The completed defensive '
+                      'relationship', text)
+        self.assertIn('Three independent protective '
+                      'identities', text)
+        self.assertIn('PERMANENT BLOODLINE PROTECTION',
+                      text)
+        self.assertIn('Human survival to', text)
+        for entry in ANTI_PROBING_PROTECTIONS:
+            self.assertIn(entry['verbatim'], text)
+
     def test_watch_set_counts(self):
         self.assertEqual(len(sentinel.BLOODLINE_WATCH_SET),
-                         17)
+                         18)
         required = [e for e in sentinel.BLOODLINE_WATCH_SET
                     if e['required']]
-        self.assertEqual(len(required), 16)
+        self.assertEqual(len(required), 17)
         watched = {e['document']: e
                    for e in sentinel.BLOODLINE_WATCH_SET}
         self.assertTrue(watched[ORDERS_DOCUMENT]['required'])
         self.assertTrue(
             watched[AMENDMENT_DOCUMENT]['required'])
+        self.assertTrue(
+            watched[RELATIONSHIP_DOCUMENT]['required'])
 
 
 class TestVerbatimCoverageConstants(unittest.TestCase):
@@ -692,6 +712,84 @@ class TestMinotaurSelfProtectionAmendment(
         self.assertEqual(
             status['self_protection']['protections_total'],
             15)
+
+
+class TestMinotaurDefensiveRelationship(
+        MinotaurWorkspaceMixin, unittest.TestCase):
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self._tmp.cleanup)
+        tmp = Path(self._tmp.name)
+        self.root = self.make_workspace(tmp)
+        self.service = MinotaurService(
+            tmp / 'minotaur.db', self.root, _verifier,
+            FakeAudit())
+
+    def test_relationship_in_the_founders_terms(self):
+        view = self.service.defensive_relationship_view(
+            OPERATOR, 'OPERATOR')
+        self.assertEqual(
+            view['role'],
+            'INDEPENDENT_INTEGRITY_VERIFICATION')
+        self.assertEqual(
+            [s['shield_id'] for s in view['shields']],
+            ['sanders_labyrinth_shield', 'labyrinth',
+             'sovereign_shield_v3'])
+        self.assertTrue(view['shields_independent'])
+        self.assertFalse(view['platforms_merged'])
+        self.assertEqual(
+            view['evidence_kinds'],
+            ['CODE', 'CONFIGURATION', 'IDENTITY',
+             'RUNTIME'])
+        self.assertEqual(
+            view['assessment_functions'],
+            ['DETECT', 'CONTAIN', 'RESTORE', 'VERIFY'])
+        self.assertEqual(view['recovery_verbatim'],
+                         'CONTINUOUS WATCHDOG RECOVERY')
+        self.assertIn('not a', view['recovery_note'])
+        self.assertEqual(
+            [s['platform'] for s in view['stands_over']],
+            ['sanders_sentinel', 'the_godfather',
+             'sanders_patriot_saint'])
+        self.assertEqual(view['ladder_state'],
+                         'CONSTRUCTED')
+        status = self.service.status()
+        self.assertEqual(
+            status['defensive_relationship']['shields'], 3)
+
+    def test_thirteen_anti_probing_protections(self):
+        view = self.service.self_protection_view(
+            OPERATOR, 'OPERATOR')
+        anti = view['anti_probing_protections']
+        self.assertEqual(len(anti), 13)
+        self.assertEqual(
+            {p['state'] for p in anti}, {'CONSTRUCTED'})
+        self.assertEqual(
+            view['anti_probing_ladder_state'],
+            'CONSTRUCTED')
+        self.assertEqual(
+            view['defensive_relationship']['role'],
+            DEFENSIVE_RELATIONSHIP['role'])
+        self.service.record_self_protection_check(
+            OPERATOR,
+            'DEFENSIVE_PATROL_MANIPULATION',
+            'EVIDENCED', 'patrol-sequence-audit-1',
+            'sequence derives from the signed chain '
+            'head only')
+        view = self.service.self_protection_view(
+            OPERATOR, 'OPERATOR')
+        states = {p['protection']: p['state']
+                  for p in view['anti_probing_protections']}
+        self.assertEqual(
+            states['DEFENSIVE_PATROL_MANIPULATION'],
+            'EVIDENCED')
+        self.assertEqual(
+            states['NETWORK_AND_SERVICE_ENUMERATION'],
+            'CONSTRUCTED')
+        status = self.service.status()
+        self.assertEqual(
+            status['self_protection']['anti_probing_total'],
+            13)
 
 
 if __name__ == '__main__':
