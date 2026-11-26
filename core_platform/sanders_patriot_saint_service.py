@@ -232,6 +232,7 @@ represented as attached: disbursements execute as
 platform records against the recorded joint
 approvals, with Glass-Box receipts, until the
 founder designates and connects a rail.
+FULFILLMENT VERIFICATION (founder’s Sanders Sentinel — Permanent Global Bloodline Protection and Succession Directive, established 2026-11-26): under the operational standard Sentinel holds — "A disbursement record is not a payment. An attorney request is not legal representation." — a bloodline matter is not FULFILLED until a human operator’s recorded confirmation, naming the delivery by reference, confirms the actual assistance was delivered: the disbursement actually reached its payee, the legal representation actually engaged. The confirmation step verifies delivery only; this platform’s disbursement authority under the Founder’s Amendment to Article III is expressly preserved, intact and undiminished.
 """
 
 from __future__ import annotations
@@ -277,6 +278,7 @@ RECORD_OPERATIONS = ('record_patriot_saint', 'approve_patriot_saint', 'record_ou
     'request_bloodline_matter_funding',
     'record_bloodline_matter_funding_determination',
     'execute_bloodline_disbursement',
+    'confirm_bloodline_matter_fulfillment',
     'view_bloodline_disbursements')
 EXECUTION_OPERATIONS = ('issue_directive', 'exercise_authority',
     'integrate_command', 'deliver_briefing',
@@ -487,6 +489,14 @@ FUNDING_APPROVAL_PLATFORMS = ('the_godfather',
                               'sanders_sentinel')
 FUNDING_STATES = ('NOT_FUNDED', 'FUNDING_REQUESTED',
                   'FUNDED')
+# Fulfillment verification (Sanders Sentinel \u2014
+# Permanent Global Bloodline Protection and
+# Succession Directive, 2026-11-26): a matter is
+# recorded-unfulfilled until a human operator's
+# recorded confirmation of actual delivery stands
+# against it.
+FULFILLMENT_STATES = ('RECORDED_UNFULFILLED',
+                      'FULFILLED')
 # -- Founder's Amendment to Article III — Patriot
 # Saint disbursement authority (founder-established,
 # effective 2026-11-26) ------------------------------
@@ -828,7 +838,28 @@ class SandersPatriotSaintService:
                      " sanders_patriot_saint_bloodline_matters"
                      " ADD COLUMN"
                      " funding_sentinel_determination_ref"
-                     " TEXT")):
+                     " TEXT"),
+                    ('fulfillment_state',
+                     "ALTER TABLE"
+                     " sanders_patriot_saint_bloodline_matters"
+                     " ADD COLUMN fulfillment_state TEXT"
+                     " NOT NULL DEFAULT"
+                     " 'RECORDED_UNFULFILLED'"),
+                    ('fulfillment_delivery_ref',
+                     "ALTER TABLE"
+                     " sanders_patriot_saint_bloodline_matters"
+                     " ADD COLUMN fulfillment_delivery_ref"
+                     " TEXT"),
+                    ('fulfillment_confirmed_by',
+                     "ALTER TABLE"
+                     " sanders_patriot_saint_bloodline_matters"
+                     " ADD COLUMN fulfillment_confirmed_by"
+                     " TEXT"),
+                    ('fulfillment_confirmed_at',
+                     "ALTER TABLE"
+                     " sanders_patriot_saint_bloodline_matters"
+                     " ADD COLUMN fulfillment_confirmed_at"
+                     " REAL")):
                 if column not in columns:
                     db.execute(ddl)
 
@@ -1283,6 +1314,17 @@ class SandersPatriotSaintService:
                     row['funding_sentinel_determination_ref'],
                 'funds_disbursed': bool(row['funds_disbursed']),
             },
+            'fulfillment': {
+                'state': row['fulfillment_state'],
+                'fulfilled': (row['fulfillment_state']
+                              == 'FULFILLED'),
+                'delivery_ref':
+                    row['fulfillment_delivery_ref'],
+                'confirmed_by':
+                    row['fulfillment_confirmed_by'],
+                'confirmed_at':
+                    row['fulfillment_confirmed_at'],
+            },
             'scope_ref': BLOODLINE_SUPPORT_SCOPE,
             'segregated_store': True,
             'opened_by': row['opened_by'],
@@ -1486,6 +1528,90 @@ class SandersPatriotSaintService:
                      coordination_ref.strip(), actor, now,
                      receipt_id, matter_id),
                 )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' sanders_patriot_saint_bloodline_matters'
+                ' WHERE matter_id = ?',
+                (matter_id,)).fetchone()
+        return self._bloodline_matter_view(updated)
+
+    def confirm_matter_fulfillment(self, actor, matter_id,
+                                   delivery_ref, *,
+                                   region=None):
+        """Confirm fulfillment of one bloodline matter
+        (operator only) under the fulfillment-
+        verification standard Sanders Sentinel holds
+        (founder's Sanders Sentinel \u2014 Permanent
+        Global Bloodline Protection and Succession
+        Directive, 2026-11-26): the human operator's
+        recorded confirmation, naming the delivery by
+        reference, that the actual assistance was
+        delivered \u2014 the disbursement reached its
+        payee, or the coordinated legal representation
+        was actually engaged. A matter reads FULFILLED
+        only on this confirmation, and only once
+        something stands recorded to fulfill: a governed
+        disbursement executed, or coordination
+        recorded. A disbursement record is not a
+        payment, and an attorney request is not legal
+        representation, until this confirmation stands.
+        The disbursement authority itself is untouched
+        by this step."""
+        self._geo(region)
+        self._require_operator(actor)
+        if not isinstance(delivery_ref, str) \
+                or not delivery_ref.strip():
+            raise SandersPatriotSaintDenied(
+                'A delivery confirmation reference is'
+                ' required')
+        now = self._now()
+        with self._bloodline_connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_patriot_saint_bloodline_matters'
+                    ' WHERE matter_id = ?',
+                    (matter_id,)).fetchone()
+                if row is None:
+                    raise SandersPatriotSaintDenied(
+                        'Bloodline matter not found')
+                if row['fulfillment_state'] == 'FULFILLED':
+                    raise SandersPatriotSaintDenied(
+                        'Fulfillment of this matter'
+                        ' already stands confirmed')
+                if not row['funds_disbursed'] and (
+                        row['status']
+                        != 'COORDINATION_RECORDED'):
+                    raise SandersPatriotSaintDenied(
+                        'Nothing stands recorded against'
+                        ' this matter to fulfill:'
+                        ' fulfillment confirms delivery of'
+                        ' assistance recorded first \u2014 a'
+                        ' governed disbursement executed,'
+                        ' or coordination recorded (matter'
+                        f" status: {row['status']})")
+                receipt_id = self._record(
+                    'SANDERS_PATRIOT_SAINT_BLOODLINE_'
+                    'FULFILLMENT_CONFIRMED',
+                    actor=actor, matter_id=matter_id,
+                    delivery_ref=delivery_ref.strip())
+                db.execute(
+                    'UPDATE'
+                    ' sanders_patriot_saint_bloodline_matters'
+                    ' SET fulfillment_state = ?,'
+                    ' fulfillment_delivery_ref = ?,'
+                    ' fulfillment_confirmed_by = ?,'
+                    ' fulfillment_confirmed_at = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE matter_id = ?',
+                    ('FULFILLED', delivery_ref.strip(),
+                     actor, now, actor, now, receipt_id,
+                     matter_id))
                 db.commit()
             except Exception:
                 db.rollback()
@@ -1782,6 +1908,10 @@ class SandersPatriotSaintService:
             'disbursement_discipline':
                 DISBURSEMENT_DISCIPLINE,
             'payment_rail_attached': False,
+            'fulfillment_state':
+                matter_row['fulfillment_state'],
+            'fulfillment_delivery_ref':
+                matter_row['fulfillment_delivery_ref'],
             'scope_ref': BLOODLINE_SUPPORT_SCOPE,
             'segregated_store': True,
             'disbursed_by': row['disbursed_by'],
@@ -1923,7 +2053,11 @@ class SandersPatriotSaintService:
                 ' m.funding_godfather_determination_ref AS'
                 ' m_godfather_ref,'
                 ' m.funding_sentinel_determination_ref AS'
-                ' m_sentinel_ref FROM'
+                ' m_sentinel_ref,'
+                ' m.fulfillment_state AS'
+                ' m_fulfillment_state,'
+                ' m.fulfillment_delivery_ref AS'
+                ' m_fulfillment_delivery_ref FROM'
                 ' sanders_patriot_saint_bloodline_disbursements d'
                 ' JOIN sanders_patriot_saint_bloodline_matters m'
                 ' ON m.matter_id = d.matter_id'
@@ -1945,6 +2079,10 @@ class SandersPatriotSaintService:
                 'disbursement_discipline':
                     DISBURSEMENT_DISCIPLINE,
                 'payment_rail_attached': False,
+                'fulfillment_state':
+                    row['m_fulfillment_state'],
+                'fulfillment_delivery_ref':
+                    row['m_fulfillment_delivery_ref'],
                 'scope_ref': BLOODLINE_SUPPORT_SCOPE,
                 'segregated_store': True,
                 'disbursed_by': row['disbursed_by'],
@@ -1994,13 +2132,22 @@ class SandersPatriotSaintService:
                 'SELECT COUNT(*) AS n FROM'
                 ' sanders_patriot_saint_bloodline_matters'
                 ' WHERE funds_disbursed = 1').fetchone()['n']
+            fulfilled_matters = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_patriot_saint_bloodline_matters'
+                " WHERE fulfillment_state = 'FULFILLED'"
+            ).fetchone()['n']
             disbursement_rows = db.execute(
                 'SELECT d.*, m.funding_state AS'
                 ' funding_state,'
                 ' m.funding_godfather_determination_ref AS'
                 ' funding_godfather_determination_ref,'
                 ' m.funding_sentinel_determination_ref AS'
-                ' funding_sentinel_determination_ref FROM'
+                ' funding_sentinel_determination_ref,'
+                ' m.fulfillment_state AS'
+                ' fulfillment_state,'
+                ' m.fulfillment_delivery_ref AS'
+                ' fulfillment_delivery_ref FROM'
                 ' sanders_patriot_saint_bloodline_disbursements d'
                 ' JOIN sanders_patriot_saint_bloodline_matters m'
                 ' ON m.matter_id = d.matter_id'
@@ -2013,6 +2160,7 @@ class SandersPatriotSaintService:
         view['open_matters'] = [
             self._bloodline_matter_view(row) for row in open_rows]
         view['funds_disbursed'] = disbursed_matters > 0
+        view['matters_fulfilled'] = fulfilled_matters
         view['disbursements_total'] = len(disbursement_rows)
         view['disbursements'] = [
             self._disbursement_view(row, row)
