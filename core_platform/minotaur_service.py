@@ -36,6 +36,7 @@ without a working Glass-Box audit adapter: no record, no action.
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import os
 import sqlite3
@@ -373,7 +374,7 @@ SELF_PROTECTIONS = (
                   ' supersession.'},
 )
 SELF_PROTECTION_CHECK_OUTCOMES = (
-    'EVIDENCED', 'FINDING', 'NOT_EVIDENCED')
+    'EVIDENCED', 'FINDING', 'NOT_EVIDENCED', 'FUNCTIONING')
 # The adopted quantum gap-closure route: the
 # certificate covers exactly the OpenSSL FIPS
 # Provider 3.5.9 operated in approved mode. The
@@ -613,6 +614,434 @@ def _wots_digits(digest: bytes) -> list[int]:
     return digits
 
 
+# -- Complete architecture: eight domains, the
+# functioning-defense standard, and the completeness
+# accounting (founder directive, 2026-11-26 11:16
+# MST) ----------------------------------------------
+#
+# "One important distinction: a named defense of
+# record must become an actual functioning defensive
+# capability, not remain merely a recorded
+# protection." The eight domains organize his whole
+# defensive construction; the exercise evidence
+# names, per protection, whether the defense is
+# exercised in code (and by which labeled
+# attack-simulation test) or stands as a record
+# (and why code exercise is not its honest form).
+# The accounting lists every omission and exposure
+# the record identifies — the founder's counts of
+# record are 30 omissions and 15 exposures; their
+# source enumerations are not in hand, no list is
+# fabricated to match the counts, and reconciliation
+# by name awaits the founder's source lists.
+FUNCTIONING_STANDARD_VERBATIM = (
+    'a named defense of record must become an actual'
+    ' functioning defensive capability, not remain'
+    ' merely a recorded protection')
+DEFENSIVE_DOMAINS = (
+    {'domain': 'SELF_PROTECTION',
+     'scope': 'His identity, intelligence, code,'
+              ' memory and runtime.',
+     'members': 'the amendment\'s fifteen enumerated'
+                ' protections; his self-integrity'
+                ' pins; the operator lockout'},
+    {'domain': 'ANTI_PROBING',
+     'scope': 'Unauthorized reconnaissance,'
+              ' enumeration and infrastructure'
+              ' fingerprinting.',
+     'members': 'the thirteen anti-probing'
+                ' protections; decoys; uniform'
+                ' refusal behavior'},
+    {'domain': 'ANTI_CIRCUMVENTION',
+     'scope': 'Attempts to bypass, manipulate or'
+              ' disable his defenses.',
+     'members': 'the amendment\'s anti-circumvention'
+                ' bars; no record operation disables'
+                ' a protection; forged-instruction'
+                ' refusal'},
+    {'domain': 'CRYPTOGRAPHIC_PROTECTION',
+     'scope': 'Keys, signatures, integrity chains'
+              ' and post-quantum communications.',
+     'members': 'WOTS+ one-time signatures under a'
+                ' Merkle tree; the SHA3-256'
+                ' attestation chain; the crypto'
+                ' environment check and claim rule;'
+                ' ML-KEM declared, route adopted'},
+    {'domain': 'INFRASTRUCTURE_PROTECTION',
+     'scope': 'Operating systems, networks,'
+              ' deployment environments and'
+              ' dependencies.',
+     'members': 'native standard library only; no'
+                ' third-party component; the'
+                ' foundation-import prohibition'
+                ' (never import a module whose import'
+                ' can stall boot)'},
+    {'domain': 'RECOVERY_PROTECTION',
+     'scope': 'Authenticated restoration,'
+              ' redundancy, failover and Watchdog'
+              ' interoperability.',
+     'members': 'recovery by reference to the signed'
+                ' chain and the guarded record set;'
+                ' three-place evidence hold;'
+                ' continuous watchdog recovery'},
+    {'domain': 'DEFENSIVE_CONTINUITY',
+     'scope': 'Continuous patrols and preservation'
+              ' of legitimate protective operations.',
+     'members': 'the simultaneous shield patrol;'
+                ' the anomaly lifecycle; clearance'
+                ' determinations that advise the'
+                ' operator and never gate the'
+                ' founder\'s operations'},
+    {'domain': 'COUNTER_MANIPULATION',
+     'scope': 'Protection against attempts to'
+              ' weaponize his own defenses against'
+              ' himself or your bloodline.',
+     'members': 'patrol sequencing derived from the'
+                ' signed chain head, never from'
+                ' presented input; machinery acts'
+                ' only on verified operator acts and'
+                ' its own records'},
+)
+# Exercise evidence per protection: ('CODE', the
+# labeled attack-simulation test that exercises the
+# function) or ('RECORD', why the defense's honest
+# form is a record with the check that does run).
+EXERCISE_EVIDENCE = {
+    'COMPROMISED_ADMINISTRATIVE_CREDENTIALS':
+        ('CODE', 'simulation: unverified operator is'
+                 ' refused and locked out at the'
+                 ' threshold'),
+    'PRIVILEGE_ESCALATION':
+        ('CODE', 'simulation: guarded reads cannot'
+                 ' write; operator acts re-verify'),
+    'MALICIOUS_INTERNAL_PLATFORM_COMMUNICATIONS':
+        ('RECORD', 'records are never executed as'
+                   ' instructions — an architectural'
+                   ' property; the check that runs is'
+                   ' the patrol\'s hash verification'
+                   ' of cores, not of claims'),
+    'COMPROMISED_RECOVERY_MECHANISMS':
+        ('CODE', 'simulation: a tampered attestation'
+                 ' fails chain verification, so a'
+                 ' compromised recovery source is'
+                 ' detected, not restored from'),
+    'UNAUTHORIZED_CONFIGURATION_CHANGES':
+        ('CODE', 'simulation: configuration of'
+                 ' record changes only through'
+                 ' verified operator acts'),
+    'DENIAL_OF_SERVICE':
+        ('RECORD', 'availability is an infrastructure'
+                   ' property of the host, not of'
+                   ' this service\'s code; the check'
+                   ' that runs is the platform health'
+                   ' verification on deploy'),
+    'RESOURCE_EXHAUSTION':
+        ('CODE', 'simulation: the one-time signature'
+                 ' pool fails closed at exhaustion'
+                 ' rather than reusing a key'),
+    'SECURITY_LOG_TAMPERING':
+        ('CODE', 'simulation: a tampered attestation'
+                 ' payload breaks chain verification'
+                 ' at its sequence'),
+    'CLOCK_TIMESTAMP_MANIPULATION':
+        ('CODE', 'simulation: chain order is sequence'
+                 ' and hash linkage; verification'
+                 ' does not consult the wall clock'),
+    'COMPROMISED_CRYPTOGRAPHIC_RANDOMNESS':
+        ('CODE', 'simulation: key derivation is'
+                 ' deterministic from the seed by'
+                 ' SHAKE-256; the same seed rebuilds'
+                 ' the same tree'),
+    'MALICIOUS_SOFTWARE_ROLLBACK':
+        ('CODE', 'simulation: an altered shield core'
+                 ' reads MISMATCH against its pin and'
+                 ' raises an anomaly on patrol'),
+    'UNAUTHORIZED_DISABLING_OF_DEFENSIVE_FUNCTIONS':
+        ('CODE', 'simulation: the contract exposes no'
+                 ' operation that disables a'
+                 ' protection; the surface is'
+                 ' enumerated and asserted'),
+    'SINGLE_POINTS_OF_FAILURE':
+        ('RECORD', 'the three-place evidence hold is'
+                   ' an architectural fact (patrol'
+                   ' store, Glass-Box receipts,'
+                   ' operator-carried anchor); the'
+                   ' check that runs is anchor'
+                   ' comparison against the chain'),
+    'THREAT_DETECTION_INTELLIGENCE_COMPROMISE':
+        ('RECORD', 'detection records are receipted'
+                   ' records under the same chain'
+                   ' discipline; the check that runs'
+                   ' is Sentinel\'s guarded-record'
+                   ' verification over the directives'
+                   ' and this platform\'s receipts'),
+    'GOVERNING_DIRECTIVES_MODIFICATION':
+        ('RECORD', 'his directives stand in the'
+                   ' bloodline guarded record set;'
+                   ' the check that runs is Sanders'
+                   ' Sentinel\'s verification cycle'
+                   ' against their manifest hashes'),
+    'UNAUTHORIZED_RECONNAISSANCE_AND_PROBING':
+        ('CODE', 'simulation: probing meets the'
+                 ' uniform guarded surface and the'
+                 ' watched decoys'),
+    'NETWORK_AND_SERVICE_ENUMERATION':
+        ('CODE', 'simulation: invalid and unknown'
+                 ' requests receive the identical'
+                 ' refusal — no enumeration oracle'),
+    'API_DISCOVERY_AND_UNAUTHORIZED_ENDPOINT_ACCESS':
+        ('CODE', 'simulation: his route forms answer'
+                 ' 401 unauthenticated (production'
+                 ' probes of record)'),
+    'AUTHENTICATION_BYPASS_AND_SESSION_HIJACKING':
+        ('CODE', 'simulation: no session exists to'
+                 ' hijack; every act re-verifies the'
+                 ' actor at the moment of the act'),
+    'CREDENTIAL_THEFT_AND_BRUTE_FORCE':
+        ('CODE', 'simulation: failed verifications'
+                 ' bucket per actor and lock out at'
+                 ' the threshold'),
+    'ERROR_MESSAGE_INFORMATION_LEAKAGE':
+        ('CODE', 'simulation: refusals are uniform in'
+                 ' type and text across unlike'
+                 ' invalid requests'),
+    'TIMING_AND_SIDE_CHANNEL_ATTACKS':
+        ('CODE', 'simulation: chain and claim'
+                 ' comparisons use constant-time'
+                 ' digest comparison; one-time keys'
+                 ' are never reused'),
+    'FORGED_INTERNAL_PLATFORM_IDENTITIES':
+        ('CODE', 'simulation: a forged patrol'
+                 ' instruction from an unverified'
+                 ' actor is refused before any state'
+                 ' change'),
+    'DEFENSIVE_PATROL_MANIPULATION':
+        ('CODE', 'simulation: the patrol sequence'
+                 ' derives from the signed chain'
+                 ' head; presented input cannot'
+                 ' reorder it'),
+    'DEFENSIVE_CONFIGURATION_DISCOVERY':
+        ('CODE', 'simulation: baselines and policies'
+                 ' are guarded reads; unguarded'
+                 ' callers receive the uniform'
+                 ' refusal'),
+    'RECOVERY_INFRASTRUCTURE_COMPROMISE':
+        ('CODE', 'simulation: recovery evidence in'
+                 ' any one store can be checked'
+                 ' against the operator-carried'
+                 ' anchor; a rewritten store fails'),
+    'DISABLE_OWN_PROTECTIONS_ATTACKS':
+        ('CODE', 'simulation: the contract exposes no'
+                 ' disabling operation to invoke'),
+    'MACHINERY_TURNED_AGAINST_AUTHORIZED_OPERATIONS':
+        ('CODE', 'simulation: machinery acts only on'
+                 ' verified operator acts; an'
+                 ' unverified attempt to aim it is'
+                 ' refused with no state change'),
+}
+# The completeness accounting: every omission and
+# exposure the examined record identifies, marked
+# ALREADY_PROTECTED (with its functioning evidence)
+# or CONSTRUCTION_REQUIRED (with what construction).
+# The founder's counts of record — 30 omissions,
+# 15 exposures — stand as his; this accounting
+# covers what the record in hand identifies, and
+# name-by-name reconciliation awaits his source
+# lists.
+COMPLETENESS_ACCOUNTING = (
+    {'item': 'Quantum-resistant key exchange'
+             ' (ML-KEM) not reachable from the'
+             ' platform runtime',
+     'domain': 'CRYPTOGRAPHIC_PROTECTION',
+     'status': 'CONSTRUCTION_REQUIRED',
+     'basis': 'the adopted route (OpenSSL FIPS'
+              ' Provider 3.5.9, certificate #5586)'
+              ' is not present in the build'
+              ' environment; the environment check'
+              ' of record states the gap as'
+              ' environment-blocked. Construction:'
+              ' provision the validated module on'
+              ' the host, then record a new check'},
+    {'item': 'ML-DSA / SLH-DSA signing via a'
+             ' validated module',
+     'domain': 'CRYPTOGRAPHIC_PROTECTION',
+     'status': 'CONSTRUCTION_REQUIRED',
+     'basis': 'same environment gap; until then'
+              ' his signatures are the native WOTS+'
+              ' hash-based construction, honestly'
+              ' labeled, never claimed as FIPS'
+              ' 204/205'},
+    {'item': 'Production-environment crypto check'
+             ' not yet recorded by the operator',
+     'domain': 'CRYPTOGRAPHIC_PROTECTION',
+     'status': 'CONSTRUCTION_REQUIRED',
+     'basis': 'the check is a capability of his'
+              ' platform; the founder-operator'
+              ' records it on the production host'
+              ' (POST /api/minotaur/crypto-'
+              'environment/check) and its'
+              ' determination becomes the production'
+              ' evidence of record. Note: the'
+              ' production host runs OpenSSL 3.5.9'
+              ' (deploy journal of record), but the'
+              ' probe\'s scope is the Python'
+              ' ssl/hashlib surface, which reaches'
+              ' no PQC algorithm — the claim follows'
+              ' the probe, not the host banner'},
+    {'item': 'Ed25519 deprecation clock (NIST IR'
+             ' 8547: deprecated after 2030,'
+             ' disallowed after 2035) for Bozly\'s'
+             ' receipts',
+     'domain': 'CRYPTOGRAPHIC_PROTECTION',
+     'status': 'CONSTRUCTION_REQUIRED',
+     'basis': 'recorded as a design intention only'
+              ' in this build, per instruction: no'
+              ' cryptography is migrated here and'
+              ' Bozly is untouched; the migration'
+              ' decision is the founder\'s, ahead'
+              ' of the 2030 clock'},
+    {'item': 'A shield platform (LABYRINTH) whose'
+             ' contract stands SPECIFIED, not'
+             ' enabled',
+     'domain': 'DEFENSIVE_CONTINUITY',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'his patrol covers LABYRINTH\'s core'
+              ' as it stands; enabling the'
+              ' intelligence is the founder\'s'
+              ' named approval, not a gap in the'
+              ' Minotaur\'s protection'},
+    {'item': 'Decoy reads are not natively'
+             ' observable (only alteration and'
+             ' disappearance are)',
+     'domain': 'ANTI_PROBING',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'recorded honestly in the research'
+              ' application: a touch that alters'
+              ' or removes a decoy is a patrol'
+              ' finding; silent reads leave the'
+              ' bait under watch, which is the'
+              ' deception design'},
+    {'item': 'SSRF fetch discipline has no fetch'
+             ' path to govern yet',
+     'domain': 'INFRASTRUCTURE_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'no platform performs outbound'
+              ' fetches; the resolve-validate-pin'
+              ' discipline stands recorded in the'
+              ' Labyrinth Shield\'s posture for any'
+              ' future founder-designated path'},
+    {'item': 'Authorization-abuse classes beyond'
+             ' mass assignment (BOLA/BFLA) are'
+             ' behavioral, not payload-shaped',
+     'domain': 'SELF_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'his surfaces bind every act to the'
+              ' verified actor and the role guard;'
+              ' object-level abuse has no unguarded'
+              ' object to reach. Behavioral'
+              ' monitoring of legitimate-actor'
+              ' misuse remains a records discipline'},
+    {'item': 'Denial-of-service and host-level'
+             ' availability attacks',
+     'domain': 'INFRASTRUCTURE_PROTECTION',
+     'status': 'CONSTRUCTION_REQUIRED',
+     'basis': 'availability is a property of the'
+              ' host and network, not of his code;'
+              ' construction belongs to the'
+              ' infrastructure layer (the deploy'
+              ' health verification and watchdog'
+              ' already watch it). His part —'
+              ' bounded work per recorded cycle —'
+              ' stands'},
+    {'item': 'Foundation modules whose optional'
+             ' imports can stall application boot'
+             ' (the liboqs build triggered by'
+             ' importing the Sovereign Shield V3'
+             ' foundation)',
+     'domain': 'INFRASTRUCTURE_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'found and fixed in this build: the'
+              ' V3 service verifies its foundation'
+              ' from hash-pinned source and never'
+              ' imports it; boot reproduced clean'
+              ' under production conditions before'
+              ' the fix landed'},
+    {'item': 'Bindings contract drift (a service'
+             ' constructed in bindings without a'
+             ' field in RuntimeBindings crashed'
+             ' boot, 2026-11-26)',
+     'domain': 'INFRASTRUCTURE_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'fixed in this build (the'
+              ' sovereign_shield_v3 field) and a'
+              ' regression test now guards the'
+              ' contract in the suite of record'},
+    {'item': 'The thirteen anti-probing'
+             ' protections read as the full extent'
+             ' of his responsibilities',
+     'domain': 'ANTI_PROBING',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'the directive itself rules they are'
+              ' a floor, never the extent; the'
+              ' amendment\'s not-a-ceiling clause'
+              ' stands in his design of record'},
+    {'item': 'Forged Founder instructions'
+             ' arriving as records or messages',
+     'domain': 'ANTI_CIRCUMVENTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'only the verified operator performs'
+              ' acts; a forged instruction is an'
+              ' unverified actor and is refused'
+              ' before any state change'
+              ' (attack-simulation tested)'},
+    {'item': 'Cryptographic downgrade presented'
+             ' as an upgrade',
+     'domain': 'CRYPTOGRAPHIC_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'claim assertion is enforced in'
+              ' code against the check of record;'
+              ' a claim above the evidence is'
+              ' refused (attack-simulation tested)'},
+    {'item': 'Recovery from a fully compromised'
+             ' patrol store',
+     'domain': 'RECOVERY_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'the operator-carried signed anchor'
+              ' and the Glass-Box receipts stand'
+              ' outside the store; a rewritten'
+              ' store fails anchor comparison'},
+    {'item': 'His own governing directives'
+             ' altered outside the amendment path',
+     'domain': 'SELF_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'the directives stand in the guarded'
+              ' record set under Sanders Sentinel\'s'
+              ' manifest-hash verification;'
+              ' amendment is the only path of'
+              ' change'},
+    {'item': 'A fourth shield or a renamed shield'
+             ' entering his patrol silently',
+     'domain': 'DEFENSIVE_CONTINUITY',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'his patrol targets are the three'
+              ' shields of the founder\'s orders,'
+              ' enumerated in code; any change is a'
+              ' code change under the same guarded'
+              ' landing discipline'},
+    {'item': 'Watchdog interoperability with the'
+             ' host\'s service watchdog',
+     'domain': 'RECOVERY_PROTECTION',
+     'status': 'ALREADY_PROTECTED',
+     'basis': 'the host watchdog (sds-watchdog)'
+              ' already restarts unresponsive'
+              ' services; his continuous watchdog'
+              ' recovery is the integrity layer'
+              ' above it — the two are named'
+              ' distinctly and neither impersonates'
+              ' the other'},
+)
+
+
 class _MinotaurHashSigner:
     """The Minotaur's own hash-based signature scheme.
 
@@ -763,6 +1192,7 @@ class MinotaurService:
 
     def __init__(self, database_path, workspace_root, operator_verifier,
                  audit, *, sentinel=None, signing_seed=None,
+                 lockout_threshold=5, lockout_window_seconds=900,
                  clock=time.time):
         if audit is None or not callable(getattr(audit, 'preserve', None)):
             raise MinotaurDenied(
@@ -772,6 +1202,8 @@ class MinotaurService:
         self._root = Path(workspace_root)
         self.operator_verifier = operator_verifier
         self._audit = audit
+        self._lockout_threshold = lockout_threshold
+        self._lockout_window = lockout_window_seconds
         self._sentinel = sentinel if sentinel is not None else MinotaurSentinel()
         self._clock = clock
         self.identity = IDENTITY
@@ -900,6 +1332,11 @@ class MinotaurService:
                     recorded_by TEXT NOT NULL,
                     recorded_at REAL NOT NULL,
                     receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS minotaur_auth_failures (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    actor TEXT NOT NULL,
+                    failed_at REAL NOT NULL
                 );
                 """
             )
@@ -1057,11 +1494,12 @@ class MinotaurService:
                 ensure_ascii=True).encode('utf-8')
             digest = hashlib.sha3_256(
                 bytes.fromhex(prev) + canonical).hexdigest()
-            if row['seq'] != expected or row['prev_hash'] != prev:
+            if row['seq'] != expected or not hmac.compare_digest(
+                    row['prev_hash'], prev):
                 return {'valid': False, 'records': len(rows),
                         'broken_at': expected,
                         'reason': 'chain linkage broken'}
-            if digest != row['hash']:
+            if not hmac.compare_digest(digest, row['hash']):
                 return {'valid': False, 'records': len(rows),
                         'broken_at': expected,
                         'reason': 'attestation content altered'}
@@ -1145,10 +1583,53 @@ class MinotaurService:
             return False
 
     def _require_operator(self, actor):
+        """Verify the operator before any state-changing
+        act — with functioning brute-force resistance:
+        failed verifications are bucketed per actor,
+        and at the lockout threshold the actor is
+        refused outright until the window clears, even
+        if a later attempt would verify. A successful
+        verification clears the actor's bucket. The
+        refusal is uniform: it names the rule, never
+        the internals."""
         self._check_actor(actor)
-        if not self._is_operator(actor):
+        now = self._now()
+        with self._connect() as db:
+            failures = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' minotaur_auth_failures WHERE actor = ?'
+                ' AND failed_at > ?',
+                (actor, now - self._lockout_window),
+            ).fetchone()['n']
+        if failures >= self._lockout_threshold:
             raise MinotaurForbidden(
-                'Operator authority is required for this operation')
+                'Operator authority is required for this'
+                ' operation')
+        if self._is_operator(actor):
+            with self._connect() as db:
+                db.execute('BEGIN IMMEDIATE;')
+                try:
+                    db.execute(
+                        'DELETE FROM minotaur_auth_failures'
+                        ' WHERE actor = ?', (actor,))
+                    db.commit()
+                except Exception:
+                    db.rollback()
+                    raise
+            return
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                db.execute(
+                    'INSERT INTO minotaur_auth_failures'
+                    ' (actor, failed_at) VALUES (?, ?)',
+                    (actor, now))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+        raise MinotaurForbidden(
+            'Operator authority is required for this operation')
 
     def _record(self, event, **fields):
         return self._audit.preserve(event, **fields)
@@ -1917,6 +2398,26 @@ class MinotaurService:
             raise MinotaurDenied(
                 'A decoy is never planted over a real core or'
                 ' a protected target')
+        # Deception isolation, enforced in code (founder
+        # directive 2026-11-26): decoys never stand on a
+        # data store, a guarded document, a bloodline
+        # store, or this service's own machinery — the
+        # deception environment stays isolated from
+        # production infrastructure, bloodline
+        # information, and emergency operations.
+        lowered = target.lower()
+        if (lowered.endswith('.db')
+                or lowered.endswith('.sqlite')
+                or lowered.endswith('.sqlite3')
+                or lowered.startswith('docs/')
+                or 'bloodline' in lowered
+                or target == self._path.name
+                or lowered.endswith('_service.py')):
+            raise MinotaurDenied(
+                'A decoy is never planted on a data store,'
+                ' a guarded document, a bloodline store, or'
+                ' service machinery — deception stays'
+                ' isolated')
         current = self._current_hash(target)
         if current == 'FILE_MISSING':
             raise MinotaurDenied(
@@ -2045,6 +2546,24 @@ class MinotaurService:
             'attack_classes': list(
                 SELF_PROTECTION_ATTACK_CLASSES),
             'crypto_route': dict(CRYPTO_ROUTE),
+            'domains': [dict(d) for d in DEFENSIVE_DOMAINS],
+            'functioning_standard':
+                FUNCTIONING_STANDARD_VERBATIM,
+            'scope_line': 'He defends himself, his'
+                          ' defenses, the'
+                          ' infrastructure sustaining'
+                          ' him, and the three shields'
+                          ' — simultaneously.',
+            'accounting_counts_of_record': {
+                'founder_omissions': 30,
+                'founder_exposures': 15,
+                'source_lists_in_hand': False,
+                'reconciliation': 'name-by-name'
+                                  ' reconciliation'
+                                  ' awaits the'
+                                  ' founder\'s source'
+                                  ' lists',
+            },
             'external_connections': 'NONE',
         }
 
@@ -2085,10 +2604,14 @@ class MinotaurService:
                     'recorded_at': row['recorded_at'],
                     'receipt_id': row['receipt_id'],
                 }
+            exercise = EXERCISE_EVIDENCE.get(
+                entry['protection'], ('RECORD', ''))
             return {
                 'protection': entry['protection'],
                 'verbatim': entry['verbatim'],
                 'mechanism': entry['mechanism'],
+                'exercise_kind': exercise[0],
+                'exercise_evidence': exercise[1],
                 'state': state,
                 'latest_check': check,
             }
@@ -2186,6 +2709,60 @@ class MinotaurService:
                 ' WHERE check_id = ?',
                 (check_id,)).fetchone()
         return self._sp_check_view(row)
+
+    _CRYPTO_CLAIM_RANK = {
+        'NATIVE_HASH_BASED_STANDS_ENVIRONMENT_BLOCKED': 0,
+        'SYSTEM_PQC_ALGORITHMS_NO_FIPS_CLAIM': 1,
+        'VALIDATED_MODULE_APPROVED_MODE': 2,
+    }
+
+    def assert_crypto_claim(self, actor, claimed, *,
+                            region=None):
+        """Assert a cryptographic claim against the
+        latest environment check of record (operator
+        only) — downgrade and overclaim refusal,
+        enforced in code: a claim is allowed only at
+        or below what the check of record proves. A
+        claim above the evidence, or any claim with
+        no check standing, is refused. This is the
+        cryptographic-downgrade defense functioning:
+        the platform cannot be made to present a
+        weaker — or stronger — posture than its
+        evidence."""
+        self._geo(region)
+        self._require_operator(actor)
+        if claimed not in self._CRYPTO_CLAIM_RANK:
+            raise MinotaurDenied(
+                'The claimed determination must be one'
+                ' of: ' + ', '.join(
+                    self._CRYPTO_CLAIM_RANK))
+        with self._connect() as db:
+            latest = db.execute(
+                'SELECT * FROM minotaur_crypto_checks'
+                ' ORDER BY recorded_at DESC LIMIT 1',
+            ).fetchone()
+        if latest is None:
+            raise MinotaurDenied(
+                'No crypto environment check stands: no'
+                ' claim may be asserted without evidence')
+        proven = latest['determination']
+        if (self._CRYPTO_CLAIM_RANK[claimed]
+                > self._CRYPTO_CLAIM_RANK[proven]):
+            raise MinotaurDenied(
+                'Claim refused: the check of record'
+                f' proves {proven}; claiming {claimed}'
+                ' would misstate the cryptographic'
+                ' posture (downgrade/overclaim refusal)')
+        receipt_id = self._record(
+            'MINOTAUR_CRYPTO_CLAIM_ASSERTED', actor=actor,
+            claimed=claimed, proven=proven)
+        return {
+            'claimed': claimed,
+            'proven_by_check': proven,
+            'check_id': latest['check_id'],
+            'allowed': True,
+            'receipt_id': receipt_id,
+        }
 
     def self_protection_checks(self, actor, role, *,
                                region=None):
@@ -2353,6 +2930,58 @@ class MinotaurService:
             ' clearance determinations')
         return relationship
 
+    def defensive_domains_view(self, actor, role, *,
+                               region=None):
+        """The eight domains of his complete
+        architecture (guarded read), each with its
+        scope in the founder's terms and the members
+        of record that stand in it."""
+        self._geo(region)
+        self._guard_access(actor, role, 'defensive-domains',
+                           'defensive domains view')
+        return {
+            'domains': [dict(d) for d in DEFENSIVE_DOMAINS],
+            'total': len(DEFENSIVE_DOMAINS),
+            'functioning_standard':
+                FUNCTIONING_STANDARD_VERBATIM,
+            'part': 'MINOTAUR_COMPLETE_ARCHITECTURE',
+            'ladder_state': 'CONSTRUCTED',
+        }
+
+    def completeness_accounting_view(self, actor, role,
+                                     *, region=None):
+        """The completeness accounting (guarded read):
+        every omission and exposure the examined
+        record identifies, marked ALREADY_PROTECTED
+        with its evidence or CONSTRUCTION_REQUIRED
+        with its construction. The founder's counts
+        of record (30 omissions, 15 exposures) stand
+        as his; their source enumerations are not in
+        hand, no list is fabricated to match the
+        counts, and name-by-name reconciliation
+        awaits his source lists."""
+        self._geo(region)
+        self._guard_access(actor, role,
+                           'completeness-accounting',
+                           'completeness accounting view')
+        entries = [dict(e) for e in COMPLETENESS_ACCOUNTING]
+        return {
+            'accounting': entries,
+            'total': len(entries),
+            'already_protected': sum(
+                1 for e in entries
+                if e['status'] == 'ALREADY_PROTECTED'),
+            'construction_required': sum(
+                1 for e in entries
+                if e['status'] == 'CONSTRUCTION_REQUIRED'),
+            'founder_counts_of_record': {
+                'omissions': 30, 'exposures': 15,
+                'source_lists_in_hand': False,
+            },
+            'part': 'MINOTAUR_COMPLETENESS_ACCOUNTING',
+            'ladder_state': 'CONSTRUCTED',
+        }
+
     # -- status / check-in --------------------------------------------------
 
     def status(self) -> dict:
@@ -2443,6 +3072,16 @@ class MinotaurService:
                     DEFENSIVE_RELATIONSHIP['shields']),
                 'shields_independent': True,
                 'recovery': 'CONTINUOUS_WATCHDOG_RECOVERY',
+                'ladder_state': 'CONSTRUCTED',
+            },
+            'complete_architecture': {
+                'domains_total': len(DEFENSIVE_DOMAINS),
+                'accounting_total': len(
+                    COMPLETENESS_ACCOUNTING),
+                'accounting_construction_required': sum(
+                    1 for e in COMPLETENESS_ACCOUNTING
+                    if e['status']
+                    == 'CONSTRUCTION_REQUIRED'),
                 'ladder_state': 'CONSTRUCTED',
             },
             'crypto_route': {
