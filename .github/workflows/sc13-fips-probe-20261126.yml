@@ -1,0 +1,41 @@
+name: SC-13 lift - FIPS provider probe (one-time, read-only)
+on:
+  workflow_dispatch:
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Identify the packaged FIPS provider and test activation in /tmp
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== FIPS.SO OWNER ==="
+            rpm -qf /usr/lib64/ossl-modules/fips.so 2>&1
+            echo "=== FIPS PROVIDER PKG FILES ==="
+            rpm -ql openssl-fips-provider-so 2>&1 | head -8
+            echo "=== FIPSMODULE.CNF LOCATIONS ==="
+            find /etc/pki /usr/lib64 /etc/ssl -name 'fipsmodule.cnf' 2>/dev/null
+            ls /etc/pki/tls/*.cnf 2>&1
+            echo "=== FULL TLS GROUPS ==="
+            openssl list -tls-groups 2>&1 | tr ':' '\n' | grep -iE 'MLKEM|X25519' | head -8
+            echo "=== ACTIVATION TEST ==="
+            FM=$(find /etc/pki /usr/lib64 /etc/ssl -name 'fipsmodule.cnf' 2>/dev/null | head -1)
+            echo "fipsmodule.cnf: $FM"
+            printf 'openssl_conf = openssl_init\n.include %s\n[openssl_init]\nproviders = provider_sect\n[provider_sect]\nfips = fips_sect\nbase = base_sect\n[fips_sect]\nactivate = 1\n[base_sect]\nactivate = 1\n' "$FM" > /tmp/fips_test.cnf
+            OPENSSL_CONF=/tmp/fips_test.cnf openssl list -providers 2>&1
+            echo "--- verbose (fips identity) ---"
+            OPENSSL_CONF=/tmp/fips_test.cnf openssl list -providers -verbose 2>&1 | head -14
+            echo "--- approved-mode algorithm behavior ---"
+            echo -n test | OPENSSL_CONF=/tmp/fips_test.cnf openssl dgst -sha256 2>&1 | head -1
+            echo -n test | OPENSSL_CONF=/tmp/fips_test.cnf openssl dgst -md5 2>&1 | head -2
+            echo "=== APP VENV PYTHON ==="
+            /opt/Sanders_Dash_Seal/venv/bin/python3 --version 2>&1
+            echo "=== EXISTING DROP-INS ==="
+            ls /etc/systemd/system/nginx.service.d/ 2>&1
+            ls /etc/systemd/system/sanders-dash-seal.service.d/ 2>&1
+            echo "PROBE_DONE"
