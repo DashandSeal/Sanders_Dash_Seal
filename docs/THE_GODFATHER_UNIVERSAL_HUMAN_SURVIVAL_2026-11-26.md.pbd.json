@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/THE_GODFATHER_UNIVERSAL_HUMAN_SURVIVAL_2026-11-26.md",
+        "payload_hash": "8f498217b164910bd7392199b7dec561c079cf77122e6bce436fb90e776335d1",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
