@@ -8,12 +8,15 @@ stripe==15.6.0
 # provider keys remain owner-placed and are NOT added here.
 faster-whisper
 pyttsx3
-# PyAV floor (2026-11-25, voice repair): faster-whisper 1.2.x decodes
+# PyAV pin (2026-11-25, voice repair): faster-whisper 1.2.x decodes
 # audio via av.open(..., metadata_errors="ignore"), a kwarg that only
 # exists in PyAV >= 13.  Unpinned, the instance's aarch64 venv resolved
 # PyAV 12.x, so every transcription died with a TypeError the voice
 # handler does not catch (production 500 on POST /api/voice/transcribe;
-# traceback in deploy run 45734343071, step 5d pre-warm).  The <15 cap
-# keeps pip on versions that publish aarch64 cp312 wheels (15.x does
-# not), so the deploy never falls into a source build.
-av>=13,<15
+# traceback in deploy run 45734343071, step 5d pre-warm).  The pin is
+# EXACT because wheel coverage decides what pip can install here:
+# 14.2.0 is the last release publishing a manylinux aarch64 cp312
+# wheel -- a range (av>=13,<15) resolved to 14.4.0, which ships no
+# such wheel, and its source build failed on the host for lack of
+# ffmpeg 7 development libraries (deploy run 45735396751).
+av==14.2.0
