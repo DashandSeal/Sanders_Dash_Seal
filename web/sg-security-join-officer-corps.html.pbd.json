@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-join-officer-corps.html",
+        "payload_hash": "a40428a2a95dce8e2fcd7a331f1cd3e1226c74df532374e12cdbdcebe4dff20f",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

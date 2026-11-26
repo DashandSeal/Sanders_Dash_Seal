@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-uniformed-guard.html",
+        "payload_hash": "a414ac94e616b5609666fa6b526e152b8ca04dd31afa349098b350f6463dfe2e",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

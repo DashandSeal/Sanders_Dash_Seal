@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-executive-protection.html",
+        "payload_hash": "b22f4cda485bb335208b64e87b789b1c3f93d1ae65756395e709ec62b5cf5f3d",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

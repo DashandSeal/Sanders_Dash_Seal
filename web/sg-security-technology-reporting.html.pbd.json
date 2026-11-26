@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-technology-reporting.html",
+        "payload_hash": "019f89a0f44bdabc4f69859313e6b5cbe4cfcc925f9174d0fbc75cbac7c50c2f",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

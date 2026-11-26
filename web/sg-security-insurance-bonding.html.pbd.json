@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-insurance-bonding.html",
+        "payload_hash": "732005b454e8ae54302404449b0f2267e353502550b8aec6347dd92e8b4d3914",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

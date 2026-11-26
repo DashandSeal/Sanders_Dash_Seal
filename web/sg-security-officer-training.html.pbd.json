@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-officer-training.html",
+        "payload_hash": "054f04fb3e38b2c7bd80d67711e5ff1cbcb982f729e4f7af22198df9195746e1",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

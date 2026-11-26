@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-licensing-compliance.html",
+        "payload_hash": "39b69f4c50be7785a56e6ec6eacfe0b498cfceb6c9df7239d44afdb2959d58ad",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

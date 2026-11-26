@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-emergency-response.html",
+        "payload_hash": "a65090d37cdbaecc63f19d795645bd8ddd6e93d521e67cb2d5579ce5d4095777",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

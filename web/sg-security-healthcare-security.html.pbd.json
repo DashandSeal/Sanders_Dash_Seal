@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-healthcare-security.html",
+        "payload_hash": "81765fd17d4840294b845495fdb2aa49ef0957b2b670c0636ca625978b9e1f8f",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

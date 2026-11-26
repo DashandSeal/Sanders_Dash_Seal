@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-mobile-patrol.html",
+        "payload_hash": "ae694db2ac1642ab6710025323f72f20fa3791162ada364c9dc6720bdb8ad5c6",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

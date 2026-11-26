@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-construction-security.html",
+        "payload_hash": "e37624d6ceac714787725b2db7ff3449977fe6dcb066aebd5aabecbf84e9e7bd",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

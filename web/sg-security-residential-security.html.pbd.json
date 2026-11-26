@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-residential-security.html",
+        "payload_hash": "8af082429235d0a56bd8f763cfee012d35f037e9ab450a6a0ec337f8dfebf390",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

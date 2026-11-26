@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/sg-security-incident-reporting.html",
+        "payload_hash": "832d350977d349d1cf91f4150c4d0a008f593c5f34581f3c29e88cae438d1165",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
