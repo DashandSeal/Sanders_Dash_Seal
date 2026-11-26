@@ -1260,6 +1260,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                 '/api/labyrinth-shield/integrity',
                                 '/api/labyrinth-shield/integrity-pin',
                                 '/api/labyrinth-shield/posture',
+                                '/api/labyrinth-shield/self-protection',
+                                '/api/labyrinth-shield/self-protection/checks',
                                 '/api/labyrinth-shield/check-in')
                        or ls_evaluation_match is not None
                        or ls_isolation_release_match is not None)
@@ -1349,6 +1351,10 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                  '/api/labyrinth/graph-edges',
                                  '/api/labyrinth/policies',
                                  '/api/labyrinth/flow-checks',
+                                 '/api/labyrinth/self-protection',
+                                 '/api/labyrinth/self-protection/checks',
+                                 '/api/labyrinth/integrity',
+                                 '/api/labyrinth/integrity-pin',
                                  '/api/labyrinth/contract',
                                  '/api/labyrinth/operation-check',
                                  '/api/labyrinth/check-in')
@@ -2209,6 +2215,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/labyrinth-shield/isolations',
                                             '/api/labyrinth-shield/integrity',
                                             '/api/labyrinth-shield/posture',
+                                            '/api/labyrinth-shield/self-protection',
                                             '/api/minotaur/status',
                                             '/api/minotaur/targets',
                                             '/api/minotaur/anomalies',
@@ -2242,6 +2249,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/hydra-q/contract',
                                             '/api/labyrinth/status',
                                             '/api/labyrinth/analyses',
+                                            '/api/labyrinth/self-protection',
+                                            '/api/labyrinth/integrity',
                                             '/api/labyrinth/contract',
                                             '/api/cerberus/status',
                                             '/api/cerberus/assessments',
@@ -2906,6 +2915,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/labyrinth-shield/self-protection':
             allowed = ('GET',)
         if path == '/api/labyrinth/self-protection':
+            allowed = ('GET',)
+        if path == '/api/labyrinth/integrity':
             allowed = ('GET',)
         if path == '/api/minotaur/self-protection/checks':
             allowed = ('GET', 'POST')
@@ -3649,6 +3660,15 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = labyrinth_shield.integrity_pin(identity)
                         return respond(start, '200 OK', {'integrity': record})
+                    if path == '/api/labyrinth-shield/self-protection':
+                        return respond(start, '200 OK', {'self_protection': labyrinth_shield.inherited_defenses_view(identity, ls_read_role)})
+                    if path == '/api/labyrinth-shield/self-protection/checks':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'self_protection_checks': labyrinth_shield.self_protection_checks(identity, ls_read_role)})
+                        if set(data) != {'protection_key', 'outcome', 'evidence_ref', 'detail'}:
+                            raise ValueError('unexpected fields')
+                        record = labyrinth_shield.record_self_protection_check(identity, data['protection_key'], data['outcome'], data['evidence_ref'], data['detail'])
+                        return respond(start, '201 Created', {'self_protection_check': record})
                     if path == '/api/labyrinth-shield/posture':
                         return respond(start, '200 OK', {'posture': labyrinth_shield.posture_view(identity, ls_read_role)})
                     return check_in(labyrinth_shield)
@@ -4037,6 +4057,22 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                             raise ValueError('unexpected fields')
                         record = labyrinth.flow_check(identity, data['from_platform'], data['to_platform'], data['endpoint_ref'])
                         return respond(start, '201 Created', {'flow_check': record})
+                    if path == '/api/labyrinth/self-protection':
+                        return respond(start, '200 OK', {'self_protection': labyrinth.inherited_defenses_view(identity, lab_role)})
+                    if path == '/api/labyrinth/self-protection/checks':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'self_protection_checks': labyrinth.self_protection_checks(identity, lab_role)})
+                        if set(data) != {'protection_key', 'outcome', 'evidence_ref', 'detail'}:
+                            raise ValueError('unexpected fields')
+                        record = labyrinth.record_self_protection_check(identity, data['protection_key'], data['outcome'], data['evidence_ref'], data['detail'])
+                        return respond(start, '201 Created', {'self_protection_check': record})
+                    if path == '/api/labyrinth/integrity':
+                        return respond(start, '200 OK', {'integrity': labyrinth.integrity_status(identity, lab_role)})
+                    if path == '/api/labyrinth/integrity-pin':
+                        if set(data) != set():
+                            raise ValueError('unexpected fields')
+                        record = labyrinth.integrity_pin(identity)
+                        return respond(start, '201 Created', {'integrity': record})
                     return check_in(labyrinth)
                 if is_cerb_route:
                     if cerberus is None:
