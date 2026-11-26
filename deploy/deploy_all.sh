@@ -17,7 +17,14 @@ set -euo pipefail
 REPO_DIR="/opt/Sanders_Dash_Seal"
 
 # 0. Bootstrap git, Nginx, Python 3.12, and native C build tools on Oracle Linux 9
-sudo dnf install -y git nginx cmake gcc-c++ make openssl-devel python3.12 python3.12-devel
+# espeak-ng (added 2026-11-25, voice repair): the system-tts
+# synthesizer (pyttsx3's espeak driver) needs the espeak-ng library
+# ON THE HOST -- tranche 1 added it to the Docker image only, so on
+# the host pyttsx3.init() raised "RuntimeError: This means you
+# probably do not have eSpeak or eSpeak-ng installed!" while the
+# status surface claimed system-tts from the pyttsx3 import alone
+# (deploy log of run 45733446059, step 5d pre-warm).
+sudo dnf install -y git nginx cmake gcc-c++ make openssl-devel python3.12 python3.12-devel espeak-ng
 
 # 1. Clone or sync entire DashandSeal/Sanders_Dash_Seal repository
 if [ ! -d "$REPO_DIR/.git" ]; then
