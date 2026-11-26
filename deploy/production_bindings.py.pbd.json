@@ -4,13 +4,8 @@
         "platform": "Sanders Dash & Seal",
         "artifact": "deploy/production_bindings.py",
         "payload_hash": "e232c33ce6f54e116640dfa8ea4fcda61c24f46cfddebcc3668a316bb17150b2",
-        "scope": {
-            "endpoint": "local://development",
-            "method": "TEST",
-            "ip": "127.0.0.1",
-            "operation": "DEVELOPMENT_VALIDATION"
-        }
-    },
-    "signatures": {},
-    "status": "UNSIGNED_SOURCE_MANIFEST"
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }
