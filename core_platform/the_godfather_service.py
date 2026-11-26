@@ -269,6 +269,28 @@ DIRECTIVES_SOURCE = ('Founder record:'
                      '-protection-directives-2026-11-26')
 BLOODLINE_DIRECTIVES_SCOPE = 'GLOBAL_BLOODLINE_DIRECTIVES'
 BLOODLINE_DISCIPLINE = 'GODFATHER_COORDINATION_ONLY'
+# -- Founder Directive — Protection From Harmful
+# or Unauthorized Wording; Amend Only, Never
+# Supersede (founder's directive, 2026-11-26):
+# ecosystem-wide standing law, carried here
+# beside the governing instruments above. -----
+PROTECTION_TITLE = (
+    'Founder Directive \u2014 Protection From '
+    'Harmful or Unauthorized Wording; Amend '
+    'Only, Never Supersede')
+PROTECTION_GIVEN = '2026-11-26'
+PROTECTION_SOURCE = (
+    'docs/FOUNDER_DIRECTIVE_PROTECTION_AMEND_'
+    'ONLY_2026-11-26.md')
+PROTECTION_PRESERVATION_STATEMENTS = (
+    'Preserve all original Founder directives.',
+    'Amend only. Never supersede.',
+    ('Preserve ownership, inheritance, '
+     'succession and Founder-assigned '
+     'authority.'),
+    'Your original protections must never be '
+    'weakened.',
+)
 # Article I assigns the funding approval for Patriot
 # Saint's private duties jointly to this platform and
 # Sanders Sentinel: neither side's determination
@@ -2028,6 +2050,13 @@ class TheGodfatherService:
                 FOUNDER_DIRECTIVES_ARTICLE_I_VERBATIM,
             'articles_iv_vi_verbatim':
                 FOUNDER_DIRECTIVES_ARTICLES_IV_VI_VERBATIM,
+            'protection_amend_only_directive': {
+                'title': PROTECTION_TITLE,
+                'given': PROTECTION_GIVEN,
+                'source': PROTECTION_SOURCE,
+                'preservation_statements': list(
+                    PROTECTION_PRESERVATION_STATEMENTS),
+            },
             'scope_ref': BLOODLINE_DIRECTIVES_SCOPE,
             'discipline': BLOODLINE_DISCIPLINE,
             'invariants':
