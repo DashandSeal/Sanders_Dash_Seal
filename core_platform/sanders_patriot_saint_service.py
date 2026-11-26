@@ -198,6 +198,40 @@ govern throughout: Global By Design, permanent
 bloodline exclusivity, and preservation of each
 platform's original identity and purpose —
 coordination without merging.
+
+FOUNDER'S AMENDMENT TO ARTICLE III (established by
+the founder, effective 2026-11-26): the founder
+amends Article III to grant this platform the
+authority to directly disburse funds, execute
+financial transactions, and make payments necessary
+to fulfill its assigned private responsibilities
+exclusively for the bloodline — attorney fees and
+legal representation expenses, emergency legal
+assistance, bail and bond payments, deposits into
+incarcerated bloodline members' accounts, payment
+of tickets and fines, and all other financial
+obligations of its private duties — "because the
+necessary controls have been put in place": the
+joint funding approval of Godfather and Sanders
+Sentinel, whose funding approval and emergency
+reserve responsibilities the amendment expressly
+retains. The amendment supersedes, as it applies to
+this platform's assigned private responsibilities,
+any previous provision requiring disbursements to
+be performed exclusively by a human or prohibiting
+this platform from directly disbursing funds —
+including the financial-authority duty of
+2026-11-25 above, which otherwise stands.
+Disbursement on this platform executes only through
+a governed disbursement record against a matter
+whose joint approval stands recorded, in the
+segregated bloodline store; the commercial side
+gains no disbursement. No real-world payment rail
+or funding account is attached to this platform or
+represented as attached: disbursements execute as
+platform records against the recorded joint
+approvals, with Glass-Box receipts, until the
+founder designates and connects a rail.
 """
 
 from __future__ import annotations
@@ -241,7 +275,9 @@ RECORD_OPERATIONS = ('record_patriot_saint', 'approve_patriot_saint', 'record_ou
     'open_bloodline_matter', 'act_on_bloodline_matter',
     'record_bloodline_coordination', 'view_bloodline_remit',
     'request_bloodline_matter_funding',
-    'record_bloodline_matter_funding_determination')
+    'record_bloodline_matter_funding_determination',
+    'execute_bloodline_disbursement',
+    'view_bloodline_disbursements')
 EXECUTION_OPERATIONS = ('issue_directive', 'exercise_authority',
     'integrate_command', 'deliver_briefing',
     'external_execution')
@@ -348,10 +384,16 @@ BLOODLINE_INVARIANTS = (
     ' purpose, and bloodline responsibilities must not'
     ' be removed, diminished, or repurposed through'
     ' future software upgrades.',
-    'The platform coordinates assistance only: it'
-    ' never independently controls or disburses family'
-    ' funds, and funds_disbursed is False on every'
-    ' bloodline matter, always.',
+    'The platform coordinates assistance; under the'
+    " Founder's Amendment to Article III (2026-11-26)"
+    ' it also disburses funds for its assigned private'
+    ' responsibilities — only against the recorded'
+    ' joint funding approval of Godfather and Sanders'
+    ' Sentinel, only through a governed disbursement'
+    ' record in the segregated bloodline store, and'
+    ' never on its commercial side — and'
+    ' funds_disbursed on a bloodline matter is the'
+    ' recorded fact of such a disbursement.',
     'Bloodline matters are segregated from the'
     ' public-facing commercial operations in a separate'
     ' store; neither store is read by the other'
@@ -409,10 +451,15 @@ BLOODLINE_MATTER_TRANSITIONS = {
 }
 BLOODLINE_OPEN_STATUSES = ('AWAITING_HUMAN_REVIEW',
                            'APPROVED')
-# Operations the bloodline remit refuses by name: the
-# platform coordinates assistance — it does not move
-# money. Any disbursement operation is refused under
-# PATRIOT_SAINT_COORDINATION_ONLY.
+# Operations the bloodline remit refuses by name:
+# ungoverned movement of money. Under the Founder's
+# Amendment to Article III (2026-11-26), disbursement
+# on this platform executes only through the governed
+# disbursement record (execute_disbursement) against
+# the recorded joint funding approval, for the
+# assigned private duties only; every ungoverned
+# disbursement operation is refused under
+# PATRIOT_SAINT_DISBURSEMENT_GOVERNED_PATH_ONLY.
 BLOODLINE_EXECUTION_OPERATIONS = (
     'disburse_funds', 'disburse', 'pay_ticket',
     'pay_tickets', 'transfer_funds', 'move_money',
@@ -440,6 +487,102 @@ FUNDING_APPROVAL_PLATFORMS = ('the_godfather',
                               'sanders_sentinel')
 FUNDING_STATES = ('NOT_FUNDED', 'FUNDING_REQUESTED',
                   'FUNDED')
+# -- Founder's Amendment to Article III — Patriot
+# Saint disbursement authority (founder-established,
+# effective 2026-11-26) ------------------------------
+AMENDMENT_TITLE = ("Founder\u2019s Amendment to"
+                   ' Article III \u2014 Patriot Saint')
+AMENDMENT_ESTABLISHED_BY = ('Roosevelt Sanders'
+                            ' \u2014 Founder')
+AMENDMENT_EFFECTIVE_DATE = '2026-11-26'
+AMENDMENT_DESIGNATION = 'Permanent | Global By Design'
+AMENDMENT_SOURCE = ('Founder record:'
+                    ' founder-amendment-article-iii'
+                    '-patriot-saint-disbursement-2026-11-26')
+DISBURSEMENT_DISCIPLINE = (
+    'PATRIOT_SAINT_PRIVATE_DUTY_DISBURSEMENT')
+# The financial obligations of the assigned private
+# duties, in the amendment's own list: disbursement
+# is refused by name for anything outside this set.
+DISBURSEMENT_PURPOSES = (
+    'ATTORNEY_FEES_AND_LEGAL_REPRESENTATION',
+    'EMERGENCY_LEGAL_ASSISTANCE',
+    'BAIL_AND_BOND_PAYMENTS',
+    'INCARCERATED_MEMBER_ACCOUNT_DEPOSITS',
+    'TICKETS_AND_FINES_PAYMENT',
+    'OTHER_PRIVATE_DUTY_OBLIGATION')
+# Implementation honesty, of record: no real-world
+# payment rail or funding account exists for this
+# platform anywhere in the ecosystem today, and none
+# is attached or represented as attached. A
+# disbursement here is the platform's recorded
+# execution against the recorded joint approval;
+# designating and connecting a rail is the founder's
+# alone.
+PAYMENT_RAIL_STATEMENT = (
+    'No real-world payment rail or funding account is'
+    ' attached to this platform; disbursements execute'
+    ' as platform records against recorded joint'
+    ' funding approvals, with Glass-Box receipts.')
+FOUNDER_AMENDMENT_ARTICLE_III_VERBATIM = (
+    'Founder\u2019s Amendment to Article III'
+    ' \u2014 Patriot Saint\n'
+    '\n'
+    'I, Roosevelt Sanders, Founder of the Sanders'
+    ' Family of Companies and the Sanders Sovereign'
+    ' RTSA Ecosystem, hereby amend Article III of the'
+    ' Permanent Global Bloodline Protection'
+    ' Directives.\n'
+    '\n'
+    'Patriot Saint is hereby granted the authority to'
+    ' directly disburse funds, execute financial'
+    ' transactions and make payments necessary to'
+    ' fulfill its assigned private responsibilities'
+    ' exclusively for my bloodline.\n'
+    '\n'
+    'This authority is granted because the necessary'
+    ' controls have been put in place.\n'
+    '\n'
+    'Patriot Saint shall possess the operational'
+    ' authority to carry out its assigned financial'
+    ' responsibilities, including:\n'
+    '\n'
+    '- Attorney fees and legal representation'
+    ' expenses.\n'
+    '- Emergency legal assistance.\n'
+    '- Bail and bond payments.\n'
+    '- Deposits into incarcerated bloodline'
+    " members' accounts.\n"
+    '- Payment of tickets and fines.\n'
+    '- All other financial obligations necessary to'
+    ' fulfill its assigned private duties.\n'
+    '\n'
+    'Godfather and Sanders Sentinel shall retain their'
+    ' established funding approval responsibilities'
+    ' and emergency financial reserve'
+    ' responsibilities.\n'
+    '\n'
+    'Any previous provision requiring financial'
+    ' disbursements to be performed exclusively by a'
+    ' human, or prohibiting Patriot Saint from'
+    ' directly disbursing funds, is hereby superseded'
+    ' as it applies to Patriot Saint\'s assigned'
+    ' private responsibilities.\n'
+    '\n'
+    'This amendment shall not diminish, restrict or'
+    ' otherwise weaken any previously established'
+    ' bloodline protection responsibilities.\n'
+    '\n'
+    'All remaining articles, authorities,'
+    ' responsibilities and protections established'
+    ' within the Permanent Global Bloodline Protection'
+    ' Directives remain in full force as internal'
+    ' Founder directives.\n'
+    '\n'
+    'This amendment is permanent, Global By Design and'
+    ' exclusively dedicated to the protection and'
+    ' welfare of my bloodline and its present and'
+    ' future bloodline descendants.')
 FOUNDER_DIRECTIVES_ARTICLE_III_VERBATIM = (
     'ARTICLE III \u2014 PATRIOT SAINT\n'
     '\n'
@@ -546,12 +689,19 @@ GLOBAL_DIRECTIVES_INVARIANTS = (
     ' responsibilities strengthen one another without'
     ' merging, replacing, or diminishing any'
     " platform's original assignment.",
-    'No platform disburses or holds funds under these'
-    ' Directives: funding approval is a recorded'
-    ' determination, emergency reserves are a register'
-    ' of designations and joint approvals rather than'
-    ' platform-held money, and execution of any'
-    ' payment or purchase remains a human act.',
+    'Funding approval under these Directives is a'
+    ' recorded determination requiring both'
+    " Godfather's and Sanders Sentinel's"
+    ' determinations; the emergency reserves are a'
+    ' register of designations and joint approvals,'
+    ' not platform-held money. Godfather and Sanders'
+    ' Sentinel disburse and hold no funds. Under the'
+    " Founder's Amendment to Article III (2026-11-26),"
+    ' Patriot Saint alone disburses — for his'
+    ' assigned private responsibilities only, against'
+    ' the recorded joint approval, as a platform'
+    ' record with no payment rail attached or'
+    ' represented.',
 )
 
 
@@ -632,6 +782,16 @@ class SandersPatriotSaintService:
                     opened_at REAL NOT NULL,
                     updated_by TEXT NOT NULL,
                     updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_patriot_saint_bloodline_disbursements (
+                    disbursement_id TEXT PRIMARY KEY,
+                    matter_id TEXT NOT NULL,
+                    purpose TEXT NOT NULL,
+                    amount_ref TEXT NOT NULL,
+                    payee_ref TEXT NOT NULL,
+                    disbursed_by TEXT NOT NULL,
+                    disbursed_at REAL NOT NULL,
                     receipt_id TEXT NOT NULL
                 );
                 """
@@ -765,7 +925,13 @@ class SandersPatriotSaintService:
             'matter_statuses': list(BLOODLINE_MATTER_STATUSES),
             'global_directives':
                 SandersPatriotSaintService.directives_design_view(),
-            'funds_disbursed': False,
+            'disbursement_discipline':
+                DISBURSEMENT_DISCIPLINE,
+            'disbursement_purposes':
+                list(DISBURSEMENT_PURPOSES),
+            'amendment':
+                SandersPatriotSaintService.amendment_design_view(),
+            'funds_disbursed_recorded_per_matter': True,
             'segregated_store': True,
             'note': (
                 "Under the founder's rulings of 2026-11-25"
@@ -780,14 +946,23 @@ class SandersPatriotSaintService:
                 ' of tickets, and legal assistance —'
                 ' locating and coordinating qualified legal'
                 ' representation. The platform COORDINATES'
-                ' assistance only: it never independently'
-                ' controls or disburses family funds, fund'
-                ' movement is represented as impossible in'
-                ' this service, disbursement operations are'
-                ' refused by name under'
-                ' PATRIOT_SAINT_COORDINATION_ONLY, and every'
-                ' matter carries funds_disbursed False,'
-                ' always. Every matter is born'
+                ' assistance; and under the Founder\u2019s'
+                ' Amendment to Article III (2026-11-26) it'
+                ' also DISBURSES funds for its assigned'
+                ' private responsibilities \u2014 only'
+                ' through a governed disbursement record,'
+                ' only against the recorded joint funding'
+                ' approval of Godfather and Sanders'
+                ' Sentinel, and only in the segregated'
+                ' bloodline store; the commercial side'
+                ' disburses nothing, ungoverned disbursement'
+                ' operations are refused by name under'
+                ' PATRIOT_SAINT_DISBURSEMENT_GOVERNED_PATH_ONLY,'
+                ' and funds_disbursed on a matter is the'
+                ' recorded fact of such a disbursement.'
+                ' No real-world payment rail is attached'
+                ' to this platform or represented as'
+                ' attached. Every matter is born'
                 ' AWAITING_HUMAN_REVIEW and moves only on a'
                 " human operator's recorded decision."
                 ' Bloodline matters are kept in a segregated'
@@ -815,12 +990,14 @@ class SandersPatriotSaintService:
         if operation in BLOODLINE_EXECUTION_OPERATIONS:
             raise SandersPatriotSaintDenied(
                 f'Operation {operation!r} is refused: the'
-                ' Sanders Patriot Saint platform coordinates'
-                ' bloodline assistance only — it never'
-                ' independently controls or disburses family'
-                ' funds (PATRIOT_SAINT_COORDINATION_ONLY;'
-                " founder's financial-authority duty,"
-                ' 2026-11-25)')
+                ' Sanders Patriot Saint platform disburses'
+                ' only through the governed disbursement'
+                ' record, against the recorded joint'
+                ' Godfather + Sanders Sentinel funding'
+                ' approval, for its assigned private duties'
+                " only (Founder's Amendment to Article III,"
+                ' 2026-11-26;'
+                ' PATRIOT_SAINT_DISBURSEMENT_GOVERNED_PATH_ONLY)')
         if operation in EXECUTION_OPERATIONS:
             raise SandersPatriotSaintDenied(
                 f'Operation {operation!r} is refused: the'
@@ -1080,10 +1257,13 @@ class SandersPatriotSaintService:
             'detail_ref': row['detail_ref'],
             'status': row['status'],
             'coordination_ref': row['coordination_ref'],
-            # The founder's financial-authority duty, in
-            # code: the platform coordinates assistance
-            # and disburses nothing — always False.
-            'funds_disbursed': False,
+            # funds_disbursed is a recorded fact: True
+            # only once a governed disbursement has
+            # executed against this matter under the
+            # Founder's Amendment to Article III
+            # (2026-11-26), against the recorded joint
+            # funding approval.
+            'funds_disbursed': bool(row['funds_disbursed']),
             # Article III funding coordination: the
             # matter reads NOT FUNDED until the joint
             # Godfather + Sanders Sentinel approval
@@ -1101,7 +1281,7 @@ class SandersPatriotSaintService:
                     row['funding_godfather_determination_ref'],
                 'sentinel_determination_ref':
                     row['funding_sentinel_determination_ref'],
-                'funds_disbursed': False,
+                'funds_disbursed': bool(row['funds_disbursed']),
             },
             'scope_ref': BLOODLINE_SUPPORT_SCOPE,
             'segregated_store': True,
@@ -1322,6 +1502,40 @@ class SandersPatriotSaintService:
     # 2026-11-26) ---------------------------------------
 
     @staticmethod
+    def amendment_design_view() -> dict:
+        return {
+            'amendment_title': AMENDMENT_TITLE,
+            'established_by': AMENDMENT_ESTABLISHED_BY,
+            'effective_date': AMENDMENT_EFFECTIVE_DATE,
+            'designation': AMENDMENT_DESIGNATION,
+            'source': AMENDMENT_SOURCE,
+            'amendment_verbatim':
+                FOUNDER_AMENDMENT_ARTICLE_III_VERBATIM,
+            'supersession': (
+                'For Patriot Saint\u2019s assigned private'
+                ' responsibilities only, this amendment'
+                ' supersedes the 2026-11-25 financial-'
+                ' authority ruling (coordination without'
+                ' disbursing) and the human-only'
+                ' disbursement reconciliation recorded'
+                ' with the Permanent Global Bloodline'
+                ' Protection Directives. Godfather and'
+                ' Sanders Sentinel retain their funding'
+                ' approval and emergency reserve'
+                ' responsibilities.'),
+            'disbursement_discipline':
+                DISBURSEMENT_DISCIPLINE,
+            'disbursement_purposes':
+                list(DISBURSEMENT_PURPOSES),
+            'joint_approval_required': True,
+            'funding_approval_platforms':
+                list(FUNDING_APPROVAL_PLATFORMS),
+            'payment_rail_attached': False,
+            'payment_rail_statement':
+                PAYMENT_RAIL_STATEMENT,
+        }
+
+    @staticmethod
     def directives_design_view() -> dict:
         return {
             'directives_title': DIRECTIVES_TITLE,
@@ -1339,7 +1553,9 @@ class SandersPatriotSaintService:
             'funding_approval_platforms':
                 list(FUNDING_APPROVAL_PLATFORMS),
             'funding_states': list(FUNDING_STATES),
-            'funds_disbursed': False,
+            'amendment':
+                SandersPatriotSaintService.amendment_design_view(),
+            'funds_disbursed_recorded_per_matter': True,
             'note': (
                 'Under the founder\u2019s Permanent Global'
                 ' Bloodline Protection Directives'
@@ -1360,12 +1576,18 @@ class SandersPatriotSaintService:
                 ' funding reads NOT FUNDED until the joint'
                 ' funding-approval determinations of'
                 ' Godfather and Sanders Sentinel are both'
-                ' recorded against it. This platform still'
-                ' coordinates only and disburses nothing:'
-                ' approval is a recorded determination in'
-                ' Godfather\u2019s and Sentinel\u2019s'
-                ' services, and execution of any payment'
-                ' remains a human act.'),
+                ' recorded against it. Under the'
+                ' Founder\u2019s Amendment to Article III'
+                ' (2026-11-26), once that joint approval'
+                ' stands recorded this platform disburses'
+                ' against it for its assigned private'
+                ' responsibilities, through a governed'
+                ' disbursement record with a Glass-Box'
+                ' receipt; approval remains a recorded'
+                ' determination in Godfather\u2019s and'
+                ' Sentinel\u2019s services, and no payment'
+                ' rail is attached to this platform or'
+                ' represented as attached.'),
         }
 
     def request_matter_funding(self, actor, matter_id,
@@ -1445,9 +1667,12 @@ class SandersPatriotSaintService:
         'sanders_sentinel'. The matter reads FUNDED
         only when BOTH determinations stand recorded —
         a single determination never funds a matter.
-        Recording a determination disburses nothing:
-        approval is a recorded determination, and
-        execution of any payment remains a human act."""
+        Recording a determination itself disburses
+        nothing: approval is a recorded determination;
+        disbursement executes separately, by this
+        platform, against the completed joint approval
+        (Founder's Amendment to Article III,
+        2026-11-26)."""
         self._geo(region)
         self._require_operator(actor)
         if platform not in FUNDING_APPROVAL_PLATFORMS:
@@ -1521,19 +1746,212 @@ class SandersPatriotSaintService:
         return self._bloodline_matter_view(updated)
 
     def disburse_funds(self, actor, matter_id, *args, **kwargs):
-        """Refused by name, unconditionally. Under the
-        founder's financial-authority duty (2026-11-25),
-        Patriot Saint coordinates assistance without
-        independently controlling or disbursing family
-        funds: fund movement is represented as impossible
-        in this service, and no argument, actor, or state
-        changes that."""
+        """Refused by name: ungoverned disbursement is
+        not an operation of this platform. Under the
+        Founder's Amendment to Article III (2026-11-26),
+        Patriot Saint disburses for his assigned private
+        responsibilities only through the governed
+        disbursement record (execute_disbursement),
+        against the recorded joint Godfather + Sanders
+        Sentinel funding approval — never through a
+        direct, unrecorded movement of funds."""
         raise SandersPatriotSaintDenied(
-            'disburse_funds is refused: the Sanders Patriot'
-            ' Saint platform coordinates bloodline'
-            ' assistance only — it never independently'
-            ' controls or disburses family funds'
-            ' (PATRIOT_SAINT_COORDINATION_ONLY)')
+            'disburse_funds is refused: disbursement on'
+            ' the Sanders Patriot Saint platform executes'
+            ' only through the governed disbursement'
+            ' record (execute_disbursement), against the'
+            ' recorded joint Godfather + Sanders Sentinel'
+            ' funding approval, for its assigned private'
+            ' duties only'
+            ' (PATRIOT_SAINT_DISBURSEMENT_GOVERNED_PATH_ONLY)')
+
+    @staticmethod
+    def _disbursement_view(row, matter_row):
+        return {
+            'disbursement_id': row['disbursement_id'],
+            'matter_id': row['matter_id'],
+            'purpose': row['purpose'],
+            'amount_ref': row['amount_ref'],
+            'payee_ref': row['payee_ref'],
+            'funding_state': matter_row['funding_state'],
+            'godfather_determination_ref':
+                matter_row['funding_godfather_determination_ref'],
+            'sentinel_determination_ref':
+                matter_row['funding_sentinel_determination_ref'],
+            'funds_disbursed': True,
+            'disbursement_discipline':
+                DISBURSEMENT_DISCIPLINE,
+            'payment_rail_attached': False,
+            'scope_ref': BLOODLINE_SUPPORT_SCOPE,
+            'segregated_store': True,
+            'disbursed_by': row['disbursed_by'],
+            'disbursed_at': row['disbursed_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def execute_disbursement(self, actor, matter_id,
+                             purpose, amount_ref, payee_ref,
+                             *, region=None):
+        """Execute a disbursement against a bloodline
+        matter (operator only), under the Founder's
+        Amendment to Article III (2026-11-26): the
+        platform's recorded execution of a payment for
+        its assigned private responsibilities. Controls,
+        in code: the matter must stand approved by a
+        human operator's recorded decision; its funding
+        state must read FUNDED — both the Godfather and
+        the Sanders Sentinel funding-approval
+        determinations recorded against it — or the
+        disbursement is refused by name
+        (PATRIOT_SAINT_DISBURSEMENT_REQUIRES_JOINT_APPROVAL);
+        the purpose must be one of the amendment's
+        assigned private-duty obligations, or the
+        disbursement is refused by name
+        (PATRIOT_SAINT_DISBURSEMENT_PRIVATE_DUTIES_ONLY).
+        The disbursement is recorded in the segregated
+        bloodline store with its Glass-Box receipt in
+        the same transaction, and the matter's
+        funds_disbursed becomes the recorded fact of it.
+        No real-world payment rail is attached to this
+        platform or represented as attached: the
+        execution is the platform's record against the
+        recorded joint approval."""
+        self._geo(region)
+        self._require_operator(actor)
+        if purpose not in DISBURSEMENT_PURPOSES:
+            raise SandersPatriotSaintDenied(
+                f'Disbursement purpose {purpose!r} is'
+                ' refused: disbursement is authorized for'
+                " Patriot Saint's assigned private duties"
+                ' only'
+                ' (PATRIOT_SAINT_DISBURSEMENT_PRIVATE_DUTIES_ONLY)')
+        for label, value in (('amount_ref', amount_ref),
+                             ('payee_ref', payee_ref)):
+            if not isinstance(value, str) or not value.strip():
+                raise SandersPatriotSaintDenied(
+                    f'A {label} is required')
+        now = self._now()
+        disbursement_id = (
+            'sanders-patriot-saint-bloodline-disbursement-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._bloodline_connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_patriot_saint_bloodline_matters'
+                    ' WHERE matter_id = ?',
+                    (matter_id,)).fetchone()
+                if row is None:
+                    raise SandersPatriotSaintDenied(
+                        'Bloodline matter not found')
+                if row['status'] not in (
+                        'APPROVED', 'COORDINATION_RECORDED'):
+                    raise SandersPatriotSaintDenied(
+                        'Disbursement requires a matter'
+                        ' approved by a human operator\u2019s'
+                        ' recorded decision (matter status:'
+                        f" {row['status']})")
+                if row['funding_state'] != 'FUNDED':
+                    raise SandersPatriotSaintDenied(
+                        'Disbursement is refused: the joint'
+                        ' funding approval of Godfather and'
+                        ' Sanders Sentinel must both stand'
+                        ' recorded against the matter first'
+                        ' (funding state:'
+                        f" {row['funding_state']};"
+                        ' PATRIOT_SAINT_DISBURSEMENT_REQUIRES'
+                        '_JOINT_APPROVAL)')
+                receipt_id = self._record(
+                    'SANDERS_PATRIOT_SAINT_BLOODLINE_DISBURSEMENT_EXECUTED',
+                    actor=actor, matter_id=matter_id,
+                    disbursement_id=disbursement_id,
+                    purpose=purpose,
+                    amount_ref=amount_ref.strip(),
+                    payee_ref=payee_ref.strip(),
+                    funds_disbursed=True,
+                    payment_rail_attached=False)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_patriot_saint_bloodline_disbursements'
+                    ' (disbursement_id, matter_id, purpose,'
+                    ' amount_ref, payee_ref, disbursed_by,'
+                    ' disbursed_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (disbursement_id, matter_id, purpose,
+                     amount_ref.strip(), payee_ref.strip(),
+                     actor, now, receipt_id),
+                )
+                db.execute(
+                    'UPDATE'
+                    ' sanders_patriot_saint_bloodline_matters'
+                    ' SET funds_disbursed = 1, updated_by = ?,'
+                    ' updated_at = ?, receipt_id = ?'
+                    ' WHERE matter_id = ?',
+                    (actor, now, receipt_id, matter_id),
+                )
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            disbursement = db.execute(
+                'SELECT * FROM'
+                ' sanders_patriot_saint_bloodline_disbursements'
+                ' WHERE disbursement_id = ?',
+                (disbursement_id,)).fetchone()
+            matter = db.execute(
+                'SELECT * FROM'
+                ' sanders_patriot_saint_bloodline_matters'
+                ' WHERE matter_id = ?',
+                (matter_id,)).fetchone()
+        return self._disbursement_view(disbursement, matter)
+
+    def bloodline_disbursements_list(self, actor, role, *,
+                                     region=None):
+        """All recorded disbursements of the bloodline
+        remit (guarded exactly as the remit's other
+        views), each against its matter's recorded
+        joint funding approval."""
+        self._geo(region)
+        self._guard_access(actor, role,
+                           'bloodline-disbursements',
+                           'bloodline disbursements view')
+        with self._bloodline_connect() as db:
+            rows = db.execute(
+                'SELECT d.*, m.funding_state AS'
+                ' m_funding_state,'
+                ' m.funding_godfather_determination_ref AS'
+                ' m_godfather_ref,'
+                ' m.funding_sentinel_determination_ref AS'
+                ' m_sentinel_ref FROM'
+                ' sanders_patriot_saint_bloodline_disbursements d'
+                ' JOIN sanders_patriot_saint_bloodline_matters m'
+                ' ON m.matter_id = d.matter_id'
+                ' ORDER BY d.disbursed_at').fetchall()
+        views = []
+        for row in rows:
+            views.append({
+                'disbursement_id': row['disbursement_id'],
+                'matter_id': row['matter_id'],
+                'purpose': row['purpose'],
+                'amount_ref': row['amount_ref'],
+                'payee_ref': row['payee_ref'],
+                'funding_state': row['m_funding_state'],
+                'godfather_determination_ref':
+                    row['m_godfather_ref'],
+                'sentinel_determination_ref':
+                    row['m_sentinel_ref'],
+                'funds_disbursed': True,
+                'disbursement_discipline':
+                    DISBURSEMENT_DISCIPLINE,
+                'payment_rail_attached': False,
+                'scope_ref': BLOODLINE_SUPPORT_SCOPE,
+                'segregated_store': True,
+                'disbursed_by': row['disbursed_by'],
+                'disbursed_at': row['disbursed_at'],
+                'receipt_id': row['receipt_id'],
+            })
+        return views
 
     def bloodline_remit(self, actor, role, *, region=None):
         """The bloodline support remit read surface: the
@@ -1572,6 +1990,21 @@ class SandersPatriotSaintService:
                     ' sanders_patriot_saint_bloodline_matters'
                     ' GROUP BY funding_state'):
                 by_funding_state[row['funding_state']] = row['n']
+            disbursed_matters = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_patriot_saint_bloodline_matters'
+                ' WHERE funds_disbursed = 1').fetchone()['n']
+            disbursement_rows = db.execute(
+                'SELECT d.*, m.funding_state AS'
+                ' funding_state,'
+                ' m.funding_godfather_determination_ref AS'
+                ' funding_godfather_determination_ref,'
+                ' m.funding_sentinel_determination_ref AS'
+                ' funding_sentinel_determination_ref FROM'
+                ' sanders_patriot_saint_bloodline_disbursements d'
+                ' JOIN sanders_patriot_saint_bloodline_matters m'
+                ' ON m.matter_id = d.matter_id'
+                ' ORDER BY d.disbursed_at').fetchall()
         view = self.bloodline_design_view()
         view['matters_total'] = sum(by_status.values())
         view['matters_by_funding_state'] = by_funding_state
@@ -1579,6 +2012,11 @@ class SandersPatriotSaintService:
         view['matters_by_kind'] = by_kind
         view['open_matters'] = [
             self._bloodline_matter_view(row) for row in open_rows]
+        view['funds_disbursed'] = disbursed_matters > 0
+        view['disbursements_total'] = len(disbursement_rows)
+        view['disbursements'] = [
+            self._disbursement_view(row, row)
+            for row in disbursement_rows]
         return view
 
     # -- status / check-in ----------------------------------------------
@@ -1628,6 +2066,14 @@ class SandersPatriotSaintService:
                     ' GROUP BY funding_state'):
                 matters_by_funding_state[
                     row['funding_state']] = row['n']
+            disbursed_matters = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_patriot_saint_bloodline_matters'
+                ' WHERE funds_disbursed = 1').fetchone()['n']
+            disbursements_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_patriot_saint_bloodline_disbursements'
+                ).fetchone()['n']
         return {
             'identity': IDENTITY.to_dict(),
             'design': self.design_view(),
@@ -1637,7 +2083,9 @@ class SandersPatriotSaintService:
             'bloodline_matters_by_kind': matters_by_kind,
             'bloodline_matters_by_funding_state':
                 matters_by_funding_state,
-            'bloodline_funds_disbursed': False,
+            'bloodline_funds_disbursed': disbursed_matters > 0,
+            'bloodline_disbursements_total':
+                disbursements_total,
             'records_total': sum(by_status.values()),
             'records_by_status': by_status,
             'records_by_outcome': by_outcome,
