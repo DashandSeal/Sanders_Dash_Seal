@@ -1,0 +1,29 @@
+name: SC-13 lift - server hybrid-group capability, stdin-held harness (read-only)
+on:
+  workflow_dispatch:
+jobs:
+  grp3:
+    runs-on: ubuntu-latest
+    steps:
+      - name: s_server with stdin held open, hybrid-first groups
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            CERT=/etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem
+            KEY=/etc/letsencrypt/live/sandersdashandseal.com/privkey.pem
+            echo "=== H1: hybrid-first server, hybrid-first client ==="
+            sudo sh -c "sleep 25 | nohup openssl s_server -accept 18448 -cert $CERT -key $KEY -tls1_3 -groups X25519MLKEM768:X25519:prime256v1 >/tmp/srv_h1.log 2>&1 &"
+            sleep 3
+            ss -ltn | grep 18448 || echo "SERVER NOT LISTENING"
+            echo | openssl s_client -connect 127.0.0.1:18448 -groups X25519MLKEM768:X25519 2>&1 | grep -iE 'Negotiated|Cipher is|error|alert' | head -3
+            echo "--- h1 server log ---"
+            grep -E 'ACCEPT|DONE|error|Ciphersuite|Group' /tmp/srv_h1.log 2>/dev/null | head -6
+            sudo pkill -f 's_server -accept 1844[8]' 2>/dev/null
+            sudo rm -f /tmp/srv_h1.log
+            echo "GROUP_TEST3_DONE"
