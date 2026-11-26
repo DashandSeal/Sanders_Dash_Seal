@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_three_shields_bloodline_protection.py",
-        "payload_hash": "c7c32a91c6b28b36e09805d0ed1f98a639f9cd10cd400b697b5b5f5b2b3c6071",
+        "payload_hash": "38f1cfef449089a5e437b38f6b604480179a9c14022e6d770cff06240ecb3e98",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
