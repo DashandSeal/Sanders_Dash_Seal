@@ -4,13 +4,8 @@
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_sanders_sentinel_construction_program.py",
         "payload_hash": "d6fd47da7c9b40dc0f24d557b879a1adfdd6ee9089f6fa23c4d0b0f931223b55",
-        "scope": {
-            "endpoint": "local://development",
-            "method": "TEST",
-            "ip": "127.0.0.1",
-            "operation": "DEVELOPMENT_VALIDATION"
-        }
-    },
-    "signatures": {},
-    "status": "UNSIGNED_SOURCE_MANIFEST"
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }

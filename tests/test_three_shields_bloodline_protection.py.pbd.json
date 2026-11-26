@@ -4,13 +4,8 @@
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_three_shields_bloodline_protection.py",
         "payload_hash": "c7c32a91c6b28b36e09805d0ed1f98a639f9cd10cd400b697b5b5f5b2b3c6071",
-        "scope": {
-            "endpoint": "local://development",
-            "method": "TEST",
-            "ip": "127.0.0.1",
-            "operation": "DEVELOPMENT_VALIDATION"
-        }
-    },
-    "signatures": {},
-    "status": "UNSIGNED_SOURCE_MANIFEST"
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }

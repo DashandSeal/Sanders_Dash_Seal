@@ -4,13 +4,8 @@
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_founder_directive_protection_amend_only.py",
         "payload_hash": "83a4da9df13f9133ac98842c4fdb17f5582e6ec8cbce0b55c1d16ce1b336a0c3",
-        "scope": {
-            "endpoint": "local://development",
-            "method": "TEST",
-            "ip": "127.0.0.1",
-            "operation": "DEVELOPMENT_VALIDATION"
-        }
-    },
-    "signatures": {},
-    "status": "UNSIGNED_SOURCE_MANIFEST"
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }

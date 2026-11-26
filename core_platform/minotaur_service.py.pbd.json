@@ -4,13 +4,8 @@
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/minotaur_service.py",
         "payload_hash": "96ad1d033a9398f9566abda73ea948df0c60413cc4583ac53465effc8883f765",
-        "scope": {
-            "endpoint": "local://development",
-            "method": "TEST",
-            "ip": "127.0.0.1",
-            "operation": "DEVELOPMENT_VALIDATION"
-        }
-    },
-    "signatures": {},
-    "status": "UNSIGNED_SOURCE_MANIFEST"
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }
