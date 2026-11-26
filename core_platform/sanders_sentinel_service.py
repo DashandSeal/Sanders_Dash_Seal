@@ -384,12 +384,19 @@ GLOBAL_DIRECTIVES_INVARIANTS = (
     ' responsibilities strengthen one another without'
     ' merging, replacing, or diminishing any'
     " platform's original assignment.",
-    'No platform disburses or holds funds under these'
-    ' Directives: funding approval is a recorded'
-    ' determination, emergency reserves are a register'
-    ' of designations and joint approvals rather than'
-    ' platform-held money, and execution of any'
-    ' payment or purchase remains a human act.',
+    'Funding approval under these Directives is a'
+    ' recorded determination requiring both'
+    " Godfather's and Sanders Sentinel's"
+    ' determinations; the emergency reserves are a'
+    ' register of designations and joint approvals,'
+    ' not platform-held money. Godfather and Sanders'
+    ' Sentinel disburse and hold no funds. Under the'
+    " Founder's Amendment to Article III (2026-11-26),"
+    ' Patriot Saint alone disburses — for his'
+    ' assigned private responsibilities only, against'
+    ' the recorded joint approval, as a platform'
+    ' record with no payment rail attached or'
+    ' represented.',
 )
 FUNDING_REQUEST_STATUSES = ('AWAITING_HUMAN_REVIEW',
                             'APPROVED', 'DECLINED')
