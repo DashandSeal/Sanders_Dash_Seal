@@ -173,6 +173,7 @@ Articles IV–VI: Global By Design, permanent
 bloodline exclusivity, and preservation of each
 platform's original identity and purpose —
 coordination without merging.
+FULFILLMENT VERIFICATION (founder’s Sanders Sentinel — Permanent Global Bloodline Protection and Succession Directive, established 2026-11-26): under the operational standard Sentinel holds — "A transportation record is not transportation. A financial reserve record is not money." — a transportation matter or reserve designation in this remit is not FULFILLED until a human operator’s recorded confirmation, naming the delivery by reference, confirms the actual assistance was delivered: the member actually carried, the reserve actually established. The confirmation changes no other rule: coordination remains coordination, the reserves remain a register that holds no funds, and this platform still disburses nothing.
 """
 
 from __future__ import annotations
@@ -222,6 +223,8 @@ RECORD_OPERATIONS = ('record_godfather', 'approve_godfather', 'record_outcome',
     'designate_bloodline_reserve',
     'act_on_bloodline_reserve',
     'record_counterpart_reserve_approval',
+    'confirm_bloodline_transport_fulfillment',
+    'confirm_bloodline_reserve_fulfillment',
     'view_bloodline_remit')
 EXECUTION_OPERATIONS = ('provide_protection', 'transact_business',
     'issue_directive', 'enforce_decision',
@@ -415,6 +418,14 @@ TRANSPORT_MATTER_TRANSITIONS = {
 }
 TRANSPORT_OPEN_STATUSES = ('AWAITING_HUMAN_REVIEW',
                            'APPROVED')
+# Fulfillment verification (Sanders Sentinel \u2014
+# Permanent Global Bloodline Protection and
+# Succession Directive, 2026-11-26): a matter or
+# designation is recorded-unfulfilled until a human
+# operator's recorded confirmation of actual
+# delivery stands against it.
+FULFILLMENT_STATES = ('RECORDED_UNFULFILLED',
+                      'FULFILLED')
 FUNDING_REQUEST_STATUSES = ('AWAITING_HUMAN_REVIEW',
                             'APPROVED', 'DECLINED')
 FUNDING_REQUEST_TRANSITIONS = {
@@ -549,6 +560,35 @@ class TheGodfatherService:
                 );
                 """
             )
+            for table, columns in (
+                    ('the_godfather_bloodline_'
+                     'transport_matters', (
+                        ('fulfillment_state',
+                         "TEXT NOT NULL DEFAULT"
+                         " 'RECORDED_UNFULFILLED'"),
+                        ('fulfillment_delivery_ref',
+                         'TEXT'),
+                        ('fulfillment_confirmed_by',
+                         'TEXT'),
+                        ('fulfillment_confirmed_at',
+                         'REAL'))),
+                    ('the_godfather_bloodline_reserves', (
+                        ('fulfillment_state',
+                         "TEXT NOT NULL DEFAULT"
+                         " 'RECORDED_UNFULFILLED'"),
+                        ('fulfillment_delivery_ref',
+                         'TEXT'),
+                        ('fulfillment_confirmed_by',
+                         'TEXT'),
+                        ('fulfillment_confirmed_at',
+                         'REAL')))):
+                existing = {row[1] for row in db.execute(
+                    'PRAGMA table_info(' + table + ')')}
+                for column, ddl in columns:
+                    if column not in existing:
+                        db.execute(
+                            'ALTER TABLE ' + table
+                            + f' ADD COLUMN {column} {ddl}')
 
     # -- plumbing ---------------------------------------------------
 
@@ -980,6 +1020,17 @@ class TheGodfatherService:
             'detail_ref': row['detail_ref'],
             'status': row['status'],
             'coordination_ref': row['coordination_ref'],
+            'fulfillment': {
+                'state': row['fulfillment_state'],
+                'fulfilled': (row['fulfillment_state']
+                              == 'FULFILLED'),
+                'delivery_ref':
+                    row['fulfillment_delivery_ref'],
+                'confirmed_by':
+                    row['fulfillment_confirmed_by'],
+                'confirmed_at':
+                    row['fulfillment_confirmed_at'],
+            },
             'scope_ref': BLOODLINE_DIRECTIVES_SCOPE,
             'segregated_store': True,
             'opened_by': row['opened_by'],
@@ -1479,6 +1530,17 @@ class TheGodfatherService:
             'joint_state': joint_state,
             'jointly_approved':
                 joint_state == 'JOINTLY_APPROVED',
+            'fulfillment': {
+                'state': row['fulfillment_state'],
+                'fulfilled': (row['fulfillment_state']
+                              == 'FULFILLED'),
+                'delivery_ref':
+                    row['fulfillment_delivery_ref'],
+                'confirmed_by':
+                    row['fulfillment_confirmed_by'],
+                'confirmed_at':
+                    row['fulfillment_confirmed_at'],
+            },
             # A register of designations and joint
             # approvals — never platform-held money.
             'funds_held': False,
@@ -1700,6 +1762,151 @@ class TheGodfatherService:
                 (reserve_id,)).fetchone()
         return self._reserve_view(updated)
 
+    # -- fulfillment verification (founder's Sanders
+    # Sentinel — Permanent Global Bloodline Protection
+    # and Succession Directive, 2026-11-26) ----------
+
+    def confirm_transport_fulfillment(
+            self, actor, matter_id, delivery_ref, *,
+            region=None):
+        """Confirm fulfillment of one transportation
+        matter (operator only): the human operator's
+        recorded confirmation, naming the delivery by
+        reference, that the transportation actually
+        happened \u2014 the member was actually carried,
+        the vehicle actually provided. A transportation
+        record is not transportation until this
+        confirmation stands. Coordination must stand
+        recorded first: there must be arranged
+        transportation to fulfill."""
+        self._geo(region)
+        self._require_operator(actor)
+        if not isinstance(delivery_ref, str) \
+                or not delivery_ref.strip():
+            raise TheGodfatherDenied(
+                'A delivery confirmation reference is'
+                ' required')
+        now = self._now()
+        with self._bloodline_connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' the_godfather_bloodline_transport_'
+                    'matters WHERE matter_id = ?',
+                    (matter_id,)).fetchone()
+                if row is None:
+                    raise TheGodfatherDenied(
+                        'Transportation matter not found')
+                if row['status'] != 'COORDINATION_RECORDED':
+                    raise TheGodfatherDenied(
+                        'Fulfillment is confirmed only'
+                        ' once coordination stands recorded'
+                        ' for the matter (this one is'
+                        f" {row['status']})")
+                if row['fulfillment_state'] == 'FULFILLED':
+                    raise TheGodfatherDenied(
+                        'Fulfillment of this matter'
+                        ' already stands confirmed')
+                receipt_id = self._record(
+                    'THE_GODFATHER_TRANSPORT_FULFILLMENT'
+                    '_CONFIRMED',
+                    actor=actor, matter_id=matter_id,
+                    delivery_ref=delivery_ref.strip())
+                db.execute(
+                    'UPDATE'
+                    ' the_godfather_bloodline_transport_'
+                    'matters SET fulfillment_state = ?,'
+                    ' fulfillment_delivery_ref = ?,'
+                    ' fulfillment_confirmed_by = ?,'
+                    ' fulfillment_confirmed_at = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE matter_id = ?',
+                    ('FULFILLED', delivery_ref.strip(),
+                     actor, now, actor, now, receipt_id,
+                     matter_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' the_godfather_bloodline_transport_matters'
+                ' WHERE matter_id = ?',
+                (matter_id,)).fetchone()
+        return self._transport_matter_view(updated)
+
+    def confirm_reserve_fulfillment(
+            self, actor, reserve_id, delivery_ref, *,
+            region=None):
+        """Confirm fulfillment of one emergency-reserve
+        designation (operator only): a designation reads
+        FULFILLED only once it stands jointly approved
+        AND the establishment of the actual reserve
+        stands confirmed delivered by the operator's
+        recorded confirmation, naming the delivery by
+        reference. A financial reserve record is not
+        money; this platform still holds no funds."""
+        self._geo(region)
+        self._require_operator(actor)
+        if not isinstance(delivery_ref, str) \
+                or not delivery_ref.strip():
+            raise TheGodfatherDenied(
+                'A delivery confirmation reference is'
+                ' required')
+        now = self._now()
+        with self._bloodline_connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' the_godfather_bloodline_reserves'
+                    ' WHERE reserve_id = ?',
+                    (reserve_id,)).fetchone()
+                if row is None:
+                    raise TheGodfatherDenied(
+                        'Reserve designation not found')
+                joint_state = self._joint_state(
+                    row['status'],
+                    row['counterpart_approval_ref'])
+                if joint_state != 'JOINTLY_APPROVED':
+                    raise TheGodfatherDenied(
+                        'A reserve designation reads'
+                        ' fulfilled only once it stands'
+                        ' jointly approved; this one reads'
+                        f' {joint_state}')
+                if row['fulfillment_state'] == 'FULFILLED':
+                    raise TheGodfatherDenied(
+                        'Fulfillment of this reserve'
+                        ' designation already stands'
+                        ' confirmed')
+                receipt_id = self._record(
+                    'THE_GODFATHER_RESERVE_FULFILLMENT'
+                    '_CONFIRMED',
+                    actor=actor, reserve_id=reserve_id,
+                    delivery_ref=delivery_ref.strip())
+                db.execute(
+                    'UPDATE the_godfather_bloodline_reserves'
+                    ' SET fulfillment_state = ?,'
+                    ' fulfillment_delivery_ref = ?,'
+                    ' fulfillment_confirmed_by = ?,'
+                    ' fulfillment_confirmed_at = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE reserve_id = ?',
+                    ('FULFILLED', delivery_ref.strip(),
+                     actor, now, actor, now, receipt_id,
+                     reserve_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = db.execute(
+                'SELECT * FROM'
+                ' the_godfather_bloodline_reserves WHERE'
+                ' reserve_id = ?',
+                (reserve_id,)).fetchone()
+        return self._reserve_view(updated)
+
     def disburse_funds(self, actor, *args, **kwargs):
         """Refused by name, unconditionally. Under the
         Permanent Global Bloodline Protection
@@ -1756,6 +1963,11 @@ class TheGodfatherService:
                 'SELECT * FROM'
                 ' the_godfather_bloodline_reserves'
                 ' ORDER BY designated_at').fetchall()
+            transport_fulfilled = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' the_godfather_bloodline_transport_matters'
+                " WHERE fulfillment_state = 'FULFILLED'"
+            ).fetchone()['n']
         funding = [self._funding_request_view(row)
                    for row in funding_rows]
         reserves = [self._reserve_view(row)
@@ -1775,6 +1987,11 @@ class TheGodfatherService:
         view['reserves'] = reserves
         view['reserves_jointly_approved'] = sum(
             1 for r in reserves if r['jointly_approved'])
+        view['transport_matters_fulfilled'] = \
+            transport_fulfilled
+        view['reserves_fulfilled'] = sum(
+            1 for r in reserves
+            if r['fulfillment']['state'] == 'FULFILLED')
         return view
 
     # -- status / check-in ----------------------------------------------
