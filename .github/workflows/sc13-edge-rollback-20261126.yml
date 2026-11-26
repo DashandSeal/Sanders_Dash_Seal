@@ -1,0 +1,38 @@
+name: SC-13 lift - remove edge FIPS drop-in (ML-KEM incompatibility of record) + server group test
+on:
+  workflow_dispatch:
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Roll back the nginx FIPS drop-in on evidence; prove server-side group capability
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            echo "=== STEP 1: remove the nginx edge FIPS drop-in ==="
+            sudo rm -f /etc/systemd/system/nginx.service.d/60-fips.conf
+            sudo systemctl daemon-reload
+            sudo systemctl restart nginx.service
+            sleep 3
+            CODE=$(curl -sk -o /dev/null -w '%{http_code}' --resolve sandersdashandseal.com:443:127.0.0.1 https://sandersdashandseal.com/healthz 2>/dev/null)
+            echo "nginx local https healthz after rollback: $CODE"
+            systemctl show nginx.service -p Environment 2>/dev/null | head -2
+            echo "=== STEP 2: app still on FIPS (sanity) ==="
+            systemctl show sanders-dash-seal.service -p Environment 2>/dev/null | head -2
+            curl -s -o /dev/null -w 'app local healthz: %{http_code}\n' http://127.0.0.1:8000/healthz
+            echo "=== STEP 3: s_server, STOCK config, server groups = hybrid first ==="
+            CERT=/etc/letsencrypt/live/sandersdashandseal.com/fullchain.pem
+            KEY=/etc/letsencrypt/live/sandersdashandseal.com/privkey.pem
+            sudo sh -c "nohup openssl s_server -accept 18445 -cert $CERT -key $KEY -tls1_3 -groups X25519MLKEM768:X25519:prime256v1 >/tmp/srv_grp.log 2>&1 &"
+            sleep 3
+            ss -ltn | grep 18445 || echo "SERVER NOT LISTENING"
+            echo | openssl s_client -connect 127.0.0.1:18445 -groups X25519MLKEM768:X25519 2>&1 | grep -iE 'Negotiated|Cipher is|error|alert' | head -3
+            sudo pkill -f 's_server -accept 18445' 2>/dev/null
+            sudo rm -f /tmp/srv_grp.log
+            echo "EDGE_ROLLBACK_DONE"
