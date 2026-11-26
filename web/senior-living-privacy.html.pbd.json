@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-privacy.html",
+        "payload_hash": "a1491586f69fe5dcbf8caff45060ee0f0f778d65c42527a09bf31cad2e4a5e9a",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

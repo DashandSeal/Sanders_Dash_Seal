@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-privacy.html",
+        "payload_hash": "10631fcf60c1903212f22e4fd827725f87a6be6845c016329ce7adaa41a40877",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

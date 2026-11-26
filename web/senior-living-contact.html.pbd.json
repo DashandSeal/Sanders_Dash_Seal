@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-contact.html",
+        "payload_hash": "265605721d6f736aabe105e1ad9c3ed8af70a04dd36a487b5fb6fd7e18b7adc0",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

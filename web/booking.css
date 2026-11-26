@@ -29,6 +29,14 @@
  * of the values the file already carried — the upgrade is material,
  * typography, depth and finish, never color. No element id, class,
  * form, endpoint or script behavior changed.
+ *
+ * CORRECTIVE REBUILD, 2026-11-25 (founder verdict: the CSS-crafted
+ * marble read flat beside the approved references, which are
+ * photographic stone): the portal field and panels now carry the
+ * photographic Imperial Jade texture as a web asset, seated under
+ * translucent washes of the same frozen values. The palette proof is
+ * unchanged — the file's color-value set is identical to the one it
+ * carried before this rebuild.
  * ========================================================================= */
 
 :root {
@@ -62,12 +70,17 @@
     /* The gold sheen gradient shared by every primary button. */
     --sds-gold-sheen: linear-gradient(120deg, var(--sds-gold-deep), #f3d993, var(--sds-gold-deep));
 
+    /* Photographic stone — the corrective rebuild's jade texture.
+       Imagery, not palette: no color values live in this token. */
+    --sds-tex-jade: url("/assets/marble-jade.webp");
+
     /* A lighter jade marble for raised panels and cards: soft mineral
-       clouds over the deep panel gradient the cards already carried. */
+       clouds over the photographic stone. */
     --sds-marble-panel:
         radial-gradient(ellipse 85% 62% at 16% 0%, color-mix(in srgb, #1a6a50 24%, transparent), transparent 62%),
         radial-gradient(ellipse 60% 55% at 96% 100%, color-mix(in srgb, #041b17 55%, transparent), transparent 70%),
-        linear-gradient(155deg, #164b38, var(--sds-jade-panel-2));
+        linear-gradient(155deg, color-mix(in srgb, #164b38 82%, transparent), color-mix(in srgb, var(--sds-jade-panel-2) 90%, transparent)),
+        var(--sds-tex-jade) center / cover;
 }
 
 * { box-sizing: border-box; }
@@ -90,9 +103,9 @@ body {
     -webkit-text-size-adjust: 100%;
 }
 
-/* Marble veining — irregular veins at varied angles and intervals,
-   laid over the jade field, as on the storefront. The page content
-   stacks above the stone (see the wrapper rule below). */
+/* The page field — photographic Imperial Jade under a wash of the
+   deep values the field already carried. The page content stacks
+   above the stone (see the wrapper rule below). */
 body::before {
     content: "";
     position: fixed;
@@ -100,25 +113,8 @@ body::before {
     z-index: 0;
     pointer-events: none;
     background:
-        repeating-linear-gradient(117deg,
-            transparent 0 132px,
-            color-mix(in srgb, var(--sds-cream) 5%, transparent) 133px,
-            transparent 136px,
-            transparent 261px,
-            color-mix(in srgb, var(--sds-gold) 4%, transparent) 263px,
-            transparent 267px,
-            transparent 389px,
-            color-mix(in srgb, var(--sds-cream) 3%, transparent) 390px,
-            transparent 392px),
-        repeating-linear-gradient(63deg,
-            transparent 0 187px,
-            color-mix(in srgb, var(--sds-cream) 4%, transparent) 189px,
-            transparent 192px,
-            transparent 341px,
-            color-mix(in srgb, var(--sds-gold) 3%, transparent) 343px,
-            transparent 346px),
-        radial-gradient(ellipse 34% 22% at 78% 12%, color-mix(in srgb, var(--sds-cream) 4%, transparent), transparent 70%),
-        radial-gradient(ellipse 28% 30% at 8% 76%, color-mix(in srgb, var(--sds-gold) 5%, transparent), transparent 70%);
+        linear-gradient(150deg, color-mix(in srgb, #06251c 52%, transparent), color-mix(in srgb, #041b17 62%, transparent)),
+        var(--sds-tex-jade) center / cover;
 }
 
 /* A second, softer vein pass so the stone reads at more than one depth. */
@@ -158,7 +154,7 @@ a { color: var(--sds-gold); }
 /* ---- Corporate header -------------------------------------------------- */
 
 .sds-enterprise-header {
-    background: linear-gradient(180deg, var(--sds-jade-deep), var(--sds-jade-bar));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--sds-jade-deep) 55%, transparent), color-mix(in srgb, var(--sds-jade-bar) 68%, transparent)), var(--sds-tex-jade) center / cover;
     border-bottom: 2px solid var(--sds-gold);
     box-shadow:
         inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 12%, transparent),
@@ -611,7 +607,7 @@ button, .sds-button-primary {
 
 .sds-intellectual-property-footer {
     border-top: 2px solid var(--sds-gold);
-    background: linear-gradient(165deg, var(--sds-jade-bar) 55%, var(--sds-jade-deep));
+    background: linear-gradient(165deg, color-mix(in srgb, var(--sds-jade-bar) 58%, transparent) 55%, color-mix(in srgb, var(--sds-jade-deep) 70%, transparent)), var(--sds-tex-jade) center / cover;
     box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 14%, transparent);
     margin-top: 3rem;
     padding: 2rem 1rem;

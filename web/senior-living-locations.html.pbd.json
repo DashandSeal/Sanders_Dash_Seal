@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-locations.html",
+        "payload_hash": "22c0bec94d48bcd912dbf3f4db59eea172060da4ce2ea22be51c8d2fbb327f73",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

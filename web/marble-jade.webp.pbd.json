@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/marble-jade.webp",
+        "payload_hash": "e8c3bfc7dbbf5911715d9c60d0e60b3bcaa87d375902b14c9d8ef0eea086da73",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

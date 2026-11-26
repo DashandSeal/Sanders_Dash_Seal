@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "web/senior-living.html",
-        "payload_hash": "5c62aac9ded570c1c69d8af800d1e1435aec9c6ae983940722a6f967414d6fd8",
+        "payload_hash": "64e5f47653d120298ce6dba1c99f2143a0956cae517a57b8a9d4728a9d4e72c5",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

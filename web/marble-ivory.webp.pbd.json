@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/marble-ivory.webp",
+        "payload_hash": "37e31895af4a24e936f74c938ee64378047bbc599405e9802608498db3d261d6",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

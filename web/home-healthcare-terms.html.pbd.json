@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-terms.html",
+        "payload_hash": "945f05d38b4c81fadc52947493d2afc619f767d8879da6c9d8d7f4ef2d2801c0",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -12,9 +12,17 @@
  *
  * Discipline: every color on this surface is a token defined in :root
  * below — no hex or rgba literal appears anywhere else in this file.
- * The marble is crafted in CSS alone: layered soft mineral clouds and
- * irregular vein gradients over a deep Imperial Jade base. No images,
- * no webfonts, no external assets of any kind.
+ * No webfonts.
+ *
+ * CORRECTIVE REBUILD, 2026-11-25 (founder verdict: the CSS-crafted
+ * marble read flat beside the approved reference, which is
+ * photographic stone): the fields are now photographic — a generated
+ * Imperial Jade stone texture and a warm ivory stone texture carried
+ * as web assets, seated under translucent washes of the same frozen
+ * tokens. Not one color value was added, removed, or altered. The
+ * services and closing sections stand on the reference's light-stone
+ * field with white marble cards; the hero field, chrome and footer
+ * are the jade stone itself.
  * ========================================================================= */
 
 :root {
@@ -72,6 +80,11 @@
     /* The gold sheen gradient shared by every primary button. */
     --sds-gold-sheen: linear-gradient(120deg, var(--sds-gold-700), var(--sds-gold-400), var(--sds-gold-700));
 
+    /* Photographic stone — the corrective rebuild's textures. Imagery,
+       not palette: no color values live in these tokens. */
+    --sds-tex-jade: url("/assets/marble-jade.webp");
+    --sds-tex-light: url("/assets/marble-ivory.webp");
+
     /* CSS-crafted Imperial Jade marble for the page field: soft mineral
        clouds over the deep jade base. */
     --sds-marble-body:
@@ -84,7 +97,8 @@
     --sds-marble-panel:
         radial-gradient(ellipse 85% 62% at 16% 0%, color-mix(in srgb, var(--sds-jade-300) 24%, transparent), transparent 62%),
         radial-gradient(ellipse 60% 55% at 96% 100%, color-mix(in srgb, var(--sds-jade-900) 55%, transparent), transparent 70%),
-        linear-gradient(155deg, var(--sds-jade-500), var(--sds-jade-800));
+        linear-gradient(155deg, color-mix(in srgb, var(--sds-jade-500) 80%, transparent), color-mix(in srgb, var(--sds-jade-800) 90%, transparent)),
+        var(--sds-tex-jade) center / cover;
 }
 
 * { box-sizing: border-box; }
@@ -102,8 +116,8 @@ body {
     -webkit-text-size-adjust: 100%;
 }
 
-/* Marble veining — irregular, branching-weight veins at varied angles
-   and intervals (never a uniform pinstripe), laid over the field. */
+/* The page field — photographic Imperial Jade, seated under a wash of
+   its own deep tokens so the stone and the palette are one. */
 body::before {
     content: "";
     position: fixed;
@@ -111,25 +125,8 @@ body::before {
     z-index: 0;
     pointer-events: none;
     background:
-        repeating-linear-gradient(117deg,
-            transparent 0 132px,
-            color-mix(in srgb, var(--sds-cream) 5%, transparent) 133px,
-            transparent 136px,
-            transparent 261px,
-            color-mix(in srgb, var(--sds-gold) 4%, transparent) 263px,
-            transparent 267px,
-            transparent 389px,
-            color-mix(in srgb, var(--sds-cream) 3%, transparent) 390px,
-            transparent 392px),
-        repeating-linear-gradient(63deg,
-            transparent 0 187px,
-            color-mix(in srgb, var(--sds-cream) 4%, transparent) 189px,
-            transparent 192px,
-            transparent 341px,
-            color-mix(in srgb, var(--sds-gold) 3%, transparent) 343px,
-            transparent 346px),
-        radial-gradient(ellipse 34% 22% at 78% 12%, color-mix(in srgb, var(--sds-cream) 4%, transparent), transparent 70%),
-        radial-gradient(ellipse 28% 30% at 8% 76%, color-mix(in srgb, var(--sds-gold) 5%, transparent), transparent 70%);
+        linear-gradient(155deg, color-mix(in srgb, var(--sds-jade-800) 46%, transparent), color-mix(in srgb, var(--sds-jade-900) 58%, transparent)),
+        var(--sds-tex-jade) center / cover;
 }
 
 /* A second, softer vein pass so the stone reads at more than one depth. */
@@ -199,7 +196,7 @@ a { color: inherit; text-decoration: none; }
     justify-content: space-between;
     gap: 2rem;
     padding: 14px clamp(20px, 5vw, 90px);
-    background: linear-gradient(180deg, var(--sds-jade-850), var(--sds-jade-bar));
+    background: linear-gradient(180deg, color-mix(in srgb, var(--sds-jade-850) 52%, transparent), color-mix(in srgb, var(--sds-jade-bar) 64%, transparent)), var(--sds-tex-jade) center / cover;
     border-bottom: 1px solid color-mix(in srgb, var(--sds-gold-700) 62%, transparent);
     box-shadow:
         inset 0 -1px 0 color-mix(in srgb, var(--sds-royal) 50%, transparent),
@@ -598,7 +595,8 @@ h3 { color: var(--sds-gold-300); font-size: 1.25rem; margin: 0 0 10px; }
     text-align: center;
     background:
         radial-gradient(ellipse 70% 60% at 50% 0%, color-mix(in srgb, var(--sds-jade-300) 16%, transparent), transparent 70%),
-        linear-gradient(180deg, var(--sds-jade-850), var(--sds-jade-900));
+        linear-gradient(180deg, color-mix(in srgb, var(--sds-jade-850) 58%, transparent), color-mix(in srgb, var(--sds-jade-900) 68%, transparent)),
+        var(--sds-tex-jade) center / cover;
     border-block: 1px solid color-mix(in srgb, var(--sds-gold-600) 40%, transparent);
 }
 
@@ -646,7 +644,7 @@ footer {
     flex-wrap: wrap;
     gap: 15px;
     padding: 34px 6vw 30px;
-    background: linear-gradient(165deg, var(--sds-jade-bar) 55%, var(--sds-royal-deep));
+    background: linear-gradient(165deg, color-mix(in srgb, var(--sds-jade-bar) 58%, transparent) 55%, color-mix(in srgb, var(--sds-royal-deep) 72%, transparent)), var(--sds-tex-jade) center / cover;
     border-top: 2px solid color-mix(in srgb, var(--sds-gold-700) 80%, transparent);
     box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sds-gray-300) 22%, transparent);
     color: var(--sds-gold);
@@ -730,6 +728,48 @@ footer {
     text-transform: uppercase;
     color: var(--sds-gold);
 }
+
+/* ---- The light-stone field — the flagship reference's lower half -----
+   White marble under the hero: the services and the closing call stand
+   on warm ivory stone, their cards white marble plaques, their type in
+   the deep jade and bronze of the frozen palette. */
+
+.section.light-field {
+    background:
+        linear-gradient(180deg, color-mix(in srgb, var(--sds-cream-bright) 60%, transparent), color-mix(in srgb, var(--sds-cream-bright) 42%, transparent)),
+        var(--sds-tex-light) center / cover;
+    border-top: 1px solid color-mix(in srgb, var(--sds-gold-700) 55%, transparent);
+}
+
+.section.light-field > .eyebrow { color: var(--sds-gold-800); }
+.section.light-field > h2 { color: var(--sds-jade-700); }
+
+.section.light-field > h2::after {
+    border-top-color: var(--sds-gold-700);
+    box-shadow: 0 4px 0 -1px color-mix(in srgb, var(--sds-gold-700) 55%, transparent);
+}
+
+.section.light-field > p { color: var(--sds-ink); }
+
+.section.light-field .cards article {
+    background:
+        linear-gradient(160deg, color-mix(in srgb, var(--sds-cream-bright) 55%, transparent), color-mix(in srgb, var(--sds-cream-bright) 38%, transparent)),
+        var(--sds-tex-light) center / cover;
+    border-color: color-mix(in srgb, var(--sds-gold-700) 60%, transparent);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream-bright) 60%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--sds-gold-700) 22%, transparent),
+        inset 0 -18px 28px color-mix(in srgb, var(--sds-jade-900) 10%, transparent),
+        var(--sds-shadow-card);
+}
+
+.section.light-field .cards article::before {
+    background: linear-gradient(112deg, transparent 40%, color-mix(in srgb, var(--sds-jade-300) 7%, transparent) 50%, transparent 60%);
+}
+
+.section.light-field .cards article h3 { color: var(--sds-jade-700); }
+.section.light-field .cards article p { color: var(--sds-ink); }
+.section.light-field .cards .price { color: var(--sds-gold-800); }
 
 /* ---- Responsive ------------------------------------------------------------ */
 

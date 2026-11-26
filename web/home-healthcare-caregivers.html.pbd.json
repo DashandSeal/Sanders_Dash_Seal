@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-caregivers.html",
+        "payload_hash": "365cf7d3e9dab3c838149c1322dd2b5f32d54fc22b7b30acbd54a344cca06360",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

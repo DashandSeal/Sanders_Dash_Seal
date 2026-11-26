@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/marble-royal-blue.webp",
+        "payload_hash": "b2d1f120b743ab5707a735caa0f54f05b80877edc7e9eee05afe347eac092908",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

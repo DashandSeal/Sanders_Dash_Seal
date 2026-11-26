@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-terms.html",
+        "payload_hash": "144a404d5f41e420d2adfd6b5a3c9c602d51b262be7ecec6e5e4617c6370ba49",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
