@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "tests/test_sanders_sentinel_human_life_protection.py",
+        "payload_hash": "933aeec810240454d4135f025ddf22c498960e12a7c0d17e910de4a182c04fd3",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
