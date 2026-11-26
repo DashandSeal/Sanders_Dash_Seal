@@ -1,0 +1,22 @@
+# Founder Directive — Every Shield Inherits the Minotaur's New Defenses
+## Given by the founder 2026-11-26 11:18 MST — preserved verbatim as received
+
+"Everyone of my 🛡️'s must inherit the minotaur's new defenses don't you agree"
+
+---
+
+## Record note (Muse):
+Directive established 2026-11-26 11:18 MST, steered into the running three-shields build the same minute. **Every shield — Sanders Labyrinth Shield, LABYRINTH, and Sovereign Shield V3 — inherits the Minotaur's new defenses**: the functioning defensive capability set built for the Minotaur under his upgrade, the adopted Self-Protection Amendment, the anti-probing protections, and the functioning-defense standard of the complete-architecture directive, implemented NATIVELY in each shield's own machinery and exercised by function tests. Inheritance here follows the founder's own shared-infrastructure pattern (the shared sovereign voice and rendering engines): a common defensive standard, separately embodied — the shields remain three INDEPENDENT protective identities (his defensive-relationship directive of the same morning); inheritance does not merge them into the Minotaur or into each other, and the Minotaur's patrol over them stands unchanged. Muse's agreement, given to the founder with the directive: yes — a defense proven in the Minotaur should not stop at the Minotaur while the shields he guards stand without it.
+
+---
+
+## Landing of record (this build, 2026-11-26)
+
+The inheritance stands constructed in each shield's own service, under the functioning-defense standard:
+
+- **Embodied in every shield**: the complete inherited set — his fifteen amendment protections and thirteen anti-probing protections, all twenty-eight — carried in the shield's own design of record with the applicability of each stated for that shield: **INHERITED_FUNCTIONING** (the defense is implemented in this shield's own code and exercised by its tests) or **INHERITED_BY_DESIGN** (the standard holds by this shield's design, with the reason stated in the record). His four machinery inheritances stand the same way: the hash-signed attestation chain (embodied as this shield's Glass-Box receipts plus his signed chain over its core), labyrinth behavior, the cryptographic claim rule, and decoy isolation.
+- **Functioning in every shield's own code**: operator verification with per-actor failure bucketing and lockout (the brute-force defense, exercised by internal labeled simulation in each shield); uniform refusals that name the rule and never the internals; per-act operator re-verification (no session stands to hijack; a forged instruction is an unverified actor, refused before any state change); no operation anywhere that disables a defensive function; and governed self-protection checks of record in the shield's own store, each protection's state derived from its checks.
+- **Functioning per shield additionally**: Sanders Labyrinth Shield — its evaluation machinery IS the probing defense (ten indicator classes; SSRF-literal enumeration targets classified and rejected without DNS or fetch; log-injection rejected by indicator). LABYRINTH — guarded policy records (defensive-configuration discovery meets the guard) and receipted graph records. Sovereign Shield V3 — its integrity pin compares the foundation and service hashes in constant time (tamper and rollback read MISMATCH), and the cryptographic claim rule holds by construction: the ML-DSA-65 state is DECLARED_NOT_EXECUTED and no code path can raise it.
+- **Identity discipline**: inheritance is a shared defensive standard, separately embodied. The shields remain three independent protective identities; nothing is merged into the Minotaur or into each other; his patrol over them is unchanged. Sovereign Shield V3 gains no public surface by this inheritance — its contract's public surface remains none, by its design of record.
+- **Surfaces**: each shield's inheritance stands in its design view (`inherited_defenses_design_view`) and its governed views; Sanders Labyrinth Shield and LABYRINTH expose theirs platform-to-platform at `/api/labyrinth-shield/self-protection` and `/api/labyrinth/self-protection` (guarded; checks at the `/checks` forms). Sovereign Shield V3's inheritance is platform-to-platform only, as its design provides.
+- **Ladder states**: the inheritance stands CONSTRUCTED in each shield, with the functioning subset exercised by internal labeled tests in this build's suite; nothing is represented connected or operational beyond what records prove.
