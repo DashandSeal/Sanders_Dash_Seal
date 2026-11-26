@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-elder-care-library.html",
+        "payload_hash": "afacd3c9ec6d3d14f7263cf87512507f7805c6182295d33fa3917b7d55380288",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

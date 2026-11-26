@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-medication-reminders.html",
+        "payload_hash": "b4304e2cfb812d10240b4cb506288ae13df49af3245d9cfb08ad4c898b32f404",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

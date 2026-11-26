@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-service-area.html",
+        "payload_hash": "3f70345b81d566d54ca4cae77b9aa9306a1cdbfaf8cda5ec8e8b8d057facb6a3",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

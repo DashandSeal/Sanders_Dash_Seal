@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-client-forms.html",
+        "payload_hash": "7725d84bcb385f61bb6405ff4fff16e4c8ddd685b2ea1bbafecdd91d7baa2c57",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

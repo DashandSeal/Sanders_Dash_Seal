@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-dementia-care.html",
+        "payload_hash": "351e3b0c63e0d84e47a1f7da804dab204af23d5cd2a28a186775c1d5b6071063",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

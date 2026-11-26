@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-join-caregiver-network.html",
+        "payload_hash": "b0b7d2630c7c491a174eed90a8f056bcde7cec243b0c9e5d06f41065f8a382df",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

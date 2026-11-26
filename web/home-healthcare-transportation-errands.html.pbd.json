@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-transportation-errands.html",
+        "payload_hash": "dfcf9162fadf0ec233b842e27e340df315c435b87d1d7a146c12202ba6f2f17d",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

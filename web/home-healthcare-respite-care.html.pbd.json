@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-respite-care.html",
+        "payload_hash": "d3d5599c825b993272970e9dbb2a0dc40d15326379fda8612f4b92c57e6d8faa",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

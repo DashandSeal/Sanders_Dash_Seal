@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-post-surgical-care.html",
+        "payload_hash": "46b09920a13744f80209b9ed0d2faa4f1605c35b1c2d491f3264ab9aa16e8604",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

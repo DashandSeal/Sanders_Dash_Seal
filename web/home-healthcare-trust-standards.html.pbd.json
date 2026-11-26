@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-trust-standards.html",
+        "payload_hash": "f0305e53cbc6f08b2be9ef27f940673db28c6c4c29b91b5fe0f44771ac92b75f",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

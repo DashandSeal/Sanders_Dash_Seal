@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-caregiver-training.html",
+        "payload_hash": "bb4f8b5f1847c68b7e658e9105ba438cb85387cf2be2d8ab06bdee950df658ab",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

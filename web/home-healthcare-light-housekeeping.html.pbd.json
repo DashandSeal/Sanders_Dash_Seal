@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-light-housekeeping.html",
+        "payload_hash": "a3bb51fe0920f9e65c9beda039980117d36e51f82c6d53ba8ff7b671c6b07da8",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

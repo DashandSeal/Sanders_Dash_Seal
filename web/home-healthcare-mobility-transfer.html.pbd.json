@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-mobility-transfer.html",
+        "payload_hash": "024a5802cf32e63b92963fc9cade002da11c279e40a607ebcc45c921b5fd8c7e",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

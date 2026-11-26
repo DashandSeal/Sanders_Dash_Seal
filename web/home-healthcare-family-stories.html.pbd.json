@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-family-stories.html",
+        "payload_hash": "b74b062bacc34ffac5797b7cd54714b7f10ad5ba6503669d741ee2a87a1e7c26",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

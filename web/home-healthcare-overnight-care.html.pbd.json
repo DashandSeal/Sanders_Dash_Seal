@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/home-healthcare-overnight-care.html",
+        "payload_hash": "feee1cfc0e1734da7d5fd4b5e0cc39e44e515bfcea3114a2958b722c0ddf2ee0",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
