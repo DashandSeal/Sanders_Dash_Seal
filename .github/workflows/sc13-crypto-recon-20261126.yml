@@ -1,0 +1,50 @@
+name: SC-13 lift - production crypto environment recon (one-time, read-only)
+on:
+  workflow_dispatch:
+jobs:
+  recon:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read-only crypto environment recon on the production instance
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          script: |
+            set +e
+            echo "=== OS ==="
+            grep -E '^(NAME|VERSION)=' /etc/os-release
+            uname -r
+            echo "=== OPENSSL CLI ==="
+            openssl version
+            openssl version -a 2>/dev/null | grep -E 'OPENSSLDIR|MODULESDIR|built on'
+            echo "=== PROVIDERS ==="
+            openssl list -providers 2>&1
+            echo "=== OSSL MODULES DIR ==="
+            ls /usr/lib64/ossl-modules/ 2>&1
+            echo "=== FIPS STATE ==="
+            cat /proc/sys/crypto/fips_enabled 2>&1
+            sudo fips-mode-setup --check 2>&1 | head -3
+            update-crypto-policies --show 2>&1
+            echo "=== PACKAGES ==="
+            rpm -q openssl openssl-libs nginx crypto-policies-scripts 2>&1
+            rpm -qa 2>/dev/null | grep -i fips | head -5
+            echo "=== TLS GROUPS (OpenSSL 3.5 syntax) ==="
+            openssl list -tls-groups 2>&1 | head -4
+            echo "=== NGINX ==="
+            nginx -v 2>&1
+            nginx -V 2>&1 | tr ' ' '\n' | grep -iE 'ssl' | head -6
+            sudo nginx -T 2>/dev/null | grep -E 'ssl_protocols|ssl_ecdh_curve|ssl_conf_command|ssl_ciphers' | head -8
+            echo "=== NGINX CONF FILES ==="
+            ls /etc/nginx/conf.d/ 2>&1
+            echo "=== APP UNIT ==="
+            sudo systemctl cat sanders-dash-seal.service 2>/dev/null | grep -E 'ExecStart|WorkingDirectory|^User' | head -6
+            echo "=== APP TREE ==="
+            ls /opt/Sanders_Dash_Seal/ 2>/dev/null | head -8
+            echo "=== PYTHON SSL (system) ==="
+            python3 -c "import ssl; print(ssl.OPENSSL_VERSION)" 2>&1
+            echo "=== PYTHON SSL (app venv) ==="
+            for P in /opt/Sanders_Dash_Seal/venv/bin/python3 /opt/Sanders_Dash_Seal/venv/bin/python; do if [ -x "$P" ]; then $P -c "import ssl,hashlib; print(ssl.OPENSSL_VERSION); print('PQC-REACHABLE:', [a for a in sorted(hashlib.algorithms_available) if 'KEM' in a.upper() or 'DSA' in a.upper()])" 2>&1; fi; done
+            echo "RECON_DONE"
