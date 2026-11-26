@@ -1284,6 +1284,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                 '/api/minotaur/defensive-relationship',
                                 '/api/minotaur/defensive-domains',
                                 '/api/minotaur/completeness-accounting',
+                                '/api/minotaur/benchmark',
                                 '/api/minotaur/crypto-environment/claim',
                                 '/api/minotaur/check-in')
                        or mn_anomaly_match is not None
@@ -2219,6 +2220,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/minotaur/defensive-relationship',
                                             '/api/minotaur/defensive-domains',
                                             '/api/minotaur/completeness-accounting',
+                                            '/api/minotaur/benchmark',
                                             '/api/glass-box-audit/status',
                                             '/api/glass-box-audit/anchors',
                                             '/api/glass-box-audit/verifications',
@@ -2890,6 +2892,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/minotaur/defensive-domains':
             allowed = ('GET',)
         if path == '/api/minotaur/completeness-accounting':
+            allowed = ('GET',)
+        if path == '/api/minotaur/benchmark':
             allowed = ('GET',)
         if path == '/api/minotaur/shield-targets':
             allowed = ('GET',)
@@ -3742,6 +3746,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         return respond(start, '201 Created', {'crypto_environment_check': record})
                     if path == '/api/minotaur/defensive-relationship':
                         return respond(start, '200 OK', {'defensive_relationship': minotaur.defensive_relationship_view(identity, mn_role)})
+                    if path == '/api/minotaur/benchmark':
+                        return respond(start, '200 OK', {'benchmark': minotaur.benchmark_view(identity, mn_role)})
                     if path == '/api/minotaur/defensive-domains':
                         return respond(start, '200 OK', {'defensive_domains': minotaur.defensive_domains_view(identity, mn_role)})
                     if path == '/api/minotaur/completeness-accounting':
