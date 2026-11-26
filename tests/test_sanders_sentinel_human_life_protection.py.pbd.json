@@ -3,9 +3,14 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_sanders_sentinel_human_life_protection.py",
-        "payload_hash": "fb777365770f471dc15c327a56886527356237df00ef0ccc0d9ce0a446fdd1bc",
-        "scope": "source-manifest",
-        "signatures": {},
-        "status": "UNSIGNED_SOURCE_MANIFEST"
-    }
+        "payload_hash": "0e270aeeccebdd4da9a5994d02ddd62de2e902f7ba410ae675849f7e1ba03c89",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
 }
