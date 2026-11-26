@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/FOUNDER_DIRECTIVE_SHIELDS_INHERIT_MINOTAUR_DEFENSES_2026-11-26.md",
+        "payload_hash": "d570db7d655c694c541881a92f5b15d77d9525c5c30e1613fbd7965df49418fd",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
