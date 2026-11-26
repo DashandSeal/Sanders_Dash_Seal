@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/FOUNDER_DIRECTIVE_MINOTAUR_COMPLETE_ARCHITECTURE_2026-11-26.md",
+        "payload_hash": "bf8fdac65a5e93b100f15c563edc292e3c7b21db4530846b2aacf6d74416cfc3",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
