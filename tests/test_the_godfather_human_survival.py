@@ -193,11 +193,11 @@ class TestGuardedRecords(unittest.TestCase):
         self.assertTrue(entries[HS_DOCUMENT]['required'])
         self.assertTrue(entries[CD_DOCUMENT]['required'])
         self.assertEqual(
-            len(sentinel.BLOODLINE_WATCH_SET), 17)
+            len(sentinel.BLOODLINE_WATCH_SET), 18)
         self.assertEqual(
             len([entry for entry
                  in sentinel.BLOODLINE_WATCH_SET
-                 if entry['required']]), 16)
+                 if entry['required']]), 17)
 
     def test_hs_document_of_record(self):
         text = (REPO_ROOT / HS_DOCUMENT).read_text(
