@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/FOUNDER_DIRECTIVE_SHIELDS_THEMSELVES_PROTECTED_2026-11-26.md",
+        "payload_hash": "0b3a636d134b4ea6b1152e06034b7ccc99fb2d79298e30cbd1ccb1561edea0e3",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
