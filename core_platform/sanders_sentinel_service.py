@@ -1136,9 +1136,59 @@ ORR_MISSION_PRESERVATION_INVARIANT = (
     ' recognize, assess, activate, coordinate,'
     ' protect, verify, recover -- whatever fails'
     ' around it.')
+ORR_OBJECTIVE_VERBATIM = (
+    'The objective is actual protection of human'
+    ' life, not the production of records'
+    ' describing protection.')
+ORR_RECOVERY_CONTINUITY_INVARIANT = (
+    'Recovery is continuous throughout the'
+    ' operational sequence (founder clarification,'
+    ' permanent, 2026-11-26): the sequence\u2019s'
+    ' final step does not confine recovery to the'
+    ' end. A loss of visibility at ANY stage --'
+    ' Perceive, Recognize, Assess, Activate,'
+    ' Coordinate, Protect, Verify -- immediately'
+    ' triggers a recovery attempt and'
+    ' alternative-channel activation recorded'
+    ' against that stage, while the protective'
+    ' action in progress continues wherever'
+    ' possible: protection never pauses for'
+    ' recovery, and no recovery or failover record'
+    ' suspends an open emergency case or its'
+    ' activations.')
+FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_VERBATIM = (
+    'One critical distinction must remain '
+    'permanent: recovery must occur throughout '
+    'the entire operational sequence, not only at '
+    'its conclusion. If Sentinel loses visibility '
+    'while assessing danger or coordinating an '
+    'evacuation, recovery and alternative '
+    'channels must activate immediately while '
+    'protective assistance continues wherever '
+    'possible.\n'
+    'His human escalation path remains '
+    'exclusively the Founder or, following the '
+    'Founder\'s death, the Founder\'s bloodline '
+    'CEO.\n'
+    'His existing public-facing business model, '
+    'private protective mission, funding '
+    'authority, and original responsibilities '
+    'remain unchanged.\n'
+    'The objective is actual protection of human '
+    'life, not the production of records '
+    'describing protection.\n'
+    'Operational readiness must be demonstrated '
+    'through functioning connections and '
+    'successful end-to-end testing.\n'
+    'Global By Design.\n'
+    'The Sanders Way!'
+)
+
 ORR_INVARIANTS = (
     ORR_TRUTHFUL_READINESS_INVARIANT,
     ORR_MISSION_PRESERVATION_INVARIANT,
+    ORR_OBJECTIVE_VERBATIM,
+    ORR_RECOVERY_CONTINUITY_INVARIANT,
     'Loss of visibility is itself an emergency'
     ' signal of record: a disconnected or'
     ' unavailable camera, sensor, channel, or'
@@ -1437,6 +1487,7 @@ class SandersSentinelService:
                     channel TEXT NOT NULL,
                     failure_ref TEXT NOT NULL,
                     detail_ref TEXT NOT NULL,
+                    stage TEXT,
                     carried_by TEXT NOT NULL,
                     recorded_by TEXT NOT NULL,
                     recorded_at REAL NOT NULL,
@@ -1497,6 +1548,7 @@ class SandersSentinelService:
                     channel TEXT,
                     connection_id TEXT,
                     detail_ref TEXT NOT NULL,
+                    stage TEXT,
                     attention_record_id TEXT,
                     recorded_by TEXT NOT NULL,
                     recorded_at REAL NOT NULL,
@@ -1508,6 +1560,7 @@ class SandersSentinelService:
                     attempt_kind TEXT NOT NULL,
                     outcome TEXT NOT NULL,
                     detail_ref TEXT NOT NULL,
+                    stage TEXT,
                     recorded_by TEXT NOT NULL,
                     recorded_at REAL NOT NULL,
                     receipt_id TEXT NOT NULL
@@ -1539,6 +1592,18 @@ class SandersSentinelService:
                         'ALTER TABLE'
                         ' sanders_sentinel_bloodline_reserves'
                         f' ADD COLUMN {column} {ddl}')
+            for _stage_table in (
+                    'sanders_sentinel_visibility_events',
+                    'sanders_sentinel_recovery_attempts',
+                    'sanders_sentinel_perception_failovers'):
+                _stage_columns = {row[1] for row in
+                                  db.execute(
+                                      'PRAGMA table_info('
+                                      f'{_stage_table})')}
+                if 'stage' not in _stage_columns:
+                    db.execute(
+                        f'ALTER TABLE {_stage_table}'
+                        ' ADD COLUMN stage TEXT')
 
     # -- plumbing ---------------------------------------------------
 
@@ -4826,6 +4891,7 @@ class SandersSentinelService:
             'failure_ref': row['failure_ref'],
             'detail_ref': row['detail_ref'],
             'carried_by': row['carried_by'],
+            'stage': row['stage'],
             'scope_ref': RTPI_SCOPE,
             'recorded_by': row['recorded_by'],
             'recorded_at': row['recorded_at'],
@@ -5569,6 +5635,11 @@ class SandersSentinelService:
                 ORR_TRUTHFUL_READINESS_INVARIANT,
             'mission_preservation_invariant':
                 ORR_MISSION_PRESERVATION_INVARIANT,
+            'clarification_verbatim':
+                FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_VERBATIM,
+            'objective': ORR_OBJECTIVE_VERBATIM,
+            'recovery_continuity_invariant':
+                ORR_RECOVERY_CONTINUITY_INVARIANT,
             'note': (
                 'Readiness is derived, never declared:'
                 ' a capability reads OPERATIONAL only'
@@ -5847,6 +5918,7 @@ class SandersSentinelService:
             'channel': row['channel'],
             'connection_id': row['connection_id'],
             'detail_ref': row['detail_ref'],
+            'stage': row['stage'],
             'attention_record_id':
                 row['attention_record_id'],
             'scope_ref': ORR_SCOPE,
@@ -5858,7 +5930,7 @@ class SandersSentinelService:
     def record_loss_of_visibility(
             self, actor, resource_kind, resource_ref,
             detail_ref, channel=None, connection_id=None,
-            *, region=None):
+            stage=None, *, region=None):
         """Record a loss of visibility (operator only,
         item 5): a camera, sensor, communication
         channel, or other protective resource has
@@ -5870,7 +5942,11 @@ class SandersSentinelService:
         primary reads FAILED_RECORDED, and its
         designated alternative carries the signal
         under the standing redundancy records until a
-        recovery stands recorded."""
+        recovery stands recorded. The stage at which
+        visibility was lost is recorded with the event:
+        recovery is continuous throughout the sequence
+        (founder clarification, 2026-11-26), not only at
+        its conclusion."""
         self._geo(region)
         self._require_operator(actor)
         if resource_kind not in VISIBILITY_RESOURCE_KINDS:
@@ -5889,6 +5965,12 @@ class SandersSentinelService:
             raise SandersSentinelDenied(
                 'The perception channel must be one of: '
                 + ', '.join(PERCEPTION_CHANNELS))
+        if stage is not None and (
+                stage not in OPERATIONAL_SEQUENCE):
+            raise SandersSentinelDenied(
+                'The stage, when given, must be one of'
+                ' the operational sequence: '
+                + ', '.join(OPERATIONAL_SEQUENCE))
         now = self._now()
         event_id = (f'sentinel-visibility-event-'
                     f'{uuid.uuid4().hex[:16]}')
@@ -5913,6 +5995,7 @@ class SandersSentinelService:
                     resource_ref=resource_ref.strip(),
                     channel=channel,
                     connection_id=connection_id,
+                    stage=stage,
                     attention_record_id=record_id)
                 db.execute(
                     'INSERT INTO sanders_sentinel_records'
@@ -5933,13 +6016,14 @@ class SandersSentinelService:
                     ' sanders_sentinel_visibility_events'
                     ' (event_id, resource_kind, resource_ref,'
                     ' channel, connection_id, detail_ref,'
-                    ' attention_record_id, recorded_by,'
-                    ' recorded_at, receipt_id) VALUES'
-                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    ' stage, attention_record_id,'
+                    ' recorded_by, recorded_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                     (event_id, resource_kind,
                      resource_ref.strip(), channel,
                      connection_id, detail_ref.strip(),
-                     record_id, actor, now, receipt_id))
+                     stage, record_id, actor, now,
+                     receipt_id))
                 if connection_id is not None:
                     db.execute(
                         'UPDATE'
@@ -6001,6 +6085,7 @@ class SandersSentinelService:
             'attempt_kind': row['attempt_kind'],
             'outcome': row['outcome'],
             'detail_ref': row['detail_ref'],
+            'stage': row['stage'],
             'scope_ref': ORR_SCOPE,
             'recorded_by': row['recorded_by'],
             'recorded_at': row['recorded_at'],
@@ -6009,7 +6094,8 @@ class SandersSentinelService:
 
     def record_recovery_attempt(
             self, actor, visibility_event_id, attempt_kind,
-            outcome, detail_ref, *, region=None):
+            outcome, detail_ref, *, stage=None,
+            region=None):
         """Record one recovery attempt against a
         loss-of-visibility event (operator only,
         item 6): RESTORE_CONNECTION attempts to restore
@@ -6023,7 +6109,14 @@ class SandersSentinelService:
         carried by the alternative. Attempts and their
         outcomes are recorded exactly as they stand;
         nothing here represents a recovery that is not
-        recorded."""
+        recorded. The attempt is recorded against the
+        stage at which visibility was lost (the event's
+        stage, unless a stage is given): recovery is
+        continuous throughout the sequence (founder
+        clarification, 2026-11-26), and no recovery or
+        failover record suspends an open emergency case
+        or its activations -- the protective action in
+        progress continues wherever possible."""
         self._geo(region)
         self._require_operator(actor)
         if attempt_kind not in RECOVERY_ATTEMPT_KINDS:
@@ -6065,23 +6158,34 @@ class SandersSentinelService:
                 if event is None:
                     raise SandersSentinelDenied(
                         'No such loss-of-visibility event')
+                if stage is not None and (
+                        stage not in OPERATIONAL_SEQUENCE):
+                    raise SandersSentinelDenied(
+                        'The stage, when given, must be'
+                        ' one of the operational sequence: '
+                        + ', '.join(OPERATIONAL_SEQUENCE))
+                effective_stage = (
+                    stage if stage is not None
+                    else event['stage'])
                 receipt_id = self._record(
                     'SANDERS_SENTINEL_RECOVERY_ATTEMPT',
                     actor=actor, attempt_id=attempt_id,
                     visibility_event_id=visibility_event_id,
                     attempt_kind=attempt_kind,
-                    outcome=outcome)
+                    outcome=outcome,
+                    stage=effective_stage)
                 db.execute(
                     'INSERT INTO'
                     ' sanders_sentinel_recovery_attempts'
                     ' (attempt_id, visibility_event_id,'
                     ' attempt_kind, outcome, detail_ref,'
-                    ' recorded_by, recorded_at, receipt_id)'
-                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+                    ' stage, recorded_by, recorded_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                     (attempt_id, visibility_event_id,
                      attempt_kind, outcome,
-                     detail_ref.strip(), actor, now,
-                     receipt_id))
+                     detail_ref.strip(), effective_stage,
+                     actor, now, receipt_id))
                 if (attempt_kind == 'RESTORE_CONNECTION'
                         and outcome == 'RESTORED'):
                     if event['connection_id'] is not None:
@@ -6112,14 +6216,15 @@ class SandersSentinelService:
                         'INSERT INTO'
                         ' sanders_sentinel_perception_'
                         'failovers (failover_id, channel,'
-                        ' failure_ref, detail_ref,'
+                        ' failure_ref, detail_ref, stage,'
                         ' carried_by, recorded_by,'
                         ' recorded_at, receipt_id) VALUES'
-                        ' (?, ?, ?, ?, ?, ?, ?, ?)',
+                        ' (?, ?, ?, ?, ?, ?, ?, ?, ?)',
                         (failover_id, event['channel'],
                          event['resource_ref'],
-                         detail_ref.strip(), 'ALTERNATIVE',
-                         actor, now, receipt_id))
+                         detail_ref.strip(), effective_stage,
+                         'ALTERNATIVE', actor, now,
+                         receipt_id))
                 db.commit()
             except Exception:
                 db.rollback()
