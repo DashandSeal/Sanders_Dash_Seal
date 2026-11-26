@@ -18,7 +18,10 @@ authorization gate anywhere in the machinery (founder
 correction 2026-11-26 13:12 MST); JustGrants roles stand as
 facts of record per entity, never as a system reservation;
 the seeded JustGrants case A-547904 stands at its truthful
-stage; and every adopted operating rule holds as a structural
+stage; the founder's two further Grants.gov workspaces of
+record stand seeded at PREPARE in the same branch, the
+Justice System Research workspace carrying its unestablished
+submission status on its face; and every adopted operating rule holds as a structural
 property proven by a test \u2014 functioning duties never
 suspend, an incomplete profile never blocks an otherwise
 eligible case (only a funder's own named mandatory
@@ -465,6 +468,58 @@ class TestRolesAndSeededCase(GrantwriterJurisdictionBase):
         self.assertEqual(case['stage_history'][3]['tracking_ref'],
                          'A-547904')
 
+    def test_seeded_workspace_case_dislocated_worker(self):
+        case = self.service.jurisdiction_case(
+            OPERATOR, 'OPERATOR', 'WS01787570',
+            'PRIVATE_CORPORATE', COMPANY)
+        self.assertEqual(case['branch'], 'PRIVATE_CORPORATE')
+        self.assertEqual(case['scope_ref'], COMPANY)
+        self.assertEqual(case['external_ref'], 'ETA-TEGL-09-24-CH1')
+        self.assertIn('Department of Labor', case['funder'])
+        self.assertEqual(case['stage'], 'PREPARE')
+        self.assertEqual(
+            [s['stage'] for s in case['stage_history']], ['PREPARE'])
+        entry = case['stage_history'][0]
+        self.assertIsNone(entry['tracking_ref'])
+        self.assertIsNone(entry['authority_basis'])
+        self.assertIn('2026-11-22', entry['note'])
+        self.assertIn('2026-12-31', entry['note'])
+        self.assertNotIn('founder_authorization_ref',
+                         json.dumps(case))
+
+    def test_seeded_workspace_case_justice_research_honest(self):
+        case = self.service.jurisdiction_case(
+            OPERATOR, 'OPERATOR', 'WS01783365',
+            'PRIVATE_CORPORATE', COMPANY)
+        self.assertEqual(case['branch'], 'PRIVATE_CORPORATE')
+        self.assertEqual(case['scope_ref'], COMPANY)
+        self.assertEqual(case['external_ref'], 'O-NIJ-2026-172800')
+        self.assertIn('National Institute of Justice',
+                      case['funder'])
+        # Honesty state: in preparation on the evidence of
+        # record — never marked submitted, closed or awarded,
+        # with the open question carried on the case itself.
+        self.assertEqual(case['stage'], 'PREPARE')
+        self.assertEqual(
+            [s['stage'] for s in case['stage_history']], ['PREPARE'])
+        note = case['stage_history'][0]['note']
+        self.assertIn('NOT ESTABLISHED', note)
+        self.assertIn('2026-11-15', note)
+        self.assertIn('2026-11-16', note)
+        self.assertNotIn('founder_authorization_ref',
+                         json.dumps(case))
+
+    def test_workspace_seeding_is_idempotent(self):
+        tmp = Path(self._tmp.name)
+        again = GrantwriterPlatform(
+            tmp / 'svc.db', grantwriter_mother.database(),
+            operator_verifier=lambda actor: actor == OPERATOR,
+            audit=FakeAudit())
+        board = again.jurisdiction_board(OPERATOR, 'OPERATOR')
+        self.assertEqual(board['cases']['by_branch']
+                         ['PRIVATE_CORPORATE'], 3)
+        self.assertEqual(board['cases']['by_stage']['PREPARE'], 2)
+
     def test_seeding_is_idempotent(self):
         tmp = Path(self._tmp.name)
         again = GrantwriterPlatform(
@@ -475,7 +530,7 @@ class TestRolesAndSeededCase(GrantwriterJurisdictionBase):
         self.assertEqual(
             len(board['seeded_case']['stage_history']), 4)
         self.assertEqual(board['cases']['by_branch']
-                         ['PRIVATE_CORPORATE'], 1)
+                         ['PRIVATE_CORPORATE'], 3)
 
     def test_status_surfaces_jurisdiction_summary(self):
         status = self.service.status()

@@ -489,6 +489,54 @@ _SEED_CASE_STAGES = (
              'preparation \u2014 due 2026-12-07 8:59 PM EST'},
 )
 
+# The founder's further Grants.gov workspaces of record
+# (founder's own Grants.gov Applicant Dashboard, 2026-11-26,
+# cross-checked by an independent in-account read the same
+# hour): both stand in preparation — Grants.gov "In
+# Progress" — for Sanders Home Healthcare & Caregivers LLC
+# as applicant, so both seed at PREPARE in the
+# PRIVATE_CORPORATE branch, identified by their workspace
+# IDs. No Grants.gov tracking numbers are of record for
+# either workspace, and none are invented. Stage positions
+# use the register's epoch convention of the A-547904 seed.
+SEEDED_WORKSPACE_CASE_IDS = ('WS01787570', 'WS01783365')
+_SEED_WORKSPACE_CASES = (
+    {'case_id': 'WS01787570',
+     'scope_ref': 'Sanders Home Healthcare & Caregivers LLC',
+     'title': 'SHHC LLC - National Dislocated Worker '
+              'Grant - 2026',
+     'funder': 'U.S. Department of Labor, Employment and '
+               'Training Administration (ETA)',
+     'external_ref': 'ETA-TEGL-09-24-CH1',
+     'recorded_at': 1763769600,
+     'note': 'Workspace of record in Grants.gov (founder\u2019s '
+             'Applicant Dashboard, 2026-11-26): SHHC LLC - '
+             'National Dislocated Worker Grant - 2026, '
+             'opportunity ETA-TEGL-09-24-CH1 (National '
+             'Dislocated Worker Grants). In preparation '
+             '\u2014 last activity 2026-11-22. Closing date '
+             '2026-12-31'},
+    {'case_id': 'WS01783365',
+     'scope_ref': 'Sanders Home Healthcare & Caregivers LLC',
+     'title': 'SHHC \u2013 NIJ Justice System Research \u2013 2026',
+     'funder': 'National Institute of Justice (NIJ)',
+     'external_ref': 'O-NIJ-2026-172800',
+     'recorded_at': 1763164800,
+     'note': 'Workspace of record in Grants.gov (founder\u2019s '
+             'Applicant Dashboard, 2026-11-26): SHHC \u2013 NIJ '
+             'Justice System Research \u2013 2026, opportunity '
+             'O-NIJ-2026-172800. In preparation \u2014 last '
+             'activity 2026-11-15. Its closing date '
+             '2026-11-16 has passed with the workspace still '
+             'showing In Progress: submission status NOT '
+             'ESTABLISHED \u2014 whether it was submitted '
+             'another way or set aside awaits the '
+             'founder\u2019s word. Recorded at PREPARE on the '
+             'evidence of record; not marked submitted, '
+             'closed or awarded'},
+)
+
+
 
 class GrantwriterPlatform:
     """Grantwriter at its recorded maximum level: a platform
@@ -991,7 +1039,9 @@ class GrantwriterPlatform:
         at its truthful stage. Idempotent: existing records are
         never overwritten (INSERT OR IGNORE / existence check),
         so a later role-assignment change of record survives
-        restarts."""
+        restarts. Also seeds the founder's further Grants.gov
+        workspaces of record (dashboard of 2026-11-26) at
+        PREPARE, under the same discipline."""
         for system, entity, role, holder in _SEED_ROLE_ASSIGNMENTS:
             db.execute(
                 "INSERT OR IGNORE INTO jurisdiction_role_assignments "
@@ -1001,8 +1051,14 @@ class GrantwriterPlatform:
         existing = db.execute(
             "SELECT case_id FROM jurisdiction_cases WHERE case_id = ?;",
             (SEEDED_JUSTGRANTS_CASE_ID,)).fetchone()
-        if existing is not None:
-            return
+        if existing is None:
+            self._seed_justgrants_case(db)
+        self._seed_workspace_cases(db)
+
+    def _seed_justgrants_case(self, db):
+        """Insert the seeded JustGrants case A-547904 and
+        its stage history (called only when the case is
+        absent)."""
         db.execute(
             "INSERT INTO jurisdiction_cases (case_id, branch, "
             "scope_ref, title, funder, external_ref, "
@@ -1028,6 +1084,45 @@ class GrantwriterPlatform:
                  entry.get('authority_basis'),
                  entry.get('tracking_ref'), entry.get('note'),
                  entry['recorded_by'], entry['recorded_at']))
+
+    def _seed_workspace_cases(self, db):
+        """Seed the founder's further Grants.gov workspaces
+        of record at PREPARE. Idempotent, under the same
+        discipline as the JustGrants seed: existing
+        records are never overwritten, so a later change
+        of record survives restarts."""
+        for case in _SEED_WORKSPACE_CASES:
+            existing = db.execute(
+                "SELECT case_id FROM jurisdiction_cases "
+                "WHERE case_id = ?;",
+                (case['case_id'],)).fetchone()
+            if existing is not None:
+                continue
+            db.execute(
+                "INSERT INTO jurisdiction_cases (case_id, "
+                "branch, scope_ref, title, funder, "
+                "external_ref, opportunity_kind, "
+                "fee_structure, profile_complete, "
+                "profile_gaps, funder_block, stage, "
+                "created_by, created_at, updated_by, "
+                "updated_at) VALUES (?, "
+                "'PRIVATE_CORPORATE', ?, ?, ?, ?, "
+                "'INDIVIDUAL', NULL, 1, NULL, NULL, "
+                "'PREPARE', 'RooseveltSanders', ?, "
+                "'RooseveltSanders', ?);",
+                (case['case_id'], case['scope_ref'],
+                 case['title'], case['funder'],
+                 case['external_ref'],
+                 case['recorded_at'], case['recorded_at']))
+            db.execute(
+                "INSERT INTO jurisdiction_case_stages "
+                "(case_id, stage, submission_method, "
+                "authority_basis, tracking_ref, note, "
+                "recorded_by, recorded_at) VALUES (?, "
+                "'PREPARE', NULL, NULL, NULL, ?, "
+                "'GRANTWRITER_RECORD', ?);",
+                (case['case_id'], case['note'],
+                 case['recorded_at']))
 
     @staticmethod
     def _jurisdiction_case_view(db, row):
@@ -1662,6 +1757,7 @@ __all__ = [
     'OPPORTUNITY_KINDS',
     'PROPERTY_OBJECTIVES',
     'SEEDED_JUSTGRANTS_CASE_ID',
+    'SEEDED_WORKSPACE_CASE_IDS',
     'SUBMISSION_METHODS',
     'WORKFLOW_STAGES',
     'GrantwriterPlatform',
