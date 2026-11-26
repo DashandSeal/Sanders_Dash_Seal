@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_sanders_sentinel_human_life_protection.py",
-        "payload_hash": "e551d30a051c42709d41ecc4a605643b3a679dfc4a1925f1c1ebfa0624c52c64",
+        "payload_hash": "7402144477c75a7e712886c08f8fc21739650581e9f04748bae21c8f3fe202e8",
         "scope": {
             "endpoint": "local://development",
             "method": "TEST",
