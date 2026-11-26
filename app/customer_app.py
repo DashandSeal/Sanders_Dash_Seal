@@ -2516,6 +2516,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                    or prom_eval_match is not None
                                    or hydra_asset_match is not None
                                    or lab_analysis_match is not None
+                                   or lab_graph_match is not None
                                    or cerb_assessment_match is not None
                                    or chorus_composition_match is not None
                                    or cobol_assessment_match is not None
