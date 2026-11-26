@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/FOUNDER_DECLARATION_SHIELDS_NASA_STANDARDS_2026-11-26.md",
+        "payload_hash": "7c0c022d3af5385e2f07cea609e07bb6d27600a4c79bd3f61bacc4e73a964f0f",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
