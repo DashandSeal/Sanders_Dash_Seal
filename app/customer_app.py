@@ -732,6 +732,7 @@ THE_GODFATHER_BLOODLINE_RESERVE_ACTION_ROUTE = re.compile(r'^/api/the-godfather/
 THE_GODFATHER_BLOODLINE_RESERVE_COUNTERPART_ROUTE = re.compile(r'^/api/the-godfather/bloodline/reserves/([A-Za-z0-9_-]{1,128})/counterpart$')
 THE_GODFATHER_BLOODLINE_TRANSPORT_MATTER_FULFILLMENT_ROUTE = re.compile(r'^/api/the-godfather/bloodline/transport-matters/([A-Za-z0-9_-]{1,128})/fulfillment$')
 THE_GODFATHER_BLOODLINE_RESERVE_FULFILLMENT_ROUTE = re.compile(r'^/api/the-godfather/bloodline/reserves/([A-Za-z0-9_-]{1,128})/fulfillment$')
+THE_GODFATHER_BLOODLINE_HS_DESIGNATION_END_ROUTE = re.compile(r'^/api/the-godfather/bloodline/hs-designations/([A-Za-z0-9_-]{1,128})/end$')
 SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ROUTE = re.compile(r'^/api/sanders-ethics-impact-collective/records/([A-Za-z0-9_-]{1,128})$')
 SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ACTION_ROUTE = re.compile(r'^/api/sanders-ethics-impact-collective/records/([A-Za-z0-9_-]{1,128})/action$')
 SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_OUTCOME_ROUTE = re.compile(r'^/api/sanders-ethics-impact-collective/records/([A-Za-z0-9_-]{1,128})/outcome$')
@@ -1131,6 +1132,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         the_godfather_bloodline_reserve_counterpart_match = THE_GODFATHER_BLOODLINE_RESERVE_COUNTERPART_ROUTE.fullmatch(path)
         the_godfather_bloodline_transport_matter_fulfillment_match = THE_GODFATHER_BLOODLINE_TRANSPORT_MATTER_FULFILLMENT_ROUTE.fullmatch(path)
         the_godfather_bloodline_reserve_fulfillment_match = THE_GODFATHER_BLOODLINE_RESERVE_FULFILLMENT_ROUTE.fullmatch(path)
+        the_godfather_bloodline_hs_designation_end_match = THE_GODFATHER_BLOODLINE_HS_DESIGNATION_END_ROUTE.fullmatch(path)
         sanders_ethics_impact_collective_record_match = SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ROUTE.fullmatch(path)
         sanders_ethics_impact_collective_record_action_match = SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_ACTION_ROUTE.fullmatch(path)
         sanders_ethics_impact_collective_record_outcome_match = SANDERS_ETHICS_IMPACT_COLLECTIVE_RECORD_OUTCOME_ROUTE.fullmatch(path)
@@ -1993,6 +1995,16 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                            '/api/the-godfather/bloodline/transport-matters',
                                            '/api/the-godfather/bloodline/funding-requests',
                                            '/api/the-godfather/bloodline/reserves',
+                                           '/api/the-godfather/bloodline/human-survival',
+                                           '/api/the-godfather/bloodline/hs-designations',
+                                           '/api/the-godfather/bloodline/hs-tests',
+                                           '/api/the-godfather/bloodline/logistics-records',
+                                           '/api/the-godfather/bloodline/movement-records',
+                                           '/api/the-godfather/bloodline/lifespan-records',
+                                           '/api/the-godfather/bloodline/anticipation-records',
+                                           '/api/the-godfather/bloodline/communications-records',
+                                           '/api/the-godfather/bloodline/execution-records',
+                                           '/api/the-godfather/bloodline/resource-records',
                                            '/api/the-godfather/check-in')
                                   or the_godfather_record_match is not None
                                   or the_godfather_record_action_match is not None
@@ -2007,7 +2019,8 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                   or the_godfather_bloodline_reserve_action_match is not None
                                   or the_godfather_bloodline_reserve_counterpart_match is not None
                                   or the_godfather_bloodline_transport_matter_fulfillment_match is not None
-                                  or the_godfather_bloodline_reserve_fulfillment_match is not None)
+                                  or the_godfather_bloodline_reserve_fulfillment_match is not None
+                                  or the_godfather_bloodline_hs_designation_end_match is not None)
         is_sanders_ethics_impact_collective_route = (path in ('/api/sanders-ethics-impact-collective/status',
                                                               '/api/sanders-ethics-impact-collective/records',
                                                               '/api/sanders-ethics-impact-collective/design',
@@ -2403,6 +2416,7 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/the-godfather/records',
                                             '/api/the-godfather/design',
                                             '/api/the-godfather/bloodline/remit',
+                                            '/api/the-godfather/bloodline/human-survival',
                                             '/api/sanders-ethics-impact-collective/status',
                                             '/api/sanders-ethics-impact-collective/records',
                                             '/api/sanders-ethics-impact-collective/design')
@@ -2775,6 +2789,24 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if path == '/api/the-godfather/bloodline/funding-requests':
             allowed = ('GET', 'POST')
         if path == '/api/the-godfather/bloodline/reserves':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/hs-designations':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/hs-tests':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/logistics-records':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/movement-records':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/lifespan-records':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/anticipation-records':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/communications-records':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/execution-records':
+            allowed = ('GET', 'POST')
+        if path == '/api/the-godfather/bloodline/resource-records':
             allowed = ('GET', 'POST')
         if path == '/api/sanders-ethics-impact-collective/records':
             allowed = ('GET', 'POST')
@@ -6975,6 +7007,78 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                     if the_godfather_bloodline_reserve_match:
                         record = the_godfather.reserve_view(identity, the_godfather_role, the_godfather_bloodline_reserve_match.group(1))
                         return respond(start, '200 OK', {'reserve': record})
+                    if path == '/api/the-godfather/bloodline/human-survival':
+                        if method != 'GET':
+                            return respond(start, '405 Method Not Allowed', {'error': 'method_not_allowed'})
+                        return respond(start, '200 OK', {'human_survival': the_godfather.human_survival_view(identity, the_godfather_role)})
+                    if path == '/api/the-godfather/bloodline/hs-designations':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'hs_designations': the_godfather.hs_designations(identity, the_godfather_role)})
+                        if set(data) != {'part_key', 'designation_ref', 'kind', 'authorization_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_hs_designation(identity, data['part_key'], data['designation_ref'], data['kind'], data['authorization_ref'])
+                        return respond(start, '201 Created', {'hs_designation': record})
+                    if the_godfather_bloodline_hs_designation_end_match:
+                        if set(data) != {'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.end_hs_designation(identity, the_godfather_bloodline_hs_designation_end_match.group(1), data['detail_ref'])
+                        return respond(start, '200 OK', {'hs_designation': record})
+                    if path == '/api/the-godfather/bloodline/hs-tests':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'hs_tests': the_godfather.hs_tests(identity, the_godfather_role)})
+                        if set(data) != {'part_key', 'phases', 'outcome', 'detail_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_hs_test(identity, data['part_key'], data['phases'], data['outcome'], data['detail_ref'])
+                        return respond(start, '201 Created', {'hs_test': record})
+                    if path == '/api/the-godfather/bloodline/logistics-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'logistics_records': the_godfather.logistics_records(identity, the_godfather_role)})
+                        if not {'function_kind', 'subject_ref', 'detail_ref'} <= set(data) <= {'function_kind', 'subject_ref', 'detail_ref', 'linked_ref', 'delivery_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_logistics_record(identity, data['function_kind'], data['subject_ref'], data['detail_ref'], linked_ref=data.get('linked_ref'), delivery_ref=data.get('delivery_ref'))
+                        return respond(start, '201 Created', {'logistics_record': record})
+                    if path == '/api/the-godfather/bloodline/movement-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'movement_records': the_godfather.movement_records(identity, the_godfather_role)})
+                        if not {'capability', 'member_ref', 'detail_ref'} <= set(data) <= {'capability', 'member_ref', 'detail_ref', 'counterpart_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_movement_record(identity, data['capability'], data['member_ref'], data['detail_ref'], counterpart_ref=data.get('counterpart_ref'))
+                        return respond(start, '201 Created', {'movement_record': record})
+                    if path == '/api/the-godfather/bloodline/lifespan-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'lifespan_records': the_godfather.lifespan_records(identity, the_godfather_role)})
+                        if not {'life_stage', 'member_ref', 'detail_ref'} <= set(data) <= {'life_stage', 'member_ref', 'detail_ref', 'assistance_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_lifespan_record(identity, data['life_stage'], data['member_ref'], data['detail_ref'], assistance_ref=data.get('assistance_ref'))
+                        return respond(start, '201 Created', {'lifespan_record': record})
+                    if path == '/api/the-godfather/bloodline/anticipation-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'anticipation_records': the_godfather.anticipation_records(identity, the_godfather_role)})
+                        if not {'anticipation_kind', 'subject_ref', 'detail_ref'} <= set(data) <= {'anticipation_kind', 'subject_ref', 'detail_ref', 'evidence_ref', 'linked_machinery_kind', 'linked_record_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_anticipation_record(identity, data['anticipation_kind'], data['subject_ref'], data['detail_ref'], evidence_ref=data.get('evidence_ref'), linked_machinery_kind=data.get('linked_machinery_kind'), linked_record_ref=data.get('linked_record_ref'))
+                        return respond(start, '201 Created', {'anticipation_record': record})
+                    if path == '/api/the-godfather/bloodline/communications-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'communications_records': the_godfather.communications_records(identity, the_godfather_role)})
+                        if not {'record_kind', 'member_ref', 'detail_ref'} <= set(data) <= {'record_kind', 'member_ref', 'detail_ref', 'linked_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_communications_record(identity, data['record_kind'], data['member_ref'], data['detail_ref'], linked_ref=data.get('linked_ref'))
+                        return respond(start, '201 Created', {'communications_record': record})
+                    if path == '/api/the-godfather/bloodline/execution-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'execution_records': the_godfather.execution_records(identity, the_godfather_role)})
+                        if not {'execution_kind', 'subject_ref', 'detail_ref', 'funding_ref'} <= set(data) <= {'execution_kind', 'subject_ref', 'detail_ref', 'funding_ref', 'delivery_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_execution_record(identity, data['execution_kind'], data['subject_ref'], data['detail_ref'], funding_ref=data['funding_ref'], delivery_ref=data.get('delivery_ref'))
+                        return respond(start, '201 Created', {'execution_record': record})
+                    if path == '/api/the-godfather/bloodline/resource-records':
+                        if method == 'GET':
+                            return respond(start, '200 OK', {'resource_records': the_godfather.resource_records(identity, the_godfather_role)})
+                        if not {'resource_kind', 'member_ref', 'detail_ref'} <= set(data) <= {'resource_kind', 'member_ref', 'detail_ref', 'provider_ref'}:
+                            raise ValueError('unexpected fields')
+                        record = the_godfather.record_resource_record(identity, data['resource_kind'], data['member_ref'], data['detail_ref'], provider_ref=data.get('provider_ref'))
+                        return respond(start, '201 Created', {'resource_record': record})
                     if the_godfather_record_action_match:
                         if set(data) != {'action'}:
                             raise ValueError('unexpected fields')
