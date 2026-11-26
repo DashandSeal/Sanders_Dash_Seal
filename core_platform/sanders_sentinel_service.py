@@ -366,6 +366,11 @@ BLOODLINE_WATCH_SET = (
      'title': ('Sanders Sentinel \u2014 Construction '
                'Program'),
      'required': True},
+    {'document': ('docs/SANDERS_SENTINEL_HUMAN_'
+                  'LIFE_PROTECTION_2026-11-26.md'),
+     'title': ('Sanders Sentinel \u2014 Human Life '
+               'Protection By Design'),
+     'required': True},
     {'document': 'docs/SANDERS_BLOODLINE_REGISTRY.md',
      'title': 'Sanders Bloodline Registry',
      'required': False},
@@ -2002,6 +2007,688 @@ RECOVERY_ASSISTANCE_PLATFORMS = (
     'sanders_sentinel', 'the_godfather',
     'sanders_patriot_saint')
 
+# -- Human Life Protection By Design (founder's
+# adoption, 2026-11-26) --------------------------
+HLP_TITLE = (
+    'Sanders Sentinel \u2014 Human Life Protection '
+    'By Design')
+HLP_ADOPTED = '2026-11-26'
+HLP_SCOPE = 'SENTINEL_HUMAN_LIFE_PROTECTION'
+HLP_SOURCE = (
+    'docs/SANDERS_SENTINEL_HUMAN_LIFE_'
+    'PROTECTION_2026-11-26.md')
+HLP_MEASURE = (
+    'The preservation of human life shall be '
+    'the measure of his protective design.')
+FOUNDER_HLP_STATEMENT_VERBATIM = (
+    'Sanders Sentinel \u2014 Human Life Protection By '
+    'Design\n'
+    'Sanders Sentinel shall be architected with '
+    'the preservation and protection of human '
+    'life as a fundamental design objective, not '
+    'as an afterthought, supplementary feature or '
+    'subsequent enhancement.\n'
+    'His native capabilities shall encompass the '
+    'prevention, recognition, assessment, '
+    'activation, coordination and delivery of '
+    'appropriate lifesaving assistance, including '
+    'emergency preparedness, physical rescue '
+    'coordination, medical assistance, essential '
+    'resource continuity and post-emergency '
+    'recovery.\n'
+    'His protective architecture shall address '
+    'foreseeable threats to human life throughout '
+    'the human lifespan, across medical, '
+    'physical, environmental, technological, '
+    'transportation and disaster-related '
+    'circumstances.\n'
+    'Sanders Sentinel shall possess native '
+    'intelligence capable of recognizing credible '
+    'threats, initiating appropriate assistance '
+    'and coordinating qualified human responders, '
+    'lifesaving equipment, emergency '
+    'transportation, medical resources and '
+    'essential survival infrastructure.\n'
+    'His construction shall incorporate '
+    'applicable established medical '
+    'interoperability standards, medically '
+    'validated emergency assistance protocols, '
+    'proven rescue technologies and functioning '
+    'emergency communications mechanisms.\n'
+    'All capabilities shall be Native By Design, '
+    'Sovereign By Design and Global By Design.\n'
+    'All existing Founder rulings, protective '
+    'responsibilities, adopted intervention '
+    'capabilities, platform identities, funding '
+    'authorities, succession provisions and '
+    'public-facing business models shall remain '
+    'preserved.\n'
+    'His established operational sequence '
+    'remains:\n'
+    'Perceive \u2192 Recognize \u2192 Assess \u2192 Activate \u2192 '
+    'Coordinate \u2192 Protect \u2192 Verify \u2192 Recover.\n'
+    'Prevention and preparedness shall support '
+    'the entire protective architecture. Recovery '
+    'and protection shall remain continuous '
+    'throughout every stage.\n'
+    'No existing protective function shall be '
+    'unnecessarily interrupted by construction, '
+    'development, testing or recovery.\n'
+    'The preservation of human life shall be the '
+    'measure of his protective design.\n'
+    'The objective is actual protection of human '
+    'life, not the production of records '
+    'describing protection.'
+)
+
+FOUNDER_HLP_THREAT_SCOPE_VERBATIM = (
+    'Disability protection \u2014 Mobility '
+    'emergencies, communication barriers, '
+    'assistive equipment failure\n'
+    'Psychological \u2014 Suicidal crises, acute '
+    'behavioral emergencies, qualified crisis '
+    'intervention\n'
+    'Environmental \u2014 Heatstroke, hypothermia, '
+    'smoke, carbon monoxide, hazardous air and '
+    'water\n'
+    'Water safety \u2014 Drowning, maritime '
+    'emergencies, flood entrapment\n'
+    'Physical safety \u2014 Assault, abuse, '
+    'exploitation, abduction and credible threats '
+    'to life\n'
+    'Transportation \u2014 Road, railway, aviation and '
+    'maritime emergencies\n'
+    'Disaster survival \u2014 Earthquakes, tsunamis, '
+    'wildfires, floods, severe storms\n'
+    'Infrastructure \u2014 Electricity failures, '
+    'communications outages, loss of essential '
+    'medical services\n'
+    'Essential survival \u2014 Emergency access to '
+    'food, water, shelter, medication and medical '
+    'equipment\n'
+    'International protection \u2014 Emergency '
+    'evacuation, medical repatriation and '
+    'cross-border continuity of assistance'
+)
+
+FOUNDER_HLP_PREVENTION_VERBATIM = (
+    'Forecast dangerous heat \u2014 Activate '
+    'preventive assistance and access to cooling\n'
+    'Severe weather warnings \u2014 Coordinate shelter '
+    'or relocation before impact\n'
+    'Elevated fall risk \u2014 Notify appropriate '
+    'caregivers and coordinate prevention\n'
+    'Caregiver absence \u2014 Arrange appropriate '
+    'replacement assistance\n'
+    'Unsafe home conditions \u2014 Communicate hazards '
+    'and coordinate corrective assistance\n'
+    'Transportation disruption \u2014 Coordinate '
+    'alternative transportation to essential '
+    'medical appointments\n'
+    'Emergency equipment recall \u2014 Identify '
+    'affected registered equipment and coordinate '
+    'replacement\n'
+    'Communications degradation \u2014 Activate '
+    'alternative communications before complete '
+    'disconnection'
+)
+
+FOUNDER_HLP_HANDOVER_FIELDS_VERBATIM = (
+    'Known medical conditions and allergies.\n'
+    'Current medications.\n'
+    'Relevant medical equipment.\n'
+    'Emergency observations and symptom onset.\n'
+    'Recorded physiological measurements.\n'
+    'Assistance already requested or delivered.\n'
+    'Accessibility and communication '
+    'requirements.\n'
+    'Applicable medical directives.'
+)
+
+FOUNDER_HLP_TELEPHONY_COMPONENTS_VERBATIM = (
+    'Sherpa-ONNX \u2014 Offline streaming speech '
+    'recognition, speech synthesis, voice '
+    'detection and keyword recognition\n'
+    'Asterisk \u2014 Self-hosted telephone '
+    'communication and call management\n'
+    'Asterisk WebRTC \u2014 Real-time browser-based '
+    'voice communication\n'
+    'LiveKit self-hosted SIP \u2014 Alternative '
+    'self-hosted real-time voice and telephone '
+    'integration\n'
+    'IETF RFC 6881 \u2014 Emergency calling technical '
+    'practices and location conveyance'
+)
+
+FOUNDER_HLP_INDUSTRIES_VERBATIM = (
+    'Home healthcare \u2014 Continuity of essential '
+    'healthcare services\n'
+    'Personal care services \u2014 Immediate human '
+    'assistance and daily safety\n'
+    'Non-emergency medical transportation \u2014 '
+    'Appropriate medical transportation and '
+    'treatment access\n'
+    'Home medical equipment rental \u2014 Access to '
+    'necessary medical equipment\n'
+    'Medical equipment and supplies distribution '
+    '\u2014 Emergency supplies and equipment '
+    'replacement\n'
+    'Healthcare courier services \u2014 Urgent '
+    'delivery of authorized medical supplies and '
+    'materials'
+)
+
+FOUNDER_HLP_ADOPTION_VERBATIM = (
+    'Adopt the Human Life Protection architecture '
+    'as Sentinel\'s next construction program'
+)
+
+HLP_LADDER = CONSTRUCTION_PROGRAM_LADDER
+HLP_LADDER_FRAME = (
+    'Per-part state is reported on the same '
+    'truthful-verification ladder as the '
+    'construction program (designed \u2192 '
+    'constructed \u2192 connected \u2192 tested \u2192 '
+    'operational), derived from the records '
+    'only -- an ACTIVE LIVE founder designation '
+    'of record and a COMPLETED end-to-end test '
+    'of record -- and settable by no caller.')
+HLP_SEQUENCE_INVARIANT = (
+    'The operational sequence remains the '
+    'established eight stages -- Perceive \u2192 '
+    'Recognize \u2192 Assess \u2192 Activate \u2192 '
+    'Coordinate \u2192 Protect \u2192 Verify \u2192 '
+    'Recover. Prevention is not a ninth stage, '
+    'and no stage is added, removed, or '
+    'reordered by this architecture.')
+HLP_PREVENTION_SUPPORT_INVARIANT = (
+    'Prevention and preparedness support the '
+    'entire protective architecture, as recovery '
+    'and protection remain continuous throughout '
+    'every stage. A prevention record is a '
+    'supporting record: it never gates, delays, '
+    'conditions, or is required by any emergency '
+    'activation, coordination, or protective '
+    'path -- the discipline of founder '
+    'clarification No. 3, carried into this '
+    'architecture.')
+HLP_NO_CONNECTION_INVARIANT = (
+    'This construction connects nothing '
+    'external: no response network, no medical '
+    'device, no warning feed, no satellite '
+    'service, no carrier, and no interoperability '
+    'endpoint is connected or represented as '
+    'connected. Every connection is a founder '
+    'designation of record; a part awaiting its '
+    'designation stands CONSTRUCTED at best, '
+    'never CONNECTED or OPERATIONAL.')
+HLP_PROFESSIONAL_INVARIANT = (
+    'Across the expanded threat scope Sentinel '
+    'coordinates and never treats: intervention '
+    'belongs to qualified human professionals '
+    'and authorized responders. A psychological '
+    'crisis is coordinated only to a qualified '
+    'mental-health professional or a trained '
+    'crisis counselor, by reference.')
+HLP_HANDOVER_PRIVACY_INVARIANT = (
+    'A clinical handover carries authorized '
+    'emergency information only, and carries it '
+    'by reference: the record names where each '
+    'field of information stands of record; it '
+    'holds no medical information itself. '
+    'Privacy is jurisdiction-aware -- the '
+    'jurisdiction is a recorded field of every '
+    'handover. HL7 IPS and HL7 FHIR inform the '
+    'field structure; no live interoperability '
+    'with any external system exists or is '
+    'claimed.')
+HLP_TELEPHONY_INVARIANT = (
+    'The named voice and telephony components '
+    'are adopted as the extension architecture '
+    'of the Daedalus sovereign voice engine -- '
+    'they extend the existing native path and '
+    'replace nothing. This construction records '
+    'the architecture only: nothing is '
+    'installed, nothing is configured, and no '
+    'carrier is connected. Every component '
+    'record stands NOT_INSTALLED, '
+    'NOT_CONFIGURED, and NOT_CONNECTED; live '
+    'calling remains a required capability, not '
+    'a verified operational capability, and '
+    'live_call is False on every record. '
+    'External telephone networks require '
+    'carrier connectivity, which is the '
+    'founder\u2019s separate designation and '
+    'arrangement.')
+HLP_AMBULANCE_DISTINCTION_INVARIANT = (
+    'Emergency ambulance transportation remains '
+    'distinct from non-emergency medical '
+    'transportation: the six-industry resource '
+    'base carries the non-emergency industry '
+    '(485991) as a coordination resource, and '
+    'an ambulance is reached through responder '
+    'coordination, never through the resource '
+    'base.')
+HLP_REPORTING_ONLY_INVARIANT = (
+    'Human Life Protection part states are '
+    'reporting only: they gate nothing. No '
+    'activation, coordination, prevention, or '
+    'protective path consults a part state.')
+HLP_TEST_INVARIANT = (
+    'Human Life Protection tests are internal '
+    'records labeled TEST, incapable of '
+    'external dispatch -- founder clarification '
+    'No. 2, carried into this architecture.')
+HLP_DESIGNATION_KINDS = (
+    CONSTRUCTION_PROGRAM_DESIGNATION_KINDS)
+HLP_DESIGNATION_STATES = (
+    CONSTRUCTION_PROGRAM_DESIGNATION_STATES)
+THREAT_COORDINATION_KINDS_GENERAL = (
+    'QUALIFIED_HUMAN_PROFESSIONAL',
+    'EMERGENCY_RESPONDER_SERVICE',
+    'ASSISTANCE_ORGANIZATION')
+THREAT_COORDINATION_KINDS_PSYCHOLOGICAL = (
+    'QUALIFIED_MENTAL_HEALTH_PROFESSIONAL',
+    'TRAINED_CRISIS_COUNSELOR')
+HLP_THREAT_CATEGORIES = (
+    {'category': 'DISABILITY_PROTECTION',
+     'title': 'Disability protection',
+     'scope': (
+         'Mobility emergencies, communication '
+         'barriers, assistive equipment failure'),
+     'coordination_kinds':
+         THREAT_COORDINATION_KINDS_GENERAL},
+    {'category': 'PSYCHOLOGICAL',
+     'title': 'Psychological',
+     'scope': (
+         'Suicidal crises, acute behavioral '
+         'emergencies, qualified crisis '
+         'intervention'),
+     'coordination_kinds':
+         THREAT_COORDINATION_KINDS_PSYCHOLOGICAL},
+    {'category': 'ENVIRONMENTAL',
+     'title': 'Environmental',
+     'scope': (
+         'Heatstroke, hypothermia, smoke, carbon '
+         'monoxide, hazardous air and water'),
+     'coordination_kinds':
+         THREAT_COORDINATION_KINDS_GENERAL},
+    {'category': 'WATER_SAFETY',
+     'title': 'Water safety',
+     'scope': (
+         'Drowning, maritime emergencies, flood '
+         'entrapment'),
+     'coordination_kinds':
+         THREAT_COORDINATION_KINDS_GENERAL},
+    {'category': 'PHYSICAL_SAFETY',
+     'title': 'Physical safety',
+     'scope': (
+         'Assault, abuse, exploitation, '
+         'abduction and credible threats to '
+         'life'),
+     'coordination_kinds':
+         THREAT_COORDINATION_KINDS_GENERAL},
+    {'category': 'TRANSPORTATION',
+     'title': 'Transportation',
+     'scope': (
+         'Road, railway, aviation and maritime '
+         'emergencies'),
+     'coordination_kinds':
+         THREAT_COORDINATION_KINDS_GENERAL},
+    {'category': 'DISASTER_SURVIVAL',
+     'title': 'Disaster survival',
+     'scope': (
+         'Earthquakes, tsunamis, wildfires, '
+         'floods, severe storms'),
+     'coordination_kinds':
+         THREAT_COORDINATION_KINDS_GENERAL},
+    {'category': 'INFRASTRUCTURE',
+     'title': 'Infrastructure',
+     'scope': (
+         'Electricity failures, communications '
+         'outages, loss of essential medical '
+         'services'),
+     'coordination_kinds':
+         THREAT_COORDINATION_KINDS_GENERAL},
+    {'category': 'ESSENTIAL_SURVIVAL',
+     'title': 'Essential survival',
+     'scope': (
+         'Emergency access to food, water, '
+         'shelter, medication and medical '
+         'equipment'),
+     'coordination_kinds':
+         THREAT_COORDINATION_KINDS_GENERAL},
+    {'category': 'INTERNATIONAL_PROTECTION',
+     'title': 'International protection',
+     'scope': (
+         'Emergency evacuation, medical '
+         'repatriation and cross-border '
+         'continuity of assistance'),
+     'coordination_kinds':
+         THREAT_COORDINATION_KINDS_GENERAL},
+)
+PREVENTION_LINK_KINDS = (
+    'GODFATHER_MATTER', 'FAMILY_NOTIFICATION',
+    'ASSISTANCE_COORDINATION',
+    'RESPONDER_COORDINATION', 'PERCEPTION_FAILOVER',
+    'RECOVERY_ATTEMPT')
+HLP_PREVENTION_KINDS = (
+    {'kind': 'FORECAST_DANGEROUS_HEAT',
+     'title': 'Forecast dangerous heat',
+     'action': (
+         'Activate preventive assistance and '
+         'access to cooling'),
+     'machinery': (
+         'FAMILY_NOTIFICATION',
+         'ASSISTANCE_COORDINATION',
+         'GODFATHER_MATTER')},
+    {'kind': 'SEVERE_WEATHER_WARNING',
+     'title': 'Severe weather warnings',
+     'action': (
+         'Coordinate shelter or relocation '
+         'before impact'),
+     'machinery': (
+         'GODFATHER_MATTER', 'FAMILY_NOTIFICATION')},
+    {'kind': 'ELEVATED_FALL_RISK',
+     'title': 'Elevated fall risk',
+     'action': (
+         'Notify appropriate caregivers and '
+         'coordinate prevention'),
+     'machinery': (
+         'FAMILY_NOTIFICATION',
+         'ASSISTANCE_COORDINATION')},
+    {'kind': 'CAREGIVER_ABSENCE',
+     'title': 'Caregiver absence',
+     'action': (
+         'Arrange appropriate replacement '
+         'assistance'),
+     'machinery': (
+         'ASSISTANCE_COORDINATION',
+         'FAMILY_NOTIFICATION')},
+    {'kind': 'UNSAFE_HOME_CONDITIONS',
+     'title': 'Unsafe home conditions',
+     'action': (
+         'Communicate hazards and coordinate '
+         'corrective assistance'),
+     'machinery': (
+         'ASSISTANCE_COORDINATION',
+         'FAMILY_NOTIFICATION')},
+    {'kind': 'TRANSPORTATION_DISRUPTION',
+     'title': 'Transportation disruption',
+     'action': (
+         'Coordinate alternative transportation '
+         'to essential medical appointments'),
+     'machinery': ('GODFATHER_MATTER',)},
+    {'kind': 'EQUIPMENT_RECALL',
+     'title': 'Emergency equipment recall',
+     'action': (
+         'Identify affected registered equipment '
+         'and coordinate replacement'),
+     'machinery': (
+         'ASSISTANCE_COORDINATION',
+         'FAMILY_NOTIFICATION')},
+    {'kind': 'COMMUNICATIONS_DEGRADATION',
+     'title': 'Communications degradation',
+     'action': (
+         'Activate alternative communications '
+         'before complete disconnection'),
+     'machinery': (
+         'PERCEPTION_FAILOVER', 'RECOVERY_ATTEMPT',
+         'FAMILY_NOTIFICATION')},
+)
+HLP_HANDOVER_FIELDS = (
+    {'field': 'conditions_allergies',
+     'column': 'conditions_allergies_ref',
+     'label': 'Known medical conditions and '
+              'allergies.'},
+    {'field': 'medications',
+     'column': 'medications_ref',
+     'label': 'Current medications.'},
+    {'field': 'equipment',
+     'column': 'equipment_ref',
+     'label': 'Relevant medical equipment.'},
+    {'field': 'observations_onset',
+     'column': 'observations_onset_ref',
+     'label': 'Emergency observations and '
+              'symptom onset.'},
+    {'field': 'measurements',
+     'column': 'measurements_ref',
+     'label': 'Recorded physiological '
+              'measurements.'},
+    {'field': 'assistance',
+     'column': 'assistance_ref',
+     'label': 'Assistance already requested or '
+              'delivered.'},
+    {'field': 'accessibility',
+     'column': 'accessibility_ref',
+     'label': 'Accessibility and communication '
+              'requirements.'},
+    {'field': 'directives',
+     'column': 'directives_ref',
+     'label': 'Applicable medical directives.'},
+)
+HLP_HANDOVER_STANDARDS = (
+    'HL7 International Patient Summary (IPS)',
+    'HL7 FHIR',
+    'WHO emergency transfer and handover '
+    'resources')
+HLP_TELEPHONY_COMPONENTS = (
+    {'component': 'SHERPA_ONNX',
+     'name': 'Sherpa-ONNX',
+     'function': (
+         'Offline streaming speech recognition, '
+         'speech synthesis, voice detection and '
+         'keyword recognition'),
+     'role': (
+         'Offline speech recognition, synthesis, '
+         'voice detection, and keyword '
+         'recognition -- the distress-command '
+         'ear of the sovereign voice engine, '
+         'working without a network.')},
+    {'component': 'ASTERISK',
+     'name': 'Asterisk',
+     'function': (
+         'Self-hosted telephone communication '
+         'and call management'),
+     'role': (
+         'Self-hosted telephony and call '
+         'management under the platform\u2019s own '
+         'control, when the founder designates '
+         'its installation and configuration.')},
+    {'component': 'ASTERISK_WEBRTC',
+     'name': 'Asterisk WebRTC',
+     'function': (
+         'Real-time browser-based voice '
+         'communication'),
+     'role': (
+         'Real-time browser-based voice over the '
+         'self-hosted telephony base.')},
+    {'component': 'LIVEKIT_SELF_HOSTED_SIP',
+     'name': 'LiveKit self-hosted SIP',
+     'function': (
+         'Alternative self-hosted real-time '
+         'voice and telephone integration'),
+     'role': (
+         'An alternative self-hosted real-time '
+         'voice and SIP telephone integration, '
+         'held as an architecture alternative '
+         'of record.')},
+    {'component': 'IETF_RFC_6881',
+     'name': 'IETF RFC 6881',
+     'function': (
+         'Emergency calling technical practices '
+         'and location conveyance'),
+     'role': (
+         'The emergency-calling practice the '
+         'telephony extension is built to: '
+         'best current practice for emergency '
+         'calling and location conveyance.')},
+)
+HLP_TELEPHONY_EXTENSION_OF = (
+    'DAEDALUS_SOVEREIGN_VOICE_ENGINE')
+HLP_TELEPHONY_INSTALLATION_STATE = 'NOT_INSTALLED'
+HLP_TELEPHONY_CONFIGURATION_STATE = (
+    'NOT_CONFIGURED')
+HLP_TELEPHONY_CONNECTION_STATE = 'NOT_CONNECTED'
+HLP_INDUSTRY_RESOURCE_BASE = (
+    {'industry': 'Home healthcare',
+     'resource_ref': 'HOME_HEALTHCARE',
+     'naics': '621610',
+     'contribution': (
+         'Continuity of essential healthcare '
+         'services')},
+    {'industry': 'Personal care services',
+     'resource_ref': 'PERSONAL_CARE_SERVICES',
+     'naics': '624120',
+     'contribution': (
+         'Immediate human assistance and daily '
+         'safety')},
+    {'industry': 'Non-emergency medical '
+                 'transportation',
+     'resource_ref':
+         'NON_EMERGENCY_MEDICAL_TRANSPORTATION',
+     'naics': '485991',
+     'contribution': (
+         'Appropriate medical transportation '
+         'and treatment access')},
+    {'industry': 'Home medical equipment rental',
+     'resource_ref':
+         'HOME_MEDICAL_EQUIPMENT_RENTAL',
+     'naics': '532283',
+     'contribution': (
+         'Access to necessary medical '
+         'equipment')},
+    {'industry': 'Medical equipment and '
+                 'supplies distribution',
+     'resource_ref':
+         'MEDICAL_EQUIPMENT_SUPPLIES_DISTRIBUTION',
+     'naics': '423450',
+     'contribution': (
+         'Emergency supplies and equipment '
+         'replacement')},
+    {'industry': 'Healthcare courier services',
+     'resource_ref': 'HEALTHCARE_COURIER_SERVICES',
+     'naics': '492110',
+     'contribution': (
+         'Urgent delivery of authorized medical '
+         'supplies and materials')},
+)
+HLP_PARTS = (
+    {'part': 'ARCHITECTURE_STATEMENT',
+     'title': 'The architecture statement of '
+              'record',
+     'mechanism': (
+         'The Human Life Protection By Design '
+         'statement carried verbatim in this '
+         'module and as the guarded record '
+         'docs/SANDERS_SENTINEL_HUMAN_LIFE_'
+         'PROTECTION_2026-11-26.md in the '
+         'bloodline watch set (12 documents, 11 '
+         'required), verified like every '
+         'governed document.'),
+     'designation': (
+         'Nothing external: the statement is '
+         'the platform\u2019s own law. No '
+         'designation applies.')},
+    {'part': 'EXPANDED_THREAT_SCOPE',
+     'title': 'Expanded threat scope',
+     'mechanism': (
+         'Threat records across the ten adopted '
+         'categories, resting on evidence '
+         'references of record and coordinating '
+         'by reference -- to qualified human '
+         'professionals only where a '
+         'psychological crisis is concerned.'),
+     'designation': (
+         'The authorized perception sources and '
+         'the coordination counterparts for '
+         'each category, designated category by '
+         'category.')},
+    {'part': 'PREVENTION_LAYER',
+     'title': 'Prevention and preparedness '
+              'layer',
+     'mechanism': (
+         'Prevention (anticipation) records '
+         'across the eight adopted anticipation '
+         'kinds, each able to name the '
+         'preventive coordination raised '
+         'through the existing machinery -- '
+         'the Godfather\u2019s shelter and '
+         'relocation matters, family '
+         'notifications, perception failover '
+         'and recovery -- by reference, before '
+         'impact.'),
+     'designation': (
+         'The forecast and warning sources '
+         'whose anticipations Sentinel may act '
+         'on, and the counterparts preventive '
+         'coordination reaches.')},
+    {'part': 'CLINICAL_HANDOVER',
+     'title': 'Native emergency medical '
+              'information and clinical handover',
+     'mechanism': (
+         'Handover records attached to '
+         'responder coordination records, '
+         'carrying the eight authorized '
+         'information fields by reference, '
+         'with the jurisdiction recorded on '
+         'every record.'),
+     'designation': (
+         'The responder services a handover is '
+         'delivered to and the authorized '
+         'medical-information sources it draws '
+         'on. Live interoperability with any '
+         'external system is a separate '
+         'designation and is not claimed.')},
+    {'part': 'VOICE_TELEPHONY_EXTENSION',
+     'title': 'Voice and telephony extension '
+              'architecture',
+     'mechanism': (
+         'Architecture records for the five '
+         'adopted component candidates as '
+         'extensions of the Daedalus sovereign '
+         'voice engine, alongside the native '
+         'speech path of record.'),
+     'designation': (
+         'Installation and configuration of '
+         'any named component, and any carrier '
+         'connectivity for external telephone '
+         'networks -- the founder\u2019s separate '
+         'designations. Until then every '
+         'component stands NOT_INSTALLED, '
+         'NOT_CONFIGURED, and NOT_CONNECTED, '
+         'and live_call is False.')},
+    {'part': 'SIX_INDUSTRY_RESOURCE_BASE',
+     'title': 'Six-industry resource base',
+     'mechanism': (
+         'Coordination references tying '
+         'Sentinel\u2019s resource coordination '
+         'to the founder\u2019s original six '
+         'industries by name and anchored '
+         'NAICS code, with each industry\u2019s '
+         'contribution to human survival as '
+         'adopted.'),
+     'designation': (
+         'Nothing external to connect: the six '
+         'industries are the ecosystem\u2019s own. '
+         'Each operating business\u2019s '
+         'participation stands in its own '
+         'records.')},
+    {'part': 'LADDER_REPORTING',
+     'title': 'Truthful-verification ladder '
+              'reporting',
+     'mechanism': (
+         'Per-part ladder states derived from '
+         'this architecture\u2019s designation '
+         'and test records only, reported on '
+         'this board and in status; the '
+         'derivation gates nothing.'),
+     'designation': (
+         'Nothing external: reporting derives '
+         'from the records of the other '
+         'parts.')},
+)
+
 
 class SandersSentinelDenied(Exception):
     """The requested Sanders Sentinel operation is not
@@ -2480,6 +3167,78 @@ class SandersSentinelService:
                 ' updated_at TEXT NOT NULL,'
                 ' receipt_id TEXT NOT NULL)')
 
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_hlp_designations ('
+                ' designation_id TEXT PRIMARY KEY,'
+                ' part_key TEXT NOT NULL,'
+                ' designation_ref TEXT NOT NULL,'
+                ' kind TEXT NOT NULL,'
+                ' authorization_ref TEXT NOT NULL,'
+                ' state TEXT NOT NULL,'
+                ' ended_detail_ref TEXT,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' updated_by TEXT NOT NULL,'
+                ' updated_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_threat_records ('
+                ' threat_id TEXT PRIMARY KEY,'
+                ' category TEXT NOT NULL,'
+                ' subject_ref TEXT NOT NULL,'
+                ' case_id TEXT,'
+                ' evidence_ref TEXT NOT NULL,'
+                ' coordination_kind TEXT,'
+                ' counterpart_ref TEXT,'
+                ' detail_ref TEXT NOT NULL,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_prevention_records ('
+                ' prevention_id TEXT PRIMARY KEY,'
+                ' anticipation_kind TEXT NOT NULL,'
+                ' subject_ref TEXT NOT NULL,'
+                ' evidence_ref TEXT,'
+                ' linked_machinery_kind TEXT,'
+                ' linked_record_ref TEXT,'
+                ' detail_ref TEXT NOT NULL,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_handover_records ('
+                ' handover_id TEXT PRIMARY KEY,'
+                ' case_id TEXT NOT NULL,'
+                ' coordination_id TEXT NOT NULL,'
+                ' jurisdiction_ref TEXT NOT NULL,'
+                ' conditions_allergies_ref TEXT,'
+                ' medications_ref TEXT,'
+                ' equipment_ref TEXT,'
+                ' observations_onset_ref TEXT,'
+                ' measurements_ref TEXT,'
+                ' assistance_ref TEXT,'
+                ' accessibility_ref TEXT,'
+                ' directives_ref TEXT,'
+                ' detail_ref TEXT NOT NULL,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
+            db.execute(
+                'CREATE TABLE IF NOT EXISTS'
+                ' sanders_sentinel_telephony_components ('
+                ' record_id TEXT PRIMARY KEY,'
+                ' component TEXT NOT NULL,'
+                ' component_ref TEXT NOT NULL,'
+                ' detail_ref TEXT NOT NULL,'
+                ' recorded_by TEXT NOT NULL,'
+                ' recorded_at TEXT NOT NULL,'
+                ' receipt_id TEXT NOT NULL)')
+
     # -- plumbing ---------------------------------------------------
 
     def _connect(self):
@@ -2569,6 +3328,9 @@ class SandersSentinelService:
             'sentinel_construction_program': (
                 SandersSentinelService
                 .construction_program_design_view()),
+            'sentinel_human_life_protection': (
+                SandersSentinelService
+                .hlp_design_view()),
             'note': 'Bloodline governance coverage is Sanders'
                     ' Sentinel\u2019s ruled remit under the'
                     ' founder\u2019s 2026-11-25 ruling: its role'
@@ -9094,6 +9856,1194 @@ class SandersSentinelService:
                 if view['state'] == 'COMPLETED'),
         }
 
+
+    # -- human life protection (founder's
+    # adoption, 2026-11-26) -------------------------
+
+    @staticmethod
+    def hlp_design_view() -> dict:
+        return {
+            'title': HLP_TITLE,
+            'adopted': HLP_ADOPTED,
+            'adoption': FOUNDER_HLP_ADOPTION_VERBATIM,
+            'statement': FOUNDER_HLP_STATEMENT_VERBATIM,
+            'measure': HLP_MEASURE,
+            'source': HLP_SOURCE,
+            'operational_sequence':
+                list(OPERATIONAL_SEQUENCE),
+            'sequence_verbatim':
+                OPERATIONAL_SEQUENCE_VERBATIM,
+            'prevention_layer': 'SUPPORTING',
+            'ladder': list(HLP_LADDER),
+            'ladder_frame': HLP_LADDER_FRAME,
+            'threat_scope_verbatim':
+                FOUNDER_HLP_THREAT_SCOPE_VERBATIM,
+            'threat_categories': [
+                {'category': entry['category'],
+                 'title': entry['title'],
+                 'scope': entry['scope'],
+                 'coordination_kinds': list(
+                     entry['coordination_kinds'])}
+                for entry in HLP_THREAT_CATEGORIES],
+            'prevention_verbatim':
+                FOUNDER_HLP_PREVENTION_VERBATIM,
+            'prevention_kinds': [
+                {'kind': entry['kind'],
+                 'title': entry['title'],
+                 'action': entry['action'],
+                 'machinery': list(entry['machinery'])}
+                for entry in HLP_PREVENTION_KINDS],
+            'handover_fields_verbatim':
+                FOUNDER_HLP_HANDOVER_FIELDS_VERBATIM,
+            'handover_fields': [
+                {'field': entry['field'],
+                 'label': entry['label']}
+                for entry in HLP_HANDOVER_FIELDS],
+            'handover_standards_informing': list(
+                HLP_HANDOVER_STANDARDS),
+            'telephony_components_verbatim': (
+                FOUNDER_HLP_TELEPHONY_COMPONENTS_VERBATIM),
+            'telephony_components': [
+                {'component': entry['component'],
+                 'name': entry['name'],
+                 'function': entry['function'],
+                 'role': entry['role']}
+                for entry in HLP_TELEPHONY_COMPONENTS],
+            'telephony_extension_of':
+                HLP_TELEPHONY_EXTENSION_OF,
+            'telephony_native_voice_path':
+                SENTINEL_SPEECH_NATIVE_PATH,
+            'telephony_installation_state':
+                HLP_TELEPHONY_INSTALLATION_STATE,
+            'telephony_configuration_state':
+                HLP_TELEPHONY_CONFIGURATION_STATE,
+            'telephony_connection_state':
+                HLP_TELEPHONY_CONNECTION_STATE,
+            'live_call': False,
+            'industries_verbatim':
+                FOUNDER_HLP_INDUSTRIES_VERBATIM,
+            'industry_resource_base': [
+                {'industry': entry['industry'],
+                 'resource_ref': entry['resource_ref'],
+                 'naics': entry['naics'],
+                 'contribution': entry['contribution']}
+                for entry in HLP_INDUSTRY_RESOURCE_BASE],
+            'parts': [
+                {'part': entry['part'],
+                 'title': entry['title'],
+                 'mechanism': entry['mechanism'],
+                 'designation_required':
+                     entry['designation']}
+                for entry in HLP_PARTS],
+            'sequence_invariant':
+                HLP_SEQUENCE_INVARIANT,
+            'prevention_support_invariant':
+                HLP_PREVENTION_SUPPORT_INVARIANT,
+            'no_connection_invariant':
+                HLP_NO_CONNECTION_INVARIANT,
+            'professional_invariant':
+                HLP_PROFESSIONAL_INVARIANT,
+            'handover_privacy_invariant':
+                HLP_HANDOVER_PRIVACY_INVARIANT,
+            'telephony_invariant':
+                HLP_TELEPHONY_INVARIANT,
+            'ambulance_distinction_invariant':
+                HLP_AMBULANCE_DISTINCTION_INVARIANT,
+            'reporting_only_invariant':
+                HLP_REPORTING_ONLY_INVARIANT,
+            'test_invariant': HLP_TEST_INVARIANT,
+            'external_connections': 'NONE',
+            'funds_disbursed': False,
+            'funds_held': False,
+        }
+
+    @staticmethod
+    def _hlp_part_entry(part_key):
+        for entry in HLP_PARTS:
+            if entry['part'] == part_key:
+                return entry
+        raise SandersSentinelDenied(
+            'The Human Life Protection part must be '
+            'one of the adopted architecture\u2019s '
+            'parts')
+
+    @staticmethod
+    def _hlp_capability(part_key):
+        return f'HLP_PART_{part_key}'
+
+    def _hlp_part_state(self, db, entry):
+        """Derive one Human Life Protection part's
+        truthful ladder state from the records --
+        and only from the records, exactly as the
+        construction program derives its items. An
+        ACTIVE LIVE designation of record is the
+        part's connection; a SIMULATED designation
+        never counts as a connection. A COMPLETED
+        end-to-end test of record is the part's
+        test. OPERATIONAL requires both."""
+        part_key = entry['part']
+        designation = db.execute(
+            'SELECT * FROM'
+            ' sanders_sentinel_hlp_designations'
+            ' WHERE part_key = ? AND state = ? ORDER'
+            ' BY recorded_at DESC, rowid DESC LIMIT 1',
+            (part_key, 'ACTIVE')).fetchone()
+        tested = db.execute(
+            'SELECT COUNT(*) AS n FROM'
+            ' sanders_sentinel_operational_tests WHERE'
+            ' capability = ? AND outcome = ?',
+            (self._hlp_capability(part_key),
+             'COMPLETED')).fetchone()['n'] > 0
+        connected = (designation is not None
+                     and designation['kind'] == 'LIVE')
+        simulated = (designation is not None
+                     and designation['kind'] == 'SIMULATED')
+        if not entry['mechanism']:
+            state = 'DESIGNED'
+        elif connected and tested:
+            state = 'OPERATIONAL'
+        elif tested:
+            state = 'TESTED'
+        elif connected:
+            state = 'CONNECTED'
+        else:
+            state = 'CONSTRUCTED'
+        return {
+            'part': part_key,
+            'title': entry['title'],
+            'mechanism': entry['mechanism'],
+            'designation_required': entry['designation'],
+            'ladder_state': state,
+            'designation_id': (
+                designation['designation_id']
+                if designation else None),
+            'designation_kind': (
+                designation['kind']
+                if designation else None),
+            'simulated_designation': simulated,
+            'end_to_end_test_completed': tested,
+            'reporting_only': True,
+            'gates_activation': False,
+        }
+
+    def human_life_protection_view(self, actor, role,
+                                   *, region=None):
+        """The Human Life Protection board (guarded
+        read): the adopted architecture, every part
+        with its derived ladder state, and the
+        records of the architecture -- threat
+        records by category, prevention records,
+        handover records, and the telephony
+        component architecture records, which stand
+        NOT_CONNECTED with live_call False. States
+        are reporting only and gate nothing."""
+        self._geo(region)
+        self._guard_access(
+            actor, role, 'human-life-protection',
+            'human life protection view')
+        with self._connect() as db:
+            parts = [
+                self._hlp_part_state(db, entry)
+                for entry in HLP_PARTS]
+            threat_by_category = {
+                entry['category']: 0
+                for entry in HLP_THREAT_CATEGORIES}
+            for row in db.execute(
+                    'SELECT category, COUNT(*) AS n'
+                    ' FROM sanders_sentinel_threat_records'
+                    ' GROUP BY category'):
+                threat_by_category[
+                    row['category']] = row['n']
+            prevention_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_prevention_records'
+            ).fetchone()['n']
+            handover_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_handover_records'
+            ).fetchone()['n']
+            telephony_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_telephony_components'
+            ).fetchone()['n']
+        return {
+            'title': HLP_TITLE,
+            'adopted': HLP_ADOPTED,
+            'design':
+                SandersSentinelService.hlp_design_view(),
+            'parts': parts,
+            'parts_operational': [
+                entry['part'] for entry in parts
+                if entry['ladder_state'] == 'OPERATIONAL'],
+            'threat_records_by_category':
+                threat_by_category,
+            'threat_records_total': sum(
+                threat_by_category.values()),
+            'prevention_records_total':
+                prevention_total,
+            'handover_records_total': handover_total,
+            'telephony_component_records_total':
+                telephony_total,
+            'telephony_connection_state':
+                HLP_TELEPHONY_CONNECTION_STATE,
+            'live_call': False,
+            'external_connections': 'NONE',
+            'funds_disbursed': False,
+            'funds_held': False,
+        }
+
+    @staticmethod
+    def _hlp_designation_view(row):
+        return {
+            'designation_id': row['designation_id'],
+            'part': row['part_key'],
+            'designation_ref': row['designation_ref'],
+            'kind': row['kind'],
+            'authorization_ref':
+                row['authorization_ref'],
+            'state': row['state'],
+            'ended_detail_ref': row['ended_detail_ref'],
+            'scope_ref': HLP_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_hlp_designation(
+            self, actor, part_key, designation_ref,
+            kind, authorization_ref, *, region=None):
+        """Record one founder designation for a
+        Human Life Protection part (operator only):
+        the designated counterpart, source, or
+        arrangement and its authorization basis, by
+        reference, labeled LIVE or SIMULATED exactly
+        as it is. A designation record designates and
+        records; the part's ladder state is derived
+        from it, and a SIMULATED designation can
+        never support a CONNECTED or OPERATIONAL
+        reading. Recording a designation connects
+        nothing by itself -- it is the record of the
+        founder's designation, the only path by
+        which a part may read CONNECTED."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(part_key, str)
+                or not part_key.strip()):
+            raise SandersSentinelDenied(
+                'The Human Life Protection part is '
+                'required')
+        self._hlp_part_entry(part_key)
+        if kind not in HLP_DESIGNATION_KINDS:
+            raise SandersSentinelDenied(
+                'The designation kind must be one of: '
+                + ', '.join(HLP_DESIGNATION_KINDS))
+        for label, value in (
+                ('designation_ref', designation_ref),
+                ('authorization_ref', authorization_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        designation_id = (
+            f'sentinel-hlp-designation-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_HLP_DESIGNATION'
+                    '_RECORDED',
+                    actor=actor,
+                    designation_id=designation_id,
+                    part_key=part_key, kind=kind)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_hlp_designations'
+                    ' (designation_id, part_key,'
+                    ' designation_ref, kind,'
+                    ' authorization_ref, state,'
+                    ' ended_detail_ref, recorded_by,'
+                    ' recorded_at, updated_by, updated_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (designation_id, part_key,
+                     designation_ref.strip(), kind,
+                     authorization_ref.strip(), 'ACTIVE',
+                     None, actor, now, actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_hlp_designations'
+                ' WHERE designation_id = ?',
+                (designation_id,)).fetchone()
+        return self._hlp_designation_view(row)
+
+    def end_hlp_designation(
+            self, actor, designation_id, detail_ref, *,
+            region=None):
+        """End one ACTIVE Human Life Protection
+        designation (operator only): the designation
+        stops counting toward the part's ladder state
+        from this record forward. The record is never
+        deleted; the part's state re-derives from
+        what remains."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersSentinelDenied(
+                'A detail reference is required')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_hlp_designations'
+                    ' WHERE designation_id = ?',
+                    (designation_id,)).fetchone()
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'Unknown Human Life Protection '
+                        'designation')
+                if row['state'] != 'ACTIVE':
+                    raise SandersSentinelDenied(
+                        'Only an ACTIVE designation can '
+                        'be ended')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_HLP_DESIGNATION'
+                    '_ENDED',
+                    actor=actor,
+                    designation_id=designation_id,
+                    part_key=row['part_key'])
+                db.execute(
+                    'UPDATE'
+                    ' sanders_sentinel_hlp_designations'
+                    ' SET state = ?, ended_detail_ref = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE'
+                    ' designation_id = ?',
+                    ('ENDED', detail_ref.strip(), actor,
+                     now, receipt_id, designation_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_hlp_designations'
+                ' WHERE designation_id = ?',
+                (designation_id,)).fetchone()
+        return self._hlp_designation_view(row)
+
+    def hlp_designations(self, actor, role, *,
+                         part_key=None, region=None):
+        """The Human Life Protection designations of
+        record (guarded read)."""
+        self._geo(region)
+        self._guard_access(
+            actor, role, 'human-life-protection',
+            'human life protection designations view')
+        with self._connect() as db:
+            if part_key is None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_hlp_designations'
+                    ' ORDER BY recorded_at').fetchall()
+            else:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_hlp_designations'
+                    ' WHERE part_key = ? ORDER BY'
+                    ' recorded_at', (part_key,)).fetchall()
+        views = [self._hlp_designation_view(row)
+                 for row in rows]
+        return {
+            'title': HLP_TITLE,
+            'designations': views,
+            'total': len(views),
+            'active_total': sum(
+                1 for view in views
+                if view['state'] == 'ACTIVE'),
+        }
+
+    def record_hlp_test(
+            self, actor, part_key, stages, outcome,
+            detail_ref, *, region=None):
+        """Record one end-to-end operational test of
+        a Human Life Protection part (operator only),
+        in the operational tests of record under the
+        part's architecture capability. A COMPLETED
+        outcome requires all eight stages of the
+        operational sequence -- the sequence this
+        architecture leaves exactly as established.
+        The record is labeled TEST everywhere it
+        appears: a test never counts as a real
+        emergency, never opens or closes a real case,
+        and is incapable of external dispatch."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(part_key, str)
+                or not part_key.strip()):
+            raise SandersSentinelDenied(
+                'The Human Life Protection part is '
+                'required')
+        self._hlp_part_entry(part_key)
+        if outcome not in OPERATIONAL_TEST_OUTCOMES:
+            raise SandersSentinelDenied(
+                'The test outcome must be one of: '
+                + ', '.join(OPERATIONAL_TEST_OUTCOMES))
+        if (not isinstance(stages, (list, tuple))
+                or not stages):
+            raise SandersSentinelDenied(
+                'The exercised stages of the operational'
+                ' sequence are required')
+        stage_list = []
+        for stage in stages:
+            if stage not in OPERATIONAL_SEQUENCE:
+                raise SandersSentinelDenied(
+                    'Each stage must be one of the'
+                    ' operational sequence: '
+                    + ', '.join(OPERATIONAL_SEQUENCE))
+            if stage not in stage_list:
+                stage_list.append(stage)
+        if (outcome == 'COMPLETED'
+                and set(stage_list)
+                != set(OPERATIONAL_SEQUENCE)):
+            raise SandersSentinelDenied(
+                'A completed end-to-end test exercises'
+                ' the complete sequence -- Perceive'
+                ' through Recover, all eight stages')
+        if (not isinstance(detail_ref, str)
+                or not detail_ref.strip()):
+            raise SandersSentinelDenied(
+                'A detail reference is required')
+        capability = self._hlp_capability(part_key)
+        now = self._now()
+        test_id = (f'sentinel-operational-test-'
+                   f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_OPERATIONAL_TEST'
+                    '_RECORDED',
+                    actor=actor, test_id=test_id,
+                    record_kind='TEST',
+                    capability=capability,
+                    outcome=outcome,
+                    stages=list(stage_list))
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_operational_tests'
+                    ' (test_id, capability, stages, outcome,'
+                    ' detail_ref, recorded_by, recorded_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?)',
+                    (test_id, capability,
+                     json.dumps(stage_list), outcome,
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_operational_tests'
+                ' WHERE test_id = ?', (test_id,)).fetchone()
+        view = self._operational_test_view(row)
+        view['part'] = part_key
+        return view
+
+    def hlp_tests(self, actor, role, *, region=None):
+        """The Human Life Protection tests of record
+        (guarded read) -- every one labeled TEST."""
+        self._geo(region)
+        self._guard_access(
+            actor, role, 'human-life-protection',
+            'human life protection tests view')
+        capabilities = [
+            self._hlp_capability(entry['part'])
+            for entry in HLP_PARTS]
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_operational_tests'
+                ' ORDER BY recorded_at').fetchall()
+        views = []
+        for row in rows:
+            if row['capability'] not in capabilities:
+                continue
+            view = self._operational_test_view(row)
+            view['part'] = row['capability'][
+                len('HLP_PART_'):]
+            views.append(view)
+        return {
+            'title': HLP_TITLE,
+            'record_kind': 'TEST',
+            'tests': views,
+            'total': len(views),
+            'completed_total': sum(
+                1 for view in views
+                if view['outcome'] == 'COMPLETED'),
+        }
+
+    @staticmethod
+    def _threat_category_entry(category):
+        for entry in HLP_THREAT_CATEGORIES:
+            if entry['category'] == category:
+                return entry
+        raise SandersSentinelDenied(
+            'The threat category must be one of the '
+            'adopted Human Life Protection threat '
+            'scope categories')
+
+    @staticmethod
+    def _threat_record_view(row):
+        return {
+            'threat_id': row['threat_id'],
+            'category': row['category'],
+            'subject_ref': row['subject_ref'],
+            'case_id': row['case_id'],
+            'evidence_ref': row['evidence_ref'],
+            'coordination_kind':
+                row['coordination_kind'],
+            'counterpart_ref': row['counterpart_ref'],
+            'detail_ref': row['detail_ref'],
+            'sentinel_role': ASSISTANCE_COORDINATION_ROLE,
+            'treatment_by_sentinel': False,
+            'scope_ref': HLP_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_threat_record(
+            self, actor, category, subject_ref,
+            evidence_ref, detail_ref, case_id=None,
+            coordination_kind=None, counterpart_ref=None,
+            *, region=None):
+        """Record one threat record in the expanded
+        threat scope (operator only): a threat,
+        assessment, or coordination record in one of
+        the ten adopted categories, resting on an
+        evidence reference of record -- Sentinel
+        assesses evidence presented, never
+        inference. Coordination, where recorded, is
+        by reference to a qualified human
+        professional, an authorized responder
+        service, or an assistance organization; a
+        PSYCHOLOGICAL record coordinates only to a
+        qualified mental-health professional or a
+        trained crisis counselor. Sentinel's role on
+        every threat record is COORDINATION_ONLY:
+        the intervention is the qualified human's --
+        Sentinel never treats. No capability beyond
+        the record and its coordination is created
+        or claimed."""
+        self._geo(region)
+        self._require_operator(actor)
+        entry = self._threat_category_entry(category)
+        for label, value in (
+                ('subject_ref', subject_ref),
+                ('evidence_ref', evidence_ref),
+                ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if coordination_kind is not None:
+            if coordination_kind not in (
+                    entry['coordination_kinds']):
+                raise SandersSentinelDenied(
+                    'The coordination kind for '
+                    f'category {category} must be one '
+                    'of: ' + ', '.join(
+                        entry['coordination_kinds']))
+            if (not isinstance(counterpart_ref, str)
+                    or not counterpart_ref.strip()):
+                raise SandersSentinelDenied(
+                    'A counterpart reference is required'
+                    ' when a coordination kind is '
+                    'recorded')
+        elif counterpart_ref is not None:
+            raise SandersSentinelDenied(
+                'A counterpart reference requires its '
+                'coordination kind')
+        now = self._now()
+        threat_id = (
+            f'sentinel-threat-record-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                if case_id is not None:
+                    case = self._emergency_case_row(
+                        db, case_id)
+                    if case is None:
+                        raise SandersSentinelDenied(
+                            'Unknown emergency case')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_THREAT_RECORD'
+                    '_RECORDED',
+                    actor=actor, threat_id=threat_id,
+                    category=category,
+                    sentinel_role=(
+                        ASSISTANCE_COORDINATION_ROLE))
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_threat_records'
+                    ' (threat_id, category, subject_ref,'
+                    ' case_id, evidence_ref,'
+                    ' coordination_kind, counterpart_ref,'
+                    ' detail_ref, recorded_by,'
+                    ' recorded_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (threat_id, category,
+                     subject_ref.strip(), case_id,
+                     evidence_ref.strip(),
+                     coordination_kind,
+                     counterpart_ref.strip()
+                     if counterpart_ref else None,
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_threat_records'
+                ' WHERE threat_id = ?',
+                (threat_id,)).fetchone()
+        return self._threat_record_view(row)
+
+    def threat_records(self, actor, role, *,
+                       category=None, case_id=None,
+                       region=None):
+        """The threat records of the expanded scope
+        (guarded read) -- every one resting on
+        evidence of record, coordination only,
+        treatment never by Sentinel."""
+        self._geo(region)
+        self._guard_access(actor, role, 'threat-records',
+                           'threat records view')
+        with self._connect() as db:
+            if category is not None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_threat_records'
+                    ' WHERE category = ? ORDER BY'
+                    ' recorded_at', (category,)).fetchall()
+            elif case_id is not None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_threat_records'
+                    ' WHERE case_id = ? ORDER BY'
+                    ' recorded_at', (case_id,)).fetchall()
+            else:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_threat_records'
+                    ' ORDER BY recorded_at').fetchall()
+        views = [self._threat_record_view(row)
+                 for row in rows]
+        return {
+            'title': HLP_TITLE,
+            'sentinel_role':
+                ASSISTANCE_COORDINATION_ROLE,
+            'treatment_by_sentinel': False,
+            'threat_records': views,
+            'total': len(views),
+        }
+
+    @staticmethod
+    def _prevention_kind_entry(kind):
+        for entry in HLP_PREVENTION_KINDS:
+            if entry['kind'] == kind:
+                return entry
+        raise SandersSentinelDenied(
+            'The anticipation kind must be one of '
+            'the adopted prevention layer\u2019s eight '
+            'anticipation kinds')
+
+    @staticmethod
+    def _prevention_record_view(row):
+        return {
+            'prevention_id': row['prevention_id'],
+            'anticipation_kind':
+                row['anticipation_kind'],
+            'subject_ref': row['subject_ref'],
+            'evidence_ref': row['evidence_ref'],
+            'linked_machinery_kind':
+                row['linked_machinery_kind'],
+            'linked_record_ref':
+                row['linked_record_ref'],
+            'detail_ref': row['detail_ref'],
+            'prevention_layer': 'SUPPORTING',
+            'gates_activation': False,
+            'delays_activation': False,
+            'scope_ref': HLP_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_prevention_record(
+            self, actor, anticipation_kind, subject_ref,
+            detail_ref, evidence_ref=None,
+            linked_machinery_kind=None,
+            linked_record_ref=None, *, region=None):
+        """Record one prevention (anticipation)
+        record (operator only): an anticipated
+        threat of one of the eight adopted kinds,
+        recorded before impact, which may name the
+        preventive coordination raised through the
+        existing machinery -- a Godfather matter, a
+        family notification, an assistance
+        coordination, a responder coordination, a
+        perception failover, or a recovery attempt --
+        by reference. Prevention supports the whole
+        architecture: this record never gates,
+        delays, conditions, or is required by any
+        emergency activation, and recording one
+        dispatches nothing itself."""
+        self._geo(region)
+        self._require_operator(actor)
+        entry = self._prevention_kind_entry(
+            anticipation_kind)
+        for label, value in (
+                ('subject_ref', subject_ref),
+                ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if evidence_ref is not None and (
+                not isinstance(evidence_ref, str)
+                or not evidence_ref.strip()):
+            raise SandersSentinelDenied(
+                'An evidence reference, when given, '
+                'must name the record it rests on')
+        if linked_machinery_kind is not None:
+            if linked_machinery_kind not in (
+                    entry['machinery']):
+                raise SandersSentinelDenied(
+                    'The linked machinery for '
+                    f'{anticipation_kind} must be one '
+                    'of: ' + ', '.join(entry['machinery']))
+            if (not isinstance(linked_record_ref, str)
+                    or not linked_record_ref.strip()):
+                raise SandersSentinelDenied(
+                    'A linked record reference is '
+                    'required when linked machinery is '
+                    'recorded')
+        elif linked_record_ref is not None:
+            raise SandersSentinelDenied(
+                'A linked record reference requires '
+                'its linked machinery kind')
+        now = self._now()
+        prevention_id = (
+            f'sentinel-prevention-record-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_PREVENTION_RECORD'
+                    '_RECORDED',
+                    actor=actor,
+                    prevention_id=prevention_id,
+                    anticipation_kind=anticipation_kind,
+                    prevention_layer='SUPPORTING')
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_prevention_records'
+                    ' (prevention_id, anticipation_kind,'
+                    ' subject_ref, evidence_ref,'
+                    ' linked_machinery_kind,'
+                    ' linked_record_ref, detail_ref,'
+                    ' recorded_by, recorded_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (prevention_id, anticipation_kind,
+                     subject_ref.strip(),
+                     evidence_ref.strip()
+                     if evidence_ref else None,
+                     linked_machinery_kind,
+                     linked_record_ref.strip()
+                     if linked_record_ref else None,
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_prevention_records'
+                ' WHERE prevention_id = ?',
+                (prevention_id,)).fetchone()
+        return self._prevention_record_view(row)
+
+    def prevention_records(self, actor, role, *,
+                           anticipation_kind=None,
+                           region=None):
+        """The prevention records (guarded read) --
+        the supporting layer's records, gating
+        nothing."""
+        self._geo(region)
+        self._guard_access(
+            actor, role, 'prevention-records',
+            'prevention records view')
+        with self._connect() as db:
+            if anticipation_kind is None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_prevention_records'
+                    ' ORDER BY recorded_at').fetchall()
+            else:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_prevention_records'
+                    ' WHERE anticipation_kind = ? ORDER'
+                    ' BY recorded_at',
+                    (anticipation_kind,)).fetchall()
+        views = [self._prevention_record_view(row)
+                 for row in rows]
+        return {
+            'title': HLP_TITLE,
+            'prevention_layer': 'SUPPORTING',
+            'gates_activation': False,
+            'prevention_records': views,
+            'total': len(views),
+        }
+
+    @staticmethod
+    def _handover_record_view(row):
+        fields = {
+            entry['field']: row[entry['column']]
+            for entry in HLP_HANDOVER_FIELDS}
+        return {
+            'handover_id': row['handover_id'],
+            'case_id': row['case_id'],
+            'coordination_id': row['coordination_id'],
+            'jurisdiction_ref': row['jurisdiction_ref'],
+            'fields_by_reference': fields,
+            'detail_ref': row['detail_ref'],
+            'authorized_information_only': True,
+            'holds_medical_information': False,
+            'privacy': 'JURISDICTION_AWARE',
+            'standards_informing': list(
+                HLP_HANDOVER_STANDARDS),
+            'interoperability_claimed': False,
+            'scope_ref': HLP_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_handover_record(
+            self, actor, case_id, coordination_id,
+            jurisdiction_ref, detail_ref,
+            conditions_allergies_ref=None,
+            medications_ref=None, equipment_ref=None,
+            observations_onset_ref=None,
+            measurements_ref=None, assistance_ref=None,
+            accessibility_ref=None, directives_ref=None,
+            *, region=None):
+        """Record one clinical handover (operator
+        only), attached to a responder coordination
+        record of the same emergency case: the eight
+        authorized emergency information fields,
+        each carried BY REFERENCE to where the
+        authorized information stands of record. The
+        handover holds no medical information
+        itself; at least one field reference is
+        required. The jurisdiction is recorded on
+        every handover -- privacy is
+        jurisdiction-aware. HL7 IPS and HL7 FHIR
+        inform the field structure; the record
+        connects to no external system and claims
+        no live interoperability."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (
+                ('jurisdiction_ref', jurisdiction_ref),
+                ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        field_values = {
+            'conditions_allergies':
+                conditions_allergies_ref,
+            'medications': medications_ref,
+            'equipment': equipment_ref,
+            'observations_onset':
+                observations_onset_ref,
+            'measurements': measurements_ref,
+            'assistance': assistance_ref,
+            'accessibility': accessibility_ref,
+            'directives': directives_ref,
+        }
+        columns = {}
+        for entry in HLP_HANDOVER_FIELDS:
+            value = field_values[entry['field']]
+            if value is not None and (
+                    not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f"The {entry['field']} reference, "
+                    'when given, must name the record '
+                    'it rests on')
+            columns[entry['column']] = (
+                value.strip() if value else None)
+        if not any(columns.values()):
+            raise SandersSentinelDenied(
+                'A handover carries at least one of '
+                'the eight authorized information '
+                'fields, by reference')
+        now = self._now()
+        handover_id = (
+            f'sentinel-handover-record-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                coordination = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_responder'
+                    '_coordination WHERE'
+                    ' coordination_id = ?',
+                    (coordination_id,)).fetchone()
+                if coordination is None:
+                    raise SandersSentinelDenied(
+                        'Unknown responder coordination: '
+                        'a handover attaches to a '
+                        'responder coordination of '
+                        'record')
+                if coordination['case_id'] != case_id:
+                    raise SandersSentinelDenied(
+                        'The responder coordination '
+                        'belongs to another emergency '
+                        'case')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_HANDOVER_RECORD'
+                    '_RECORDED',
+                    actor=actor, handover_id=handover_id,
+                    case_id=case_id,
+                    coordination_id=coordination_id,
+                    authorized_information_only=True)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_handover_records'
+                    ' (handover_id, case_id,'
+                    ' coordination_id, jurisdiction_ref,'
+                    ' conditions_allergies_ref,'
+                    ' medications_ref, equipment_ref,'
+                    ' observations_onset_ref,'
+                    ' measurements_ref, assistance_ref,'
+                    ' accessibility_ref, directives_ref,'
+                    ' detail_ref, recorded_by,'
+                    ' recorded_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?, ?, ?, ?)',
+                    (handover_id, case_id,
+                     coordination_id,
+                     jurisdiction_ref.strip(),
+                     columns['conditions_allergies_ref'],
+                     columns['medications_ref'],
+                     columns['equipment_ref'],
+                     columns['observations_onset_ref'],
+                     columns['measurements_ref'],
+                     columns['assistance_ref'],
+                     columns['accessibility_ref'],
+                     columns['directives_ref'],
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_handover_records'
+                ' WHERE handover_id = ?',
+                (handover_id,)).fetchone()
+        return self._handover_record_view(row)
+
+    def handover_records(self, actor, role, *,
+                         case_id=None, region=None):
+        """The clinical handover records (guarded
+        read) -- authorized information by reference
+        only; no medical information is held here,
+        and no interoperability is claimed."""
+        self._geo(region)
+        self._guard_access(
+            actor, role, 'handover-records',
+            'handover records view')
+        with self._connect() as db:
+            if case_id is None:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_handover_records'
+                    ' ORDER BY recorded_at').fetchall()
+            else:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_handover_records'
+                    ' WHERE case_id = ? ORDER BY'
+                    ' recorded_at', (case_id,)).fetchall()
+        views = [self._handover_record_view(row)
+                 for row in rows]
+        return {
+            'title': HLP_TITLE,
+            'authorized_information_only': True,
+            'holds_medical_information': False,
+            'interoperability_claimed': False,
+            'handover_records': views,
+            'total': len(views),
+        }
+
+    @staticmethod
+    def _telephony_component_entry(component):
+        for entry in HLP_TELEPHONY_COMPONENTS:
+            if entry['component'] == component:
+                return entry
+        raise SandersSentinelDenied(
+            'The telephony component must be one of '
+            'the adopted extension architecture\u2019s '
+            'five component candidates')
+
+    @staticmethod
+    def _telephony_component_view(row):
+        return {
+            'record_id': row['record_id'],
+            'component': row['component'],
+            'component_ref': row['component_ref'],
+            'detail_ref': row['detail_ref'],
+            'extension_of': HLP_TELEPHONY_EXTENSION_OF,
+            'native_voice_path':
+                SENTINEL_SPEECH_NATIVE_PATH,
+            'installation_state':
+                HLP_TELEPHONY_INSTALLATION_STATE,
+            'configuration_state':
+                HLP_TELEPHONY_CONFIGURATION_STATE,
+            'connection_state':
+                HLP_TELEPHONY_CONNECTION_STATE,
+            'live_call': False,
+            'scope_ref': HLP_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def record_telephony_component(
+            self, actor, component, component_ref,
+            detail_ref, *, region=None):
+        """Record one voice/telephony extension
+        architecture record (operator only): one of
+        the five adopted component candidates, named
+        as an extension of the Daedalus sovereign
+        voice engine alongside the native speech
+        path of record. This is an ARCHITECTURE
+        record only: it installs nothing, configures
+        nothing, and connects no carrier. The record
+        stands NOT_INSTALLED, NOT_CONFIGURED, and
+        NOT_CONNECTED, and live_call is False --
+        installation, configuration, and carrier
+        connectivity are the founder's separate
+        designations."""
+        self._geo(region)
+        self._require_operator(actor)
+        self._telephony_component_entry(component)
+        for label, value in (
+                ('component_ref', component_ref),
+                ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        record_id = (
+            f'sentinel-telephony-component-'
+            f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_TELEPHONY'
+                    '_COMPONENT_RECORDED',
+                    actor=actor, record_id=record_id,
+                    component=component,
+                    connection_state=(
+                        HLP_TELEPHONY_CONNECTION_STATE),
+                    live_call=False)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_telephony'
+                    '_components (record_id, component,'
+                    ' component_ref, detail_ref,'
+                    ' recorded_by, recorded_at,'
+                    ' receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?)',
+                    (record_id, component,
+                     component_ref.strip(),
+                     detail_ref.strip(), actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_telephony_components'
+                ' WHERE record_id = ?',
+                (record_id,)).fetchone()
+        return self._telephony_component_view(row)
+
+    def telephony_components(self, actor, role, *,
+                             region=None):
+        """The voice/telephony extension architecture
+        records (guarded read) -- architecture only:
+        nothing installed, nothing configured,
+        nothing connected, live_call False."""
+        self._geo(region)
+        self._guard_access(
+            actor, role, 'telephony-components',
+            'telephony components view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_telephony_components'
+                ' ORDER BY recorded_at').fetchall()
+        views = [self._telephony_component_view(row)
+                 for row in rows]
+        return {
+            'title': HLP_TITLE,
+            'extension_of': HLP_TELEPHONY_EXTENSION_OF,
+            'native_voice_path':
+                SENTINEL_SPEECH_NATIVE_PATH,
+            'installation_state':
+                HLP_TELEPHONY_INSTALLATION_STATE,
+            'configuration_state':
+                HLP_TELEPHONY_CONFIGURATION_STATE,
+            'connection_state':
+                HLP_TELEPHONY_CONNECTION_STATE,
+            'live_call': False,
+            'components': views,
+            'total': len(views),
+        }
+
     def disburse_funds(self, actor, *args, **kwargs):
         """Refused by name, unconditionally. Under the
         Permanent Global Bloodline Protection
@@ -9300,6 +11250,33 @@ class SandersSentinelService:
                 'SELECT COUNT(*) AS n FROM'
                 ' sanders_sentinel_recovery_assistance'
             ).fetchone()['n']
+            hlp_part_states = {
+                entry['part']:
+                SandersSentinelService
+                ._hlp_part_state(self, db, entry)
+                ['ladder_state']
+                for entry in HLP_PARTS}
+            hlp_designations_active = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_hlp_designations'
+                " WHERE state = 'ACTIVE'"
+            ).fetchone()['n']
+            hlp_threat_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_threat_records'
+            ).fetchone()['n']
+            hlp_prevention_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_prevention_records'
+            ).fetchone()['n']
+            hlp_handover_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_handover_records'
+            ).fetchone()['n']
+            hlp_telephony_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_telephony_components'
+            ).fetchone()['n']
         return {
             'identity': IDENTITY.to_dict(),
             'design': self.design_view(),
@@ -9415,6 +11392,32 @@ class SandersSentinelService:
                     program_notifications_undelivered,
                 'recovery_assistance_total':
                     program_recovery_total,
+                'external_connections': 'NONE',
+                'funds_disbursed': False,
+                'funds_held': False,
+            },
+            'human_life_protection': {
+                'title': HLP_TITLE,
+                'adopted': HLP_ADOPTED,
+                'parts_by_ladder_state':
+                    hlp_part_states,
+                'parts_operational': [
+                    part for part, state
+                    in hlp_part_states.items()
+                    if state == 'OPERATIONAL'],
+                'designations_active':
+                    hlp_designations_active,
+                'threat_records_total':
+                    hlp_threat_total,
+                'prevention_records_total':
+                    hlp_prevention_total,
+                'handover_records_total':
+                    hlp_handover_total,
+                'telephony_component_records_total':
+                    hlp_telephony_total,
+                'telephony_connection_state':
+                    HLP_TELEPHONY_CONNECTION_STATE,
+                'live_call': False,
                 'external_connections': 'NONE',
                 'funds_disbursed': False,
                 'funds_held': False,
