@@ -1041,6 +1041,168 @@ COMPLETENESS_ACCOUNTING = (
               ' the other'},
 )
 
+# -- Global benchmark mapping (founder directive,
+# 2026-11-26 11:36 MST) ------------------------------
+#
+# "Ensure they are the best, most secure globally,"
+# executed as control-for-control hardening against
+# the top-tier global standard: every control in the
+# sets gathered in the shield-upgrade research is
+# mapped here and marked FUNCTIONING (exercised by
+# test), RECORDED_WITH_REASON,
+# NOT_APPLICABLE_WITH_REASON, or ENVIRONMENT_LIMITED
+# (the limit in plain words, plus the founder
+# decision that would lift it). No control is
+# silently skipped; no standing is overstated. The
+# internal attack-simulation suites are the
+# continuous proof mechanism.
+FOUNDER_BENCHMARK_DIRECTIVE_VERBATIM = (
+    "We've got to ensure that they are")
+BENCHMARK_STANDINGS = (
+    'FUNCTIONING', 'RECORDED_WITH_REASON',
+    'NOT_APPLICABLE_WITH_REASON', 'ENVIRONMENT_LIMITED')
+BENCHMARK_CONTROLS = (
+    # OWASP Top 10:2025 (web)
+    {'set': 'OWASP_TOP_10_2025', 'control': 'A01_BROKEN_ACCESS_CONTROL',
+     'standing': 'FUNCTIONING',
+     'basis': 'per-platform access guards with fixed role scopes; per-act operator verification; SSRF indicators stand in this family in the packet evaluator — exercised across the suites'},
+    {'set': 'OWASP_TOP_10_2025', 'control': 'A02_SECURITY_MISCONFIGURATION',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the edge posture checklist stands of record in the Labyrinth Shield posture view (fifteen items); live verification is by presented evidence — these platforms do not reconfigure their host'},
+    {'set': 'OWASP_TOP_10_2025', 'control': 'A03_SOFTWARE_SUPPLY_CHAIN_FAILURES',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'native standard library only — no third-party component exists in these platforms to attack; the foundation-import prohibition is enforced in code; interpreter patch level stands as a host record, not exercised by these suites'},
+    {'set': 'OWASP_TOP_10_2025', 'control': 'A04_CRYPTOGRAPHIC_FAILURES',
+     'standing': 'FUNCTIONING',
+     'basis': 'SHA-3/SHAKE constructions, hash-chained signed attestations, constant-time comparisons — exercised; claims above the environment check are refused in code (the validated-module standing is carried separately below)'},
+    {'set': 'OWASP_TOP_10_2025', 'control': 'A05_INJECTION',
+     'standing': 'FUNCTIONING',
+     'basis': 'ten indicator classes in the packet evaluator — CRLF/desync, SSTI, traversal in all encodings, log injection, NoSQL operator shapes — exercised in the shield suites'},
+    {'set': 'OWASP_TOP_10_2025', 'control': 'A06_INSECURE_DESIGN',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'fail-closed design is of record in every platform contract (refuse-to-exist without audit; prohibited operations refused by name); design discipline is a record, not a test'},
+    {'set': 'OWASP_TOP_10_2025', 'control': 'A07_AUTHENTICATION_FAILURES',
+     'standing': 'FUNCTIONING',
+     'basis': 'per-actor lockout buckets, credential-stuffing scoring (account diversity + success source), per-act re-verification — exercised by the attack simulations'},
+    {'set': 'OWASP_TOP_10_2025', 'control': 'A08_SOFTWARE_AND_DATA_INTEGRITY_FAILURES',
+     'standing': 'FUNCTIONING',
+     'basis': 'integrity patrol over known-good baselines, hash pins compared in constant time, signed chain verification — exercised, including tamper simulations that break verification on cue'},
+    {'set': 'OWASP_TOP_10_2025', 'control': 'A09_LOGGING_AND_ALERTING_FAILURES',
+     'standing': 'FUNCTIONING',
+     'basis': 'every state change writes its Glass-Box receipt in the same transaction; integrity failures surface as anomaly records on the operator\u2019s boards — exercised; no external dispatch exists, by the native-only law'},
+    {'set': 'OWASP_TOP_10_2025', 'control': 'A10_MISHANDLING_OF_EXCEPTIONAL_CONDITIONS',
+     'standing': 'FUNCTIONING',
+     'basis': 'uniform refusals that leak nothing; the signer fails closed at leaf exhaustion; the evaluator rejects rather than errors open — exercised'},
+    # OWASP API Security Top 10 (2023)
+    {'set': 'OWASP_API_TOP_10_2023', 'control': 'API1_BROKEN_OBJECT_LEVEL_AUTHORIZATION',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'sequential cross-owner identifier and mass-assignment indicator classes stand in the packet evaluator; behavioral BOLA detection across owners is adapted in part — no cross-owner object store stands in the shields\u2019 own surfaces for it to exercise against'},
+    {'set': 'OWASP_API_TOP_10_2023', 'control': 'API2_BROKEN_AUTHENTICATION',
+     'standing': 'FUNCTIONING',
+     'basis': 'the A07 machinery, at the API surface: lockout, stuffing signals, per-act verification — exercised'},
+    {'set': 'OWASP_API_TOP_10_2023', 'control': 'API3_BROKEN_OBJECT_PROPERTY_LEVEL_AUTHORIZATION',
+     'standing': 'FUNCTIONING',
+     'basis': 'mass-assignment probes (unexpected privileged fields in presented bodies) are indicator-classified — exercised; every route form in these platforms also refuses unexpected fields by name'},
+    {'set': 'OWASP_API_TOP_10_2023', 'control': 'API4_UNRESTRICTED_RESOURCE_CONSUMPTION',
+     'standing': 'FUNCTIONING',
+     'basis': 'identity-keyed buckets and bounded governed records — exercised; volumetric absorption at network scale is the environment cap named in the completeness accounting (denial of service entry)'},
+    {'set': 'OWASP_API_TOP_10_2023', 'control': 'API5_BROKEN_FUNCTION_LEVEL_AUTHORIZATION',
+     'standing': 'FUNCTIONING',
+     'basis': 'function-level acts are operator-only and re-verified per act; a forged instruction is refused before any state change — exercised by simulation'},
+    {'set': 'OWASP_API_TOP_10_2023', 'control': 'API6_UNRESTRICTED_ACCESS_TO_SENSITIVE_BUSINESS_FLOWS',
+     'standing': 'NOT_APPLICABLE_WITH_REASON',
+     'basis': 'the shields and the Minotaur expose no public business flows — no booking, purchase, or signup endpoint stands in their surfaces; the flagship storefront\u2019s flows are outside this benchmark\u2019s platforms'},
+    {'set': 'OWASP_API_TOP_10_2023', 'control': 'API7_SERVER_SIDE_REQUEST_FORGERY',
+     'standing': 'FUNCTIONING',
+     'basis': 'SSRF-shaped targets (internal, metadata, encoded forms) are classified and rejected by indicator without DNS or fetch — exercised; no component of these platforms fetches at all, and the resolve-classify-pin discipline stands of record for any future fetch'},
+    {'set': 'OWASP_API_TOP_10_2023', 'control': 'API8_SECURITY_MISCONFIGURATION',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'as A02: the posture checklist of record, verified by presented evidence'},
+    {'set': 'OWASP_API_TOP_10_2023', 'control': 'API9_IMPROPER_INVENTORY_MANAGEMENT',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the platform registry and each shield\u2019s contract enumerate their own surfaces of record; inventory is a governed record in this ecosystem, not an exercised function'},
+    {'set': 'OWASP_API_TOP_10_2023', 'control': 'API10_UNSAFE_CONSUMPTION_OF_APIS',
+     'standing': 'NOT_APPLICABLE_WITH_REASON',
+     'basis': 'these platforms consume no third-party APIs and make no outbound connections — there is no consumption surface to make unsafe'},
+    # NIST SP 800-207 — the seven tenets
+    {'set': 'NIST_SP_800_207', 'control': 'TENET_1_EVERY_RESOURCE_HAS_AN_ACCESS_DECISION',
+     'standing': 'FUNCTIONING',
+     'basis': 'every platform surface in this build answers through its own access guard with named role scopes — exercised'},
+    {'set': 'NIST_SP_800_207', 'control': 'TENET_2_ALL_COMMUNICATION_SECURED_REGARDLESS_OF_LOCATION',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'platforms prove themselves by identity and records, never by loopback position — of record in the ecosystem law; transport security itself is the host TLS layer, recorded at the edge entries below, not exercised by these suites'},
+    {'set': 'NIST_SP_800_207', 'control': 'TENET_3_ACCESS_GRANTED_PER_SESSION',
+     'standing': 'FUNCTIONING',
+     'basis': 'stronger than per-session in these platforms: the actor is verified at the moment of every act and no session stands to persist — exercised'},
+    {'set': 'NIST_SP_800_207', 'control': 'TENET_4_DYNAMIC_POLICY_FROM_OBSERVABLE_STATE',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'LABYRINTH communication policies are governed records with observe-then-enforce discipline; device posture is not an input that exists in this environment, and no posture feed is represented'},
+    {'set': 'NIST_SP_800_207', 'control': 'TENET_5_CONTINUOUS_MONITORING_OF_INTEGRITY_AND_POSTURE',
+     'standing': 'FUNCTIONING',
+     'basis': 'the simultaneous patrol, the posture views, and the anomaly lifecycle — exercised'},
+    {'set': 'NIST_SP_800_207', 'control': 'TENET_6_AUTHENTICATION_AND_AUTHORIZATION_BEFORE_ACCESS',
+     'standing': 'FUNCTIONING',
+     'basis': 'guards evaluate before any record is read or written in these platforms — exercised, including the application gate answering 401 before dispatch'},
+    {'set': 'NIST_SP_800_207', 'control': 'TENET_7_TELEMETRY_FED_BACK_INTO_POLICY',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'telemetry is receipted and surfaced to the operator; policy changes remain the operator\u2019s recorded acts — by design in this ecosystem, automation of policy is not claimed'},
+    # NIST SP 800-53 controls as cited in the research
+    {'set': 'NIST_SP_800_53', 'control': 'AU_9_PROTECTION_OF_AUDIT_INFORMATION',
+     'standing': 'FUNCTIONING',
+     'basis': 'receipts written in the same transaction as every act; alteration of patrolled records generates anomaly records on the operator\u2019s surfaces — exercised by tamper simulation'},
+    {'set': 'NIST_SP_800_53', 'control': 'AU_9_3_CRYPTOGRAPHIC_PROTECTION_OF_AUDIT_INFORMATION',
+     'standing': 'FUNCTIONING',
+     'basis': 'the exercised form is hash-based: WOTS+ one-time signatures under a Merkle tree over a SHA3-256 chain, verified end-to-end in the suites; the validated-module asymmetric form is carried at the FIPS entry below'},
+    {'set': 'NIST_SP_800_53', 'control': 'SI_7_SOFTWARE_FIRMWARE_AND_INFORMATION_INTEGRITY',
+     'standing': 'FUNCTIONING',
+     'basis': 'file-integrity patrol over known-good baselines with authorized re-baseline only; a tampered shield core raises an ALTERED anomaly — exercised (the research flags SI-7\u2019s enhancement text as not re-read at the primary source in its pass)'},
+    {'set': 'NIST_SP_800_53', 'control': 'IA_13_TOKEN_AND_ASSERTION_PROTECTION',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'no bearer-token surface stands in the shields or the Minotaur — authority is the per-act operator verification, so token replay has no session to replay; the underlying IR 8587\u2019s exact release year stands flagged-unverified in the research of record'},
+    # CISA practice
+    {'set': 'CISA_PRACTICE', 'control': 'ZERO_TRUST_MATURITY_MODEL_V2_STAGED_ASSESSMENT',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'a yardstick is recorded, not exercised: of record, Identity and Applications stand advanced-ward by the functioning controls above; Devices and Data name no stage beyond what the records prove (the model itself is archived-content at CISA, cited as method)'},
+    {'set': 'CISA_PRACTICE', 'control': 'MICROSEGMENTATION_OBSERVE_THEN_ENFORCE',
+     'standing': 'FUNCTIONING',
+     'basis': 'LABYRINTH communication policies: flows are OBSERVED violations until an ENFORCE policy of record refuses them — exercised end-to-end in the suites'},
+    {'set': 'CISA_PRACTICE', 'control': 'DECOYS_AND_HONEYTOKENS_AS_DETECTION',
+     'standing': 'FUNCTIONING',
+     'basis': 'decoys planted under isolation rules; a touched decoy is an anomaly finding on patrol — exercised (the research read the CISA decoys guidance via a secondary summary, flagged there)'},
+    # Edge / TLS (research Area 4)
+    {'set': 'EDGE_AND_TLS', 'control': 'TLSREF_MOZILLA_INTERMEDIATE_TLS',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the TLS checklist (1.2+1.3 only, AEAD suites, tickets off, HSTS 63072000) stands in the Labyrinth Shield posture checklist of record; the live proxy configuration is a host fact verified by presented evidence, outside these platforms\u2019 machinery'},
+    {'set': 'EDGE_AND_TLS', 'control': 'OWASP_SECURITY_HEADERS_SET',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'the corrected header set (including X-XSS-Protection: 0 and no Server leak) stands in the same posture checklist of record; header emission is the application/proxy layer\u2019s standing behavior, verified by evidence'},
+    {'set': 'EDGE_AND_TLS', 'control': 'HYBRID_PQ_KEY_EXCHANGE_X25519MLKEM768',
+     'standing': 'ENVIRONMENT_LIMITED',
+     'basis': 'the production host\u2019s OpenSSL is 3.5.9, which can offer the hybrid group — but the proxy\u2019s group list of record does not offer it first today',
+     'limit': 'the hybrid post-quantum group is not enabled in the live proxy configuration, so recorded TLS traffic does not yet gain harvest-now-decrypt-later protection at the edge',
+     'founder_decision': 'the founder\u2019s go to set X25519MLKEM768 first in the proxy\u2019s group list on his host — a configuration change, no purchase, no new component'},
+    # Post-quantum route (research Areas 3.4, 5.1)
+    {'set': 'POST_QUANTUM_ROUTE', 'control': 'FIPS_140_3_VALIDATED_PQC_OPERATION',
+     'standing': 'ENVIRONMENT_LIMITED',
+     'basis': 'the adopted route stands of record (OpenSSL FIPS Provider 3.5.9, FIPS 140-3 certificate #5586, ML-KEM/ML-DSA/SLH-DSA approved); the environment check of record proves the runtime reaches no PQC algorithm and no FIPS provider stands loaded, so validated operation is not claimed',
+     'limit': 'post-quantum key establishment and validated-module signatures cannot run in the current runtime environment; the native hash-based construction stands in their place',
+     'founder_decision': 'the founder\u2019s direction to provision the validated module in approved mode on the production host (and to record the production environment check), or to designate another runtime that reaches it'},
+    {'set': 'POST_QUANTUM_ROUTE', 'control': 'NIST_IR_8547_ED25519_DEPRECATION_CLOCK',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'recorded as a design intention only, per the founder\u2019s boundary for this build: Ed25519 (Bozly receipts, platform credentials) is deprecated after 2030 and disallowed after 2035; no cryptography is migrated in this build and Bozly is untouched'},
+    # PCI DSS floor as cited in the research
+    {'set': 'PCI_DSS_FLOOR', 'control': 'REQ_10_3_4_LOG_ALTERATION_GENERATES_ALERTS',
+     'standing': 'FUNCTIONING',
+     'basis': 'alteration of a patrolled record generates an anomaly on the operator\u2019s surfaces — the mechanism-free property the requirement names, exercised by tamper simulation'},
+    {'set': 'PCI_DSS_FLOOR', 'control': 'REQ_11_5_FILE_INTEGRITY_CHANGE_DETECTION',
+     'standing': 'FUNCTIONING',
+     'basis': 'the patrol itself: scheduled and on-event comparison against known-good baselines — exercised'},
+    # Python stdlib discipline (research Area 5.3)
+    {'set': 'RUNTIME_DISCIPLINE', 'control': 'STDLIB_CVE_AND_PARSER_SURFACE_DISCIPLINE',
+     'standing': 'RECORDED_WITH_REASON',
+     'basis': 'no untrusted archive extraction exists in these platforms; presented payloads are bounded governed records, which blunts the parser-DoS class; the interpreter patch level stands as a host record — the discipline is of record, not exercised by these suites'},
+)
+
 
 class _MinotaurHashSigner:
     """The Minotaur's own hash-based signature scheme.
@@ -2978,7 +3140,44 @@ class MinotaurService:
                 'omissions': 30, 'exposures': 15,
                 'source_lists_in_hand': False,
             },
+            'benchmark_total': len(BENCHMARK_CONTROLS),
+            'benchmark_standings': {
+                s: sum(1 for e in BENCHMARK_CONTROLS
+                       if e['standing'] == s)
+                for s in BENCHMARK_STANDINGS},
             'part': 'MINOTAUR_COMPLETENESS_ACCOUNTING',
+            'ladder_state': 'CONSTRUCTED',
+        }
+
+    def benchmark_view(self, actor, role, *,
+                       region=None):
+        """The global benchmark mapping (guarded read):
+        every control in the sets gathered in the
+        shield-upgrade research, marked FUNCTIONING /
+        RECORDED_WITH_REASON /
+        NOT_APPLICABLE_WITH_REASON /
+        ENVIRONMENT_LIMITED — the completeness
+        accounting's benchmark section, under the
+        founder's directive of 2026-11-26 11:36 MST.
+        Standing is reported control-by-control,
+        never as a blanket claim."""
+        self._geo(region)
+        self._guard_access(actor, role, 'benchmark',
+                           'global benchmark view')
+        entries = [dict(e) for e in BENCHMARK_CONTROLS]
+        counts = {s: sum(1 for e in entries
+                         if e['standing'] == s)
+                  for s in BENCHMARK_STANDINGS}
+        return {
+            'directive_verbatim':
+                FOUNDER_BENCHMARK_DIRECTIVE_VERBATIM,
+            'benchmark': entries,
+            'total': len(entries),
+            'standings': counts,
+            'proof_mechanism': (
+                'the internal attack-simulation suites '
+                'and the Minotaur\'s continuous patrol'),
+            'part': 'GLOBAL_BENCHMARK_MAPPING',
             'ladder_state': 'CONSTRUCTED',
         }
 
