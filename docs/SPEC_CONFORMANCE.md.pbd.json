@@ -3,9 +3,9 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "docs/SPEC_CONFORMANCE.md",
-        "payload_hash": "a6e84e5ef483db77e4f05aa015dce67cd92434cff43b21854408df11a0be1eb7",
-        "scope": "source-manifest",
-        "signatures": {},
-        "status": "UNSIGNED_SOURCE_MANIFEST"
-    }
+        "payload_hash": "ea4b065559cad313b8e4df92a5c0383813aa62689b3e02155cc27638f9114f10",
+        "scope": "source-manifest"
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
 }
