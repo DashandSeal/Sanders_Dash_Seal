@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "docs/SANDERS_SENTINEL_OPERATIONAL_READINESS_REQUIREMENTS_2026-11-26.md",
-    "payload_hash": "67a56363dd2eb43e70e1a15863d57868a791517020ee8452b355ff364239b579",
+    "payload_hash": "5d2a0051b898f6e52589427c9415cae76e03b5c313d50a8fa73b9c7ef2c35a9d",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
