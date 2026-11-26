@@ -3,7 +3,7 @@
     "schema": 1,
     "platform": "Sanders Dash & Seal",
     "artifact": "web/seal-corporate-hq.png",
-    "payload_hash": "136ed4fb91d3e12b9c4bf0144d5abc5d1140125f40a601278fc891e5d8b5fc52",
+    "payload_hash": "cb4eb1eb39bba99ed2dd1e6abc5e026d53af72a9b4eb48fba4957dc6ae1e37e8",
     "scope": {
       "endpoint": "local://development",
       "method": "TEST",
