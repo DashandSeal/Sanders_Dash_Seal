@@ -805,6 +805,134 @@ SUCCESSION_DUAL_NATURE_RULING = (
     ' protective resource for the Sanders bloodline.'
     ' Neither purpose should diminish the other.')
 
+
+# -- Emergency Activation (founder additions
+# No. 2 and No. 3, 2026-11-26) ---------------------
+# The founder's Emergency Activation list for
+# Sanders Sentinel, complete at items 1-12: items
+# 4-12 given 2026-11-26 02:29 MST (addition No. 2);
+# the head of the list -- its title and items
+# 1-3 -- given 2026-11-26 02:31 MST (addition
+# No. 3; its item 4 arrived truncated at
+# "Authorized", and item 4's complete text stands
+# in addition No. 2). Both additions are carried
+# verbatim below, after the constants they govern.
+EMERGENCY_ACTIVATION_TITLE = ('Sanders Sentinel'
+                              ' \u2014 Emergency'
+                              ' Activation')
+EMERGENCY_ACTIVATION_ESTABLISHED = '2026-11-26'
+EMERGENCY_ACTIVATION_SOURCE = ('Founder record:'
+                               ' founder-sanders-'
+                               'sentinel-protection-'
+                               'succession-directive-'
+                               '2026-11-26')
+EMERGENCY_SCOPE = 'EMERGENCY_ACTIVATION'
+EMERGENCY_SIGNAL_KINDS = (
+    'SOS_BUTTON', 'VOICE_ACTIVATION',
+    'SILENT_DISTRESS_SIGNAL',
+    'MEDICAL_DEVICE_ALERT', 'FAMILY_REPORT',
+    'DISASTER_WARNING_EXPOSURE', 'MISSED_CHECK_IN',
+    'RTSA_PLATFORM_SIGNAL')
+# Each detection channel has exactly one authorized
+# source kind of record: detection sources are
+# authorized devices, family members, platforms,
+# and agreed check-ins only. A signal presented
+# under any other source is refused by name.
+EMERGENCY_SIGNAL_SOURCES = {
+    'SOS_BUTTON': 'BLOODLINE_MEMBER',
+    'VOICE_ACTIVATION': 'BLOODLINE_MEMBER',
+    'SILENT_DISTRESS_SIGNAL': 'BLOODLINE_MEMBER',
+    'MEDICAL_DEVICE_ALERT':
+        'AUTHORIZED_MEDICAL_DEVICE',
+    'FAMILY_REPORT': 'BLOODLINE_FAMILY_MEMBER',
+    'DISASTER_WARNING_EXPOSURE':
+        'PUBLIC_EMERGENCY_WARNING',
+    'MISSED_CHECK_IN': 'AGREED_CHECK_IN',
+    'RTSA_PLATFORM_SIGNAL':
+        'AUTHORIZED_RTSA_PLATFORM',
+}
+EMERGENCY_CASE_STATES = ('OPEN', 'CLOSED_RESOLVED')
+EMERGENCY_ACTIVATION_KINDS = ('RELOCATION', 'LEGAL',
+                              'FUNDING')
+EMERGENCY_ACTIVATION_TARGETS = {
+    'RELOCATION': 'the_godfather',
+    'LEGAL': 'sanders_patriot_saint',
+    'FUNDING': 'JOINT_GODFATHER_SENTINEL',
+}
+EMERGENCY_NO_TRACKING_INVARIANT = (
+    'Confidential, authenticated assistance without'
+    ' unauthorized personal tracking: exposure is'
+    ' identified only from authorized location'
+    ' information of record, named by reference;'
+    ' this platform collects no location and tracks'
+    ' no one.')
+EMERGENCY_ACTIVATION_INVARIANTS = (
+    'Emergency activations are never gated on'
+    ' escalation delivery (Article IV): a case and'
+    ' its activations record immediately, and'
+    ' delivery verification records after the fact'
+    ' through the ordinary path.',
+    'The silent distress channel never requires'
+    ' speech or sound: a signal on it is complete'
+    ' as received, in silence.',
+    'Voice activation is an intake record of a'
+    ' received spoken distress command; no live'
+    ' voice path is connected or represented as'
+    ' connected.',
+    'The SOS button is intake machinery: the'
+    ' physical or application button is a'
+    ' designated counterpart, not something this'
+    ' build connects.',
+    'An emergency case closes only when the'
+    ' arrival of assistance stands verified and'
+    ' the resolution of the immediate danger'
+    ' stands recorded by the operator; nothing'
+    ' auto-closes, auto-approves, or'
+    ' auto-disburses.',
+)
+
+FOUNDER_EMERGENCY_ACTIVATION_ADDITION_NO_2_VERBATIM = (
+    '4. Medical emergency detection: Authorized '
+    'medical devices transmit emergency alerts.\n'
+    '5. Family notification: Another family '
+    'member reports an emergency.\n'
+    '6. Global disaster detection: Sentinel '
+    'receives public emergency warnings and '
+    'identifies potential exposure using '
+    'authorized location information.\n'
+    '7. Emergency check-ins: Sentinel responds '
+    'when an agreed safety check-in is missed.\n'
+    '8. RTSA integration: Other authorized '
+    'platforms transmit emergency signals '
+    'directly to Sentinel.\n'
+    '9. Emergency relocation: Sentinel activates '
+    'the Godfather\'s transportation and '
+    'evacuation capabilities.\n'
+    '10. Legal emergencies: Sentinel activates '
+    'Patriot Saint.\n'
+    '11. Emergency funding: Sentinel and the '
+    'Godfather exercise their established joint '
+    'funding authority.\n'
+    '12. Continuous emergency response: Sentinel '
+    'verifies whether assistance has arrived and '
+    'continues coordinating protection until the '
+    'immediate danger is resolved.\n'
+    'While maintaining his public facing business '
+    'model'
+)
+
+FOUNDER_EMERGENCY_ACTIVATION_ADDITION_NO_3_VERBATIM = (
+    'Sanders Sentinel \u2014 Emergency Activation\n'
+    '1. SOS button: A bloodline member requests '
+    'immediate emergency assistance.\n'
+    '2. Voice activation: Sentinel receives a '
+    'spoken distress command.\n'
+    '3. Silent distress signal: Sentinel receives '
+    'an emergency request when speaking is '
+    'unsafe.\n'
+    '4. Medical emergency detection: Authorized'
+)
+
 class SandersSentinelDenied(Exception):
     """The requested Sanders Sentinel operation is not
     allowed."""
@@ -967,6 +1095,42 @@ class SandersSentinelService:
                     recorded_at REAL NOT NULL,
                     updated_by TEXT NOT NULL,
                     updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_emergency_cases (
+                    case_id TEXT PRIMARY KEY,
+                    signal_kind TEXT NOT NULL,
+                    source_kind TEXT NOT NULL,
+                    source_ref TEXT NOT NULL,
+                    authorization_ref TEXT NOT NULL,
+                    member_ref TEXT NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    authorized_location_ref TEXT,
+                    state TEXT NOT NULL,
+                    assistance_due_at REAL,
+                    arrival_ref TEXT,
+                    delivered_detail_ref TEXT,
+                    arrival_confirmed_by TEXT,
+                    arrival_confirmed_at REAL,
+                    resolution_ref TEXT,
+                    resolved_by TEXT,
+                    resolved_at REAL,
+                    finding_record_id TEXT,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
+                    updated_by TEXT NOT NULL,
+                    updated_at REAL NOT NULL,
+                    receipt_id TEXT NOT NULL
+                );
+                CREATE TABLE IF NOT EXISTS sanders_sentinel_emergency_activations (
+                    activation_id TEXT PRIMARY KEY,
+                    case_id TEXT NOT NULL,
+                    activation_kind TEXT NOT NULL,
+                    target_platform TEXT NOT NULL,
+                    target_ref TEXT NOT NULL,
+                    detail_ref TEXT NOT NULL,
+                    recorded_by TEXT NOT NULL,
+                    recorded_at REAL NOT NULL,
                     receipt_id TEXT NOT NULL
                 );
                 """
@@ -2385,6 +2549,9 @@ class SandersSentinelService:
                     ' source platforms\u2019 segregated'
                     ' stores are never opened here.'),
             },
+            'emergency_activation':
+                SandersSentinelService
+                .emergency_activation_design_view(),
             'note': (
                 'This Directive supplements and'
                 ' strengthens the Permanent Bloodline'
@@ -3419,6 +3586,639 @@ class SandersSentinelService:
         return self._reserve_view(updated)
 
 
+    # -- Emergency Activation (additions No. 2-3) --
+
+    @staticmethod
+    def emergency_activation_design_view() -> dict:
+        """The Emergency Activation duties of record,
+        read-only: the founder's two additions carried
+        verbatim, the eight authorized detection
+        channels with their one authorized source
+        kind each, the three activation kinds and
+        their target platforms, and the governing
+        invariants. The list's closing line -- "While
+        maintaining his public facing business model"
+        -- reaffirms the dual nature ruled for this
+        platform at 2026-11-26 01:56 MST and carried
+        in SUCCESSION_DUAL_NATURE_RULING; it is
+        referenced here, never duplicated."""
+        return {
+            'title': EMERGENCY_ACTIVATION_TITLE,
+            'established': EMERGENCY_ACTIVATION_ESTABLISHED,
+            'source': EMERGENCY_ACTIVATION_SOURCE,
+            'addition_no_2_verbatim':
+                FOUNDER_EMERGENCY_ACTIVATION_ADDITION_NO_2_VERBATIM,
+            'addition_no_3_verbatim':
+                FOUNDER_EMERGENCY_ACTIVATION_ADDITION_NO_3_VERBATIM,
+            'signal_kinds': list(EMERGENCY_SIGNAL_KINDS),
+            'signal_sources':
+                dict(EMERGENCY_SIGNAL_SOURCES),
+            'activation_kinds':
+                list(EMERGENCY_ACTIVATION_KINDS),
+            'activation_targets':
+                dict(EMERGENCY_ACTIVATION_TARGETS),
+            'invariants':
+                list(EMERGENCY_ACTIVATION_INVARIANTS),
+            'no_tracking_invariant':
+                EMERGENCY_NO_TRACKING_INVARIANT,
+            'dual_nature_ruling':
+                SUCCESSION_DUAL_NATURE_RULING,
+            'note': (
+                'Items 1-3 stand in addition No. 3'
+                ' (2026-11-26 02:31 MST), whose item 4'
+                ' arrived truncated at "Authorized";'
+                ' item 4\u2019s complete text, and items'
+                ' 5-12 with the closing line, stand in'
+                ' addition No. 2 (2026-11-26 02:29'
+                ' MST). Together they are the complete'
+                ' Emergency Activation list, items'
+                ' 1-12. Activations run by reference'
+                ' into the target platforms\u2019 own'
+                ' segregated machinery: relocation'
+                ' activates a Godfather transportation'
+                ' or evacuation matter, a legal'
+                ' emergency activates a Patriot Saint'
+                ' matter, and emergency funding'
+                ' exercises the established joint'
+                ' Godfather + Sentinel funding'
+                ' determination flow -- no new money'
+                ' authority, and no payment rail is'
+                ' attached or represented.'),
+        }
+
+    @staticmethod
+    def _emergency_case_view(row):
+        return {
+            'case_id': row['case_id'],
+            'signal_kind': row['signal_kind'],
+            'source_kind': row['source_kind'],
+            'source_ref': row['source_ref'],
+            'authorization_ref': row['authorization_ref'],
+            'member_ref': row['member_ref'],
+            'detail_ref': row['detail_ref'],
+            'authorized_location_ref':
+                row['authorized_location_ref'],
+            'state': row['state'],
+            'open': row['state'] == 'OPEN',
+            'assistance_due_at': row['assistance_due_at'],
+            'arrival_verified':
+                row['arrival_ref'] is not None,
+            'arrival_ref': row['arrival_ref'],
+            'delivered_detail_ref':
+                row['delivered_detail_ref'],
+            'arrival_confirmed_by':
+                row['arrival_confirmed_by'],
+            'arrival_confirmed_at':
+                row['arrival_confirmed_at'],
+            'resolution_ref': row['resolution_ref'],
+            'resolved_by': row['resolved_by'],
+            'resolved_at': row['resolved_at'],
+            'finding_record_id': row['finding_record_id'],
+            'scope_ref': EMERGENCY_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'updated_by': row['updated_by'],
+            'updated_at': row['updated_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    @staticmethod
+    def _emergency_activation_view(row):
+        return {
+            'activation_id': row['activation_id'],
+            'case_id': row['case_id'],
+            'activation_kind': row['activation_kind'],
+            'target_platform': row['target_platform'],
+            'target_ref': row['target_ref'],
+            'detail_ref': row['detail_ref'],
+            'gated_on_escalation_delivery': False,
+            'scope_ref': EMERGENCY_SCOPE,
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'receipt_id': row['receipt_id'],
+        }
+
+    def _emergency_case_row(self, db, case_id):
+        return db.execute(
+            'SELECT * FROM'
+            ' sanders_sentinel_emergency_cases WHERE'
+            ' case_id = ?', (case_id,)).fetchone()
+
+    def record_emergency_signal(
+            self, actor, signal_kind, source_kind,
+            source_ref, authorization_ref, member_ref,
+            detail_ref, authorized_location_ref=None,
+            assistance_due_at=None, *, region=None):
+        """Record one emergency signal received
+        through an authorized channel (operator
+        only), opening its emergency case. The case
+        is born OPEN and stays open until the arrival
+        of assistance stands verified and the
+        resolution of the immediate danger stands
+        recorded (item 12). Each channel has exactly
+        one authorized source kind of record; a
+        signal presented under any other source is
+        refused by name
+        (EMERGENCY_SIGNAL_SOURCE_NOT_AUTHORIZED).
+        Disaster exposure is identified only from
+        authorized location information of record,
+        named by reference -- this platform collects
+        no location and tracks no one. The signal
+        record is by reference only: a device, a
+        family member, a warning feed, an agreed
+        check-in, or a platform transmitted the
+        signal through its own channel; this record
+        is the platform's governed intake of it."""
+        self._geo(region)
+        self._require_operator(actor)
+        if signal_kind not in EMERGENCY_SIGNAL_KINDS:
+            raise SandersSentinelDenied(
+                'The emergency signal kind must be one'
+                ' of: ' + ', '.join(EMERGENCY_SIGNAL_KINDS))
+        if source_kind != EMERGENCY_SIGNAL_SOURCES[
+                signal_kind]:
+            raise SandersSentinelDenied(
+                f'A {signal_kind} signal is received'
+                ' only from its authorized source kind,'
+                f" {EMERGENCY_SIGNAL_SOURCES[signal_kind]};"
+                ' the presented source is refused'
+                ' (EMERGENCY_SIGNAL_SOURCE_NOT_AUTHORIZED)')
+        for label, value in (
+                ('source_ref', source_ref),
+                ('authorization_ref', authorization_ref),
+                ('member_ref', member_ref),
+                ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        if authorized_location_ref is not None and (
+                not isinstance(authorized_location_ref, str)
+                or not authorized_location_ref.strip()):
+            raise SandersSentinelDenied(
+                'An authorized location reference, when'
+                ' given, must name the authorized'
+                ' location information of record')
+        if (signal_kind == 'DISASTER_WARNING_EXPOSURE'
+                and authorized_location_ref is None):
+            raise SandersSentinelDenied(
+                'Exposure is identified only from'
+                ' authorized location information of'
+                ' record: an authorized location'
+                ' reference is required for a disaster'
+                ' warning signal'
+                ' (AUTHORIZED_LOCATION_INFORMATION_REQUIRED)')
+        if assistance_due_at is not None and (
+                isinstance(assistance_due_at, bool)
+                or not isinstance(assistance_due_at,
+                                  (int, float))):
+            raise SandersSentinelDenied(
+                'The assistance terms, when given, must'
+                ' set a delivery time (assistance_due_at)')
+        now = self._now()
+        case_id = (f'sentinel-emergency-case-'
+                   f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_EMERGENCY_SIGNAL'
+                    '_RECORDED',
+                    actor=actor, case_id=case_id,
+                    signal_kind=signal_kind,
+                    source_kind=source_kind,
+                    source_ref=source_ref.strip(),
+                    authorization_ref=(
+                        authorization_ref.strip()),
+                    member_ref=member_ref.strip())
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_emergency_cases'
+                    ' (case_id, signal_kind, source_kind,'
+                    ' source_ref, authorization_ref,'
+                    ' member_ref, detail_ref,'
+                    ' authorized_location_ref, state,'
+                    ' assistance_due_at, arrival_ref,'
+                    ' delivered_detail_ref,'
+                    ' arrival_confirmed_by,'
+                    ' arrival_confirmed_at,'
+                    ' resolution_ref, resolved_by,'
+                    ' resolved_at, finding_record_id,'
+                    ' recorded_by, recorded_at,'
+                    ' updated_by, updated_at, receipt_id)'
+                    ' VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                    ' ?, ?, ?)',
+                    (case_id, signal_kind, source_kind,
+                     source_ref.strip(),
+                     authorization_ref.strip(),
+                     member_ref.strip(), detail_ref.strip(),
+                     authorized_location_ref.strip()
+                     if authorized_location_ref else None,
+                     'OPEN',
+                     float(assistance_due_at)
+                     if assistance_due_at is not None
+                     else None,
+                     None, None, None, None, None, None,
+                     None, None, actor, now, actor, now,
+                     receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = self._emergency_case_row(db, case_id)
+        return self._emergency_case_view(row)
+
+    def emergency_cases(self, actor, role, *,
+                        region=None):
+        """The emergency-case register (guarded
+        read): every case with its channel, source,
+        state, and arrival-verification state. By
+        reference only -- no location data and no
+        personal tracking data is held here."""
+        self._geo(region)
+        self._guard_access(actor, role, 'emergency-cases',
+                           'emergency cases view')
+        with self._connect() as db:
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_emergency_cases'
+                ' ORDER BY recorded_at').fetchall()
+        views = [self._emergency_case_view(row)
+                 for row in rows]
+        by_state = {}
+        by_kind = {}
+        for view in views:
+            by_state[view['state']] = (
+                by_state.get(view['state'], 0) + 1)
+            by_kind[view['signal_kind']] = (
+                by_kind.get(view['signal_kind'], 0) + 1)
+        return {
+            'title': EMERGENCY_ACTIVATION_TITLE,
+            'cases': views,
+            'by_state': by_state,
+            'by_signal_kind': by_kind,
+            'open_total': by_state.get('OPEN', 0),
+        }
+
+    def emergency_case_view(self, actor, role, case_id,
+                            *, region=None):
+        """One emergency case (guarded read), with
+        its recorded activations."""
+        self._geo(region)
+        self._guard_access(actor, role, 'emergency-cases',
+                           'emergency case view')
+        with self._connect() as db:
+            row = self._emergency_case_row(db, case_id)
+            if row is None:
+                raise SandersSentinelDenied(
+                    'No such emergency case')
+            activations = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_emergency_activations'
+                ' WHERE case_id = ? ORDER BY recorded_at',
+                (case_id,)).fetchall()
+        view = self._emergency_case_view(row)
+        view['activations'] = [
+            self._emergency_activation_view(entry)
+            for entry in activations]
+        return view
+
+    def record_emergency_activation(
+            self, actor, case_id, activation_kind,
+            target_ref, detail_ref, *, region=None):
+        """Record one activation of an open emergency
+        case (operator only), by reference into the
+        target platform's own segregated machinery:
+        RELOCATION activates the Godfather's
+        transportation and evacuation capabilities
+        (item 9 -- target_ref names the Godfather
+        transportation matter), LEGAL activates
+        Patriot Saint (item 10 -- target_ref names
+        the Patriot Saint matter), and FUNDING
+        exercises the established joint Godfather +
+        Sentinel funding authority (item 11 --
+        target_ref names the joint funding request of
+        record). No new money authority is created,
+        no disbursement is made or represented, and
+        -- per Article IV -- the activation is never
+        gated on any escalation's delivery state."""
+        self._geo(region)
+        self._require_operator(actor)
+        if activation_kind not in (
+                EMERGENCY_ACTIVATION_KINDS):
+            raise SandersSentinelDenied(
+                'The emergency activation kind must be'
+                ' one of: '
+                + ', '.join(EMERGENCY_ACTIVATION_KINDS))
+        for label, value in (('target_ref', target_ref),
+                             ('detail_ref', detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required')
+        now = self._now()
+        activation_id = (f'sentinel-emergency-activation-'
+                         f'{uuid.uuid4().hex[:16]}')
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                case = self._emergency_case_row(db, case_id)
+                if case is None:
+                    raise SandersSentinelDenied(
+                        'No such emergency case')
+                if case['state'] != 'OPEN':
+                    raise SandersSentinelDenied(
+                        'Activations record only against'
+                        ' an open emergency case; this one'
+                        ' reads ' + case['state']
+                        + ' (EMERGENCY_CASE_NOT_OPEN)')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_EMERGENCY_ACTIVATION'
+                    '_RECORDED',
+                    actor=actor, case_id=case_id,
+                    activation_id=activation_id,
+                    activation_kind=activation_kind,
+                    target_platform=(
+                        EMERGENCY_ACTIVATION_TARGETS[
+                            activation_kind]),
+                    target_ref=target_ref.strip(),
+                    gated_on_escalation_delivery=False)
+                db.execute(
+                    'INSERT INTO'
+                    ' sanders_sentinel_emergency_'
+                    'activations (activation_id, case_id,'
+                    ' activation_kind, target_platform,'
+                    ' target_ref, detail_ref, recorded_by,'
+                    ' recorded_at, receipt_id) VALUES'
+                    ' (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (activation_id, case_id, activation_kind,
+                     EMERGENCY_ACTIVATION_TARGETS[
+                         activation_kind],
+                     target_ref.strip(), detail_ref.strip(),
+                     actor, now, receipt_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_emergency_activations'
+                ' WHERE activation_id = ?',
+                (activation_id,)).fetchone()
+        return self._emergency_activation_view(row)
+
+    def emergency_activations(self, actor, role, case_id,
+                              *, region=None):
+        """One case's recorded activations (guarded
+        read)."""
+        self._geo(region)
+        self._guard_access(actor, role, 'emergency-cases',
+                           'emergency activations view')
+        with self._connect() as db:
+            if self._emergency_case_row(db, case_id) is None:
+                raise SandersSentinelDenied(
+                    'No such emergency case')
+            rows = db.execute(
+                'SELECT * FROM'
+                ' sanders_sentinel_emergency_activations'
+                ' WHERE case_id = ? ORDER BY recorded_at',
+                (case_id,)).fetchall()
+        return {
+            'case_id': case_id,
+            'activations': [
+                self._emergency_activation_view(row)
+                for row in rows],
+        }
+
+    def confirm_emergency_arrival(
+            self, actor, case_id, arrival_ref,
+            delivered_detail_ref, *, region=None):
+        """Confirm the arrival of assistance for one
+        emergency case (operator only): the human
+        operator's recorded confirmation, through the
+        authenticated path, that assistance actually
+        arrived -- naming the arrival's reference and
+        what was delivered (item 12, and the
+        fulfillment-verification standard: recorded
+        is not delivered). A standing
+        UNFULFILLED_ASSISTANCE finding on the case is
+        decided with the confirmation."""
+        self._geo(region)
+        self._require_operator(actor)
+        for label, value in (
+                ('arrival_ref', arrival_ref),
+                ('delivered_detail_ref',
+                 delivered_detail_ref)):
+            if (not isinstance(value, str)
+                    or not value.strip()):
+                raise SandersSentinelDenied(
+                    f'A {label} is required: arrival is'
+                    ' verified by naming what arrived')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = self._emergency_case_row(db, case_id)
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'No such emergency case')
+                if row['state'] != 'OPEN':
+                    raise SandersSentinelDenied(
+                        'This emergency case already stands'
+                        ' closed')
+                if row['arrival_ref'] is not None:
+                    raise SandersSentinelDenied(
+                        'The arrival of assistance for'
+                        ' this case already stands'
+                        ' verified')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_EMERGENCY_ARRIVAL'
+                    '_CONFIRMED',
+                    actor=actor, case_id=case_id,
+                    arrival_ref=arrival_ref.strip(),
+                    delivered_detail_ref=(
+                        delivered_detail_ref.strip()))
+                db.execute(
+                    'UPDATE'
+                    ' sanders_sentinel_emergency_cases'
+                    ' SET arrival_ref = ?,'
+                    ' delivered_detail_ref = ?,'
+                    ' arrival_confirmed_by = ?,'
+                    ' arrival_confirmed_at = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE case_id = ?',
+                    (arrival_ref.strip(),
+                     delivered_detail_ref.strip(), actor,
+                     now, actor, now, receipt_id, case_id))
+                finding_id = row['finding_record_id']
+                if finding_id:
+                    db.execute(
+                        'UPDATE sanders_sentinel_records'
+                        ' SET status = ?, outcome = ?,'
+                        ' evidence_ref = ?, updated_by = ?,'
+                        ' updated_at = ? WHERE record_id'
+                        ' = ?',
+                        ('OUTCOME_RECORDED',
+                         'EMERGENCY_ASSISTANCE_ARRIVED',
+                         arrival_ref.strip(), actor, now,
+                         finding_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = self._emergency_case_row(db, case_id)
+        return self._emergency_case_view(updated)
+
+    def verify_emergency_cases(self, actor, *,
+                               region=None):
+        """Run one continuous-response verification
+        cycle (operator only): every open emergency
+        case whose recorded assistance terms have run
+        and whose arrival stands unverified raises an
+        UNFULFILLED_ASSISTANCE finding -- the same
+        discipline as the fulfillment register:
+        recorded is not delivered, past the matter's
+        own terms. Findings are receipted watch
+        records, deduped per case, and decided when
+        the arrival stands confirmed."""
+        self._geo(region)
+        self._require_operator(actor)
+        now = self._now()
+        raised = []
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                rows = db.execute(
+                    'SELECT * FROM'
+                    ' sanders_sentinel_emergency_cases'
+                    " WHERE state = 'OPEN' AND"
+                    ' arrival_ref IS NULL AND'
+                    ' assistance_due_at IS NOT NULL AND'
+                    ' assistance_due_at <= ? ORDER BY'
+                    ' assistance_due_at', (now,)).fetchall()
+                for row in rows:
+                    if row['finding_record_id']:
+                        continue
+                    record_id = (
+                        f'sentinel-record-'
+                        f'{uuid.uuid4().hex[:16]}')
+                    receipt_id = self._record(
+                        'SANDERS_SENTINEL_UNFULFILLED_'
+                        'ASSISTANCE_FINDING',
+                        actor=actor, record_id=record_id,
+                        case_id=row['case_id'],
+                        signal_kind=row['signal_kind'],
+                        member_ref=row['member_ref'])
+                    db.execute(
+                        'INSERT INTO'
+                        ' sanders_sentinel_records'
+                        ' (record_id, subject_ref,'
+                        ' signal_refs, signal_count,'
+                        ' scope_ref, status, outcome,'
+                        ' evidence_ref, requested_by,'
+                        ' requested_at, updated_by,'
+                        ' updated_at, receipt_id) VALUES'
+                        ' (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,'
+                        ' ?, ?, ?)',
+                        (record_id, row['case_id'],
+                         json.dumps(['UNFULFILLED_ASSISTANCE']),
+                         1, FULFILLMENT_SCOPE, 'REQUESTED',
+                         None, None, actor, now, actor, now,
+                         receipt_id))
+                    db.execute(
+                        'UPDATE'
+                        ' sanders_sentinel_emergency_cases'
+                        ' SET finding_record_id = ?,'
+                        ' updated_by = ?, updated_at = ?'
+                        ' WHERE case_id = ?',
+                        (record_id, actor, now,
+                         row['case_id']))
+                    raised.append(record_id)
+                totals = db.execute(
+                    'SELECT state, COUNT(*) AS n FROM'
+                    ' sanders_sentinel_emergency_cases'
+                    ' GROUP BY state').fetchall()
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+        by_state = {row['state']: row['n'] for row in totals}
+        return {
+            'title': EMERGENCY_ACTIVATION_TITLE,
+            'checked_at': now,
+            'cases_total': sum(by_state.values()),
+            'open_total': by_state.get('OPEN', 0),
+            'closed_total': by_state.get(
+                'CLOSED_RESOLVED', 0),
+            'overdue_unverified': len(rows),
+            'findings_raised': raised,
+        }
+
+    def close_emergency_case(self, actor, case_id,
+                             resolution_ref, *,
+                             region=None):
+        """Close one emergency case (operator only)
+        on the recorded resolution of the immediate
+        danger (item 12). A case may close only when
+        the arrival of assistance stands verified AND
+        the resolution stands recorded by reference;
+        closing a case whose assistance arrival is
+        unverified is refused by name
+        (EMERGENCY_ARRIVAL_UNVERIFIED_MAY_NOT_BE_CLOSED).
+        Nothing auto-closes."""
+        self._geo(region)
+        self._require_operator(actor)
+        if (not isinstance(resolution_ref, str)
+                or not resolution_ref.strip()):
+            raise SandersSentinelDenied(
+                'A resolution reference is required: a'
+                ' case closes on the recorded resolution'
+                ' of the immediate danger')
+        now = self._now()
+        with self._connect() as db:
+            db.execute('BEGIN IMMEDIATE;')
+            try:
+                row = self._emergency_case_row(db, case_id)
+                if row is None:
+                    raise SandersSentinelDenied(
+                        'No such emergency case')
+                if row['state'] != 'OPEN':
+                    raise SandersSentinelDenied(
+                        'This emergency case already stands'
+                        ' closed')
+                if row['arrival_ref'] is None:
+                    raise SandersSentinelDenied(
+                        'An emergency case may not be'
+                        ' closed while the arrival of its'
+                        ' assistance stands unverified:'
+                        ' continuous response continues'
+                        ' until assistance has arrived and'
+                        ' the immediate danger is resolved'
+                        ' (EMERGENCY_ARRIVAL_UNVERIFIED'
+                        '_MAY_NOT_BE_CLOSED)')
+                receipt_id = self._record(
+                    'SANDERS_SENTINEL_EMERGENCY_CASE'
+                    '_CLOSED',
+                    actor=actor, case_id=case_id,
+                    resolution_ref=resolution_ref.strip())
+                db.execute(
+                    'UPDATE'
+                    ' sanders_sentinel_emergency_cases'
+                    ' SET state = ?, resolution_ref = ?,'
+                    ' resolved_by = ?, resolved_at = ?,'
+                    ' updated_by = ?, updated_at = ?,'
+                    ' receipt_id = ? WHERE case_id = ?',
+                    ('CLOSED_RESOLVED',
+                     resolution_ref.strip(), actor, now,
+                     actor, now, receipt_id, case_id))
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            updated = self._emergency_case_row(db, case_id)
+        return self._emergency_case_view(updated)
+
     def disburse_funds(self, actor, *args, **kwargs):
         """Refused by name, unconditionally. Under the
         Permanent Global Bloodline Protection
@@ -3526,6 +4326,27 @@ class SandersSentinelService:
                 ' sanders_sentinel_records WHERE scope_ref = ?'
                 " AND status IN ('REQUESTED', 'APPROVED')",
                 (FULFILLMENT_SCOPE,)).fetchone()['n']
+            emergency_cases_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_emergency_cases'
+            ).fetchone()['n']
+            emergency_cases_open = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_emergency_cases'
+                " WHERE state = 'OPEN'"
+            ).fetchone()['n']
+            emergency_cases_by_kind = {
+                k: 0 for k in EMERGENCY_SIGNAL_KINDS}
+            for row in db.execute(
+                    'SELECT signal_kind, COUNT(*) AS n'
+                    ' FROM sanders_sentinel_emergency_cases'
+                    ' GROUP BY signal_kind'):
+                emergency_cases_by_kind[
+                    row['signal_kind']] = row['n']
+            emergency_activations_total = db.execute(
+                'SELECT COUNT(*) AS n FROM'
+                ' sanders_sentinel_emergency_activations'
+            ).fetchone()['n']
         return {
             'identity': IDENTITY.to_dict(),
             'design': self.design_view(),
@@ -3569,6 +4390,19 @@ class SandersSentinelService:
                     fulfillment_unfulfilled_total,
                 'fulfillment_findings_open':
                     fulfillment_findings_open,
+            },
+            'emergency_activation': {
+                'title': EMERGENCY_ACTIVATION_TITLE,
+                'established':
+                    EMERGENCY_ACTIVATION_ESTABLISHED,
+                'cases_total': emergency_cases_total,
+                'cases_open': emergency_cases_open,
+                'cases_by_signal_kind':
+                    emergency_cases_by_kind,
+                'activations_total':
+                    emergency_activations_total,
+                'funds_disbursed': False,
+                'funds_held': False,
             },
             'records_total': sum(by_status.values()),
             'records_by_status': by_status,
