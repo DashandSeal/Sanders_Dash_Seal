@@ -176,6 +176,7 @@ from core_platform.archimedes_service import ArchimedesService
 from core_platform.promethean_service import PrometheanService
 from core_platform.hydra_q_service import HydraQService
 from core_platform.labyrinth_service import LabyrinthService
+from core_platform.sovereign_shield_v3_service import SovereignShieldV3Service
 from core_platform.cerberus_service import CerberusService
 from core_platform.chorus_service import ChorusService
 from core_platform.cobol_synthetic_ai_service import CobolSyntheticAiService
@@ -595,6 +596,22 @@ def create_production_bindings():
     # merged.
     labyrinth = LabyrinthService(
         data_dir / 'labyrinth.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
+
+    # Sovereign Shield V3 (founder's three-shields order,
+    # 2026-11-26): the sovereign shield layer built as its own
+    # platform over the recovered shield class in Money Factory
+    # Legal Aid — governed chain-of-custody records (SHA3-512
+    # custody digests in the recovered class's canonical form;
+    # the ML-DSA-65 signature stands DECLARED_NOT_EXECUTED, never
+    # claimed) and shield-layer determinations, on its own store.
+    # No HTTP endpoint and no public surface is designed for this
+    # platform, and none is bound: it is reached
+    # platform-to-platform only. Separate from Sanders Labyrinth
+    # Shield and from LABYRINTH — the three shields are never
+    # merged.
+    sovereign_shield_v3 = SovereignShieldV3Service(
+        data_dir / 'sovereign_shield_v3.db',
         operator_verifier=auth.operator_verifier, audit=audit)
 
     # CERBERUS (RTSA Build Program): the evidence, provenance,
@@ -1388,6 +1405,7 @@ def create_production_bindings():
         promethean=promethean,
         hydra_q=hydra_q,
         labyrinth=labyrinth,
+        sovereign_shield_v3=sovereign_shield_v3,
         cerberus=cerberus,
         chorus=chorus,
         cobol_synthetic_ai=cobol_synthetic_ai,
