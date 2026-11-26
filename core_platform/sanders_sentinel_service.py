@@ -371,6 +371,20 @@ BLOODLINE_WATCH_SET = (
      'title': ('Sanders Sentinel \u2014 Human Life '
                'Protection By Design'),
      'required': True},
+    {'document': ('docs/THE_GODFATHER_HUMAN_'
+                  'SURVIVAL_2026-11-26.md'),
+     'title': ('The Godfather \u2014 Global Human'
+               ' Survival, Mobility and'
+               ' Essential Resource Protection'
+               ' By Design'),
+     'required': True},
+    {'document': ('docs/THE_GODFATHER_UNIVERSAL_'
+                  'HUMAN_SURVIVAL_2026-11-26.md'),
+     'title': ('The Godfather \u2014 Universal'
+               ' Human Survival, Mobility,'
+               ' Resource and Communications'
+               ' Protection By Design'),
+     'required': True},
     {'document': 'docs/SANDERS_BLOODLINE_REGISTRY.md',
      'title': 'Sanders Bloodline Registry',
      'required': False},
