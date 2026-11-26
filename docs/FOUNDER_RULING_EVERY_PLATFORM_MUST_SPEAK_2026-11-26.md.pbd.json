@@ -1,0 +1,16 @@
+{
+  "body": {
+    "schema": 1,
+    "platform": "Sanders Dash & Seal",
+    "artifact": "docs/FOUNDER_RULING_EVERY_PLATFORM_MUST_SPEAK_2026-11-26.md",
+    "payload_hash": "8ccf809c0f6530eb17692cefa201fe4a6a433f05b2b89cc6b9ac762fe814e176",
+    "scope": {
+      "endpoint": "local://development",
+      "method": "TEST",
+      "ip": "127.0.0.1",
+      "operation": "DEVELOPMENT_VALIDATION"
+    }
+  },
+  "signatures": {},
+  "status": "UNSIGNED_SOURCE_MANIFEST"
+}
