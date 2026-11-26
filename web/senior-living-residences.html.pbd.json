@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "web/senior-living-residences.html",
-        "payload_hash": "e98e6f1c48ed7fe21376691a597022ee972b5ab62185d592d35f5126aa6565ca",
+        "payload_hash": "2aa6181d305be9a968f4b178d2c5df6c09148e29a7d08ecea0e38928ce21546d",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

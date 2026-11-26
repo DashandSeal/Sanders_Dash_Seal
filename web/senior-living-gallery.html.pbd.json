@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-gallery.html",
+        "payload_hash": "0ee12818bc67d42fc9f9f158bd4fab6a52676e2026497bd045bf7334a969d021",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-join-our-team.html",
+        "payload_hash": "a3ae57723b45e5ed25000f5bf79a1c5489378c6710e8143473b0a9fe02614ff8",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

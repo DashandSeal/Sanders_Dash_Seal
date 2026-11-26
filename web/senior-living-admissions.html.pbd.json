@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-admissions.html",
+        "payload_hash": "7de95e2be18fe29846cf760f126f69f0effbd35d16ad94ffb0415a1189a1c493",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

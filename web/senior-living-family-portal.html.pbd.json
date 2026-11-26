@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-family-portal.html",
+        "payload_hash": "514960c39af66e42160fba8a082b198cbbfdd38315c493e2d0bea60a9a31ad7d",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

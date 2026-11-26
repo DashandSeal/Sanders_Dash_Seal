@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-transportation.html",
+        "payload_hash": "45526018ad23df90a0a2afacd00628ab441fd7d9dc41a657dabf7f2d47a09005",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

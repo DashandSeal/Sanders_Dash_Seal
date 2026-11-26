@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-resident-handbook.html",
+        "payload_hash": "ed4e844d5b5433f0ec6b12c2af5ffde52e2a945c9eb5804d2c315c161cb25266",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

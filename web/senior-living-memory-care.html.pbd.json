@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-memory-care.html",
+        "payload_hash": "50c49f4eeae19b1ac51f76c08c03f9ee5f9deb5e0a9d3e9b49c7ffb920f14dc4",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

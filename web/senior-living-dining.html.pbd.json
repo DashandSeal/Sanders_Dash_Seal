@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-dining.html",
+        "payload_hash": "d20587db749634b55bc71bb248c396dd5f60e4a8c6fdd1e9e06d73f1a615b118",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-health-services.html",
+        "payload_hash": "eb9cb13070f9c8cf2922ed3c1817f9b20829383c1cbe3ecde50a822d43300fcd",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

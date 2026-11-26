@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-safety-security.html",
+        "payload_hash": "35beb01f0431d2f6a76c084dc159a07764cf2e140a8b12d9f9aec34bdd7b7cab",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

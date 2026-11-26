@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-independent-living.html",
+        "payload_hash": "38178a7fb9c745d7e5c4c1797b4747e89ea671fc979ec871c64e47bac9e129d4",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

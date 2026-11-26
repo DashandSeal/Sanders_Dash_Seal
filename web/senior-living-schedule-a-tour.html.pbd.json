@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-schedule-a-tour.html",
+        "payload_hash": "46b59aabb552294429c65e47d1a5d4f054c2df9e58d17486b3fe9de8329bbbb5",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

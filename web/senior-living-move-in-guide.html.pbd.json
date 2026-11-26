@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-move-in-guide.html",
+        "payload_hash": "7f6c017cf603b3e4e705d4d911b3e59c4b8377fe042e882ca4a810c1ab5e695b",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

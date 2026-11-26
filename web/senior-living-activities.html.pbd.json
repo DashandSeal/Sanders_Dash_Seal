@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-activities.html",
+        "payload_hash": "c8e6732e9e14b0d259ecd644e279e53c2b9eb6b7ae1d7e7b543eee6f1f89e967",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

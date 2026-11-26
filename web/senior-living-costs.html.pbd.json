@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-costs.html",
+        "payload_hash": "fbe21d4ac5d60072dc1c91ca53a3be873f6f4c437d39fd9c45f44c3cf3b74eae",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

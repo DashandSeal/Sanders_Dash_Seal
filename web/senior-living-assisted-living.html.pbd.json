@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "web/senior-living-assisted-living.html",
+        "payload_hash": "ce73c677583b078f3ccc502098a827013a89bc18b295a22e2e68bce77f7ff273",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
