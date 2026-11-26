@@ -1234,6 +1234,45 @@ FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_NO_2_VERBATIM = (
     'Global By Design. The Sanders Way!'
 )
 
+ORR_READINESS_NON_GATING_INVARIANT = (
+    'Readiness never gates protection (founder'
+    ' clarification No. 3, 2026-11-26): readiness'
+    ' states are reporting states only. No'
+    ' activation, escalation, coordination, or'
+    ' assistance path in this platform reads a'
+    ' capability\u2019s readiness or test state --'
+    ' the derivation (_readiness_state_for) is'
+    ' consulted by the readiness reporting view'
+    ' alone. Sentinel shall not withhold, delay,'
+    ' suspend, or refuse available, authorized'
+    ' life-preserving assistance because a field'
+    ' exercise or end-to-end test has not been'
+    ' completed: a functioning, authorized'
+    ' capability is exercised immediately, and'
+    ' acting on it does not relabel it -- the'
+    ' readiness board still reports its true'
+    ' state (UNTESTED, or as it stands). Testing'
+    ' strengthens capability in parallel; it is'
+    ' never an approval gate and never a'
+    ' prerequisite for helping the bloodline'
+    ' during an actual emergency.')
+FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_NO_3_VERBATIM = (
+    'Sanders Sentinel shall not withhold, delay, '
+    'suspend, or refuse available, authorized '
+    'life-preserving assistance because a field '
+    'exercise has not been completed.\n'
+    'Testing shall strengthen his capabilities, '
+    'never become an additional approval gate or '
+    'a prerequisite for helping your bloodline '
+    'during an actual emergency.\n'
+    'He shall immediately exercise his '
+    'functioning protective capabilities while '
+    'continuing to develop, test, and strengthen '
+    'his remaining capabilities.\n'
+    'No existing protective authority or '
+    'responsibility shall be diminished.'
+)
+
 ORR_INVARIANTS = (
     ORR_TRUTHFUL_READINESS_INVARIANT,
     ORR_MISSION_PRESERVATION_INVARIANT,
@@ -1241,6 +1280,7 @@ ORR_INVARIANTS = (
     ORR_RECOVERY_CONTINUITY_INVARIANT,
     ORR_ESCALATION_COORDINATION_DISTINCTION,
     ORR_TESTING_SAFETY_INVARIANT,
+    ORR_READINESS_NON_GATING_INVARIANT,
     'Loss of visibility is itself an emergency'
     ' signal of record: a disconnected or'
     ' unavailable camera, sensor, channel, or'
@@ -5840,6 +5880,10 @@ class SandersSentinelService:
                 ORR_TESTING_SAFETY_INVARIANT,
             'responder_coordination_kinds': list(
                 RESPONDER_COORDINATION_KINDS),
+            'clarification_no_3_verbatim':
+                FOUNDER_OPERATIONAL_READINESS_CLARIFICATION_NO_3_VERBATIM,
+            'readiness_non_gating_invariant':
+                ORR_READINESS_NON_GATING_INVARIANT,
             'note': (
                 'Readiness is derived, never declared:'
                 ' a capability reads OPERATIONAL only'
@@ -5941,6 +5985,10 @@ class SandersSentinelService:
                 if entry['operational']],
             'truthful_readiness_invariant':
                 ORR_TRUTHFUL_READINESS_INVARIANT,
+            'reporting_only': True,
+            'gates_activation': False,
+            'readiness_non_gating_invariant':
+                ORR_READINESS_NON_GATING_INVARIANT,
         }
 
     def record_readiness_connection(
