@@ -1,0 +1,25 @@
+name: SC-13 lift - outside hybrid-PQ handshake proof (one-time)
+on:
+  workflow_dispatch:
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Handshake against the live site from a current-OpenSSL client
+        run: |
+          set +e
+          echo "=== client image: debian trixie (OpenSSL 3.5) ==="
+          docker run --rm debian:trixie sh -c '
+            apt-get update -qq >/dev/null 2>&1
+            apt-get install -y -qq openssl ca-certificates curl >/dev/null 2>&1
+            openssl version
+            echo "--- P1: hybrid offered first ---"
+            echo | openssl s_client -connect sandersdashandseal.com:443 -servername sandersdashandseal.com -groups X25519MLKEM768:X25519 2>/dev/null | grep -E "Negotiated|Cipher is|Protocol|Verify return" | head -4
+            echo "--- P2: default groups ---"
+            echo | openssl s_client -connect sandersdashandseal.com:443 -servername sandersdashandseal.com 2>/dev/null | grep -E "Negotiated|Cipher is|Protocol" | head -3
+            echo "--- P3: classical only (compatibility control) ---"
+            echo | openssl s_client -connect sandersdashandseal.com:443 -servername sandersdashandseal.com -groups X25519 2>/dev/null | grep -E "Negotiated|Cipher is|Protocol" | head -3
+            echo "--- P4: healthz over the negotiated connection stack ---"
+            curl -s https://sandersdashandseal.com/healthz | head -c 200; echo
+          '
+          echo "OUTSIDE_PROOF_DONE"
