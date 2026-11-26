@@ -1,0 +1,16 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "docs/SANDERS_SENTINEL_HUMAN_LIFE_PROTECTION_2026-11-26.md",
+        "payload_hash": "9fd2c951294c0191222ae8d39af8710bb170cea8850880e8b9c89f52d5c59066",
+        "scope": {
+            "endpoint": "local://development",
+            "method": "TEST",
+            "ip": "127.0.0.1",
+            "operation": "DEVELOPMENT_VALIDATION"
+        }
+    },
+    "signatures": {},
+    "status": "UNSIGNED_SOURCE_MANIFEST"
+}
