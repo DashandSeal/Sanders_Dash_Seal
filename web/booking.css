@@ -15,6 +15,20 @@
  * the owner's Imperial Jade banner design for the relaunch of the real
  * Dash & Seal. Every class referenced by web/index.html and
  * web/booking.js is defined here; the layout is mobile-first.
+ *
+ * Royal Enterprise Standard upgrade, 2026-11-25 (founder-ruled): the
+ * portal and operator desk are brought up to the storefront's standard
+ * (web/jade-landing.css, rebuilt 2026-11-24) — CSS-crafted jade marble
+ * with veining over the page field, sculpted plaque cards with inset
+ * light, a gold inner rule and layered depth, the gold-sheen primary
+ * button with its sweep of light, medallion seal mounts, a serif
+ * hierarchy with the gold double-rule ornament, elegant motion, and
+ * the classes web/operator.js already emits (quote form, input rows,
+ * secondary button, success/error messages, history log) defined at
+ * last. THE PALETTE IS FROZEN: every color value in this file is one
+ * of the values the file already carried — the upgrade is material,
+ * typography, depth and finish, never color. No element id, class,
+ * form, endpoint or script behavior changed.
  * ========================================================================= */
 
 :root {
@@ -34,6 +48,26 @@
     --sds-error-bg: #4a1714;
     --sds-font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     --sds-serif: Georgia, "Times New Roman", serif;
+
+    /* Motion — one easing curve, the storefront's. */
+    --sds-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+    /* Shadows — layered depth, never a single flat drop. */
+    --sds-shadow-card: 0 14px 28px rgba(0, 0, 0, 0.35), 0 30px 60px rgba(0, 0, 0, 0.4);
+    --sds-shadow-card-hover: 0 20px 36px rgba(0, 0, 0, 0.35), 0 42px 84px rgba(0, 0, 0, 0.4);
+    --sds-shadow-button: 0 8px 30px rgba(0, 0, 0, 0.4);
+    --sds-shadow-button-hover: 0 14px 36px rgba(0, 0, 0, 0.4);
+    --sds-glow-gold: 0 0 16px rgba(232, 200, 121, 0.45);
+
+    /* The gold sheen gradient shared by every primary button. */
+    --sds-gold-sheen: linear-gradient(120deg, var(--sds-gold-deep), #f3d993, var(--sds-gold-deep));
+
+    /* A lighter jade marble for raised panels and cards: soft mineral
+       clouds over the deep panel gradient the cards already carried. */
+    --sds-marble-panel:
+        radial-gradient(ellipse 85% 62% at 16% 0%, color-mix(in srgb, #1a6a50 24%, transparent), transparent 62%),
+        radial-gradient(ellipse 60% 55% at 96% 100%, color-mix(in srgb, #041b17 55%, transparent), transparent 70%),
+        linear-gradient(155deg, #164b38, var(--sds-jade-panel-2));
 }
 
 * { box-sizing: border-box; }
@@ -56,13 +90,79 @@ body {
     -webkit-text-size-adjust: 100%;
 }
 
+/* Marble veining — irregular veins at varied angles and intervals,
+   laid over the jade field, as on the storefront. The page content
+   stacks above the stone (see the wrapper rule below). */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(117deg,
+            transparent 0 132px,
+            color-mix(in srgb, var(--sds-cream) 5%, transparent) 133px,
+            transparent 136px,
+            transparent 261px,
+            color-mix(in srgb, var(--sds-gold) 4%, transparent) 263px,
+            transparent 267px,
+            transparent 389px,
+            color-mix(in srgb, var(--sds-cream) 3%, transparent) 390px,
+            transparent 392px),
+        repeating-linear-gradient(63deg,
+            transparent 0 187px,
+            color-mix(in srgb, var(--sds-cream) 4%, transparent) 189px,
+            transparent 192px,
+            transparent 341px,
+            color-mix(in srgb, var(--sds-gold) 3%, transparent) 343px,
+            transparent 346px),
+        radial-gradient(ellipse 34% 22% at 78% 12%, color-mix(in srgb, var(--sds-cream) 4%, transparent), transparent 70%),
+        radial-gradient(ellipse 28% 30% at 8% 76%, color-mix(in srgb, var(--sds-gold) 5%, transparent), transparent 70%);
+}
+
+/* A second, softer vein pass so the stone reads at more than one depth. */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        repeating-linear-gradient(158deg,
+            transparent 0 218px,
+            color-mix(in srgb, var(--sds-cream) 3%, transparent) 221px,
+            color-mix(in srgb, var(--sds-cream) 1%, transparent) 228px,
+            transparent 234px,
+            transparent 457px,
+            color-mix(in srgb, var(--sds-gold) 3%, transparent) 460px,
+            transparent 464px);
+}
+
+/* The wrappers every portal page shares, stacked above the marble. */
+.sds-enterprise-header, .sds-main-viewport, .sds-intellectual-property-footer {
+    position: relative;
+    z-index: 1;
+}
+
 a { color: var(--sds-gold); }
+
+::selection { background: var(--sds-gold); color: #16231a; }
+
+:focus-visible {
+    outline: 3px solid rgba(232, 200, 121, 0.45);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
 
 /* ---- Corporate header -------------------------------------------------- */
 
 .sds-enterprise-header {
-    background: var(--sds-jade-bar);
+    background: linear-gradient(180deg, var(--sds-jade-deep), var(--sds-jade-bar));
     border-bottom: 2px solid var(--sds-gold);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 12%, transparent),
+        0 12px 30px color-mix(in srgb, var(--sds-jade-deep) 55%, transparent);
     padding: 0.9rem 1rem;
     display: flex;
     flex-wrap: wrap;
@@ -70,14 +170,21 @@ a { color: var(--sds-gold); }
     gap: 0.75rem 1rem;
 }
 
+/* The headquarters seal mounted as a medallion: the artwork untouched,
+   clipped to its own circle and ringed in gold on a deep-jade mount —
+   the storefront's mount, carried into the portal chrome. */
 .sds-header-seal {
     height: 56px;
-    width: auto;
-    max-width: 42vw;
-    object-fit: contain;
-    background: #ffffff;
-    border-radius: 6px;
-    padding: 4px;
+    width: 56px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--sds-gold);
+    background: var(--sds-jade-deep);
+    padding: 0;
+    box-shadow:
+        0 0 0 3px var(--sds-jade-deep),
+        0 0 0 4px rgba(211, 183, 107, 0.55),
+        0 6px 16px rgba(0, 0, 0, 0.35);
 }
 
 .sds-brand-title {
@@ -87,7 +194,10 @@ a { color: var(--sds-gold); }
     font-weight: 800;
     text-decoration: none;
     letter-spacing: 0.2px;
+    transition: color 0.2s var(--sds-ease);
 }
+
+.sds-brand-title:hover { color: var(--sds-gold-bright); }
 
 .sds-brand-title span { color: var(--sds-cream); }
 
@@ -107,24 +217,62 @@ a { color: var(--sds-gold); }
     padding: 1rem 1rem 2rem;
 }
 
+/* Sculpted plaque cards — layered depth: outer shadow, inset top
+   highlight catching the light, an inset gold ring, a carved inner
+   fall-off at the base, and the double-rule frame (::after) the
+   storefront's plaques carry. */
 .sds-action-card {
-    background: linear-gradient(150deg, #164b38, var(--sds-jade-panel-2));
+    position: relative;
+    background: var(--sds-marble-panel);
     border: 1px solid rgba(211, 183, 107, 0.55);
-    border-radius: 10px;
+    border-radius: 14px;
     padding: 1.25rem;
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 22%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--sds-gold) 14%, transparent),
+        inset 0 -22px 34px color-mix(in srgb, var(--sds-jade-deep) 55%, transparent),
+        var(--sds-shadow-card);
     color: var(--sds-cream);
+    transition: box-shadow 0.24s var(--sds-ease), border-color 0.24s var(--sds-ease);
 }
 
-h1 { font-family: var(--sds-serif); font-size: 1.75rem; line-height: 1.2; margin: 0 0 1rem; font-weight: 800; color: #fff8e5; }
+.sds-action-card::after {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border: 1px solid rgba(211, 183, 107, 0.4);
+    border-radius: 9px;
+    pointer-events: none;
+}
+
+h1 {
+    font-family: var(--sds-serif);
+    font-size: 1.75rem;
+    line-height: 1.2;
+    margin: 0 0 1rem;
+    font-weight: 800;
+    color: #fff8e5;
+    text-shadow: 0 2px 22px color-mix(in srgb, var(--sds-jade-deep) 65%, transparent);
+}
 h2 { font-family: var(--sds-serif); color: var(--sds-gold); }
 h3 { font-family: var(--sds-serif); color: var(--sds-gold-bright); }
+
+/* A gold double rule beneath the card headings — the ornament the
+   hierarchy stands on, as beneath the storefront's section headings. */
+.sds-action-card > h1::after, .sds-action-card > h2::after {
+    content: "";
+    display: block;
+    width: 72px;
+    margin-top: 12px;
+    border-top: 1px solid var(--sds-gold);
+    box-shadow: 0 4px 0 -1px color-mix(in srgb, var(--sds-gold) 55%, transparent);
+}
 
 .sds-eyebrow {
     color: var(--sds-gold);
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.18em;
     font-size: 0.85rem;
     margin: 0 0 0.5rem;
 }
@@ -145,6 +293,7 @@ h3 { font-family: var(--sds-serif); color: var(--sds-gold-bright); }
     border-radius: 6px;
     padding: 0.6rem 0.8rem;
     font-size: 0.95rem;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 10%, transparent);
 }
 
 .notice:empty { display: none; }
@@ -164,6 +313,19 @@ h3 { font-family: var(--sds-serif); color: var(--sds-gold-bright); }
 
 .sds-empty-msg { color: var(--sds-cream-dim); }
 
+/* Operator sign-in prompt pieces (web/operator.js). */
+.sds-error-msg {
+    background: var(--sds-error-bg);
+    color: var(--sds-error);
+    border: 1px solid var(--sds-error);
+    border-radius: 6px;
+    padding: 0.7rem 0.9rem;
+    font-weight: 600;
+    margin: 0 0 0.6rem;
+}
+
+.sds-auth-link { color: var(--sds-gold); font-weight: 700; }
+
 /* ---- Form controls: clearly visible and usable on a phone --------------- */
 
 #booking-fields { border: none; margin: 0; padding: 0; min-width: 0; }
@@ -179,6 +341,7 @@ label {
 input[type="text"],
 input[type="password"],
 input[type="email"],
+input[type="number"],
 input[type="datetime-local"],
 textarea,
 select {
@@ -191,17 +354,20 @@ select {
     border: 1.5px solid var(--sds-field-border);
     border-radius: 6px;
     appearance: auto;
+    transition: border-color 0.2s var(--sds-ease), box-shadow 0.2s var(--sds-ease);
 }
 
 input[type="text"]:focus,
 input[type="password"]:focus,
 input[type="email"]:focus,
+input[type="number"]:focus,
 input[type="datetime-local"]:focus,
 textarea:focus,
 select:focus {
     border-color: var(--sds-gold);
     outline: 3px solid rgba(232, 200, 121, 0.45);
     outline-offset: 0;
+    box-shadow: var(--sds-glow-gold);
 }
 
 input[type="checkbox"] {
@@ -225,23 +391,75 @@ button, .sds-button-primary {
     cursor: pointer;
 }
 
+/* Gold sheen, a lift on hover, a sweep of light, a press — the
+   storefront's primary button, at portal scale. */
 .sds-button-primary {
+    position: relative;
+    overflow: hidden;
     display: block;
     width: 100%;
     min-height: 52px;
     padding: 0.85rem 1rem;
-    background: linear-gradient(120deg, #b68a38, #f3d993, #b68a38);
+    background: var(--sds-gold-sheen);
     color: #16231a;
     font-size: 1.05rem;
     font-weight: 700;
     border: 1px solid #f9e2a7;
-    border-radius: 6px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-    transition: opacity 0.2s ease;
+    border-radius: 10px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, #fff8e5 65%, transparent),
+        var(--sds-shadow-button);
+    transition: transform 0.22s var(--sds-ease), box-shadow 0.22s var(--sds-ease), opacity 0.2s ease;
 }
 
-.sds-button-primary:hover { opacity: 0.92; }
+.sds-button-primary::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -80%;
+    width: 55%;
+    background: linear-gradient(115deg, transparent, color-mix(in srgb, var(--sds-gold-bright) 55%, transparent), transparent);
+    transform: skewX(-18deg);
+    transition: left 0.26s var(--sds-ease);
+    pointer-events: none;
+}
+
+.sds-button-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, #fff8e5 65%, transparent),
+        var(--sds-shadow-button-hover);
+}
+
+.sds-button-primary:hover:not(:disabled)::after { left: 130%; }
+.sds-button-primary:active:not(:disabled) { transform: translateY(0); }
 .sds-button-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* The secondary action — a marble panel under gold type, for the
+   operator desk's workspace button (web/operator.js). */
+.sds-button-secondary {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    margin-top: 1rem;
+    padding: 0.7rem 1rem;
+    background: var(--sds-marble-panel);
+    color: var(--sds-gold);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 1px solid rgba(211, 183, 107, 0.55);
+    border-radius: 10px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 18%, transparent),
+        var(--sds-shadow-button);
+    cursor: pointer;
+    transition: border-color 0.22s var(--sds-ease), color 0.22s var(--sds-ease), transform 0.22s var(--sds-ease);
+}
+
+.sds-button-secondary:hover { border-color: var(--sds-gold); color: var(--sds-gold-bright); transform: translateY(-1px); }
+.sds-button-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ---- Timeline ------------------------------------------------------------ */
 
@@ -255,16 +473,29 @@ button, .sds-button-primary {
     width: 100%;
     min-height: 52px;
     padding: 1rem 1.25rem;
-    background: linear-gradient(150deg, #164b38, var(--sds-jade-panel-2));
+    background: var(--sds-marble-panel);
     color: var(--sds-cream);
     border: 1px solid rgba(211, 183, 107, 0.55);
-    border-radius: 10px;
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.35);
+    border-radius: 14px;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 20%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--sds-gold) 10%, transparent),
+        inset 0 -18px 28px color-mix(in srgb, var(--sds-jade-deep) 45%, transparent),
+        var(--sds-shadow-card);
     font-size: 1rem;
     text-align: left;
+    transition: transform 0.24s var(--sds-ease), box-shadow 0.24s var(--sds-ease), border-color 0.24s var(--sds-ease);
 }
 
-.request-item:hover { border-color: var(--sds-gold); }
+.request-item:hover {
+    transform: translateY(-3px);
+    border-color: var(--sds-gold);
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 24%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--sds-gold) 16%, transparent),
+        inset 0 -18px 28px color-mix(in srgb, var(--sds-jade-deep) 45%, transparent),
+        var(--sds-shadow-card-hover);
+}
 .request-item strong { color: var(--sds-gold); font-size: 1.05rem; }
 
 .sds-date-string { color: var(--sds-cream-dim); font-size: 0.95rem; }
@@ -325,6 +556,51 @@ button, .sds-button-primary {
     font-weight: 700;
 }
 
+/* ---- Operator desk: case cards, quote form, workspace log ------------------- */
+
+.case-item > h3 { margin: 0 0 0.75rem; }
+.case-item > p { margin: 0.25rem 0; }
+
+.sds-quote-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-top: 1rem;
+}
+
+.sds-input-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.sds-input-row label { margin-bottom: 0; }
+.sds-input-row input { width: 9.5rem; flex: none; }
+
+.sds-success-msg {
+    background: rgba(232, 200, 121, 0.15);
+    color: var(--sds-gold-bright);
+    border: 1px solid var(--sds-gold);
+    border-radius: 6px;
+    padding: 0.7rem 0.9rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.sds-history-log {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background: rgba(12, 61, 48, 0.85);
+    border: 1px solid rgba(211, 183, 107, 0.55);
+    border-radius: 6px;
+    padding: 0.9rem 1rem;
+    color: var(--sds-cream);
+    font-size: 0.95rem;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 10%, transparent);
+}
+
 /* ---- Sign-in prompt --------------------------------------------------------- */
 
 .signin { text-align: center; }
@@ -335,7 +611,8 @@ button, .sds-button-primary {
 
 .sds-intellectual-property-footer {
     border-top: 2px solid var(--sds-gold);
-    background: var(--sds-jade-bar);
+    background: linear-gradient(165deg, var(--sds-jade-bar) 55%, var(--sds-jade-deep));
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--sds-cream) 14%, transparent);
     margin-top: 3rem;
     padding: 2rem 1rem;
     text-align: center;
@@ -353,24 +630,41 @@ button, .sds-button-primary {
 
 .sds-seal-strip figure {
     margin: 0;
-    width: 120px;
+    width: 132px;
     text-align: center;
 }
 
+/* The four companies' seals as medallion mounts — the same mount as
+   the storefront's footer: artwork untouched, ringed in gold. */
 .sds-seal-strip img {
-    width: 120px;
-    height: 96px;
-    object-fit: contain;
-    background: #ffffff;
-    border-radius: 8px;
-    padding: 6px;
+    width: 118px;
+    height: 118px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 2px solid var(--sds-gold);
+    background: var(--sds-jade-deep);
+    padding: 0;
+    box-shadow:
+        0 0 0 4px var(--sds-jade-bar),
+        0 0 0 5px rgba(211, 183, 107, 0.55),
+        0 10px 22px rgba(0, 0, 0, 0.35);
+    transition: transform 0.24s var(--sds-ease), box-shadow 0.24s var(--sds-ease);
+}
+
+.sds-seal-strip figure:hover img {
+    transform: translateY(-3px);
+    box-shadow:
+        0 0 0 4px var(--sds-jade-bar),
+        0 0 0 5px var(--sds-gold),
+        var(--sds-glow-gold),
+        0 14px 26px rgba(0, 0, 0, 0.35);
 }
 
 .sds-seal-strip figcaption {
     font-size: 0.72rem;
     font-weight: 600;
     color: var(--sds-gold);
-    margin-top: 0.35rem;
+    margin-top: 0.6rem;
     line-height: 1.3;
 }
 
@@ -397,7 +691,7 @@ video {
     max-height: 320px;
     background: #061c18;
     border: 1px solid rgba(211, 183, 107, 0.55);
-    border-radius: 6px;
+    border-radius: 10px;
 }
 
 pre {
@@ -425,16 +719,17 @@ audio { width: 100%; }
     border: 1px solid rgba(211, 183, 107, 0.55);
     border-radius: 6px;
     cursor: pointer;
+    transition: border-color 0.2s var(--sds-ease), color 0.2s var(--sds-ease);
 }
 
-.sds-media-actions button:hover { border-color: var(--sds-gold); }
+.sds-media-actions button:hover { border-color: var(--sds-gold); color: var(--sds-gold-bright); }
 .sds-media-actions button:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ---- Wider screens -------------------------------------------------------------- */
 
 @media (min-width: 640px) {
     .sds-enterprise-header { padding: 1.1rem 2rem; }
-    .sds-header-seal { height: 68px; }
+    .sds-header-seal { height: 68px; width: 68px; }
     .sds-brand-title { font-size: 1.6rem; }
     .sds-tagline-anchor { width: auto; margin-left: auto; text-align: right; }
     .sds-main-viewport { padding: 1.5rem 1rem 2.5rem; }
@@ -444,4 +739,5 @@ audio { width: 100%; }
 
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; }
+    .sds-button-primary:hover, .sds-button-secondary:hover, .request-item:hover, .sds-seal-strip figure:hover img { transform: none; }
 }
