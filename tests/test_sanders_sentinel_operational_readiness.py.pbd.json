@@ -4,8 +4,8 @@
         "platform": "Sanders Dash & Seal",
         "artifact": "tests/test_sanders_sentinel_operational_readiness.py",
         "payload_hash": "12505fc0ec9a757834485792839ff079469d449c2a35367087b9eaef2bd0a99c",
-        "scope": "source-manifest"
-    },
-    "signatures": {},
-    "status": "UNSIGNED_SOURCE_MANIFEST"
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
 }
