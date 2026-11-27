@@ -1,0 +1,46 @@
+name: Verify certificate expansion for Nexus Shield and Six Industry (one-time, 2026-11-26)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify-cert-expansion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read back certificate, nginx and strict HTTPS state on Oracle instance
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 15m
+          script: |
+            set +e
+            CERT=/etc/letsencrypt/live/sandersdashandseal.com/cert.pem
+            if [ -x /usr/local/bin/certbot ]; then CERTBOT=/usr/local/bin/certbot; else CERTBOT=certbot; fi
+            echo "=== CERTBOT CERTIFICATES ==="
+            sudo "$CERTBOT" certificates 2>/dev/null | grep -E "Certificate Name|Domains|Expiry" | head -20
+            echo "=== CERT FILE READBACK ==="
+            sudo openssl x509 -in "$CERT" -noout -subject -dates -ext subjectAltName
+            SAN=$(sudo openssl x509 -in "$CERT" -noout -ext subjectAltName 2>/dev/null)
+            NAMES=$(echo "$SAN" | grep -o 'DNS:[^,]*' | sed 's/DNS://' | sort -u)
+            echo "SAN_COUNT=$(echo "$NAMES" | grep -c .)"
+            echo "=== NGINX TEST ==="
+            sudo nginx -t
+            echo "nginx -t rc=$?"
+            sudo systemctl is-active nginx
+            echo "=== SERVER_NAME LINES WITH NEW NAMES ==="
+            sudo grep -R "server_name" /etc/nginx | grep "sandersnexusshield.com" | cut -c1-160
+            echo "=== ALIAS_HOSTS LIVE ==="
+            grep -n "^ALIAS_HOSTS" /tmp/sds-app/deploy/deployment.py | cut -c1-300
+            echo "=== LOOPBACK HOST GATE ==="
+            FAIL=0
+            for h in sandersnexusshield.com www.sandersnexusshield.com sanderssixindustry.com www.sanderssixindustry.com sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: $h" http://127.0.0.1:8000/healthz); echo "loopback Host $h -> $CODE"; if [ "$CODE" != "200" ]; then FAIL=1; fi; done
+            echo "=== STRICT HTTPS VERIFICATION (curl without -k) ==="
+            for n in sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com sandersnexusshield.com www.sandersnexusshield.com sanderssixindustry.com www.sanderssixindustry.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/healthz"); echo "https://$n/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/healthz returned $CODE"; FAIL=1; fi; done
+            for n in sandersnexusshield.com www.sandersnexusshield.com sanderssixindustry.com www.sanderssixindustry.com sandersdashandseal.com sanderslegalhelpersllc.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/"); echo "https://$n/ -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/ returned $CODE"; FAIL=1; fi; done
+            for n in sandersnexusshield.com sanderssixindustry.com; do T=$(curl -s "https://$n/" | grep -i -o '<title[^>]*>[^<]*</title>' | head -n 1); echo "TITLE $n: $T"; echo "$T" | grep -q "Imperial Jade" || { echo "FAIL: title on $n does not contain Imperial Jade"; FAIL=1; }; done
+            for n in sandersnexusshield.com sanderssixindustry.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://$n/healthz"); echo "http://$n/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: http://$n/healthz returned $CODE"; FAIL=1; fi; done
+            if [ "$FAIL" -ne 0 ]; then echo "CHECKS_FAILED"; exit 1; fi
+            echo "ALL_CHECKS_PASSED"
