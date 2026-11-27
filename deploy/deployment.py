@@ -19,7 +19,7 @@ from core_platform.pipeline_api import create_pipeline_app, TransactionStore
 from core_platform.stream_api import create_stream_app
 
 CANONICAL_HOST = 'sandersdashandseal.com'
-ALIAS_HOSTS = {'www.sandersdashandseal.com', 'sanderslegalhelpersllc.com', 'www.sanderslegalhelpersllc.com', 'sanderssixshield.com', 'www.sanderssixshield.com', 'sanderssecurestack.com', 'www.sanderssecurestack.com', 'sandersemergencyglobalcommunication.com', 'www.sandersemergencyglobalcommunication.com'}
+ALIAS_HOSTS = {'www.sandersdashandseal.com', 'sanderslegalhelpersllc.com', 'www.sanderslegalhelpersllc.com', 'sanderssixshield.com', 'www.sanderssixshield.com', 'sanderssecurestack.com', 'www.sanderssecurestack.com', 'sandersemergencyglobalcommunication.com', 'www.sandersemergencyglobalcommunication.com', 'sandersnexusshield.com', 'www.sandersnexusshield.com', 'sanderssixindustry.com', 'www.sanderssixindustry.com'}
 ORIGIN = 'https://' + CANONICAL_HOST
 # Every origin a browser may POST from: the canonical host plus every alias
 # host. The customer app and the session auth both check POST Origins
