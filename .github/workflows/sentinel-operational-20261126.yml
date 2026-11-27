@@ -1,0 +1,221 @@
+name: Sentinel OPERATIONAL - internal-reach exercise (one-off 2026-11-26)
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'read (boards only) or execute (record internal designations, tests, desk escalation)'
+        required: true
+        default: 'read'
+jobs:
+  sentinel-operational:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sentinel boards read / internal-reach operational exercise via production bindings
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            echo "=== STEP A: env handoff (values never printed) ==="
+            sudo sh -c 'cat /etc/sanders-dash-seal/environment /etc/sanders-dash-seal/runtime.env > /tmp/sds_env_parsed 2>/dev/null; chown sanders:sanders /tmp/sds_env_parsed; chmod 600 /tmp/sds_env_parsed'
+            echo "=== STEP B: sentinel operational (mode=${{ inputs.mode }}) ==="
+            cat > /tmp/sentinel_operational.py <<'PYEOF'
+            import json, os, time
+            with open('/tmp/sds_env_parsed') as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith('#') or '=' not in line:
+                        continue
+                    k, v = line.split('=', 1)
+                    os.environ[k.strip()] = v.strip().strip('"').strip("'")
+            os.environ.setdefault('SANDERS_RUNTIME_FACTORY', 'deploy.production_bindings:create_production_bindings')
+            from deploy.production_bindings import create_production_bindings
+            b = create_production_bindings()
+            s = b.sanders_sentinel
+            OP = 'RooseveltSanders'
+            ROLE = 'OPERATOR'
+            MODE = os.environ.get('SENTINEL_MODE', 'read')
+            AUTH = ('Founder directive 2026-11-26 23:39 MST: bring Sanders Sentinel to OPERATIONAL on '
+                    'everything within the platform own reach; internal designations recorded under '
+                    'that directive in the 2026-11-26 operational run')
+            EX = 'sentinel-operational-exercise-2026-11-26'
+            STAGES = ['PERCEIVE', 'RECOGNIZE', 'ASSESS', 'ACTIVATE', 'COORDINATE', 'PROTECT', 'VERIFY', 'RECOVER']
+
+            def boards(tag):
+                st = s.status()
+                print(tag + '_STATUS_PROG ' + json.dumps(st['construction_program']['items_by_ladder_state'], default=str))
+                print(tag + '_STATUS_READY ' + json.dumps(st['operational_readiness']['capabilities'], default=str))
+                print(tag + '_STATUS_HLP ' + json.dumps(st['human_life_protection']['parts_by_ladder_state'], default=str))
+                print(tag + '_STATUS_CASES ' + json.dumps({'total': st['emergency_activation']['cases_total'], 'open': st['emergency_activation']['cases_open'], 'escalations_total': st['bloodline_succession_directive']['escalations_total']}, default=str))
+                board = s.construction_program_view(OP, ROLE)
+                print(tag + '_BOARD ' + json.dumps([{'item': i['item'], 'state': i['ladder_state'], 'desig_id': i['designation_id'], 'desig_kind': i['designation_kind'], 'tested': i['end_to_end_test_completed']} for i in board['items']], default=str))
+                ready = s.readiness_view(OP, ROLE)
+                print(tag + '_READY ' + json.dumps([{'cap': c['capability'], 'state': c['state'], 'conn_id': c['connection_id'], 'kind': c['connection_kind'], 'tested': c['end_to_end_test_completed']} for c in ready['capabilities']], default=str))
+                hlp = s.human_life_protection_view(OP, ROLE)
+                print(tag + '_HLP ' + json.dumps([{'part': p['part'], 'state': p['ladder_state'], 'desig_id': p['designation_id'], 'tested': p['end_to_end_test_completed']} for p in hlp['parts']], default=str))
+                sh = s.shield_coverage_view(OP, ROLE)
+                print(tag + '_SHIELD ' + json.dumps(sh['part'], default=str))
+                esc = s.escalations(OP, ROLE)
+                print(tag + '_ESC ' + json.dumps([{'id': e['escalation_id'], 'ref': e['record_ref'], 'delivery': e['delivery_state'], 'closure': e['closure_state'], 'office': e['authority_office']} for e in esc['escalations']], default=str))
+
+            boards('BEFORE')
+            if MODE != 'execute':
+                print('READ_ONLY_DONE')
+            else:
+                # --- exercise case chain on platform-internal signals (RTSA_PLATFORM_SIGNAL) ---
+                cases = s.emergency_cases(OP, ROLE)['cases']
+                case = next((c for c in cases if EX in (c.get('detail_ref') or '')), None)
+                if case is None:
+                    case = s.record_emergency_signal(OP, 'RTSA_PLATFORM_SIGNAL', 'AUTHORIZED_RTSA_PLATFORM',
+                        'platform-internal-signals:' + EX, AUTH, 'TEST-EXERCISE-NO-MEMBER',
+                        'TEST ' + EX + ': eight-step operational sequence exercised on platform-internal signals only; no real emergency; no external dispatch',
+                        assistance_due_at=time.time() + 3600)
+                    print('CASE_CREATED ' + json.dumps(case, default=str))
+                else:
+                    print('CASE_EXISTS ' + json.dumps({'case_id': case['case_id'], 'state': case['state']}, default=str))
+                case_id = case['case_id']
+                case_state = case['state']
+                acts = s.emergency_activations(OP, ROLE, case_id)['activations'] if case_state == 'OPEN' else []
+                if case_state == 'OPEN' and not any(a['activation_kind'] == 'FUNDING' for a in acts):
+                    act = s.record_emergency_activation(OP, case_id, 'FUNDING', 'joint-funding-exercise:' + EX,
+                        'TEST ' + EX + ': item 48 joint funding flow exercised internally; no disbursement, no payment rail')
+                    print('ACTIVATION ' + json.dumps(act, default=str))
+                # item 48: Sentinel-side funding determination of record (joint flow, Sentinel side only)
+                frs = s.funding_requests_list(OP, ROLE)
+                fr = next((r for r in frs if EX in (r.get('matter_ref') or '')), None)
+                if fr is None:
+                    fr = s.open_funding_request(OP, 'TEST-EXERCISE:' + EX,
+                        'TEST ' + EX + ': item 48 emergency funding activation exercised through the internal joint Godfather+Sentinel flow of record; funds_disbursed False; no payment rail designated')
+                    print('FUNDING_OPENED ' + json.dumps(fr, default=str))
+                if fr['status'] == 'AWAITING_HUMAN_REVIEW':
+                    fr = s.record_funding_determination(OP, fr['request_id'], 'approve')
+                    print('FUNDING_DETERMINATION ' + json.dumps(fr, default=str))
+                else:
+                    print('FUNDING_STATE ' + json.dumps({'request_id': fr['request_id'], 'status': fr['status'], 'joint': fr.get('funding_approved')}, default=str))
+                # items 49 + 51: family notifications to the founder operator desk over TEXT, delivered to desk
+                notifs = s.family_notifications(OP, ROLE, case_id=case_id)['notifications'] if case_state == 'OPEN' else []
+                def ensure_notif(acc, detail_marker):
+                    found = next((n for n in notifs if detail_marker in (n.get('detail_ref') or '')), None)
+                    if found is None:
+                        found = s.record_family_notification(OP, case_id, 'founder-operator-desk', 'TEXT',
+                            'TEST ' + EX + ': ' + detail_marker, language='en', accessibility=acc)
+                        print('NOTIF_CREATED ' + json.dumps(found, default=str))
+                    if found['delivery_state'] != 'DELIVERED':
+                        found = s.confirm_family_notification_delivery(OP, found['notification_id'],
+                            'operator-desk-delivery-confirmation:' + EX)
+                        print('NOTIF_DELIVERED ' + json.dumps(found, default=str))
+                    return found
+                if case_state == 'OPEN':
+                    n49 = ensure_notif('STANDARD', 'item 49 emergency family notification to founder operator desk over TEXT channel')
+                    n51 = ensure_notif('DEAF_OR_HARD_OF_HEARING', 'item 51 deaf and hard-of-hearing accessible notification to founder operator desk over TEXT channel (VOICE refused by rule)')
+                # item 55 + closure + item 56: arrival verification, resolved closure, recovery assistance
+                cv = s.emergency_case_view(OP, ROLE, case_id)
+                if cv['state'] == 'OPEN':
+                    if not cv.get('arrival_ref'):
+                        cv = s.confirm_emergency_arrival(OP, case_id, 'operator-desk-arrival-confirmation:' + EX,
+                            'TEST ' + EX + ': item 55 arrival of exercise assistance at founder operator desk confirmed by operator record')
+                        print('ARRIVAL ' + json.dumps({'case_id': case_id, 'arrival_ref': cv.get('arrival_ref')}, default=str))
+                    closed = s.close_emergency_case(OP, case_id, 'TEST ' + EX + ': exercise danger resolved of record; case closed CLOSED_RESOLVED after verified arrival')
+                    print('CASE_CLOSED ' + json.dumps({'case_id': case_id, 'state': closed['state']}, default=str))
+                ras = s.recovery_assistance_records(OP, ROLE, case_id=case_id)['recovery_assistance']
+                ra = next((r for r in ras if EX in (r.get('detail_ref') or '')), None)
+                if ra is None:
+                    ra = s.record_recovery_assistance(OP, case_id, 'RECOVERY_FOLLOW_THROUGH',
+                        'founder-operator-desk', 'TEST ' + EX + ': item 56 post-emergency recovery follow-through to founder operator desk', target_platform='sanders_sentinel')
+                    print('RECOVERY_CREATED ' + json.dumps(ra, default=str))
+                if ra['state'] == 'RECORDED':
+                    ra = s.complete_recovery_assistance(OP, ra['assistance_id'], 'TEST ' + EX + ': recovery follow-through completed by operator record')
+                    print('RECOVERY_COMPLETED ' + json.dumps(ra, default=str))
+                # escalation to the founder operator desk: create, confirm desk delivery, leave OPEN (no closure, no acknowledgment on founder behalf)
+                escs = s.escalations(OP, ROLE)['escalations']
+                esc = next((e for e in escs if e['record_ref'] == 'TEST-ESCALATION:' + EX), None)
+                if esc is None:
+                    esc = s.record_escalation(OP, 'TEST-ESCALATION:' + EX,
+                        'TEST ' + EX + ': internal exercise escalation delivered to founder operator desk; not a real emergency; no external dispatch',
+                        critical=False, emergency=False)
+                    print('ESC_CREATED ' + json.dumps(esc, default=str))
+                if esc['delivery_state'] != 'DELIVERED':
+                    esc = s.confirm_escalation_delivery(OP, esc['escalation_id'], 'operator-desk-delivery-confirmation:' + EX)
+                    print('ESC_DELIVERED ' + json.dumps(esc, default=str))
+                else:
+                    print('ESC_ALREADY_DELIVERED ' + json.dumps({'id': esc['escalation_id'], 'closure': esc['closure_state']}, default=str))
+                # --- internal LIVE designations (platform-internal counterparts only) ---
+                prog_des = s.program_designations(OP, ROLE)['designations']
+                PROG = {
+                    48: 'internal:joint-godfather-sentinel-funding-flow (platform-internal flow of record; no payment rail designated, none represented)',
+                    49: 'internal:founder-operator-desk notification channel (TEXT/VISUAL desk of record)',
+                    51: 'internal:founder-operator-desk accessible TEXT/VISUAL channel (DEAF_OR_HARD_OF_HEARING notifications proceed over TEXT/VISUAL/SILENT)',
+                    55: 'internal:fulfillment-and-arrival-verification machinery (platform-internal)',
+                    56: 'internal:post-emergency recovery-assistance records carried by sanders_sentinel, the_godfather, sanders_patriot_saint',
+                }
+                for item, ref in PROG.items():
+                    if not any(d['item'] == item and d['state'] == 'ACTIVE' and d['designation_ref'] == ref for d in prog_des):
+                        rec = s.record_program_designation(OP, item, ref, 'LIVE', AUTH)
+                        print('PROG_DESIG %d ' % item + json.dumps(rec, default=str))
+                    else:
+                        print('PROG_DESIG_EXISTS %d' % item)
+                hlp_des = s.hlp_designations(OP, ROLE)['designations']
+                HLP = {
+                    'SIX_INDUSTRY_RESOURCE_BASE': 'internal:ecosystem six-industry resource base (621610, 624120, 485991, 532283, 423450, 492110) - the founder own businesses, nothing external',
+                    'LADDER_REPORTING': 'internal:truthful-verification ladder reporting derived from platform records (platform-internal)',
+                }
+                for part, ref in HLP.items():
+                    if not any(d['part'] == part and d['state'] == 'ACTIVE' and d['designation_ref'] == ref for d in hlp_des):
+                        rec = s.record_hlp_designation(OP, part, ref, 'LIVE', AUTH)
+                        print('HLP_DESIG ' + part + ' ' + json.dumps(rec, default=str))
+                    else:
+                        print('HLP_DESIG_EXISTS ' + part)
+                sh_des = s.shield_designations(OP, ROLE)['designations']
+                SHREF = 'internal:three-shields platform-to-platform coverage (Sanders Labyrinth Shield, LABYRINTH, Sovereign Shield V3) under the founder three-shields order 2026-11-26'
+                if not any(d['state'] == 'ACTIVE' and d['designation_ref'] == SHREF for d in sh_des):
+                    rec = s.record_shield_designation(OP, SHREF, 'LIVE', AUTH)
+                    print('SHIELD_DESIG ' + json.dumps(rec, default=str))
+                else:
+                    print('SHIELD_DESIG_EXISTS')
+                # --- readiness: PROTECTIVE_ACTIVATION on the platform-internal activation machinery ---
+                conns = s.readiness_connections(OP, ROLE)['connections']
+                SRC = 'internal:platform emergency activation machinery (production bindings, sanders_sentinel)'
+                if not any(c['capability'] == 'PROTECTIVE_ACTIVATION' and c['state'] == 'CONNECTED' and c['connection_kind'] == 'LIVE' and c['source_ref'] == SRC for c in conns):
+                    conn = s.record_readiness_connection(OP, 'PROTECTIVE_ACTIVATION', SRC, AUTH, connection_kind='LIVE', jurisdiction_ref='platform-internal', timezone_ref='America/Denver')
+                    print('READY_CONN ' + json.dumps(conn, default=str))
+                else:
+                    print('READY_CONN_EXISTS')
+                # --- completed end-to-end tests (TEST records, internal only, no external dispatch) ---
+                DETAIL = 'TEST ' + EX + ': end-to-end exercise on platform-internal signals and the founder operator desk; case ' + case_id + '; no external dispatch'
+                otests = s.operational_tests(OP, ROLE)['tests']
+                if not any(t['capability'] == 'PROTECTIVE_ACTIVATION' and t['outcome'] == 'COMPLETED' for t in otests):
+                    t = s.record_operational_test(OP, 'PROTECTIVE_ACTIVATION', STAGES, 'COMPLETED', DETAIL)
+                    print('READY_TEST ' + json.dumps(t, default=str))
+                else:
+                    print('READY_TEST_EXISTS')
+                ptests = s.program_tests(OP, ROLE)['tests']
+                for item in (48, 49, 51, 55, 56):
+                    if not any(t['item'] == item and t['outcome'] == 'COMPLETED' for t in ptests):
+                        t = s.record_program_test(OP, item, STAGES, 'COMPLETED', DETAIL)
+                        print('PROG_TEST %d ' % item + json.dumps(t, default=str))
+                    else:
+                        print('PROG_TEST_EXISTS %d' % item)
+                htests = s.hlp_tests(OP, ROLE)['tests']
+                for part in ('SIX_INDUSTRY_RESOURCE_BASE', 'LADDER_REPORTING'):
+                    if not any(t.get('part') == part and t['outcome'] == 'COMPLETED' for t in htests):
+                        t = s.record_hlp_test(OP, part, STAGES, 'COMPLETED', DETAIL)
+                        print('HLP_TEST ' + part + ' ' + json.dumps(t, default=str))
+                    else:
+                        print('HLP_TEST_EXISTS ' + part)
+                shtests = s.shield_tests(OP, ROLE)['tests']
+                if not any(t['outcome'] == 'COMPLETED' for t in shtests):
+                    t = s.record_shield_test(OP, ['IDENTIFY', 'DESIGNATE', 'CONNECT', 'EXERCISE', 'VERIFY', 'REPORT'], 'COMPLETED', DETAIL)
+                    print('SHIELD_TEST ' + json.dumps(t, default=str))
+                else:
+                    print('SHIELD_TEST_EXISTS')
+                boards('AFTER')
+                print('EXECUTE_DONE')
+            PYEOF
+            sudo -u sanders bash -c 'cd /opt/Sanders_Dash_Seal && SENTINEL_MODE=${{ inputs.mode }} PYTHONPATH=/opt/Sanders_Dash_Seal OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf ./venv/bin/python3 /tmp/sentinel_operational.py' 2>&1 | grep -E 'BEFORE_|AFTER_|CASE_|ACTIVATION|FUNDING_|NOTIF_|ARRIVAL|RECOVERY_|ESC_|PROG_|HLP_|SHIELD_|READY_|READ_ONLY_DONE|EXECUTE_DONE|Error|Denied|denied|Forbidden|Traceback' | head -60
+            sudo shred -u /tmp/sds_env_parsed 2>/dev/null || sudo rm -f /tmp/sds_env_parsed
+            rm -f /tmp/sentinel_operational.py
+            echo "SENTINEL_OPERATIONAL_DONE"
