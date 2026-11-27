@@ -733,6 +733,31 @@ ACCESS_REGISTER_SEED = (
                'is never recorded here; Validation Services '
                'may request documents at application time',
      'verified_on': '2026-11-26'},
+    {'system': 'UNGM',
+     'state': 'VERIFIED',
+     'basis': 'Her second global key: the founder\u2019s '
+              'UNGM supplier account is held and activated '
+              '(rooseveltsanders381@gmail.com) and SANDERS '
+              'HOME HEALTHCARE & CAREGIVERS LLC stands '
+              'registered \u2014 Basic Registration submitted '
+              '2026-11-26; UNGM number 1312370; supplier '
+              'profile registered with 25 UN Organizations; '
+              'the founder made the Declaration of '
+              'Eligibility himself',
+     'detail': 'UN Global Marketplace (ungm.org): Basic '
+               'Registration of record \u2014 year '
+               'established 2025; employees 0 (independent '
+               'contractors, owner-operated); scope '
+               'International; UNSPSC 85101508, 85101600, '
+               '91111600, 91111900; the site confirmed '
+               '\u201cCongratulations! The registration at '
+               'Basic level has been submitted. Your '
+               'supplier profile is registered with 25 '
+               'Organizations.\u201d No tax ID or document '
+               'upload was requested or supplied; the UNGM '
+               'credential is held by the founder alone and '
+               'is never recorded here',
+     'verified_on': '2026-11-26'},
 )
 ACCESS_SYSTEMS = tuple(e['system'] for e in ACCESS_REGISTER_SEED)
 
