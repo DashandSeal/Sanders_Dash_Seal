@@ -712,6 +712,27 @@ ACCESS_REGISTER_SEED = (
      'detail': 'Cannot be created standalone \u2014 AT_AWARD '
                'is its state of record, not a gap',
      'verified_on': '2026-11-26'},
+    {'system': 'EU_FUNDING_TENDERS_PORTAL',
+     'state': 'VERIFIED',
+     'basis': 'Her first global key: the founder\u2019s EU '
+              'Login account is held '
+              '(rooseveltsanders381@gmail.com) and SANDERS '
+              'HOME HEALTHCARE & CAREGIVERS LLC stands '
+              'registered in the Participant Register \u2014 '
+              'registration completed 2026-11-26; PIC '
+              '859635244; the founder is the authorised user '
+              'on the registration',
+     'detail': 'EU Funding & Tenders Portal, Participant '
+               'Register: organisation registration of record '
+               'under Colorado Secretary of State registration '
+               'number 20251946893; the portal confirmed '
+               '\u201cRegistration completed / Registration '
+               'submitted successfully\u201d (the founder '
+               'submitted himself, 2026-11-26). The EU Login '
+               'credential is held by the founder alone and '
+               'is never recorded here; Validation Services '
+               'may request documents at application time',
+     'verified_on': '2026-11-26'},
 )
 ACCESS_SYSTEMS = tuple(e['system'] for e in ACCESS_REGISTER_SEED)
 

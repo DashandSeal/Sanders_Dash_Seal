@@ -685,7 +685,13 @@ class TestMotherUpgrade(GrantwriterJurisdictionBase):
              'FEMA_GO': 'NOT_STARTED',
              'GRANTSOLUTIONS': 'AT_AWARD',
              'PMS': 'AT_AWARD',
-             'ASAP': 'AT_AWARD'})
+             'ASAP': 'AT_AWARD',
+             'EU_FUNDING_TENDERS_PORTAL': 'VERIFIED'})
+        eu = entries['EU_FUNDING_TENDERS_PORTAL']
+        self.assertIn('859635244', eu['basis'])
+        self.assertIn('EU Login', eu['basis'])
+        self.assertIn('20251946893', eu['detail'])
+        self.assertIn('Participant Register', eu['detail'])
         justgrants = entries['JUSTGRANTS']
         self.assertIn('Entity Administrator', justgrants['basis'])
         self.assertIn('A-547904', justgrants['detail'])
