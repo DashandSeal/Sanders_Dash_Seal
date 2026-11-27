@@ -129,10 +129,49 @@ its record_submission remains a RECORDED state only and
 transmits nothing. The jurisdiction case lifecycle is the
 amendment's own machinery, in this service's own store,
 beside it.
+
+MOTHER UPGRADE (founder direction 2026-11-26 16:42 MST:
+"give Grantwriter everything she truly needs to perform her
+duties \u2014 upgrade everything"): three additions, all
+records in this service's own store beside the jurisdiction
+machinery. (1) TARGETING PARAMETERS OF RECORD \u2014 the
+founder's pursuit floor (2026-11-26 16:29 MST: discovery and
+pursuit target opportunities of $10,000,000 and up; the floor
+steers new hunts and cancels no case of record), his
+partnership rule as corrected and clarified the same
+afternoon (16:31\u201316:33 MST: joint and collaborative
+applications are made only among the four Sanders companies
+\u2014 those are the joint partners; an external co-applicant
+is refused by name in her machinery), and his global-by-design
+key principle (16:12 MST: her submission access is a global
+register, every jurisdiction's system keyed the same way
+\u2014 the founder's authority or her own seat, plus her
+records). (2) THE ACCESS REGISTER \u2014 her keys as platform
+records, one entry per system, in truthful laddered states
+verified 2026-11-26 (JustGrants key of record active through
+the founder's activated Entity Administrator authority, her
+own-name seat pending the 2026-11-27 session of record;
+SAM.gov and Grants.gov verified; eRA Commons, HRSA EHBs and
+FEMA GO not started; GrantSolutions, PMS and ASAP stand
+AT_AWARD \u2014 provisioned at award or invitation, recorded
+as their state, not as a gap). The register holds NO
+credentials and NO passwords, ever. (3) DISCOVERY \u2014 a
+native client for the Grants.gov public opportunities API,
+carried as a LABELED, detachable input tool: a data source,
+never her decision-making. Discovery results record as
+records under her targeting (the floor applied where the
+source exposes amounts); a discovery record never auto-creates
+a pursuit case \u2014 a case is born only through her duty
+cycle. The connection state is reported truthfully: it reads
+CONNECTED only when a discovery run has actually been
+answered by the source, and NOT_CONNECTED otherwise.
 """
 
+import json
 import sqlite3
 import time
+import urllib.error
+import urllib.request
 import uuid
 from pathlib import Path
 
@@ -538,6 +577,191 @@ _SEED_WORKSPACE_CASES = (
 
 
 
+# -- Mother upgrade (founder direction 2026-11-26) -------------------
+# Targeting parameters of record, the access register, and the
+# labeled discovery connection. Founder documents of record:
+# the pursuit-floor direction of 2026-11-26 (16:29 MST) as
+# corrected 16:31 MST and clarified 16:33 MST, and the
+# global-by-design key direction of 2026-11-26 16:12 MST.
+
+PURSUIT_FLOOR_USD = 10_000_000
+
+EXTERNAL_PARTNER_REFUSAL = 'GRANTWRITER_EXTERNAL_PARTNER_REFUSED'
+
+TARGETING_PARAMETERS = {
+    'pursuit_floor_usd': PURSUIT_FLOOR_USD,
+    'pursuit_floor_of_record': '$10,000,000 and up',
+    'pursuit_floor_scope': (
+        'Discovery and pursuit target opportunities of '
+        '$10,000,000 and up. The floor steers what she hunts '
+        'going forward; it cancels no case of record \u2014 '
+        'cases already of record and in motion continue on '
+        'their own footing'),
+    'pursuit_floor_source': (
+        'Founder direction 2026-11-26 16:29 MST: \u201cWe have '
+        'go after grants $10 million dollars and up to make a '
+        'real world difference\u201d'),
+    'partnership_rule': 'JOINT_PARTNERS_ARE_THE_FOUR_COMPANIES_ONLY',
+    'joint_partners': JURISDICTION_COMPANIES,
+    'external_co_applicants': 'REFUSED_BY_NAME',
+    'external_partner_refusal': EXTERNAL_PARTNER_REFUSAL,
+    'partnership_rule_source': (
+        'Founder correction 2026-11-26 16:31 MST (\u201cNo '
+        'joint appreciation only our companies\u201d \u2014 '
+        'appreciation carried as given; operative word: '
+        'application), clarified 16:33 MST: \u201cThose are '
+        'our joint partners\u201d \u2014 the four Sanders '
+        'companies are each other\u2019s joint partners; joint '
+        'and collaborative applications run inside the Sanders '
+        'house, never with outside parties'),
+    'access_principle': 'GLOBAL_BY_DESIGN_KEY_REGISTER',
+    'access_principle_statement': (
+        'Her submission access is a global register: every '
+        'jurisdiction\u2019s system keyed the same way \u2014 '
+        'the founder\u2019s authority or her own seat, plus her '
+        'platform records of them'),
+    'access_principle_source': (
+        'Founder direction 2026-11-26 16:12 MST: '
+        '\u201cshe\u2019s got to be able to submit grants '
+        'globally by design\u201d'),
+}
+
+# The access register: her keys as platform records, one entry
+# per system, in truthful laddered states. Facts verified
+# 2026-11-26 and stated exactly as verified; nothing here is a
+# credential \u2014 the register never holds a password.
+ACCESS_STATES = (
+    'KEY_OF_RECORD_ACTIVE', 'VERIFIED', 'PENDING',
+    'NOT_STARTED', 'AT_AWARD')
+ACCESS_REGISTER_SEED = (
+    {'system': 'JUSTGRANTS',
+     'state': 'KEY_OF_RECORD_ACTIVE',
+     'basis': 'Her key of record runs through the '
+              'founder\u2019s activated Entity Administrator '
+              'authority (his DOJ account was activated '
+              '2026-11-26) \u2014 the seat that exists',
+     'detail': 'Own-name seat PENDING: scheduled 2026-11-27 '
+               '(library desktop session); invitee '
+               'daddydik323@gmail.com; application A-547904; '
+               'role to assign: Application Submitter; '
+               'Authorized Representative remains the founder',
+     'verified_on': '2026-11-26'},
+    {'system': 'SAM.GOV',
+     'state': 'VERIFIED',
+     'basis': 'Founder is Administrator (verified in SAM.gov '
+              '2026-11-26); her access runs through his '
+              'entity administration',
+     'detail': 'Sanders Home Healthcare & Caregivers LLC: '
+               'Active Registration, expires 2027-11-11 '
+               '(UEI QW8BRKNCF573, CAGE 27KB6). Sanders '
+               'Senior Living LLC (UEI FJAZARX3NJA6): '
+               'registration Work In Progress. Sanders Legal '
+               'Helpers LLC (UEI J9FUQW4EXQ17): registration '
+               'Work In Progress. S & G Security Inc.: no '
+               'registration of record',
+     'verified_on': '2026-11-26'},
+    {'system': 'GRANTS.GOV',
+     'state': 'VERIFIED',
+     'basis': 'Submission under the founder\u2019s active '
+              'Expanded AOR; her workspace participation '
+              'attaches per application',
+     'detail': 'Sanders Home Healthcare & Caregivers LLC '
+               'linked (UEI QW8BRKNCF573); founder is EBiz '
+               'POC with APPROVED / ACTIVE roles: Expanded '
+               'AOR, Standard AOR, Workspace Manager '
+               '(verified in Grants.gov 2026-11-26)',
+     'verified_on': '2026-11-26'},
+    {'system': 'ERA_COMMONS',
+     'state': 'NOT_STARTED',
+     'basis': 'Organization registration with the founder as '
+              'Signing Official; the SAM.gov registration it '
+              'requires stands Active',
+     'detail': 'Not started \u2014 Tier 2, create ahead of '
+               'need (NIH / eRA Commons)',
+     'verified_on': '2026-11-26'},
+    {'system': 'HRSA_EHBS',
+     'state': 'NOT_STARTED',
+     'basis': 'Organization registration ahead of need; the '
+              'SAM.gov registration it requires stands Active',
+     'detail': 'Not started \u2014 Tier 2, create ahead of '
+               'need (HRSA Electronic Handbooks)',
+     'verified_on': '2026-11-26'},
+    {'system': 'FEMA_GO',
+     'state': 'NOT_STARTED',
+     'basis': 'Organization registration ahead of need',
+     'detail': 'Not started \u2014 Tier 2, create ahead of '
+               'need (FEMA GO)',
+     'verified_on': '2026-11-26'},
+    {'system': 'GRANTSOLUTIONS',
+     'state': 'AT_AWARD',
+     'basis': 'Provisioned at award or by agency invitation',
+     'detail': 'Cannot be created standalone \u2014 AT_AWARD '
+               'is its state of record, not a gap',
+     'verified_on': '2026-11-26'},
+    {'system': 'PMS',
+     'state': 'AT_AWARD',
+     'basis': 'Provisioned at award (HHS Payment Management '
+              'Services)',
+     'detail': 'Cannot be created standalone \u2014 AT_AWARD '
+               'is its state of record, not a gap',
+     'verified_on': '2026-11-26'},
+    {'system': 'ASAP',
+     'state': 'AT_AWARD',
+     'basis': 'Provisioned at award (Automated Standard '
+              'Application for Payments)',
+     'detail': 'Cannot be created standalone \u2014 AT_AWARD '
+               'is its state of record, not a gap',
+     'verified_on': '2026-11-26'},
+)
+ACCESS_SYSTEMS = tuple(e['system'] for e in ACCESS_REGISTER_SEED)
+
+# Discovery: the Grants.gov public opportunities API as a
+# LABELED, detachable input tool \u2014 a data source, never
+# her decision-making (native-only labeling discipline).
+DISCOVERY_SOURCE = {
+    'name': 'Grants.gov public opportunities API',
+    'kind': 'LABELED_DETACHABLE_INPUT_TOOL',
+    'role': 'DATA_SOURCE_ONLY_NOT_DECISION_MAKING',
+    'search_endpoint': 'https://api.grants.gov/v1/api/search2',
+    'detail_endpoint':
+        'https://api.grants.gov/v1/api/fetchOpportunity',
+    'auto_creates_cases': False,
+}
+# The NAICS facet set her record currently carries (the set
+# carried in her base platform record). The founder's NAICS
+# ruling is still open, so the set is labeled exactly that:
+# carried, not ruled. The source API exposes CFDA / agency
+# facets rather than NAICS parameters, so the carried set is
+# recorded as the targeting facet of record on every run; it
+# is never represented as an API parameter the source accepts.
+DISCOVERY_NAICS_CODES = (
+    '541611', '541612', '541613', '541614', '541618', '541690')
+DISCOVERY_NAICS_STATUS = 'CARRIED_NOT_RULED'
+
+
+def _default_discovery_fetch(url, payload):
+    """The native discovery transport: one JSON POST via the
+    standard library. Raises on any failure; the caller records
+    the connection state honestly."""
+    request = urllib.request.Request(
+        url, data=json.dumps(payload).encode('utf-8'),
+        headers={'Content-Type': 'application/json'},
+        method='POST')
+    with urllib.request.urlopen(request, timeout=30) as response:
+        return json.loads(response.read().decode('utf-8'))
+
+
+def _amount_of_record(value):
+    """Parse a source amount to an int of USD, or None when
+    the source exposes none."""
+    if value is None:
+        return None
+    try:
+        return int(float(str(value).replace(',', '').strip()))
+    except (TypeError, ValueError):
+        return None
+
+
 class GrantwriterPlatform:
     """Grantwriter at its recorded maximum level: a platform
     service layer composing the pre-existing Grantwriter data and
@@ -547,7 +771,8 @@ class GrantwriterPlatform:
     receipts, check-in)."""
 
     def __init__(self, database, base_store, operator_verifier=None,
-                 audit=None, approval_checker=None):
+                 audit=None, approval_checker=None,
+                 discovery_fetcher=None):
         if audit is None or not callable(getattr(audit, 'preserve', None)):
             raise GrantwriterPlatformDenied(
                 'A Glass-Box audit adapter is required: '
@@ -564,6 +789,8 @@ class GrantwriterPlatform:
         self.operator_verifier = operator_verifier
         self.audit = audit
         self.approval_checker = approval_checker
+        self._discovery_fetch = discovery_fetcher or \
+            _default_discovery_fetch
         self.identity = IDENTITY
         self.geofence = GeofencePolicy(IDENTITY)
         self.guard = AccessGuard(audit, 'grantwriter', {
@@ -628,7 +855,51 @@ class GrantwriterPlatform:
                 updated_at INTEGER NOT NULL,
                 PRIMARY KEY (system, entity, role)
             );""")
+            case_columns = [row[1] for row in db.execute(
+                "PRAGMA table_info(jurisdiction_cases);").fetchall()]
+            if 'partners' not in case_columns:
+                db.execute(
+                    "ALTER TABLE jurisdiction_cases "
+                    "ADD COLUMN partners TEXT;")
+            db.execute("""CREATE TABLE IF NOT EXISTS grantwriter_access_register (
+                system TEXT PRIMARY KEY,
+                state TEXT NOT NULL,
+                basis TEXT,
+                detail TEXT,
+                verified_on TEXT,
+                updated_by TEXT NOT NULL,
+                updated_at INTEGER NOT NULL
+            );""")
+            db.execute("""CREATE TABLE IF NOT EXISTS grantwriter_discovery_runs (
+                run_id TEXT PRIMARY KEY,
+                source TEXT NOT NULL,
+                keyword TEXT,
+                state TEXT NOT NULL,
+                hits_returned INTEGER NOT NULL DEFAULT 0,
+                records_written INTEGER NOT NULL DEFAULT 0,
+                below_floor_filtered INTEGER NOT NULL DEFAULT 0,
+                error TEXT,
+                recorded_by TEXT NOT NULL,
+                recorded_at INTEGER NOT NULL
+            );""")
+            db.execute("""CREATE TABLE IF NOT EXISTS grantwriter_discovery_records (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                run_id TEXT NOT NULL,
+                source_opp_id TEXT,
+                opp_number TEXT,
+                title TEXT,
+                agency TEXT,
+                open_date TEXT,
+                close_date TEXT,
+                opp_status TEXT,
+                cfda_list TEXT,
+                award_ceiling INTEGER,
+                estimated_total_funding INTEGER,
+                floor_verdict TEXT NOT NULL,
+                recorded_at INTEGER NOT NULL
+            );""")
             self._seed_jurisdiction(db)
+            self._seed_access_register(db)
 
     # -- plumbing ----------------------------------------------------
 
@@ -1141,6 +1412,8 @@ class GrantwriterPlatform:
             'funder': row['funder'],
             'external_ref': row['external_ref'],
             'opportunity_kind': row['opportunity_kind'],
+            'partners': json.loads(row['partners'])
+            if row['partners'] else [],
             'fee_structure': row['fee_structure'],
             'profile_complete': bool(row['profile_complete']),
             'profile_gaps': row['profile_gaps'],
@@ -1187,6 +1460,44 @@ class GrantwriterPlatform:
         return row
 
     @staticmethod
+    def _validate_case_partners(opportunity_kind, partners):
+        """The founder's partnership rule (2026-11-26, corrected
+        16:31 MST and clarified 16:33 MST): joint and
+        collaborative applications are made only among the four
+        Sanders companies \u2014 those are the joint partners.
+        A named partner outside the four is refused by name.
+        Returns the partners of record as a tuple."""
+        if partners is None:
+            return ()
+        if isinstance(partners, str) or \
+                not isinstance(partners, (list, tuple)):
+            raise GrantwriterPlatformDenied(
+                'Partners must be named as a list of entities')
+        named = []
+        for partner in partners:
+            if not isinstance(partner, str) or not partner.strip():
+                raise GrantwriterPlatformDenied(
+                    'Every partner must be named')
+            named.append(partner.strip())
+        external = [name for name in named
+                    if name not in JURISDICTION_COMPANIES]
+        if external:
+            raise GrantwriterPlatformForbidden(
+                EXTERNAL_PARTNER_REFUSAL + ': joint and '
+                'collaborative applications are made only among '
+                'the four Sanders companies \u2014 '
+                + '; '.join(JURISDICTION_COMPANIES)
+                + ' \u2014 the joint partners of record. '
+                'External co-applicant refused: '
+                + '; '.join(external))
+        if opportunity_kind == 'INDIVIDUAL' and named:
+            raise GrantwriterPlatformDenied(
+                'An INDIVIDUAL case names no partners; a case '
+                'with partners of record is JOINT, COLLABORATIVE '
+                'or ECOSYSTEM_WIDE')
+        return tuple(named)
+
+    @staticmethod
     def _validate_branch_scope(branch, scope_ref):
         if branch not in JURISDICTION_BRANCH_IDS:
             raise GrantwriterPlatformDenied(
@@ -1208,7 +1519,8 @@ class GrantwriterPlatform:
                                  funder=None, external_ref=None,
                                  fee_structure=None,
                                  profile_complete=True,
-                                 profile_gaps=None, case_id=None):
+                                 profile_gaps=None, case_id=None,
+                                 partners=None):
         """Open a jurisdiction case at PREPARE in one branch and
         one record scope. The standing fee bar is structural: a
         percentage-of-award fee structure is refused by name.
@@ -1226,6 +1538,8 @@ class GrantwriterPlatform:
                 str(fee_structure).strip().upper() == 'PERCENTAGE_OF_AWARD':
             raise GrantwriterPlatformDenied(
                 FEE_BAR['refusal'] + ': ' + FEE_BAR['basis'])
+        partners = self._validate_case_partners(
+            opportunity_kind, partners)
         if case_id is None:
             case_id = 'GWJ-' + uuid.uuid4().hex[:12].upper()
         now = int(time.time())
@@ -1240,13 +1554,15 @@ class GrantwriterPlatform:
                     "scope_ref, title, funder, external_ref, "
                     "opportunity_kind, fee_structure, profile_complete, "
                     "profile_gaps, funder_block, stage, created_by, "
-                    "created_at, updated_by, updated_at) VALUES (?, ?, "
+                    "created_at, updated_by, updated_at, partners) "
+                    "VALUES (?, ?, "
                     "?, ?, ?, ?, ?, ?, ?, ?, NULL, 'PREPARE', ?, ?, "
-                    "?, ?);",
+                    "?, ?, ?);",
                     (case_id, branch, scope_ref, title.strip(), funder,
                      external_ref, opportunity_kind, fee_structure,
                      1 if profile_complete else 0, profile_gaps,
-                     actor, now, actor, now))
+                     actor, now, actor, now,
+                     json.dumps(list(partners)) if partners else None))
                 db.execute(
                     "INSERT INTO jurisdiction_case_stages (case_id, "
                     "stage, submission_method, authority_basis, "
@@ -1564,6 +1880,325 @@ class GrantwriterPlatform:
                  'updated_at': r['updated_at']}
                 for r in db.execute(query, params).fetchall()]
 
+    # -- Mother upgrade: targeting, access register, discovery ------
+
+    @staticmethod
+    def targeting_view() -> dict:
+        """The targeting parameters of record (founder directions
+        of 2026-11-26): the $10,000,000 pursuit floor, the
+        partnership rule, and the global-by-design key
+        principle."""
+        view = dict(TARGETING_PARAMETERS)
+        view['joint_partners'] = list(TARGETING_PARAMETERS[
+            'joint_partners'])
+        return view
+
+    def _seed_access_register(self, db):
+        """Seed her keys of record, one entry per system, in the
+        truthful states verified 2026-11-26. Idempotent: existing
+        entries are never overwritten, so a later state of record
+        survives restarts. The register holds no credentials."""
+        for entry in ACCESS_REGISTER_SEED:
+            db.execute(
+                "INSERT OR IGNORE INTO grantwriter_access_register "
+                "(system, state, basis, detail, verified_on, "
+                "updated_by, updated_at) VALUES (?, ?, ?, ?, ?, "
+                "'FOUNDER_RECORD', 1764115200);",
+                (entry['system'], entry['state'], entry['basis'],
+                 entry['detail'], entry['verified_on']))
+
+    @staticmethod
+    def _access_entry_view(row):
+        return {'system': row['system'], 'state': row['state'],
+                'basis': row['basis'], 'detail': row['detail'],
+                'verified_on': row['verified_on'],
+                'updated_by': row['updated_by'],
+                'updated_at': row['updated_at']}
+
+    def access_register(self):
+        """Her keys of record, in register order."""
+        with self._connect() as db:
+            return [self._access_entry_view(r) for r in db.execute(
+                "SELECT * FROM grantwriter_access_register "
+                "ORDER BY rowid;").fetchall()]
+
+    def record_access_state(self, actor, system, state, basis=None,
+                            detail=None, verified_on=None):
+        """Record a key's state (operator-only, receipt
+        GRANTWRITER_ACCESS_STATE_RECORDED). States are the
+        laddered states of record; a new jurisdiction's system
+        may be added \u2014 the register is global by design.
+        No credential is ever recorded: this surface refuses
+        password-shaped input by name."""
+        self._check_actor(actor)
+        if not self._is_operator(actor):
+            raise GrantwriterPlatformForbidden(
+                'Access register records are an operator authority')
+        if not isinstance(system, str) or not system.strip():
+            raise GrantwriterPlatformDenied('A system must be named')
+        system = system.strip().upper()
+        if state not in ACCESS_STATES:
+            raise GrantwriterPlatformDenied(
+                f'Unknown access state: {state!r} \u2014 the states '
+                'of record are ' + ', '.join(ACCESS_STATES))
+        for value in (basis, detail):
+            if value is not None and 'password' in str(value).lower():
+                raise GrantwriterPlatformDenied(
+                    'GRANTWRITER_ACCESS_REGISTER_HOLDS_NO_CREDENTIALS: '
+                    'the register records keys as states and bases '
+                    'only \u2014 never a password or credential')
+        now = int(time.time())
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                db.execute(
+                    "INSERT INTO grantwriter_access_register (system, "
+                    "state, basis, detail, verified_on, updated_by, "
+                    "updated_at) VALUES (?, ?, ?, ?, ?, ?, ?) "
+                    "ON CONFLICT(system) DO UPDATE SET state = "
+                    "excluded.state, basis = excluded.basis, detail = "
+                    "excluded.detail, verified_on = "
+                    "excluded.verified_on, updated_by = "
+                    "excluded.updated_by, updated_at = "
+                    "excluded.updated_at;",
+                    (system, state, basis, detail, verified_on,
+                     actor, now))
+                self._record('GRANTWRITER_ACCESS_STATE_RECORDED',
+                             actor=actor, system=system, state=state)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                "SELECT * FROM grantwriter_access_register "
+                "WHERE system = ?;", (system,)).fetchone()
+            return self._access_entry_view(row)
+
+    def access_register_board(self, actor, role):
+        """The access register board, behind the JURISDICTION
+        guard: her keys as records under the global-by-design
+        principle. Credentials held: none, ever."""
+        self._check_actor(actor)
+        self._guard_access(actor, role, 'JURISDICTION',
+                           'access-register',
+                           purpose='grantwriter access register')
+        return {
+            'principle': TARGETING_PARAMETERS['access_principle'],
+            'principle_statement': TARGETING_PARAMETERS[
+                'access_principle_statement'],
+            'credentials_held': False,
+            'passwords_held': False,
+            'entries': self.access_register(),
+        }
+
+    def _discovery_run_view(self, db, row):
+        records = db.execute(
+            "SELECT * FROM grantwriter_discovery_records "
+            "WHERE run_id = ? ORDER BY id;", (row['run_id'],)).fetchall()
+        return {
+            'run_id': row['run_id'],
+            'source': row['source'],
+            'keyword': row['keyword'],
+            'state': row['state'],
+            'hits_returned': row['hits_returned'],
+            'records_written': row['records_written'],
+            'below_floor_filtered': row['below_floor_filtered'],
+            'error': row['error'],
+            'recorded_by': row['recorded_by'],
+            'recorded_at': row['recorded_at'],
+            'records': [self._discovery_record_view(r)
+                        for r in records],
+        }
+
+    @staticmethod
+    def _discovery_record_view(row):
+        return {
+            'source_opp_id': row['source_opp_id'],
+            'opp_number': row['opp_number'],
+            'title': row['title'],
+            'agency': row['agency'],
+            'open_date': row['open_date'],
+            'close_date': row['close_date'],
+            'opp_status': row['opp_status'],
+            'cfda_list': json.loads(row['cfda_list'])
+            if row['cfda_list'] else [],
+            'award_ceiling': row['award_ceiling'],
+            'estimated_total_funding':
+                row['estimated_total_funding'],
+            'floor_verdict': row['floor_verdict'],
+            'recorded_at': row['recorded_at'],
+        }
+
+    def discovery_connection_state(self):
+        """The truthful connection state of the labeled discovery
+        source: CONNECTED only when a discovery run has actually
+        been answered by the source; NOT_CONNECTED otherwise
+        \u2014 never claimed from configuration alone."""
+        with self._connect() as db:
+            row = db.execute(
+                "SELECT state FROM grantwriter_discovery_runs "
+                "ORDER BY recorded_at DESC, rowid DESC LIMIT 1;"
+            ).fetchone()
+        if row is not None and row['state'] == 'CONNECTED':
+            return 'CONNECTED'
+        return 'NOT_CONNECTED'
+
+    def run_discovery_search(self, actor, keyword=None, rows=25):
+        """Run one discovery search against the labeled Grants.gov
+        public opportunities API (operator-only, receipt
+        GRANTWRITER_DISCOVERY_SEARCH_RECORDED). Results record as
+        discovery records under her targeting: where the source
+        exposes an amount (estimated total program funding or
+        award ceiling), an opportunity below the $10,000,000
+        floor is filtered out and counted, never recorded; where
+        the source exposes no amount, the record carries
+        AMOUNT_NOT_EXPOSED and stands. A discovery record never
+        auto-creates a pursuit case. When the source does not
+        answer, the run records NOT_CONNECTED with the failure
+        named \u2014 no results are fabricated."""
+        self._check_actor(actor)
+        if not self._is_operator(actor):
+            raise GrantwriterPlatformForbidden(
+                'Discovery searches are an operator authority')
+        try:
+            rows = max(1, min(int(rows), 100))
+        except (TypeError, ValueError):
+            raise GrantwriterPlatformDenied(
+                'rows must be a whole number') from None
+        run_id = 'GWD-' + uuid.uuid4().hex[:12].upper()
+        now = int(time.time())
+        payload = {'oppStatuses': 'posted', 'rows': rows}
+        if isinstance(keyword, str) and keyword.strip():
+            payload['keyword'] = keyword.strip()
+        state = 'CONNECTED'
+        error = None
+        hits = []
+        try:
+            response = self._discovery_fetch(
+                DISCOVERY_SOURCE['search_endpoint'], payload)
+            hits = ((response or {}).get('data') or {}).get(
+                'oppHits') or []
+        except Exception as exc:  # the source did not answer
+            state = 'NOT_CONNECTED'
+            error = f'{type(exc).__name__}: {exc}'[:300]
+            hits = []
+        records = []
+        below_floor = 0
+        if state == 'CONNECTED':
+            for hit in hits:
+                ceiling = None
+                estimated = None
+                opp_id = hit.get('id')
+                if opp_id is not None:
+                    try:
+                        detail = self._discovery_fetch(
+                            DISCOVERY_SOURCE['detail_endpoint'],
+                            {'oppId': int(opp_id)
+                             if str(opp_id).isdigit() else opp_id})
+                        synopsis = ((detail or {}).get('data')
+                                    or {}).get('synopsis') or {}
+                        ceiling = _amount_of_record(
+                            synopsis.get('awardCeiling'))
+                        estimated = _amount_of_record(
+                            synopsis.get(
+                                'estimatedTotalProgramFunding'))
+                    except Exception:
+                        ceiling = None
+                        estimated = None
+                amounts = [a for a in (estimated, ceiling)
+                           if a is not None]
+                if not amounts:
+                    verdict = 'AMOUNT_NOT_EXPOSED'
+                elif max(amounts) >= PURSUIT_FLOOR_USD:
+                    verdict = 'MEETS_FLOOR'
+                else:
+                    verdict = 'BELOW_FLOOR'
+                if verdict == 'BELOW_FLOOR':
+                    below_floor += 1
+                    continue
+                records.append({
+                    'source_opp_id': str(opp_id)
+                    if opp_id is not None else None,
+                    'opp_number': hit.get('number'),
+                    'title': hit.get('title'),
+                    'agency': hit.get('agency'),
+                    'open_date': hit.get('openDate'),
+                    'close_date': hit.get('closeDate'),
+                    'opp_status': hit.get('oppStatus'),
+                    'cfda_list': hit.get('cfdaList') or [],
+                    'award_ceiling': ceiling,
+                    'estimated_total_funding': estimated,
+                    'floor_verdict': verdict,
+                    'recorded_at': now,
+                })
+        with self._connect() as db:
+            db.execute("BEGIN IMMEDIATE;")
+            try:
+                db.execute(
+                    "INSERT INTO grantwriter_discovery_runs (run_id, "
+                    "source, keyword, state, hits_returned, "
+                    "records_written, below_floor_filtered, error, "
+                    "recorded_by, recorded_at) VALUES (?, ?, ?, ?, "
+                    "?, ?, ?, ?, ?, ?);",
+                    (run_id, DISCOVERY_SOURCE['name'],
+                     payload.get('keyword'), state, len(hits),
+                     len(records), below_floor, error, actor, now))
+                for record in records:
+                    db.execute(
+                        "INSERT INTO grantwriter_discovery_records "
+                        "(run_id, source_opp_id, opp_number, title, "
+                        "agency, open_date, close_date, opp_status, "
+                        "cfda_list, award_ceiling, "
+                        "estimated_total_funding, floor_verdict, "
+                        "recorded_at) VALUES (?, ?, ?, ?, ?, ?, ?, "
+                        "?, ?, ?, ?, ?, ?);",
+                        (run_id, record['source_opp_id'],
+                         record['opp_number'], record['title'],
+                         record['agency'], record['open_date'],
+                         record['close_date'], record['opp_status'],
+                         json.dumps(record['cfda_list']),
+                         record['award_ceiling'],
+                         record['estimated_total_funding'],
+                         record['floor_verdict'],
+                         record['recorded_at']))
+                self._record(
+                    'GRANTWRITER_DISCOVERY_SEARCH_RECORDED',
+                    actor=actor, run_id=run_id, state=state,
+                    hits_returned=len(hits),
+                    records_written=len(records),
+                    below_floor_filtered=below_floor)
+                db.commit()
+            except Exception:
+                db.rollback()
+                raise
+            row = db.execute(
+                "SELECT * FROM grantwriter_discovery_runs "
+                "WHERE run_id = ?;", (run_id,)).fetchone()
+            return self._discovery_run_view(db, row)
+
+    def discovery_board(self, actor, role):
+        """The discovery board, behind the JURISDICTION guard:
+        the labeled source, its truthful connection state, the
+        carried NAICS facet set (CARRIED_NOT_RULED), and every
+        discovery run and record of record."""
+        self._check_actor(actor)
+        self._guard_access(actor, role, 'JURISDICTION', 'discovery',
+                           purpose='grantwriter discovery board')
+        with self._connect() as db:
+            runs = [self._discovery_run_view(db, r) for r in
+                    db.execute(
+                        "SELECT * FROM grantwriter_discovery_runs "
+                        "ORDER BY recorded_at, rowid;").fetchall()]
+        return {
+            'source': dict(DISCOVERY_SOURCE),
+            'connection_state': self.discovery_connection_state(),
+            'pursuit_floor_usd': PURSUIT_FLOOR_USD,
+            'naics_codes_carried': list(DISCOVERY_NAICS_CODES),
+            'naics_status': DISCOVERY_NAICS_STATUS,
+            'auto_creates_cases': False,
+            'runs': runs,
+        }
+
     @staticmethod
     def jurisdiction_design_view() -> dict:
         """The Complete Service Jurisdiction as adopted
@@ -1604,7 +2239,27 @@ class GrantwriterPlatform:
                 {'role': role, 'meaning': JUSTGRANTS_ROLE_MEANINGS[role]}
                 for role in JUSTGRANTS_ROLES],
             'roles_model': 'FACTS_OF_RECORD_PER_ENTITY',
-            'external_connections': 'NONE',
+            'targeting': GrantwriterPlatform.targeting_view(),
+            'access_register': {
+                'principle': TARGETING_PARAMETERS[
+                    'access_principle'],
+                'states': list(ACCESS_STATES),
+                'systems': list(ACCESS_SYSTEMS),
+                'credentials_held': False,
+            },
+            'discovery': {
+                'source': dict(DISCOVERY_SOURCE),
+                'naics_codes_carried': list(DISCOVERY_NAICS_CODES),
+                'naics_status': DISCOVERY_NAICS_STATUS,
+                'connection_state': 'REPORTED_ON_THE_DISCOVERY_'
+                                    'BOARD_TRUTHFULLY',
+            },
+            'external_connections': 'ONE_LABELED_DETACHABLE_'
+                                    'INPUT_TOOL: the Grants.gov '
+                                    'public opportunities API '
+                                    'as a discovery data source '
+                                    'only; no submission '
+                                    'connection',
             'funds_held': False,
             'funds_disbursed': False,
         }
@@ -1644,6 +2299,10 @@ class GrantwriterPlatform:
                       'by_stage': by_stage},
             'role_assignments': self.role_assignments(),
             'seeded_case': seeded,
+            'targeting': type(self).targeting_view(),
+            'access_register': self.access_register_board(
+                actor, role),
+            'discovery': self.discovery_board(actor, role),
         }
 
     def _jurisdiction_status_summary(self):
@@ -1653,6 +2312,9 @@ class GrantwriterPlatform:
             ).fetchone()['n']
             seeded = self._jurisdiction_case_row(
                 db, SEEDED_JUSTGRANTS_CASE_ID)
+            access_entries = db.execute(
+                "SELECT COUNT(*) AS n FROM "
+                "grantwriter_access_register;").fetchone()['n']
         return {
             'guarded_document': JURISDICTION_GUARDED_DOCUMENT,
             'amendment': True,
@@ -1662,6 +2324,12 @@ class GrantwriterPlatform:
                 {'case_id': SEEDED_JUSTGRANTS_CASE_ID,
                  'stage': seeded['stage']} if seeded is not None
                 else None),
+            'mother_upgrade': {
+                'pursuit_floor_usd': PURSUIT_FLOOR_USD,
+                'access_register_entries': access_entries,
+                'discovery_connection':
+                    self.discovery_connection_state(),
+            },
         }
 
     # -- check-in --------------------------------------------------------
@@ -1755,6 +2423,15 @@ __all__ = [
     'JUSTGRANTS_ROLES',
     'OPERATING_RULES',
     'OPPORTUNITY_KINDS',
+    'ACCESS_REGISTER_SEED',
+    'ACCESS_STATES',
+    'ACCESS_SYSTEMS',
+    'DISCOVERY_NAICS_CODES',
+    'DISCOVERY_NAICS_STATUS',
+    'DISCOVERY_SOURCE',
+    'EXTERNAL_PARTNER_REFUSAL',
+    'PURSUIT_FLOOR_USD',
+    'TARGETING_PARAMETERS',
     'PROPERTY_OBJECTIVES',
     'SEEDED_JUSTGRANTS_CASE_ID',
     'SEEDED_WORKSPACE_CASE_IDS',

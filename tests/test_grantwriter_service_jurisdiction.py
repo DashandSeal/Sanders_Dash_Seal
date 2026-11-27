@@ -581,3 +581,200 @@ class TestRoutes(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+# -- Mother upgrade (founder direction 2026-11-26) -------------------
+
+
+def _fake_discovery_fetch(url, payload):
+    """A labeled fake of the Grants.gov public API: three search
+    hits; detail amounts for two of them (one above the floor,
+    one below); the third's detail answers with no synopsis, so
+    no amount is exposed."""
+    if url.endswith('search2'):
+        return {'data': {'oppHits': [
+            {'id': '101', 'number': 'TEST-BIG-1',
+             'title': 'Big Health Program',
+             'agency': 'Department of Health and Human Services',
+             'agencyCode': 'HHS', 'openDate': '11/01/2026',
+             'closeDate': '03/01/2027', 'oppStatus': 'posted',
+             'cfdaList': ['93.000']},
+            {'id': '102', 'number': 'TEST-SMALL-1',
+             'title': 'Small Local Grant', 'agency': 'Agency',
+             'agencyCode': 'AG', 'openDate': '11/01/2026',
+             'closeDate': '01/01/2027', 'oppStatus': 'posted',
+             'cfdaList': []},
+            {'id': '103', 'number': 'TEST-NOAMT-1',
+             'title': 'Amount Not Published', 'agency': 'Agency',
+             'agencyCode': 'AG', 'openDate': '11/01/2026',
+             'closeDate': '02/01/2027', 'oppStatus': 'posted',
+             'cfdaList': []},
+        ]}}
+    if url.endswith('fetchOpportunity'):
+        amounts = {
+            101: {'estimatedTotalProgramFunding': '25000000',
+                  'awardCeiling': '12000000'},
+            102: {'estimatedTotalProgramFunding': '400000',
+                  'awardCeiling': '500000'},
+        }
+        return {'data': {'synopsis': amounts.get(payload['oppId'], {})}}
+    raise AssertionError(f'unexpected url {url}')
+
+
+class TestMotherUpgrade(GrantwriterJurisdictionBase):
+    def make_service(self, fetcher=None):
+        tmp = Path(self._tmp.name)
+        return GrantwriterPlatform(
+            tmp / 'svc2.db', grantwriter_mother.database(),
+            operator_verifier=lambda actor: actor == OPERATOR,
+            audit=FakeAudit(), discovery_fetcher=fetcher)
+
+    def test_pursuit_floor_recorded_and_cancels_nothing(self):
+        view = GrantwriterPlatform.jurisdiction_design_view()
+        targeting = view['targeting']
+        self.assertEqual(targeting['pursuit_floor_usd'], 10_000_000)
+        self.assertEqual(gwsvc.PURSUIT_FLOOR_USD, 10_000_000)
+        self.assertIn('cancels no case of record',
+                      targeting['pursuit_floor_scope'])
+        board = self.service.jurisdiction_board(OPERATOR, 'OPERATOR')
+        self.assertEqual(board['targeting']['pursuit_floor_usd'],
+                         10_000_000)
+        # The floor steers new hunts; the cases of record stand.
+        self.assertEqual(board['cases']['by_branch']
+                         ['PRIVATE_CORPORATE'], 3)
+        self.assertEqual(board['seeded_case']['case_id'], 'A-547904')
+        self.assertEqual(board['seeded_case']['stage'],
+                         'VERIFY_RECEIPT')
+
+    def test_external_partner_refused_by_name(self):
+        with self.assertRaises(GrantwriterPlatformForbidden) as ctx:
+            self.make_case(opportunity_kind='JOINT',
+                           partners=[COMPANY, 'Outside Org Inc.'])
+        self.assertIn('GRANTWRITER_EXTERNAL_PARTNER_REFUSED',
+                      str(ctx.exception))
+        with self.assertRaises(GrantwriterPlatformForbidden):
+            self.make_case(branch='PLATFORM_FUNDING',
+                           scope='grantwriter',
+                           opportunity_kind='COLLABORATIVE',
+                           partners=['Some Foundation'])
+
+    def test_internal_joint_case_accepted(self):
+        case = self.make_case(
+            opportunity_kind='JOINT',
+            partners=[COMPANY, OTHER_COMPANY,
+                      'Sanders Legal Helpers LLC',
+                      'S & G Security Inc.'])
+        self.assertEqual(case['opportunity_kind'], 'JOINT')
+        self.assertEqual(case['partners'],
+                         [COMPANY, OTHER_COMPANY,
+                          'Sanders Legal Helpers LLC',
+                          'S & G Security Inc.'])
+        solo = self.make_case()
+        self.assertEqual(solo['partners'], [])
+
+    def test_access_register_states_exact(self):
+        entries = {e['system']: e
+                   for e in self.service.access_register()}
+        self.assertEqual(
+            {system: e['state'] for system, e in entries.items()},
+            {'JUSTGRANTS': 'KEY_OF_RECORD_ACTIVE',
+             'SAM.GOV': 'VERIFIED',
+             'GRANTS.GOV': 'VERIFIED',
+             'ERA_COMMONS': 'NOT_STARTED',
+             'HRSA_EHBS': 'NOT_STARTED',
+             'FEMA_GO': 'NOT_STARTED',
+             'GRANTSOLUTIONS': 'AT_AWARD',
+             'PMS': 'AT_AWARD',
+             'ASAP': 'AT_AWARD'})
+        justgrants = entries['JUSTGRANTS']
+        self.assertIn('Entity Administrator', justgrants['basis'])
+        self.assertIn('A-547904', justgrants['detail'])
+        self.assertIn('daddydik323@gmail.com', justgrants['detail'])
+        self.assertIn('Application Submitter', justgrants['detail'])
+        sam = entries['SAM.GOV']
+        self.assertIn('QW8BRKNCF573', sam['detail'])
+        self.assertIn('27KB6', sam['detail'])
+        self.assertIn('FJAZARX3NJA6', sam['detail'])
+        self.assertIn('J9FUQW4EXQ17', sam['detail'])
+        grants = entries['GRANTS.GOV']
+        self.assertIn('Expanded AOR', grants['detail'])
+        self.assertIn('Workspace Manager', grants['detail'])
+        for entry in entries.values():
+            self.assertNotIn('password',
+                             (entry['basis'] + entry['detail']).lower())
+        board = self.service.access_register_board(
+            OPERATOR, 'OPERATOR')
+        self.assertFalse(board['credentials_held'])
+        self.assertEqual(board['principle'],
+                         'GLOBAL_BY_DESIGN_KEY_REGISTER')
+
+    def test_access_state_recording_and_credential_refusal(self):
+        updated = self.service.record_access_state(
+            OPERATOR, 'ERA_COMMONS', 'PENDING',
+            basis='Organization registration submitted',
+            verified_on='2026-11-27')
+        self.assertEqual(updated['state'], 'PENDING')
+        entries = {e['system']: e
+                   for e in self.service.access_register()}
+        self.assertEqual(entries['ERA_COMMONS']['state'], 'PENDING')
+        with self.assertRaises(GrantwriterPlatformForbidden):
+            self.service.record_access_state(
+                'not-the-operator', 'ERA_COMMONS', 'VERIFIED')
+        with self.assertRaises(GrantwriterPlatformDenied) as ctx:
+            self.service.record_access_state(
+                OPERATOR, 'ERA_COMMONS', 'PENDING',
+                detail='the password is hunter2')
+        self.assertIn('HOLDS_NO_CREDENTIALS', str(ctx.exception))
+        with self.assertRaises(GrantwriterPlatformDenied):
+            self.service.record_access_state(
+                OPERATOR, 'ERA_COMMONS', 'SOMEWHERE')
+
+    def test_discovery_floor_filtering_and_records(self):
+        service = self.make_service(_fake_discovery_fetch)
+        before = service.jurisdiction_board(
+            OPERATOR, 'OPERATOR')['cases']['total']
+        run = service.run_discovery_search(OPERATOR, keyword='health')
+        self.assertEqual(run['state'], 'CONNECTED')
+        self.assertEqual(run['hits_returned'], 3)
+        self.assertEqual(run['records_written'], 2)
+        self.assertEqual(run['below_floor_filtered'], 1)
+        by_number = {r['opp_number']: r for r in run['records']}
+        self.assertEqual(by_number['TEST-BIG-1']['floor_verdict'],
+                         'MEETS_FLOOR')
+        self.assertEqual(
+            by_number['TEST-BIG-1']['estimated_total_funding'],
+            25_000_000)
+        self.assertEqual(by_number['TEST-BIG-1']['award_ceiling'],
+                         12_000_000)
+        self.assertEqual(by_number['TEST-NOAMT-1']['floor_verdict'],
+                         'AMOUNT_NOT_EXPOSED')
+        self.assertNotIn('TEST-SMALL-1', by_number)
+        board = service.discovery_board(OPERATOR, 'OPERATOR')
+        self.assertEqual(board['connection_state'], 'CONNECTED')
+        self.assertEqual(board['naics_status'], 'CARRIED_NOT_RULED')
+        self.assertEqual(board['naics_codes_carried'],
+                         ['541611', '541612', '541613', '541614',
+                          '541618', '541690'])
+        self.assertFalse(board['auto_creates_cases'])
+        self.assertEqual(board['source']['kind'],
+                         'LABELED_DETACHABLE_INPUT_TOOL')
+        after = service.jurisdiction_board(
+            OPERATOR, 'OPERATOR')['cases']['total']
+        self.assertEqual(before, after)
+
+    def test_discovery_not_connected_honesty(self):
+        def failing_fetch(url, payload):
+            raise OSError('network unreachable')
+
+        service = self.make_service(failing_fetch)
+        self.assertEqual(service.discovery_connection_state(),
+                         'NOT_CONNECTED')
+        run = service.run_discovery_search(OPERATOR)
+        self.assertEqual(run['state'], 'NOT_CONNECTED')
+        self.assertEqual(run['records'], [])
+        self.assertEqual(run['records_written'], 0)
+        self.assertIn('network unreachable', run['error'])
+        board = service.discovery_board(OPERATOR, 'OPERATOR')
+        self.assertEqual(board['connection_state'], 'NOT_CONNECTED')
+        with self.assertRaises(GrantwriterPlatformForbidden):
+            service.run_discovery_search('not-the-operator')

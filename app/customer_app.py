@@ -1202,7 +1202,11 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                          '/api/grantwriter/check-in',
                                          '/api/grantwriter/jurisdiction',
                                          '/api/grantwriter/jurisdiction/cases',
-                                         '/api/grantwriter/jurisdiction/role-assignments')
+                                         '/api/grantwriter/jurisdiction/role-assignments',
+                                         '/api/grantwriter/targeting',
+                                         '/api/grantwriter/access-register',
+                                         '/api/grantwriter/discovery',
+                                         '/api/grantwriter/discovery/search')
                                 or gw_stage_match is not None
                                 or gw_budget_match is not None
                                 or gw_evidence_match is not None
@@ -2214,6 +2218,9 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                                             '/api/grantwriter/status',
                                             '/api/grantwriter/portfolio',
                                             '/api/grantwriter/jurisdiction',
+                                            '/api/grantwriter/targeting',
+                                            '/api/grantwriter/access-register',
+                                            '/api/grantwriter/discovery',
                                             '/api/pbd-validation/status',
                                             '/api/pbd-manifest-generator/status',
                                             '/api/vault/status',
@@ -3337,8 +3344,25 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                         if not is_operator():
                             return respond(start, '403 Forbidden', {'error': 'operator_required'})
                         return respond(start, '200 OK', {'jurisdiction': grantwriter.jurisdiction_board(identity, 'OPERATOR')})
+                    if path == '/api/grantwriter/targeting':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'targeting': grantwriter.targeting_view()})
+                    if path == '/api/grantwriter/access-register':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'access_register': grantwriter.access_register_board(identity, 'OPERATOR')})
+                    if path == '/api/grantwriter/discovery':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        return respond(start, '200 OK', {'discovery': grantwriter.discovery_board(identity, 'OPERATOR')})
+                    if path == '/api/grantwriter/discovery/search':
+                        if not is_operator():
+                            return respond(start, '403 Forbidden', {'error': 'operator_required'})
+                        record = grantwriter.run_discovery_search(identity, keyword=data.get('keyword'), rows=data.get('rows', 25))
+                        return respond(start, '201 Created', {'discovery_run': record})
                     if path == '/api/grantwriter/jurisdiction/cases':
-                        record = grantwriter.create_jurisdiction_case(identity, data['branch'], data['scope_ref'], data['title'], opportunity_kind=data.get('opportunity_kind', 'INDIVIDUAL'), funder=data.get('funder'), external_ref=data.get('external_ref'), fee_structure=data.get('fee_structure'), profile_complete=data.get('profile_complete', True), profile_gaps=data.get('profile_gaps'), case_id=data.get('case_id'))
+                        record = grantwriter.create_jurisdiction_case(identity, data['branch'], data['scope_ref'], data['title'], opportunity_kind=data.get('opportunity_kind', 'INDIVIDUAL'), funder=data.get('funder'), external_ref=data.get('external_ref'), fee_structure=data.get('fee_structure'), profile_complete=data.get('profile_complete', True), profile_gaps=data.get('profile_gaps'), case_id=data.get('case_id'), partners=data.get('partners'))
                         return respond(start, '201 Created', {'case': record})
                     if gw_jurisdiction_case_match:
                         record = grantwriter.jurisdiction_case(identity, 'OPERATOR', gw_jurisdiction_case_match.group(1), data['branch'], data['scope_ref'])
