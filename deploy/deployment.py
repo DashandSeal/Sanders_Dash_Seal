@@ -1420,7 +1420,13 @@ def create_application(bindings=None):
             # and /operator.html 308-redirected to '/' (and a POST there
             # 405d), while the alias host served them. '/' itself is
             # excluded: _api_route already served the portal at '/' above.
-            if path.startswith('/auth/') or (path in CUSTOMER_ASSETS and path != '/'):
+            # The /platforms storefront routes (platform finish,
+            # 2026-11-27) are delegated the same way, so the flagship
+            # serves every platform's storefront instead of
+            # 308-redirecting them to '/'.
+            if (path.startswith('/auth/') or path == '/platforms'
+                    or path.startswith('/platforms/')
+                    or (path in CUSTOMER_ASSETS and path != '/')):
                 return customer(env, start)
             if method not in ('GET', 'HEAD'):
                 return _response(start, '421 Misdirected Request',

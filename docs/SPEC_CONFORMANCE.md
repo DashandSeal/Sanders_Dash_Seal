@@ -6914,3 +6914,11 @@ Landed under the Founder's order of 2026-11-26 23:11 MST ("Finish the platforms 
 **The honest limits.** (1) Records stand at authentication level FOUNDER_DESIGNATED: vital-record tracing is still pending family documents, every vital field stands NOT_YET_TRACED (death_record NOT_APPLICABLE_LIVING — all three successors are living and no death record exists), and no vital-record authentication is claimed that does not exist. (2) The record is a record: this module carries no dispatch path and takes no protective action itself; it is the authenticated record that protection stands on. (3) The registry document itself remains outside the repository, unchanged by this landing.
 
 **Recorded.** Entered into this record on 2026-11-27 as the bloodline descendant-record landing (founder's order of 2026-11-26, 23:32 MST), beside the entries it follows and does not supersede.
+
+---
+
+## Platform Finish — Tranche 1 Follow-Up: Daedalus’s Product of Record (2026-11-27)
+
+Under the Founder’s ruling of 2026-11-26 23:59 / 2026-11-27 00:02 MST, Daedalus’s definition in `core_platform/platform_definitions.py` is amended to carry his product of record: he is the one that gets plugged into everything to repair it — the ecosystem’s repair core, on a global scale by design — and ensuring he performs well is a standing priority. The amendment touches his who, his why, his business model (the product statement), and his provenance only; his six codes and his NOT SETTLED price stand untouched. Pinned by `test_daedalus_repair_core_product` in `tests/test_platform_definitions.py`.
+
+The same follow-up landing delegates the `/platforms` storefront routes to the customer app on the canonical host in `deploy/deployment.py`: as first landed, the alias hosts served the storefronts while the flagship 308-redirected them to `/`; the delegation follows the existing `/auth/` precedent in that file, so sandersdashandseal.com itself now serves the directory and every storefront.

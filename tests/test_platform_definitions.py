@@ -135,6 +135,19 @@ class PlatformDefinitionsTest(unittest.TestCase):
         self.assertNotIn('$', defn.price_of_record)
         self.assertNotIn('prod_', defn.stripe_product)
 
+    def test_daedalus_repair_core_product(self):
+        # Founder ruling, 2026-11-26/27: Daedalus's product of record
+        # is that he is the one that gets plugged into everything to
+        # repair it — the ecosystem's repair core, global by design;
+        # ensuring he performs well is a standing priority.
+        defn = DEFINITIONS['daedalus']
+        for field in (defn.who, defn.why, defn.business_model):
+            self.assertIn('repair core', field)
+            self.assertIn('plugged into everything', field)
+        self.assertIn('standing priority', defn.why)
+        # His price stays NOT SETTLED (conflict) — untouched.
+        self.assertTrue(defn.price_of_record.startswith('NOT SETTLED'))
+
     def test_accessors(self):
         self.assertIs(definition_for('grantwriter'),
                       DEFINITIONS['grantwriter'])
