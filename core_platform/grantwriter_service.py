@@ -631,8 +631,8 @@ TARGETING_PARAMETERS = {
 # 2026-11-26 and stated exactly as verified; nothing here is a
 # credential \u2014 the register never holds a password.
 ACCESS_STATES = (
-    'KEY_OF_RECORD_ACTIVE', 'VERIFIED', 'PENDING',
-    'NOT_STARTED', 'AT_AWARD')
+    'KEY_OF_RECORD_ACTIVE', 'VERIFIED', 'SUBMITTED',
+    'PENDING', 'NOT_STARTED', 'AT_AWARD')
 ACCESS_REGISTER_SEED = (
     {'system': 'JUSTGRANTS',
      'state': 'KEY_OF_RECORD_ACTIVE',
@@ -757,6 +757,35 @@ ACCESS_REGISTER_SEED = (
                'upload was requested or supplied; the UNGM '
                'credential is held by the founder alone and '
                'is never recorded here',
+     'verified_on': '2026-11-26'},
+    {'system': 'WORLD_BANK_VMP',
+     'state': 'SUBMITTED',
+     'basis': 'Her third global key: the founder\u2019s '
+              'World Bank Vendor Management Portal account '
+              'is held (rooseveltsanders381@gmail.com, '
+              'signed in via Google \u2014 no credential of '
+              'its own was created) and the vendor '
+              'application of SANDERS HOME HEALTHCARE & '
+              'CAREGIVERS LLC stands SUBMITTED 2026-11-26; '
+              'Application Number VMP0016761; submitted, '
+              'not yet approved \u2014 the World Bank '
+              'reviews; the founder made the '
+              'conflict-of-interest attestation and the '
+              'submission himself',
+     'detail': 'World Bank Vendor Management Portal '
+               '(vmp-ext.worldbank.org): vendor application '
+               'of record \u2014 establishment date '
+               '08/27/2025 (founder-confirmed); categories '
+               'MEDICAL: SERVICES and CONTRACT '
+               'CONSULTANTS: CONSULTING: FIRMS FOR '
+               'OPERATIONAL PROJECTS; company, contact and '
+               'questionnaire fully filled and saved before '
+               'submission; both WBG conflict questions '
+               'answered No; no demographic ownership '
+               'categories claimed; no tax ID was requested '
+               'or entered at any step; the account is the '
+               'founder\u2019s Google sign-in and no '
+               'credential is recorded here',
      'verified_on': '2026-11-26'},
 )
 ACCESS_SYSTEMS = tuple(e['system'] for e in ACCESS_REGISTER_SEED)
