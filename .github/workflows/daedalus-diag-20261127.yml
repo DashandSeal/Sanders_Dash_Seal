@@ -1,0 +1,195 @@
+name: Daedalus production diagnosis (one-off 2026-11-27, READ-ONLY)
+on:
+  workflow_dispatch:
+jobs:
+  daedalus-diag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read-only Daedalus protection-state diagnosis via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            APP=/opt/Sanders_Dash_Seal
+            DATA=$APP/data
+            echo "== D1 files =="
+            ls $DATA 2>&1 | head -20 | cut -c1-90
+            stat -c '%n|%U:%G|%a|%s|%y' $DATA $DATA/daedalus_protection_state.json $DATA/daedalus_protection_ledger.jsonl $DATA/daedalus_protection_seed.hex $DATA/daedalus_knowledge.db 2>&1 | cut -c1-115
+            echo "== D2 access-as-sanders =="
+            sudo -u sanders /usr/bin/python3 - <<'PYEOF' 2>&1 | cut -c1-100
+            import os
+            for f in ['data','data/daedalus_protection_state.json','data/daedalus_protection_ledger.jsonl','data/daedalus_protection_seed.hex','data/daedalus_knowledge.db']:
+                p = '/opt/Sanders_Dash_Seal/' + f
+                print('ACC', f, 'exists=%s r=%s w=%s x=%s' % (os.path.exists(p), os.access(p, os.R_OK), os.access(p, os.W_OK), os.access(p, os.X_OK)))
+            PYEOF
+            echo "== D3 disk =="
+            df -P /opt 2>/dev/null | tail -1 | awk '{print "DISK avail_kb="$4" use="$5}'
+            echo "== D4 env names (names only, values never printed) =="
+            sudo grep -hoE '^DAEDALUS_[A-Z_]+=' /etc/sanders-dash-seal/environment /etc/sanders-dash-seal/runtime.env 2>/dev/null | sort -u | cut -c1-60
+            echo "== env handoff for python checks (values never printed) =="
+            sudo sh -c 'cat /etc/sanders-dash-seal/environment /etc/sanders-dash-seal/runtime.env > /tmp/sds_env_parsed 2>/dev/null; chown sanders:sanders /tmp/sds_env_parsed; chmod 600 /tmp/sds_env_parsed'
+            echo "== D5-D8 state reads (as sanders, read-only) =="
+            cat > /tmp/daed_reads.py <<'PYEOF'
+            import hashlib, json, os, time
+            APP = '/opt/Sanders_Dash_Seal'
+            DATA = APP + '/data'
+            with open('/tmp/sds_env_parsed') as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith('#') or '=' not in line:
+                        continue
+                    k, v = line.split('=', 1)
+                    os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+            sp = DATA + '/daedalus_protection_state.json'
+            try:
+                st = json.load(open(sp))
+                out = {'seed_source': st.get('seed_source'),
+                       'leaves_used': len(st.get('used_leaf_indices') or []),
+                       'used': st.get('used_leaf_indices'),
+                       'chain_length': st.get('chain_length'),
+                       'baselines': len(st.get('baselines') or {}),
+                       'pinned_at': st.get('baseline_pinned_at'),
+                       'patrol_age_s': int(time.time() - float(st.get('last_patrol_epoch') or 0)),
+                       'last_patrol_status': (st.get('last_patrol') or {}).get('status'),
+                       'root12': (st.get('merkle_root') or '')[:12]}
+                print('STATE ' + json.dumps(out)[:880])
+            except Exception as e:
+                st = None
+                print('STATE_ERROR', type(e).__name__, str(e)[:120])
+            lp = DATA + '/daedalus_protection_ledger.jsonl'
+            try:
+                kinds = {}
+                n = 0
+                signed = 0
+                with open(lp) as fh:
+                    for line in fh:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        n += 1
+                        try:
+                            rec = json.loads(line)
+                            kinds[rec.get('kind')] = kinds.get(rec.get('kind'), 0) + 1
+                            if rec.get('signature'):
+                                signed += 1
+                        except Exception:
+                            kinds['UNPARSEABLE'] = kinds.get('UNPARSEABLE', 0) + 1
+                print('LEDGER lines=%d signed=%d kinds=%s' % (n, signed, json.dumps(kinds)[:300]))
+            except Exception as e:
+                print('LEDGER_ERROR', type(e).__name__, str(e)[:120])
+            if st is not None:
+                targets = ['core_platform/daedalus_native_core.py','core_platform/daedalus_protection.py','core_platform/daedalus_l15_capabilities.py','core_platform/daedalus_knowledge_store.py','core_platform/daedalus_engine.py','core_platform/ai_platform_links.json','labyrinth_shield.py','minotaur_sentinel.py']
+                base = st.get('baselines') or {}
+                for t in targets:
+                    p = os.path.join(APP, t)
+                    if not os.path.exists(p):
+                        cur = 'FILE_MISSING'
+                    else:
+                        h = hashlib.sha256()
+                        with open(p, 'rb') as fh:
+                            for chunk in iter(lambda: fh.read(8192), b''):
+                                h.update(chunk)
+                        cur = h.hexdigest()
+                    pin = base.get(t)
+                    verdict = 'NOPIN' if pin is None else ('MATCH' if pin == cur else 'DIFF')
+                    print('BASELINE', t, verdict)
+                try:
+                    import sys
+                    sys.path.insert(0, APP)
+                    from core_platform.daedalus_protection import HashSignatureScheme
+                    seed = None
+                    kind = 'none'
+                    env_hex = os.environ.get('DAEDALUS_PROTECTION_SEED_HEX')
+                    if env_hex:
+                        try:
+                            raw = bytes.fromhex(env_hex.strip())
+                            if len(raw) == 32:
+                                seed, kind = raw, 'env'
+                        except ValueError:
+                            pass
+                    if seed is None and os.path.exists(DATA + '/daedalus_protection_seed.hex'):
+                        try:
+                            raw = bytes.fromhex(open(DATA + '/daedalus_protection_seed.hex').read().strip())
+                            if len(raw) == 32:
+                                seed, kind = raw, 'file'
+                        except Exception:
+                            pass
+                    if seed is None:
+                        print('SEEDROOT no seed available (env unset, file missing/unreadable)')
+                    else:
+                        root = HashSignatureScheme(seed).root.hex()
+                        print('SEEDROOT kind=%s root_match=%s' % (kind, root == st.get('merkle_root')))
+                except Exception as e:
+                    print('SEEDROOT_ERROR', type(e).__name__, str(e)[:120])
+            print('READS_DONE')
+            PYEOF
+            sudo -u sanders bash -c 'cd /opt/Sanders_Dash_Seal && PYTHONPATH=/opt/Sanders_Dash_Seal OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf ./venv/bin/python3 /tmp/daed_reads.py' 2>&1 | cut -c1-240 | head -30
+            rm -f /tmp/daed_reads.py
+            echo "== D9 service and logs =="
+            pgrep -a gunicorn 2>/dev/null | head -2 | cut -c1-110
+            systemctl list-units --type=service --all --no-legend 2>/dev/null | grep -i sanders | cut -c1-95 | head -5
+            sudo journalctl --since '-12 hours' --no-pager -g 'Daedalus|daedalus|Tamper|ProtectionError' 2>/dev/null | tail -4 | cut -c1-115
+            echo "== D10 reproduction against a COPY of production state =="
+            sudo rm -rf /tmp/daed_diag
+            sudo cp -a $DATA /tmp/daed_diag && sudo chown -R sanders:sanders /tmp/daed_diag && echo COPY_OK
+            cat > /tmp/daed_repro.py <<'PYEOF'
+            import json, os
+            with open('/tmp/sds_env_parsed') as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith('#') or '=' not in line:
+                        continue
+                    k, v = line.split('=', 1)
+                    os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+            os.environ['DAEDALUS_KNOWLEDGE_DB_PATH'] = '/tmp/daed_diag/daedalus_knowledge.db'
+            os.chdir('/opt/Sanders_Dash_Seal')
+            from core_platform.daedalus_protection import DaedalusProtection
+            p = DaedalusProtection(state_dir='/tmp/daed_diag')
+            st = p.status()
+            print('PSTATUS leaves=%s/%s seed_source=%s chain=%s baselines=%s last_patrol=%s' % (
+                st['quantum_protocols']['one_time_leaves_used'], st['quantum_protocols']['one_time_leaves_total'],
+                st['quantum_protocols']['seed_source'], st['ledger']['records'],
+                st['patrol']['baselines_pinned'], st['patrol']['last_patrol_status']))
+            vc = p.verify_chain()
+            print('CHAIN valid=%s records=%s broken=%s reason=%s' % (vc.get('valid'), vc.get('records'), vc.get('broken_at'), str(vc.get('reason'))[:80]))
+            try:
+                p.require_intact()
+                print('INTACT OK')
+            except Exception as e:
+                print('INTACT EXC', type(e).__name__, str(e)[:220])
+            from core_platform.daedalus_native_core import DaedalusNativeCore
+            core = DaedalusNativeCore(protection_state_dir='/tmp/daed_diag')
+            try:
+                r = core.generate(system='diag', user_message='What is Bozly?')
+                print('GENERATE OK', r.request_id, 'textlen=%d' % len(r.text))
+            except Exception as e:
+                print('GENERATE EXC', type(e).__name__, str(e)[:220])
+            try:
+                ids = list(core.platform_ids())
+                pair = None
+                for s in ids:
+                    for t in ids:
+                        if t != s and t not in core.founder_references(s) and t not in core.founder_referenced_by(s):
+                            pair = (s, t)
+                            break
+                    if pair:
+                        break
+                core.learn_relationship(pair[0], pair[1], source='diag', relation='references')
+                print('LEARN OK', pair[0], '->', pair[1])
+            except Exception as e:
+                print('LEARN EXC', type(e).__name__, str(e)[:220])
+            print('REPRO_DONE')
+            PYEOF
+            sudo -u sanders bash -c 'cd /opt/Sanders_Dash_Seal && PYTHONPATH=/opt/Sanders_Dash_Seal OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf ./venv/bin/python3 /tmp/daed_repro.py' 2>&1 | cut -c1-250 | head -20
+            rm -f /tmp/daed_repro.py
+            sudo rm -rf /tmp/daed_diag
+            sudo shred -u /tmp/sds_env_parsed 2>/dev/null || sudo rm -f /tmp/sds_env_parsed
+            echo "== D11 timeline =="
+            cd $APP && git log -1 --format='%h %ci' 2>/dev/null | cut -c1-60
+            stat -c '%y|%n' $APP/core_platform/daedalus_engine.py $APP/core_platform/ai_platform_links.json $DATA/daedalus_protection_state.json 2>&1 | cut -c1-100
+            echo "DAEDALUS_DIAG_DONE"
