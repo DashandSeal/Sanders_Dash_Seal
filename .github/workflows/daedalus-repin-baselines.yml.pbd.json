@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": ".github/workflows/daedalus-repin-baselines.yml",
+        "payload_hash": "d708d1a1c6cefe68e3356cec9d6d818d501ffbf21ccb203c130aad427e879b03",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

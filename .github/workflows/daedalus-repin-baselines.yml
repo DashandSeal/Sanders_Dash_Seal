@@ -1,0 +1,119 @@
+name: Daedalus baseline re-pin (operator, deliberate)
+
+# Deliberate, operator-invoked re-pin of Daedalus's Minotaur patrol
+# baselines on the production instance. workflow_dispatch only: a
+# human runs this by hand, after reviewing why the baselines no
+# longer match the deployed tree (a deploy changed a patrolled
+# file). Re-pinning is NEVER automatic — whether a deploy may ever
+# re-pin on its own is a Founder policy question, open as of
+# 2026-11-27; the interim default is this deliberate operator act.
+#
+# What it does, in order:
+#   1. Reports the BEFORE state (baselines pinned when, whether the
+#      integrity gate currently refuses, patrol status, chain).
+#   2. Calls DaedalusProtection.pin_baselines() against the current
+#      deployed tree — a signed ledger entry, the protection
+#      layer's own operator path.
+#   3. Verifies: require_intact() passes, a fresh patrol seals with
+#      status "clean", and the ledger chain still verifies.
+#   4. Restarts sanders-dash-seal.service so the running workers
+#      drop their cached in-memory baselines and re-read the
+#      re-pinned state, then health-checks the app locally.
+# It does NOT change the seed, the 32-leaf epoch size, the 300 s
+# patrol cadence, or the patrol target set.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  repin-daedalus-baselines:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deliberate operator re-pin of Daedalus protection baselines via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            APP=/opt/Sanders_Dash_Seal
+            echo "== env handoff for python (values never printed) =="
+            sudo sh -c 'cat /etc/sanders-dash-seal/environment /etc/sanders-dash-seal/runtime.env > /tmp/sds_env_parsed 2>/dev/null; chown sanders:sanders /tmp/sds_env_parsed; chmod 600 /tmp/sds_env_parsed'
+            cat > /tmp/daed_repin.py <<'PYEOF'
+            import os, sys
+            with open('/tmp/sds_env_parsed') as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith('#') or '=' not in line:
+                        continue
+                    k, v = line.split('=', 1)
+                    os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+            os.chdir('/opt/Sanders_Dash_Seal')
+            from core_platform.daedalus_protection import DaedalusProtection
+            p = DaedalusProtection()
+            st = p.status()
+            print('BEFORE pinned=%s last_patrol=%s leaves=%s/%s chain=%s' % (
+                st['patrol']['baselines_pinned'], st['patrol']['last_patrol_status'],
+                st['quantum_protocols']['one_time_leaves_used'],
+                st['quantum_protocols']['one_time_leaves_total'],
+                st['ledger']['records']))
+            try:
+                p.require_intact()
+                print('BEFORE intact=OK')
+            except Exception as e:
+                print('BEFORE intact=REFUSED %s: %s' % (type(e).__name__, str(e)[:200]))
+            entry = p.pin_baselines()
+            print('REPIN kind=%s index=%s signed=%s' % (
+                entry.get('kind'), entry.get('index'), bool(entry.get('signature'))))
+            ok = True
+            try:
+                res = p.require_intact()
+                print('AFTER intact=%s targets_checked=%s' % (res['status'], res['targets_checked']))
+            except Exception as e:
+                ok = False
+                print('AFTER intact=REFUSED %s: %s' % (type(e).__name__, str(e)[:200]))
+            rep = p.patrol()
+            print('PATROL status=%s altered=%s missing=%s' % (rep['status'], rep['altered'], rep['missing']))
+            if rep['status'] != 'clean':
+                ok = False
+            vc = p.verify_chain()
+            print('CHAIN valid=%s records=%s' % (vc.get('valid'), vc.get('records')))
+            if not vc.get('valid'):
+                ok = False
+            st = p.status()
+            print('AFTER last_patrol=%s leaves=%s/%s chain=%s' % (
+                st['patrol']['last_patrol_status'],
+                st['quantum_protocols']['one_time_leaves_used'],
+                st['quantum_protocols']['one_time_leaves_total'],
+                st['ledger']['records']))
+            print('REPIN_DONE ok=%s' % ok)
+            sys.exit(0 if ok else 1)
+            PYEOF
+            sudo -u sanders bash -c 'cd /opt/Sanders_Dash_Seal && PYTHONPATH=/opt/Sanders_Dash_Seal OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf ./venv/bin/python3 /tmp/daed_repin.py > /tmp/daed_repin.log 2>&1'
+            REPIN_RC=$?
+            grep -v "hash md5\|ValueError\|Traceback\|ERROR:root" /tmp/daed_repin.log | cut -c1-240 | head -20
+            rm -f /tmp/daed_repin.py /tmp/daed_repin.log
+            sudo shred -u /tmp/sds_env_parsed 2>/dev/null || sudo rm -f /tmp/sds_env_parsed
+            if [ "$REPIN_RC" -ne 0 ]; then
+              echo "REPIN FAILED (python exit $REPIN_RC) — service NOT restarted; the re-pin did not verify."
+              exit 1
+            fi
+            echo "== restart service so workers drop cached in-memory baselines =="
+            sudo systemctl restart sanders-dash-seal.service
+            HEALTH=FAIL
+            for i in $(seq 1 30); do
+              if curl -fsS -H "Host: sandersdashandseal.com" http://127.0.0.1:8000/healthz >/dev/null 2>&1; then
+                HEALTH=OK
+                break
+              fi
+              sleep 2
+            done
+            echo "HEALTHZ_AFTER_RESTART=$HEALTH"
+            if [ "$HEALTH" != "OK" ]; then
+              echo "Service did not answer /healthz after restart."
+              exit 1
+            fi
+            echo "DAEDALUS_REPIN_DONE"

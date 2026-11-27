@@ -6975,3 +6975,40 @@ carries the global repair product, attributed to the Founder's ruling of 2026-11
 **Recorded.** Entered into this record on 2026-11-27 as the Daedalus performance-assurance landing
 (founder's ruling of 2026-11-26, 23:59 MST), beside the platform-finish and bloodline entries it
 follows and does not supersede.
+
+## Daedalus — Baseline Re-Pin: The Deliberate Operator Path (2026-11-27)
+
+**Diagnosis of record (proven, 2026-11-27).** Daedalus's production protection baselines were
+pinned 2026-11-26T00:23:42Z against the then-deployed tree. A deploy at 2026-11-26 17:43:52 UTC
+changed one patrolled file, `core_platform/ai_platform_links.json`; the other seven patrolled
+targets still match their baselines exactly. Since that deploy, `require_intact()` in
+`core_platform/daedalus_protection.py` has raised `DaedalusTamperError` on every call, and the
+five protection-gated capabilities (live_native_reasoning, live_source_provenance,
+glass_box_audit, request_correlation, real_time_learning) read unavailable in production —
+live describe 6/26 active against 11/26 on the assurance machine. The protection layer behaved
+exactly as designed (fail closed); the deploy was routine, and the layer cannot distinguish a
+deploy from an alteration. Ruled out by direct instance values (GitHub Actions run 45959465869,
+read-only): state-directory write failure (all protection files sanders-owned and writable,
+disk 50%), one-time leaf exhaustion (3 of 32 used), seed epoch mismatch (seed root matches;
+ledger chain valid, 27 records).
+
+**The operator path (this entry).** `.github/workflows/daedalus-repin-baselines.yml` —
+workflow_dispatch only: a deliberate, human-invoked re-pin, never automatic. It reports the
+before state, calls `DaedalusProtection.pin_baselines()` on the instance through the protection
+layer's own operator path (the re-pin is itself a signed ledger entry), then verifies:
+`require_intact()` passes, a fresh patrol seals with status clean, and the ledger chain still
+verifies. It then restarts sanders-dash-seal.service so the running workers drop their cached
+in-memory baselines and re-read the re-pinned state, and health-checks the app. Nothing else
+changes: the seed, the 32-leaf epoch size, the 300-second patrol cadence, and the patrol target
+set are untouched (reclassifying any patrolled file is a Founder decision, not taken here).
+
+**Open Founder policy question.** Whether a routine deploy may ever re-pin baselines
+automatically, or re-pinning must always remain a deliberate operator act, is the Founder's
+ruling to make — it is the tamper-evidence trade-off at the heart of this incident. The interim
+default implemented here and in the companion drift check is deliberate-only.
+
+**Recorded.** Entered into this record on 2026-11-27 as the first half of the Daedalus
+baseline-drift repair, under the Founder's directive of 2026-11-26 (23:59 MST) that Daedalus —
+the one plugged into everything to repair it — be ensured to perform well. The companion entry
+(the production re-pin execution, the post-deploy drift check, and the regression tests) follows
+and does not supersede this one.
