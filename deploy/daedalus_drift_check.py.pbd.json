@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "deploy/daedalus_drift_check.py",
+        "payload_hash": "0f4ba044c3f1b0ee17d537d57f670e897b5471e1cc48f22ef913f35a60a82c09",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

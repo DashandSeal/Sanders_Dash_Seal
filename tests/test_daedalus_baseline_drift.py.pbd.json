@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "tests/test_daedalus_baseline_drift.py",
+        "payload_hash": "dfd8581de329ff3ea0b5bff841f666e9b005882665cf747fc815483676250387",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

@@ -7012,3 +7012,49 @@ baseline-drift repair, under the Founder's directive of 2026-11-26 (23:59 MST) t
 the one plugged into everything to repair it — be ensured to perform well. The companion entry
 (the production re-pin execution, the post-deploy drift check, and the regression tests) follows
 and does not supersede this one.
+
+## Daedalus — Baseline Drift Made Loud: Re-Pin Executed, Post-Deploy Check, Regression Tests (2026-11-27)
+
+**Production re-pin — executed and verified.** The deliberate operator re-pin of the companion
+entry was run on 2026-11-27 (GitHub Actions run 45962941720, conclusion success). Its own log is
+the evidence: BEFORE — baselines pinned, leaves 3/32, chain 27 records, and `require_intact()`
+REFUSED with `DaedalusTamperError` naming exactly `core_platform/ai_platform_links.json`; the
+re-pin entered as a signed `baselines_pinned` ledger record (index 27); AFTER — `require_intact()`
+intact over all 8 patrolled targets, a fresh patrol sealed with status clean (altered and
+missing both empty), the ledger chain valid at 29 records, leaves 5/32 (the re-pin and patrol
+signatures), the service restarted, and the local health check OK. Independently verified from
+outside: live `/api/daedalus/describe` moved from **6/26 capabilities active to 11/26**, with
+the five protection-gated capabilities (live_native_reasoning, live_source_provenance,
+glass_box_audit, request_correlation, real_time_learning) active again — the locally-equivalent
+posture — and `/healthz` 200. The protection state file, unwritten since 2026-11-26 00:32:31 UTC
+because every gated operation refused before any write, advances again.
+
+**The loud check (this entry).** `deploy/daedalus_drift_check.py` — a read-only comparison of
+every patrolled target against its pinned baseline (plain SHA-256, the Minotaur's own
+`compute_target_hash` semantics). It never constructs the protection layer, never pins, never
+writes; it prints MATCH / DIFF / MISSING per target and exits non-zero on drift, naming the
+drifted files and the deliberate re-pin path. The master-deploy workflow
+(`deploy_all_simultaneous.yml`) now runs it as a named post-deploy step — "Daedalus baseline
+drift check (post-deploy) — drift fails this deploy loudly" — which fails the deploy with a
+`DAEDALUS BASELINE DRIFT` error annotation when any patrolled target differs from its pinned
+baseline after a deploy. Drift can no longer darken capabilities silently for a day; it breaks
+the deploy's green check in the open, and the remedy remains the deliberate operator re-pin,
+never an automatic one.
+
+**Regression tests (this entry).** `tests/test_daedalus_baseline_drift.py` (3 tests): a drifted
+patrolled target surfaces as a named tamper state (patrol status `tamper_detected` with the file
+named in `altered`; `require_intact()` raising `DaedalusTamperError` naming the file); a
+protection-gated capability — the native core's `generate()` — refuses while drifted and works
+again after `pin_baselines()`; and the drift-check script's target list equals PATROL_TARGETS
+with verdicts agreeing with the protection state. Full suite over the final tree: the failing
+set is byte-identical to the baseline recaptured at the pre-landing head (82 entries), 878
+passed (the baseline's 875 plus these 3), 19 skipped — zero new failures.
+
+**Untouched, restated.** The seed, the 32-leaf epoch, the 300-second patrol cadence, and the
+patrol target set are unchanged; `ai_platform_links.json` remains in the patrol set (its
+reclassification is a Founder decision, not taken). The open Founder policy question stands as
+recorded in the companion entry: may a deploy ever re-pin automatically, or must re-pinning
+always be a deliberate operator act? Interim default: deliberate.
+
+**Recorded.** Entered into this record on 2026-11-27 as the second half of the Daedalus
+baseline-drift repair, beside the companion re-pin entry it follows and does not supersede.

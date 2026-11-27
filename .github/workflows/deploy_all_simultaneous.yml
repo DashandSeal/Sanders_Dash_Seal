@@ -110,3 +110,32 @@ jobs:
             # check, diagnostics — is fixed there, not by editing this
             # workflow through the web UI.
             bash deploy/deploy_all.sh
+
+      # Post-deploy Daedalus baseline drift check (2026-11-27). A
+      # deploy that changes a Daedalus-patrolled file leaves the
+      # protection layer's pinned baselines stale; require_intact()
+      # then fails closed and the five protection-gated Daedalus
+      # capabilities read "unavailable" — which happened silently on
+      # 2026-11-26. This step makes drift LOUD instead: it compares
+      # every patrolled target against its pinned baseline on the
+      # instance (read-only; deploy/daedalus_drift_check.py) and
+      # FAILS this deploy with a named error when any target differs.
+      # It never re-pins: re-pinning is a deliberate operator act
+      # (the "Daedalus baseline re-pin (operator, deliberate)"
+      # workflow) — whether a deploy may ever re-pin automatically
+      # is a Founder policy question, open as of 2026-11-27.
+      - name: Daedalus baseline drift check (post-deploy) — drift fails this deploy loudly
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          script: |
+            set -uo pipefail
+            cd /opt/Sanders_Dash_Seal
+            if ./venv/bin/python3 deploy/daedalus_drift_check.py; then
+              echo "Daedalus drift check passed: patrolled targets match their pinned baselines."
+            else
+              echo "::error title=DAEDALUS BASELINE DRIFT::A deploy changed one or more Daedalus-patrolled files; the pinned protection baselines are stale and the protection-gated Daedalus capabilities will read unavailable. An operator must deliberately re-pin: Actions -> 'Daedalus baseline re-pin (operator, deliberate)'. Re-pinning is never automatic."
+              exit 1
+            fi
