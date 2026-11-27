@@ -1,0 +1,67 @@
+name: Grantwriter register - record ERA_COMMONS verified state (one-off 2026-11-26)
+on:
+  workflow_dispatch:
+jobs:
+  record-era:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record ERA_COMMONS VERIFIED through the register machinery; read back
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            echo "=== STEP A: env handoff (values never printed) ==="
+            sudo sh -c 'cat /etc/sanders-dash-seal/environment /etc/sanders-dash-seal/runtime.env > /tmp/sds_env_parsed 2>/dev/null; chown sanders:sanders /tmp/sds_env_parsed; chmod 600 /tmp/sds_env_parsed'
+            echo "=== STEP B: record through production bindings ==="
+            cat > /tmp/record_era.py <<'PYEOF'
+            import json, os
+            with open('/tmp/sds_env_parsed') as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith('#') or '=' not in line:
+                        continue
+                    k, v = line.split('=', 1)
+                    os.environ[k.strip()] = v.strip().strip('"').strip("'")
+            os.environ.setdefault('SANDERS_RUNTIME_FACTORY', 'deploy.production_bindings:create_production_bindings')
+            from deploy.production_bindings import create_production_bindings
+            b = create_production_bindings()
+            gw = b.grantwriter
+            BASIS = "Institution registration approved by NIH 2026-11-26; the founder's Signing Official and Account Administrator accounts were created 2026-11-26 \u2014 Grantwriter's Commons accounts are created under his SO authority"
+            DETAIL = "SANDERS HOME HEALTHCARE & CAREGIVERS LLC \u2014 eRA Commons institution registration approved 2026-11-26 (approval notice from era-notify@mail.nih.gov); the founder's email was verified and both accounts were created 2026-11-26 17:05 MST: Signing Official username RooseveltSanders, Account Administrator username RooseveltSandersAA (account notices from commons@od.nih.gov)"
+            def compact(entries):
+                return [{'system': e['system'], 'state': e['state'], 'updated_by': e['updated_by'], 'updated_at': e['updated_at']} for e in entries]
+            before_all = gw.access_register()
+            print('REGISTER_BEFORE ' + json.dumps(compact(before_all), default=str))
+            before = [e for e in before_all if e['system'] == 'ERA_COMMONS']
+            print('BEFORE ' + json.dumps(before, default=str))
+            if before and before[0]['state'] == 'VERIFIED' and before[0]['basis'] == BASIS and before[0]['detail'] == DETAIL:
+                print('ALREADY_CURRENT')
+            else:
+                view = gw.record_access_state('RooseveltSanders', 'ERA_COMMONS', 'VERIFIED', basis=BASIS, detail=DETAIL, verified_on='2026-11-26')
+                print('RECORDED ' + json.dumps(view, default=str))
+            after_all = gw.access_register()
+            print('REGISTER_AFTER ' + json.dumps(compact(after_all), default=str))
+            after = [e for e in after_all if e['system'] == 'ERA_COMMONS']
+            print('AFTER ' + json.dumps(after, default=str))
+            PYEOF
+            sudo -u sanders bash -c 'cd /opt/Sanders_Dash_Seal && PYTHONPATH=/opt/Sanders_Dash_Seal OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf ./venv/bin/python3 /tmp/record_era.py' 2>&1 | grep -E 'REGISTER_BEFORE|BEFORE |RECORDED |ALREADY_CURRENT|REGISTER_AFTER|AFTER |Error|Denied|denied|Traceback' | head -10
+            sudo shred -u /tmp/sds_env_parsed 2>/dev/null || sudo rm -f /tmp/sds_env_parsed
+            rm -f /tmp/record_era.py
+            echo "=== STEP C: audit receipt read-back ==="
+            cat > /tmp/read_audit.py <<'PYEOF'
+            import json, sqlite3
+            db = sqlite3.connect('file:/opt/Sanders_Dash_Seal/data/audit.db?mode=ro', uri=True)
+            rows = db.execute("SELECT seq, body, hash FROM receipts WHERE body LIKE '%GRANTWRITER_ACCESS_STATE_RECORDED%' ORDER BY seq DESC LIMIT 3;").fetchall()
+            print('AUDIT_MATCHES', len(rows))
+            for seq, body, h in rows:
+                parsed = json.loads(body)
+                print('AUDIT', seq, h, json.dumps(parsed.get('context'), default=str), parsed.get('timestamp'))
+            PYEOF
+            sudo -u sanders /opt/Sanders_Dash_Seal/venv/bin/python3 /tmp/read_audit.py 2>&1 | head -5
+            rm -f /tmp/read_audit.py
+            echo "GW_ERA_RECORD_DONE"
