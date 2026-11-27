@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/hydra_q_service.py",
-        "payload_hash": "6283c140c3c8a94aaf81163b7c0c2ad46af3a8c6561c5ea28e02a142dcf9e169",
+        "payload_hash": "8b2172717f61c7af1a1c97f09233f25a80c198f1e0f9ff9e9e56a4218d9c6614",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

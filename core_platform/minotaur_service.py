@@ -31,6 +31,16 @@ module contains no Shield code.
 
 Like every platform on the foundation, the service refuses to exist
 without a working Glass-Box audit adapter: no record, no action.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 541512,
+541519, 561621, 518210, 541511, 541690 — ADOPTED_EXISTING
+per the NACI six-code reconciliation of 2026-11-26. The
+reconciled six govern the built identity from this lock-in
+forward.
 """
 
 from __future__ import annotations
@@ -68,7 +78,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     platform_id='minotaur_sentinel',
     name='RTSA Minotaur',
     legal_entities=(),
-    naics_codes=(),
+    naics_codes=('541512', '541519', '561621', '518210', '541511', '541690'),
     authorized_regions=('US-CO', 'US-WI'),
     status='BUILT',
 ))

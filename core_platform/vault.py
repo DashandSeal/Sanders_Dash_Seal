@@ -75,6 +75,16 @@ Fail-closed throughout: a Glass-Box audit adapter is required at
 construction — no record, no action. Python standard library
 only. No secrets beyond the lease tokens it issues, no network,
 no external calls.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 541512,
+518210, 541519, 561621, 541511, 541690 — ADOPTED_EXISTING
+per the NACI six-code reconciliation of 2026-11-26. The
+reconciled six govern the built identity from this lock-in
+forward.
 """
 
 import hashlib
@@ -110,7 +120,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     platform_id='vault',
     name='Vault',
     legal_entities=(),
-    naics_codes=(),
+    naics_codes=('541512', '518210', '541519', '561621', '541511', '541690'),
     authorized_regions=('US-CO', 'US-WI'),
     status='BUILT',
 ))

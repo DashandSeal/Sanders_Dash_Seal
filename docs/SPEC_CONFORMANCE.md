@@ -6666,3 +6666,225 @@ The objective was never to build websites for the sake of having websites. It wa
 **The honest limits.** (1) SUBMITTED is not approved: the application is with the World Bank for review, and nothing beyond the submission is represented — no vendor approval, no award, and no eligibility for any specific procurement is claimed. (2) No tax ID was requested or entered at any step of the account creation or the application. (3) Registration places the firm in the Bank's vendor system; the Bank's grant and loan financing flows to governments, and the firm's participation runs through consulting and services work on Bank-financed projects — this entry records a vendor key, not a grant.
 
 **Recorded.** Entered into this record on 2026-11-26 as the Grantwriter third-global-key landing (founder's direction of 2026-11-26), beside the second-global-key entry it extends and does not supersede.
+
+## NACI Six-Code Reconciliation — Lock-In of Record (2026-11-26)
+
+The founder's directives of 2026-11-26 govern this entry: reconcile the
+platforms that do not have with groups of six NACI industry codes that would
+benefit humanity as a whole, not fragmented (20:33 MST), and give them
+purpose (20:34 MST). The NACI six-code reconciliation of 2026-11-26 assigned
+each of the 155 reconciled entries its group of six — 110 adopted from an
+existing recorded set whole, 15 composed across recorded generations, 30
+completed where the record carried fewer than six — and gave 33 purposes
+where none stood of record. This landing writes the reconciliation into the
+platform's built records.
+
+**Where the records live.** A platform's NACI/NAICS codes of record are
+carried in its built identity record — the PlatformIdentity of its service
+module under core_platform/ — and its purpose stands in the same module's
+record. Before this landing, the built identity records carried no codes:
+the attested sets stood in the module records as attested and unruled, and
+the identity tuples stood empty. From this lock-in forward, each reconciled
+platform's identity record carries its reconciled six, with a dated lock-in
+amendment appended to the module record stating the six, the reconciliation
+category, and the directive it stands under. The attested sets recorded in
+the modules stand as found — amended, never superseded.
+
+**Landed in built identity records: 90 platforms.** Every platform holding a
+built identity record in this repository now carries its reconciled six
+there, Grantwriter first: her identity record carries the composed six
+541611, 541612, 541618, 541512, 611430, 813211 — composed across all three
+of her recorded sets, neither generation followed wholesale. A new test
+(tests/test_naci_six_code_lockin.py) pins all ninety sixes, the ruled sets
+below, and the watchdog disclosure, so the lock-in cannot silently drift.
+
+**Untouched, exactly as ruled.** Uncle Nickey / Mao and Sanders Home
+Healthcare & Caregivers keep the anchored six (621610, 624120, 485991,
+532283, 423450, 492110) — this landing did not alter their records.
+JUGGERNAUT keeps its ruled none. SEIC (Sanders Ethics & Impact Collective)
+keeps its ruled eight, which stand in its own record outside the identity
+tuple this landing writes; its record was not altered. Sanders Handshake's
+founder-given forty stand untouched. No platform was merged and no name was
+changed — Alph is spelled Alph throughout. CareHive OS holds a built
+identity record but stood outside the reconciliation's 155 entries; its
+record is unaltered by this landing and carries no reconciled six.
+
+**Disclosure — the watchdogs.** The older ruled record carried the watchdogs
+with no codes. Lil Mama's and Baby Girl's sixes are landed in their identity
+records under the founder's 2026-11-26 directive that every platform carries
+a group of six, reconciled from the attested watchdog sets, and the
+disclosure is carried in their module records beside the lock-in. Bata and
+Alph hold no built identity record in this repository; their reconciled
+sixes and their given purposes stand below and in the reconciliation of
+record.
+
+**Disclosure — Sanders Six Industry.** The reconciliation adopted the
+mapping's candidate placement as this platform's reconciled six: the
+anchored six themselves (621610, 624120, 485991, 532283, 423450, 492110) —
+the platform named for the six industries carries the six industries. This
+adopts the candidate as the reconciliation of record; it does not move the
+anchored six from Uncle Nickey / Mao or Sanders Home Healthcare, who hold
+them as anchors — one design, held in more than one place by the founder's
+own architecture. Sanders Six Industry holds no built identity record in
+this repository; the adoption stands here and in the reconciliation of
+record.
+
+**Purposes given.** Of the 33 purposes given under the 20:34 directive, two
+platforms hold built records, and their given purposes are landed in their
+module records, marked as given under the directive and the founder's to
+amend: Sanders Strategy Hub and Sanders Global Freedom (carried in the
+records under their full names). The remaining 31 given purposes stand
+below, of record here until their platforms are built. Purposes already of
+record were not overwritten anywhere.
+
+**Platforms whose built identity record does not exist in this repository.** Their reconciled sixes stand here and in the reconciliation of record; nothing about their absence here alters their standing. Twelve stand in the central link registry (core_platform/ai_platform_links.json) without a built identity record of their own:
+
+- Sanders Dash & Seal — 541199, 541110, 541512, 541511, 518210, 519190
+- Sanders Corporations Secretary — 561110, 541110, 541199, 541611, 518210, 519190
+- TwoStep — 541512, 518210, 541519, 561621, 541690, 519190
+- The Judge — 541110, 541199, 541512, 518210, 541690, 922190
+- The Police Men — 561612, 561611, 541512, 541199, 561621, 541690
+- Money Factory Legal Aid v1.668 — 541110, 541199, 541512, 518210, 561499, 519190
+- Daedalus — 541715, 541511, 541512, 518210, 541519, 541690
+- Stream API — 518210, 541512, 522320, 541511, 541519, 561499
+- Voice/Audio/Video — 517919, 518210, 541511, 541512, 512191, 519130
+- Sanders Signal — 519130, 541810, 541613, 518210, 541511, 519190
+- Zone Watch — 541512, 518210, 541519, 561621, 541110, 519190
+- AI role workers — 541511, 541512, 541513, 518210, 541519, 541690
+
+Fifty-three hold no platform record in this repository at all:
+
+- Sanders Travel — 561510, 561520, 561599, 488510, 541618, 541690
+- Sanders Compliance — 541611, 541612, 541618, 541690, 541990, 541512
+- Sanders Quantum Computing — 541511, 541512, 541519, 541715, 541690, 518210
+- MICHAEL ANGELO — 541511, 541512, 541611, 518210, 541690, 519190
+- Upgrade sidecar — 541511, 541512, 541513, 518210, 541519, 541690
+- Bata — 561621, 541519, 541512, 518210, 561612, 541690
+- Alph — 541512, 541513, 541519, 561621, 518210, 541690
+- Sanders AI Recognition — 541512, 541511, 541513, 541519, 541618, 541690
+- Sanders Tactical Training — 611699, 541618, 541512, 541511, 541513, 541519
+- Sanders Martial Academy — 611699, 611620, 541618, 541512, 541511, 541513
+- Sanders Leadership Institute — 611430, 611699, 541618, 541512, 541511, 541513
+- Sanders Fitness & Wellness — 713940, 621399, 541618, 541512, 541511, 541513
+- Sanders Advanced Academics — 611110, 611310, 611430, 541618, 541512, 541511
+- Guardian Sentinel — 561621, 561612, 541618, 541512, 541611, 561499
+- Big Data Mind — 541512, 518210, 541511, 541513, 541519, 541618
+- Health Solutions — 621610, 621999, 621399, 541618, 541512, 541511
+- Family Council — 624190, 624120, 541618, 541512, 541511, 541513
+- Elite Leadership — 611430, 541611, 541618, 541512, 541511, 541513
+- Combat Academy — 611699, 611620, 541618, 541512, 541511, 541513
+- Tactical Edge — 541611, 541618, 541512, 541511, 541513, 541519
+- Wellness Center — 621399, 713940, 541618, 541512, 541511, 541513
+- Knowledge Base — 519120, 518210, 541511, 541512, 541513, 541618
+- AI Strategy — 541611, 541512, 541511, 541513, 541519, 541618
+- Freedom Ops — 541611, 541618, 541512, 541511, 541513, 541519
+- Mind Guardian — 621330, 621999, 541618, 541512, 541511, 541513
+- Watchdog Beta — 541512, 541618, 541511, 541513, 541519, 541690
+- Sanders Six Industry — 621610, 624120, 485991, 532283, 423450, 492110
+- White Phoenix — 541512, 541511, 518210, 541715, 541519, 541690
+- Kronos — 541512, 518210, 541511, 541513, 541519, 541690
+- Hades — 541512, 518210, 541511, 541519, 541690, 561499
+- Guardian Watchdog — 561621, 541519, 541512, 561612, 518210, 541690
+- platform1–33 (ship-it stub collective) — 541511, 541512, 541513, 541519, 518210, 541690
+- Sanders Six Shield — 561621, 541512, 541519, 561612, 541618, 518210
+- Sanders Secure Stack — 541512, 518210, 561621, 541519, 541513, 541690
+- Sanders Emergency Global Communication — 517919, 624230, 541512, 518210, 541690, 922190
+- Sanders Nexus Shield — 561621, 541512, 518210, 541519, 561612, 541690
+- Sanders Healthtech — 541715, 541513, 541519, 621111, 621511, 622110
+- Sanders CyberSec — 541519, 541511, 541512, 541618, 541690, 611420
+- Sanders AI Lab — 541715, 541714, 541713, 541519, 541618, 541690
+- Sanders Big Brother GovOps — 541820, 541611, 541618, 541690, 561110, 561621
+- Sanders Gatekeeper /Audit — 541211, 541219, 541213, 541214, 541618, 541690
+- Sanders Integration — 541512, 541513, 541519, 541611, 541618, 541690
+- Sanders Ops — 541614, 541618, 561110, 561621, 541512, 541690
+- Sanders Strategy — 541611, 541612, 541618, 541690, 541512, 541513
+- Sanders Space — 336414, 336411, 336413, 541715, 541618, 541690
+- Sanders Chemistry — 325998, 325199, 541715, 541618, 541690, 541714
+- Sanders Teacher Physics — 541715, 541714, 541713, 541618, 541690, 541512
+- Sanders Biology — 541714, 541715, 621511, 621999, 541618, 541690
+- Sanders Archive — 519120, 519130, 541519, 541618, 541690, 541512
+- Sanders Construction — 236220, 236210, 541618, 541512, 541690, 541611
+- Sanders Environment — 541620, 541690, 541618, 541512, 541513, 541715
+- Sanders Health — 621111, 621112, 621999, 622110, 623110, 541715
+- GOLIATH — 541511, 541512, 541519, 518210, 519190, 541715
+
+**The 31 given purposes not landed in a module record** (given under the founder directive of 2026-11-26, 20:34 MST; the founder's to amend):
+
+- **Bata** — Bata is a watchdog of the founder's ruled roster: the deep-watch post of the ecosystem, holding the long, quiet perimeter — backup systems, dormant services, and the night hours — so that nothing the house owns is ever unguarded; tied to the four companies as their standing night watch, selling access to continuous guarded monitoring as part of the platforms' protection suite, for the benefit of every person whose records and care the ecosystem holds.
+
+- **Alph** — Alph is a watchdog of the founder's ruled roster (spelled Alph, never Alpha): the first-alert post of the ecosystem, watching identity and access — who knocks, who enters, who should not — for all four companies; its suite sells access to continuous identity-watch as part of the platforms' protection offering, benefiting every client whose identity the house is trusted to hold.
+
+- **Sanders AI Recognition** — the ecosystem's recognition platform — identifying people, documents, and needs accurately and with consent, so a client anywhere is known correctly the first time; tied to the four companies as their shared recognition service, selling access by subscription, benefiting humanity by ending mistaken identity in care, law, and service.
+
+- **Sanders Tactical Training** — training platform for protective and emergency skills — teaching ordinary people and professionals to act safely under pressure; a teaching platform of the house, tied to the four companies, selling access to its courses and drills globally, benefiting humanity by making readiness common.
+
+- **Sanders Martial Academy** — martial-arts academy platform — discipline, fitness, and self-defense taught safely to all ages; tied to the four companies as their wellness-and-protection teaching arm, selling access to instruction worldwide, benefiting humanity through healthy, confident, non-violent strength.
+
+- **Sanders Leadership Institute** — leadership institute — forming ethical leaders for communities, companies, and public service; tied to the four companies as their leadership school, selling access to its programs globally, benefiting humanity by multiplying honest leadership.
+
+- **Sanders Fitness & Wellness** — fitness and wellness platform — guided movement, strength, and recovery for every body; tied to the four companies as their public fitness arm, selling access to programs worldwide, benefiting humanity through healthier daily life.
+
+- **Sanders Advanced Academics** — advanced academics platform — rigorous schooling and tutoring from primary through professional levels; tied to the four companies as their advanced school, selling access to learning globally, benefiting humanity by making excellent education reachable anywhere.
+
+- **Guardian Sentinel** — guardian sentinel platform — protective monitoring for families, elders, and the vulnerable, watching over homes and care journeys; tied to the four companies as their public guardian service, selling access to continuous guardianship, benefiting humanity by keeping the vulnerable watched over, never watched upon.
+
+- **Big Data Mind** — big-data intelligence platform — turning large records into clear decisions for clients and the companies; tied to the four companies as their shared data mind, selling access to its analytics globally, benefiting humanity by making evidence, not noise, drive decisions.
+
+- **Health Solutions** — health solutions platform — practical, whole-person health support that connects clients to care, equipment, transport, and follow-through in one journey; tied to the four companies — anchored by Sanders Home Healthcare & Caregivers — as their public health-solutions door, selling access to its coordinated care suite globally, benefiting humanity by making fragmented care whole. (This platform's purpose stood expressly open, D-N12 family; it is given here under the directive.)
+
+- **Family Council** — family council platform — a structured place for families to decide together about care, elders, and estates, with counsel present; tied to the four companies as their family-decision room, selling access to guided family deliberation, benefiting humanity by keeping families whole through hard decisions.
+
+- **Elite Leadership** — elite leadership platform — advanced formation for executives and founders who carry large responsibility; tied to the four companies as their executive school, selling access to its cohorts and counsel, benefiting humanity by raising the standard of those who lead many.
+
+- **Combat Academy** — combat academy platform — disciplined defensive combat training for professionals and civilians, taught under strict safety and ethics; tied to the four companies as their defensive-training arm, selling access to instruction, benefiting humanity by teaching protection without aggression.
+
+- **Tactical Edge** — tactical edge platform — applied tactical planning for security, logistics, and emergency teams; tied to the four companies as their field-planning service, selling access to its planning suite, benefiting humanity by making protective operations precise and safe.
+
+- **Wellness Center** — wellness center platform — a welcoming front door to practitioners, fitness, and recovery for the public; tied to the four companies as their neighborhood wellness door, selling access to its services, benefiting humanity through everyday, affordable wellbeing.
+
+- **Knowledge Base** — knowledge base platform — the ecosystem's living library, where verified knowledge is kept, searched, and taught; tied to the four companies as their shared memory, selling access to curated knowledge globally, benefiting humanity by keeping truth findable.
+
+- **AI Strategy** — AI strategy platform — counsel and design for organizations adopting AI responsibly; tied to the four companies as their AI-counsel arm, selling access to its strategy suite, benefiting humanity by steering AI adoption toward human good.
+
+- **Freedom Ops** — freedom operations platform — the operational arm of the freedom mission: logistics, coordination, and delivery for liberty-focused work; tied to the four companies as their field operations for Global Freedom's purpose, selling access to coordinated operations, benefiting humanity by making good intentions arrive.
+
+- **Mind Guardian** — mind guardian platform — protective support for mental wellbeing, watching for crisis signals and connecting people to help early; tied to the four companies as their mental-health guardian, selling access to its protective suite, benefiting humanity by guarding minds as carefully as bodies.
+
+- **Watchdog Beta** — Watchdog Beta is a platform of the catalog carrying the watchdog family's work in reserve and training form: the proving post where new watch rotations, alert rules, and guardian procedures are tested before they stand on the live perimeter, and the relief post that fills any gap in the roster's watch. (The founder's ruled watchdog roster is Lil Mama, Baby Girl, Alph, Bata; nothing is renamed by this purpose — Watchdog Beta's platform standing and name remain exactly as cataloged, and its purpose is given within the watchdog family as the founder directed.) Tied to the four companies as their watch-reserve, its suite sells access to tested, ready guardianship, benefiting everyone the live watch protects.
+
+- **Kronos** — Kronos is the ecosystem's time platform: scheduling, deadlines, and the memory of when everything happened, keeping 140 platforms and four companies on one true clock; tied to the four companies as their shared timekeeper, selling access to deadline-true coordination, benefiting humanity by making promises about time that are kept.
+
+- **Hades** — Hades is the ecosystem's keeper of what has ended: closed cases, retired records, and the dead files of the house, preserved intact and retrievable forever — nothing the companies finish is ever lost; tied to the four companies as their archive of record, selling access to permanent, provable retention, benefiting humanity by keeping the past honest.
+
+- **Guardian Watchdog** — Guardian Watchdog is the ship-it guardian build: the deployable watchdog that ships with new storefronts and domains, standing guard over each new public face from its first day; tied to the four companies as their forward guard, selling access as part of every new platform's protection suite, benefiting every client a new storefront serves.
+
+- **platform1–33 (ship-it stub collective)** — the ship-it stub collective is the seedbed of the fleet: thirty-three platform places held ready, each to be named and purposed by the founder as the ecosystem grows; as a collective it is tied to the four companies as their expansion reserve, and its access is sold only when an individual stub is named, purposed, and built — the collective itself holds the ground for humanity's future benefit.
+
+- **Sanders Six Shield** — named by its domain (sanderssixshield.com): the shield of the six industries — protective monitoring standing over the original six-industry workflow wherever it runs; tied to the four companies as the six industries' own guard, selling access to shielded operation as part of the care suite, benefiting every patient and client the six industries serve.
+
+- **Sanders Secure Stack** — named by its domain (sanderssecurestack.com): the secure technology stack as a public offering — the hardened layer-cake of systems the house runs on, offered to clients who need the same strength; tied to the four companies as their stack made sellable, selling access to a proven secure stack, benefiting humanity by raising the security of everyone who builds on it.
+
+- **Sanders Emergency Global Communication** — named by its domain (sandersemergencyglobalcommunication.com): emergency communication for the world — when disaster cuts ordinary channels, this platform carries the message; tied to the four companies as their emergency voice (and SURN's public sister), selling access to resilient emergency communication globally, benefiting humanity in its worst hours.
+
+- **Sanders Nexus Shield** — named by its domain (sandersnexusshield.com): the shield at the nexus — protection for the connection points where industries and platforms meet, the joints of the whole design; tied to the four companies as the guard of their interconnections, selling access to protected connection, benefiting everyone whose care or business crosses from one industry to another.
+
+- **Sanders Health** — Sanders Health is the sources' general health platform name: the broad door to the house's health work — physicians, hospitals, nursing care, and research under one name — distinct in the record from Sanders Home Healthcare, Healthcare, and Health Solutions, which hold their own entries (nothing merged; this name's platform status remains the founder's separate question, and its purpose is given so the name does not stand purposeless). Tied to the four companies as their general health face, selling access to coordinated health services, benefiting humanity by giving every health need one door.
+
+- **GOLIATH** — GOLIATH is the heavy-lift platform of the CareHiveOS record (its Platform #42): the large-scale systems engine that carries the heaviest computational and evidentiary loads of the ecosystem — the strength the smaller platforms stand on; tied to the four companies as their heavy infrastructure, selling access to large-scale, provable processing, benefiting humanity by making very large work trustworthy. (Its catalog status remains the founder's separate question; its purpose is given so the name does not stand purposeless.)
+
+**The honest limits.** (1) Grantwriter's discovery facet set in code
+(DISCOVERY_NAICS_CODES, labeled CARRIED_NOT_RULED) is a search tool's
+configuration, not her identity record; this landing did not alter it — her
+identity record carries the reconciled six, and the facet label stands as a
+separate record awaiting its own reconciliation decision. (2) The deploy
+grid (deploy/oracle/sanders_master_grid.json) and the central link registry
+were not altered: the grid is the ship-it fleet's deploy data and keeps its
+own sets — Lil Mama's grid set already equals her reconciled six, while
+Sanders Sentinel's grid set differs from his reconciled six; the built
+identity records govern. (3) A reconciled six in an identity record is a
+classification of record, locked and test-pinned; it does not by itself
+build the 65 platforms that hold no built record here.
+
+**Recorded.** Entered into this record on 2026-11-26 as the NACI six-code
+lock-in landing (founder's directives of 2026-11-26, 20:33 and 20:34 MST),
+beside the Grantwriter entries it follows and does not supersede.

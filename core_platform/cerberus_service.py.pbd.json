@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/cerberus_service.py",
-        "payload_hash": "472319e1223aef46db17734bd6c52cee6e5de8ea40e07e40c7b14017d73299df",
+        "payload_hash": "ee831c9626ebae6f14661566b19706cd1c6931ba3e2df49a5a5baa3cb6a703b6",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

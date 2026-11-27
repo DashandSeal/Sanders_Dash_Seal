@@ -178,6 +178,17 @@ FULFILLMENT VERIFICATION (founder’s Sanders Sentinel — Permanent Global Bloo
 HUMAN SURVIVAL, MOBILITY AND ESSENTIAL RESOURCE PROTECTION BY DESIGN (founder-presented architecture, adopted by the founder 2026-11-26 as this platform’s construction program; a ruled extension of this platform’s remit, recorded as a ruling, not as recovered design): the Godfather is designed to facilitate the acquisition, provision, coordination, maintenance, replacement and replenishment of transportation and essential resources required to support, sustain and protect the lives of the Founder’s bloodline throughout their lifetimes — ordinary daily living, preventive assistance, emergency intervention, international mobility, relocation, evacuation, repatriation, accommodation, essential resource acquisition, medical equipment, logistical support and continuing recovery. The architecture stands in eight domains (transportation; housing and shelter; medical resources; essential resources; global procurement; financial coordination under existing assigned authority; emergency evacuation; predictive logistics) flowing into actual resource acquisition and delivery and lifelong bloodline support, carried here as governed records in the segregated store: five further transportation matter kinds, logistics machinery records, international movement records, lifespan continuity records, and predictive-logistics anticipation records, with per-part states on the founder’s truthful-verification ladder (designed, constructed, connected, tested, operational) derived from designation and test records only. The adoption creates no new money authority: financial coordination stands under existing assigned authority, acquisition executes through the existing joint funding flow, and the real-world funding rail remains the founder’s separate open designation — this module creates no funds, attaches no rail, and represents none. Nothing external is connected by this construction. The three platforms remain separate; coordination is by reference only.
 
 CORRECTED DIRECTIVE — UNIVERSAL HUMAN SURVIVAL, MOBILITY, RESOURCE AND COMMUNICATIONS PROTECTION BY DESIGN (founder-presented corrected directive, adopted by the founder 2026-11-26 as an AMENDMENT to this platform’s original scope — amending and extending the Human Survival architecture above, which remains governing and intact; nothing is superseded (founder ruling 2026-11-26: adoptions amend the original scope, they never supersede it). Articles I–XI stand as that amendment from the adoption forward. Article V establishes Universal Communications as a full domain of this platform — communications resource intelligence: device, number, plan and service records, SIM and eSIM, accessibility communications, international, maritime and aviation connectivity, backup equipment and backup power, digital access, and account and equipment recovery, all as provisioning and coordination machinery under established authority. The privacy guard is an invariant: this platform authorizes no interception, no unauthorized tracking, and no access to private communications, and every member retains control of their own communications and accounts. This platform provisions connectivity; Sanders Sentinel’s protective communications duties remain Sentinel’s, and the platforms are never merged. The corrected directive also extends housing (permanent housing assistance, utilities, furnishings), daily living (educational and employment resources), and medical resources (oxygen equipment, hospital beds, prescription fulfillment through authorized pharmacies, temperature-controlled medical transportation and storage, backup power for medical equipment), carried as resource coordination records, and Article VI adds purchasing and reservation EXECUTION records under established authority: an execution record stands on a joint funding determination of record and itself executes no payment, disburses nothing, and attaches no rail. Article VII introduces no new approval gates and preserves every financial responsibility; Article IX makes the enumerated capabilities a foundation, never a ceiling. Nothing external is connected by this construction: no carrier, supplier, pharmacy or service is connected or represented.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 541611,
+541618, 541512, 541614, 561110, 624230 — COMPLETED_NEW per
+the NACI six-code reconciliation of 2026-11-26. The
+attested sets recorded above stand as found; the
+reconciled six govern the built identity from this lock-in
+forward.
 """
 
 from __future__ import annotations
@@ -209,7 +220,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     platform_id='the_godfather',
     name='The Godfather',
     legal_entities=('s_and_g_security_inc',),
-    naics_codes=(),
+    naics_codes=('541611', '541618', '541512', '541614', '561110', '624230'),
     authorized_regions=('US-CO', 'US-WI'),
     status='BUILT',
 ))

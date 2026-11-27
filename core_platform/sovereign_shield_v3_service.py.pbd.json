@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/sovereign_shield_v3_service.py",
-        "payload_hash": "b8738fbc67ae67a33ff6b53a26b02c0e06a3303ed163334ffa01f880f1fc6eea",
+        "payload_hash": "4b10f2607569a671c3caeef83dd1e562f9ce48c1feda1e54c3c59b40c4ded8f8",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

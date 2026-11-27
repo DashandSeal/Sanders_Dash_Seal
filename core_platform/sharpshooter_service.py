@@ -55,6 +55,16 @@ production binding is the recovered ``sharpshooter.core.diagnose``
 against real hostnames. This platform diagnoses and remediates
 operational infrastructure state; it holds no customer records
 and no PHI.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 541512,
+541513, 541519, 518210, 561621, 541690 — ADOPTED_EXISTING
+per the NACI six-code reconciliation of 2026-11-26. The
+reconciled six govern the built identity from this lock-in
+forward.
 """
 
 from __future__ import annotations
@@ -89,7 +99,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     platform_id='sharpshooter',
     name='Sharpshooter',
     legal_entities=(),
-    naics_codes=(),
+    naics_codes=('541512', '541513', '541519', '518210', '561621', '541690'),
     authorized_regions=('US-CO', 'US-WI'),
     status='BUILT',
 ))

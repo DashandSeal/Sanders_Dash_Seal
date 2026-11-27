@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/bozly_service.py",
-        "payload_hash": "03961067fae3d8b1fdb0c59a61c78f7d9827a0c3948b94c36a23c9224a5bfb75",
+        "payload_hash": "9183e83274fa3bdd789ca492c1433dc9b992fe90b1a032b918ac35f7249faf0b",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

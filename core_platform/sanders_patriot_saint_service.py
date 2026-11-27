@@ -233,6 +233,17 @@ platform records against the recorded joint
 approvals, with Glass-Box receipts, until the
 founder designates and connects a rail.
 FULFILLMENT VERIFICATION (founder’s Sanders Sentinel — Permanent Global Bloodline Protection and Succession Directive, established 2026-11-26): under the operational standard Sentinel holds — "A disbursement record is not a payment. An attorney request is not legal representation." — a bloodline matter is not FULFILLED until a human operator’s recorded confirmation, naming the delivery by reference, confirms the actual assistance was delivered: the disbursement actually reached its payee, the legal representation actually engaged. The confirmation step verifies delivery only; this platform’s disbursement authority under the Founder’s Amendment to Article III is expressly preserved, intact and undiminished.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 541611,
+541612, 541618, 541690, 541512, 541513 — ADOPTED_EXISTING
+per the NACI six-code reconciliation of 2026-11-26. The
+attested sets recorded above stand as found; the
+reconciled six govern the built identity from this lock-in
+forward.
 """
 
 from __future__ import annotations
@@ -264,7 +275,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     platform_id='sanders_patriot_saint',
     name='Sanders Patriot Saint',
     legal_entities=('s_and_g_security_inc',),
-    naics_codes=(),
+    naics_codes=('541611', '541612', '541618', '541690', '541512', '541513'),
     authorized_regions=('US-CO', 'US-WI'),
     status='BUILT',
 ))

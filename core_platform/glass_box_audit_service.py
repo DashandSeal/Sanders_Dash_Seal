@@ -79,6 +79,16 @@ without a working Glass-Box audit adapter: no record, no action.
 Every store this service *verifies* is opened read-only
 (``mode=ro``): the verifier physically cannot mutate what it
 guards. Its own records live in its own store.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 541211,
+541512, 518210, 541690, 541219, 561499 — ADOPTED_EXISTING
+per the NACI six-code reconciliation of 2026-11-26. The
+reconciled six govern the built identity from this lock-in
+forward.
 """
 
 from __future__ import annotations
@@ -112,7 +122,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     platform_id='glass_box_audit',
     name='Glass-Box Audit',
     legal_entities=(),
-    naics_codes=(),
+    naics_codes=('541211', '541512', '518210', '541690', '541219', '561499'),
     authorized_regions=('US-CO', 'US-WI'),
     status='BUILT',
 ))

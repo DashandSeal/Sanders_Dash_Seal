@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/glass_box_audit_service.py",
-        "payload_hash": "d66792c9bab5f1eeefb6eafb812e5d22bf5b604b2cd267c726e82ec23dbab9c4",
+        "payload_hash": "58a5404f1708a23002a118c98f463281b9e63e5103aedef4ceb002513012965f",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

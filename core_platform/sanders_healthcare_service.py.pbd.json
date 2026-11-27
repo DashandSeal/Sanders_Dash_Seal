@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/sanders_healthcare_service.py",
-        "payload_hash": "155b3ee15fe3f2603f6e97733ddf18ffbba029571505918794a3e7f40dfa48eb",
+        "payload_hash": "353ddaf3d75f2a274ea88dbd1f3ace828742966f7ee79504f1a21cbf1e8fcd84",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

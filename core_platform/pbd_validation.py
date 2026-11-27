@@ -69,6 +69,16 @@ Fail-closed throughout, on the platform's established disciplines:
 
 Python standard library only. No secrets, no network, no external
 calls.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 541512,
+541511, 518210, 541519, 541690, 561499 — ADOPTED_EXISTING
+per the NACI six-code reconciliation of 2026-11-26. The
+reconciled six govern the built identity from this lock-in
+forward.
 """
 
 import hashlib
@@ -104,7 +114,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     platform_id='pbd_validation',
     name='PBDScriptValidationEngine',
     legal_entities=(),
-    naics_codes=(),
+    naics_codes=('541512', '541511', '518210', '541519', '541690', '561499'),
     authorized_regions=('US-CO', 'US-WI'),
     status='BUILT',
 ))

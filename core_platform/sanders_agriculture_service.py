@@ -89,6 +89,17 @@ No record, no action: every state-changing operation
 writes its Glass-Box receipt inside the same
 transaction, through the shared foundation's audit
 adapter; the service refuses to exist without one.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 115114,
+111998, 115115, 115116, 541611, 541618 — ADOPTED_EXISTING
+per the NACI six-code reconciliation of 2026-11-26. The
+attested sets recorded above stand as found; the
+reconciled six govern the built identity from this lock-in
+forward.
 """
 
 from __future__ import annotations
@@ -120,7 +131,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     platform_id='sanders_agriculture',
     name='Sanders Agriculture',
     legal_entities=('s_and_g_security_inc',),
-    naics_codes=(),
+    naics_codes=('115114', '111998', '115115', '115116', '541611', '541618'),
     authorized_regions=('US-CO', 'US-WI'),
     status='BUILT',
 ))

@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/labyrinth_service.py",
-        "payload_hash": "e62846f05acbc7aa547a9ad2f4248d7c5b2408a604f5b8703ff82cc24354b5b3",
+        "payload_hash": "47bd4bf99d442e0cc46154e89983154266619aaa09065f02c78d86e4a1a3ecac",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

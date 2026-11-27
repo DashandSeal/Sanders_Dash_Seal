@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "tests/test_naci_six_code_lockin.py",
+        "payload_hash": "fd1b594c6aaa3b89fa3c5d35c181fa99c5a55f63bd0716249cd962a3483fda5c",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}

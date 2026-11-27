@@ -48,6 +48,16 @@ foundation's audit adapter; the service refuses to exist without
 one. MASTER section 20 boundaries hold: HYDRA-Q is not the Vault
 (key custody), not Glass-Box Audit (evidence), and not any
 cryptographic executor.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 541512,
+541715, 541519, 518210, 561621, 541690 — ADOPTED_EXISTING
+per the NACI six-code reconciliation of 2026-11-26. The
+reconciled six govern the built identity from this lock-in
+forward.
 """
 
 from __future__ import annotations
@@ -79,7 +89,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     platform_id='hydra_q',
     name='HYDRA-Q',
     legal_entities=('s_and_g_security_inc',),
-    naics_codes=(),
+    naics_codes=('541512', '541715', '541519', '518210', '561621', '541690'),
     authorized_regions=('US-CO', 'US-WI'),
     status='BUILT',
 ))

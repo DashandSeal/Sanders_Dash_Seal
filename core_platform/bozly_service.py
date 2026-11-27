@@ -63,6 +63,16 @@ Glass-Box receipt inside the same transaction (the claim module
 keeps its own durable review record by design, and the platform
 receipt is written before the assessment is returned). Bozly's
 scope is corporate headquarters: all four Sanders companies.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 541512,
+541211, 541219, 518210, 541511, 541690 — ADOPTED_EXISTING
+per the NACI six-code reconciliation of 2026-11-26. The
+reconciled six govern the built identity from this lock-in
+forward.
 """
 
 from __future__ import annotations
@@ -99,7 +109,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     name='Bozly',
     legal_entities=('s_and_g_security_inc', 'sanders_legal_helpers',
                     'sanders_home_healthcare', 'sanders_senior_living'),
-    naics_codes=(),
+    naics_codes=('541512', '541211', '541219', '518210', '541511', '541690'),
     authorized_regions=('US-CO', 'US-WI'),
     status='BUILT',
 ))

@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/archimedes_service.py",
-        "payload_hash": "217fa90faaa56b06969d08a0fad0d9b00f4b46f09d7ecb9e9d7b3545eaab79d6",
+        "payload_hash": "50c957d563225718b8e2c611bff35000c60640c9bf76f9678190682a69a456dc",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

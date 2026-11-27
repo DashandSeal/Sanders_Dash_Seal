@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/sanders_omniconn_service.py",
-        "payload_hash": "d32aaecd5e5070469387f20aba07cbc91ceb49431b9e8563f8965a1253037107",
+        "payload_hash": "8e5b24214389a953a1c1485470078723c2ead7848b9e53361f7d4a29502cd91a",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

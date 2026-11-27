@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/cobol_synthetic_ai_service.py",
-        "payload_hash": "a15ba86da1a282df6a82ed3be208df8664f5437fe3f2457882431d8a26f2e14c",
+        "payload_hash": "5c48ab98d2b3e754527df6b590d84d08be937b81c1ce924dc3059f5a405deb74",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

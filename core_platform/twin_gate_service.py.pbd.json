@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/twin_gate_service.py",
-        "payload_hash": "1a366b45f561e1dac5dac4b478ad9ef852d6ff2c9998dc1f627e18cdd5f26160",
+        "payload_hash": "424c5479bf0ae6a34609f52dd3dab2fa44189beb51ea14018ff2f2902e793e18",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

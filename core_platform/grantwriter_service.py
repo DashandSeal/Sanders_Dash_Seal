@@ -165,6 +165,15 @@ a pursuit case \u2014 a case is born only through her duty
 cycle. The connection state is reported truthfully: it reads
 CONNECTED only when a discovery run has actually been
 answered by the source, and NOT_CONNECTED otherwise.
+
+NAICS LOCK-IN — 2026-11-26: under the founder's directive
+of 2026-11-26 (reconcile the platforms that do not have
+with groups of six NACI industry codes that would benefit
+humanity as a whole, not fragmented), this platform's
+identity record carries the reconciled six: 541611,
+541612, 541618, 541512, 611430, 813211 — COMPOSED per the
+NACI six-code reconciliation of 2026-11-26. The reconciled
+six govern the built identity from this lock-in forward.
 """
 
 import json
@@ -206,7 +215,7 @@ IDENTITY = validate_identity(PlatformIdentity(
     platform_id='grantwriter',
     name='Grantwriter',
     legal_entities=(),
-    naics_codes=(),
+    naics_codes=('541611', '541612', '541618', '541512', '611430', '813211'),
     authorized_regions=('US-CO', 'US-WI'),
     status='UPGRADED',
 ))

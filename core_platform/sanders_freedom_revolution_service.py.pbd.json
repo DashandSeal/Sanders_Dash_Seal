@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/sanders_freedom_revolution_service.py",
-        "payload_hash": "4fda109753304fab2357119b3d40bc7c440fd8be14ec5be19c447945f3b9b729",
+        "payload_hash": "29bf89a83fa254456efc3267f088f8104fb4df76a63d0966a5566ca735a1eea8",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"
