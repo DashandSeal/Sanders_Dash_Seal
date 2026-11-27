@@ -126,6 +126,8 @@ from core_platform.sanders_healthcare_service import SandersHealthcareDenied, Sa
 from core_platform.the_godfather_service import TheGodfatherDenied, TheGodfatherForbidden
 from core_platform.sanders_ethics_impact_collective_service import SandersEthicsImpactCollectiveDenied, SandersEthicsImpactCollectiveForbidden
 from core_platform.rtsa_foundation import FoundationForbidden
+from core_platform.platform_storefront import (  # noqa: E402
+    render_directory, render_storefront)
 
 ASSETS = {
     '/auth/login': ('auth.html', 'text/html; charset=utf-8'),
@@ -185,6 +187,7 @@ ASSETS = {
     '/headquarters': ('headquarters.html', 'text/html; charset=utf-8'),
     '/labyrinth-shield': ('labyrinth-shield.html', 'text/html; charset=utf-8'),
     '/assets/labyrinth-shield.css': ('labyrinth-shield.css', 'text/css; charset=utf-8'),
+    '/assets/platform-storefront.css': ('platform-storefront.css', 'text/css; charset=utf-8'),
     '/lil-mama': ('lil-mama.html', 'text/html; charset=utf-8'),
     '/baby-girl': ('baby-girl.html', 'text/html; charset=utf-8'),
     '/assets/business-faces.css': ('business-faces.css', 'text/css; charset=utf-8'),
@@ -786,6 +789,16 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         if method == 'GET' and path in ASSETS:
             filename, mime = ASSETS[path]
             return respond(start, '200 OK', (root / filename).read_bytes(), mime)
+
+        if method == 'GET' and path == '/platforms':
+            return respond(start, '200 OK', render_directory(),
+                           'text/html; charset=utf-8')
+
+        if method == 'GET' and path.startswith('/platforms/'):
+            status, body = render_storefront(
+                path[len('/platforms/'):].strip('/'))
+            return respond(start, status, body,
+                           'text/html; charset=utf-8')
             
         try:
             if release_verifier() is not True:

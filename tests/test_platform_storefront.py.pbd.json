@@ -1,0 +1,11 @@
+{
+    "body": {
+        "schema": 1,
+        "platform": "Sanders Dash & Seal",
+        "artifact": "tests/test_platform_storefront.py",
+        "payload_hash": "e23233342b0ff546940178b192dd4f1af1f177771dbe22bc5d8685772ec86423",
+        "scope": "source-manifest",
+        "signatures": {},
+        "status": "UNSIGNED_SOURCE_MANIFEST"
+    }
+}
