@@ -226,6 +226,7 @@ from core_platform.sanders_entertainment_service import SandersEntertainmentServ
 from core_platform.sanders_sports_service import SandersSportsService
 from core_platform.sanders_wellness_service import SandersWellnessService
 from core_platform.sanders_steward_sentinel_service import SandersStewardSentinelService
+from core_platform.bloodline_record_service import BloodlineRecordService
 from core_platform.sanders_patriot_saint_service import SandersPatriotSaintService
 from core_platform.sanders_freedom_revolution_service import SandersFreedomRevolutionService
 from core_platform.sanders_strategy_hub_service import SandersStrategyHubService
@@ -1100,6 +1101,16 @@ def create_production_bindings():
     sanders_steward_sentinel = SandersStewardSentinelService(
         data_dir / 'sanders_steward_sentinel.db',
         operator_verifier=auth.operator_verifier, audit=audit)
+    # Bloodline descendant records (founder order
+    # 2026-11-26): the authenticated descendant record
+    # for the Sanders bloodline — append-only records
+    # for the designated human successors of record,
+    # over its own store, on the same operator verifier
+    # and audit chain. Registry seals only; the registry
+    # itself never enters this build.
+    bloodline_records = BloodlineRecordService(
+        data_dir / 'bloodline_records.db',
+        operator_verifier=auth.operator_verifier, audit=audit)
     # Sanders Patriot Saint platform (Q74, RTSA
     # Build Program tranche 20): governed
     # governance records over its own store — it
@@ -1454,6 +1465,7 @@ def create_production_bindings():
         sanders_sports=sanders_sports,
         sanders_wellness=sanders_wellness,
         sanders_steward_sentinel=sanders_steward_sentinel,
+        bloodline_records=bloodline_records,
         sanders_patriot_saint=sanders_patriot_saint,
         sanders_freedom_revolution=sanders_freedom_revolution,
         sanders_strategy_hub=sanders_strategy_hub,

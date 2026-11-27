@@ -115,6 +115,7 @@ class RuntimeBindings:
     sanders_sports: object = None
     sanders_wellness: object = None
     sanders_steward_sentinel: object = None
+    bloodline_records: object = None
     sanders_patriot_saint: object = None
     sanders_freedom_revolution: object = None
     sanders_strategy_hub: object = None

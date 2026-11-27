@@ -1,0 +1,68 @@
+name: Bloodline - establish authenticated descendant records (one-off 2026-11-27)
+on:
+  workflow_dispatch:
+jobs:
+  establish-descendant-records:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Establish the three descendant records through production bindings; read back and verify
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            echo "=== STEP A: env handoff (values never printed) ==="
+            sudo sh -c 'cat /etc/sanders-dash-seal/environment /etc/sanders-dash-seal/runtime.env > /tmp/sds_env_parsed 2>/dev/null; chown sanders:sanders /tmp/sds_env_parsed; chmod 600 /tmp/sds_env_parsed'
+            echo "=== STEP B: establish through production bindings ==="
+            cat > /tmp/establish_bloodline.py <<'PYEOF'
+            import json, os
+            with open('/tmp/sds_env_parsed') as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith('#') or '=' not in line:
+                        continue
+                    k, v = line.split('=', 1)
+                    os.environ[k.strip()] = v.strip().strip('"').strip("'")
+            os.environ.setdefault('SANDERS_RUNTIME_FACTORY', 'deploy.production_bindings:create_production_bindings')
+            from deploy.production_bindings import create_production_bindings
+            b = create_production_bindings()
+            svc = b.bloodline_records
+            RECORDS = [
+                ('roosevelt-sanders-iv', 'Roosevelt Sanders IV', 'c84cbc4f4e880ff4cee41f6a10acc255b306e030991a4093ac78b04333b5a784'),
+                ('joavon-d-sanders', 'Joavon D. Sanders', 'd35587830b291e236d862065468a4d07ce83bb40621705781609f4704340e0b3'),
+                ('tevin-l-sanders', 'Tevin L. Sanders', '609e397106c0998382ff1ff17fa497867fd2d9fe3294307a15cdd478e838decc'),
+            ]
+            for person_key, full_name, seal in RECORDS:
+                view = svc.establish_record('RooseveltSanders', person_key, full_name, seal)
+                if view.get('already_current'):
+                    print('ALREADY_CURRENT ' + person_key)
+                else:
+                    print('ESTABLISHED ' + json.dumps(view, default=str))
+            records = svc.descendant_records()
+            print('RECORDS_COUNT ' + str(len(records)))
+            for record in records:
+                print('RECORD ' + json.dumps(record, default=str))
+            for person_key, full_name, seal in RECORDS:
+                result = svc.verify_record(person_key)
+                print('VERIFY ' + json.dumps(result, default=str))
+            PYEOF
+            sudo -u sanders bash -c 'cd /opt/Sanders_Dash_Seal && PYTHONPATH=/opt/Sanders_Dash_Seal OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf ./venv/bin/python3 /tmp/establish_bloodline.py' 2>&1 | grep -E 'ALREADY_CURRENT|ESTABLISHED|RECORDS_COUNT|RECORD |VERIFY '
+            sudo shred -u /tmp/sds_env_parsed 2>/dev/null || sudo rm -f /tmp/sds_env_parsed
+            rm -f /tmp/establish_bloodline.py
+            echo "=== STEP C: audit receipt read-back ==="
+            cat > /tmp/read_audit.py <<'PYEOF'
+            import json, sqlite3
+            db = sqlite3.connect('file:/opt/Sanders_Dash_Seal/data/audit.db?mode=ro', uri=True)
+            rows = db.execute("SELECT seq, body, hash FROM receipts WHERE body LIKE '%BLOODLINE_DESCENDANT_RECORD_ESTABLISHED%' ORDER BY seq ASC;").fetchall()
+            print('AUDIT_MATCHES', len(rows))
+            for seq, body, h in rows:
+                parsed = json.loads(body)
+                print('AUDIT', seq, h, json.dumps(parsed.get('context'), default=str), parsed.get('timestamp'))
+            PYEOF
+            sudo -u sanders /opt/Sanders_Dash_Seal/venv/bin/python3 /tmp/read_audit.py 2>&1 | head -8
+            rm -f /tmp/read_audit.py
+            echo "BLOODLINE_DESCENDANT_RECORD_DONE"
