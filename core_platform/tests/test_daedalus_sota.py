@@ -579,9 +579,11 @@ class TestEngineVoiceWiring(unittest.TestCase):
         return DaedalusEngineConfig(**values)
 
     def test_build_engine_without_key_or_model_raises(self):
+        # The raise belongs to the explicitly selected Claude tool
+        # plug; the default native core needs no key or model.
         with mock.patch.dict(os.environ, {}, clear=True):
             with self.assertRaises(ValueError):
-                build_engine(self._config(model=None, api_key=None))
+                build_engine(self._config(core="claude", model=None, api_key=None))
 
     def test_build_engine_succeeds_with_stdlib_backend(self):
         engine = build_engine(self._config())
@@ -625,12 +627,12 @@ class TestCapabilitiesAndPricing(unittest.TestCase):
         ))
         # Consolidated from tests/test_daedalus.py D12.
         self.assertEqual(set(profile.capability_states), set(CAPABILITIES))
-        self.assertEqual(len(CAPABILITIES), 13)
+        self.assertEqual(len(CAPABILITIES), 26)
 
     def test_observed_profile_configured_not_active(self):
         profile = observed_profile(live_reasoning_configured=True)
         self.assertEqual(
-            profile.capability_states["live_claude_reasoning"],
+            profile.capability_states["live_native_reasoning"],
             CapabilityState.CONFIGURED,
         )
         self.assertFalse(profile.fully_active)

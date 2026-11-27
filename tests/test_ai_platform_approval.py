@@ -14,6 +14,7 @@ is read (never written) by one test and never mutated by any test.
 
 import json
 import os
+from dataclasses import replace as _dc_replace
 import sys
 import tempfile
 import unittest
@@ -369,9 +370,11 @@ class TestDaedalusWiring(unittest.TestCase):
         self.assertIsNotNone(engine)
 
     def test_build_engine_with_live_key_blocked_when_unapproved(self):
+        # The live-key gates guard the explicitly selected Claude
+        # tool plug; the default native core uses no provider key.
         with self.assertRaises(ApprovalRequiredError) as ctx:
             build_engine(
-                _config(api_key=LIVE_SHAPE_KEY),
+                _dc_replace(_config(api_key=LIVE_SHAPE_KEY), core="claude"),
                 approval_store=ApprovalStore(),
             )
         self.assertIn("daedalus_live", str(ctx.exception))
@@ -380,7 +383,8 @@ class TestDaedalusWiring(unittest.TestCase):
         # Both daedalus_live AND anthropic_live_model are required.
         store = _approved_store("daedalus_live")
         with self.assertRaises(ApprovalRequiredError) as ctx:
-            build_engine(_config(api_key=LIVE_SHAPE_KEY), approval_store=store)
+            build_engine(_dc_replace(_config(api_key=LIVE_SHAPE_KEY), core="claude"),
+                         approval_store=store)
         self.assertIn("anthropic_live_model", str(ctx.exception))
 
     def test_build_engine_with_live_key_allowed_when_both_gates_approved(self):
@@ -400,7 +404,7 @@ class TestDaedalusWiring(unittest.TestCase):
     def test_build_voice_runner_with_live_key_blocked_when_unapproved(self):
         with self.assertRaises(ApprovalRequiredError):
             build_voice_runner(
-                _config(api_key=LIVE_SHAPE_KEY),
+                _dc_replace(_config(api_key=LIVE_SHAPE_KEY), core="claude"),
                 transcriber=FakeTranscriber("hello"),
                 speaker=FakeSpeaker(),
                 approval_store=ApprovalStore(),

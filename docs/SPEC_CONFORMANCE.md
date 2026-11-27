@@ -6922,3 +6922,56 @@ Landed under the Founder's order of 2026-11-26 23:11 MST ("Finish the platforms 
 Under the Founder’s ruling of 2026-11-26 23:59 / 2026-11-27 00:02 MST, Daedalus’s definition in `core_platform/platform_definitions.py` is amended to carry his product of record: he is the one that gets plugged into everything to repair it — the ecosystem’s repair core, on a global scale by design — and ensuring he performs well is a standing priority. The amendment touches his who, his why, his business model (the product statement), and his provenance only; his six codes and his NOT SETTLED price stand untouched. Pinned by `test_daedalus_repair_core_product` in `tests/test_platform_definitions.py`.
 
 The same follow-up landing delegates the `/platforms` storefront routes to the customer app on the canonical host in `deploy/deployment.py`: as first landed, the alias hosts served the storefronts while the flagship 308-redirected them to `/`; the delegation follows the existing `/auth/` precedent in that file, so sandersdashandseal.com itself now serves the directory and every storefront.
+
+---
+
+## Daedalus — Performance Assurance and Test-Harness Repair (2026-11-27)
+
+Landed under the Founder's ruling of 2026-11-26 23:59 MST ("Daedalus is the one that gets plugged into
+everything to repair it, so we're to ensure he can perform well"). The full assurance report is the
+workspace record `~/workspace/your_files/daedalus-performance-assurance-2026-11-27.md`.
+
+**Verified state.** Daedalus's native core (`core_platform/daedalus_native_core.py`, stdlib-only,
+deterministic, L15+) stands as his mind; the provider transports remain optional gated tools. The
+fleet board's own checker reports him LINKED (8/8 modules compile; native core deterministic over
+the 108-platform registry; learning store round-trips). His protection stands platform-to-platform:
+Labyrinth Shield (LABYRINTH-SHIELD-v1.0.0-LE35) evaluating every operation, Minotaur
+(MINOTAUR-SENTINEL-v1.0.0) patrolling his files, WOTS+/Merkle/SHA3-256 integrity in
+`core_platform/daedalus_protection.py`; ML-KEM remains declared, not implemented, in this layer.
+
+**Measured performance (assurance machine, 2026-11-27).** Core construction 611 ms; synthesize
+0.8 ms; plan 1.0 ms; deterministic source generation 1.1 ms; transport-shape generate 30 ms;
+WOTS+ sign 2.3 ms / verify 2.1 ms; ledger chain verification (30 entries) 0.45 ms; Minotaur patrol
+8.4 ms, status clean; engine describe() full probe run 5,745 ms. Live production probes answer
+200 (`/api/daedalus/describe`, `/api/voice/daedalus/status`: live, deterministic, 108 platforms).
+
+**The repair (tests only; no production code changed).** Fifteen tests in Daedalus's own harness
+still asserted the superseded provider-key design from before the native core landed (founder
+rulings, 2026-11-25) and failed against the design of record. They are aligned, each preserving
+its original safety intent under the current design: the capability's native name
+(`live_native_reasoning`) in the declared/observed profile tests; describe()'s current honest
+status string; the capability inventory count (13 -> 26); the provider-path properties (full-chain
+fake transport, key/model raise, live-key double gate in build_engine and build_voice_runner) now
+select the Claude tool plug explicitly, exactly as the engine's contract requires; the links-board
+Daedalus tests now assert the native semantics (no key or model required; the owner's approval
+flag is the named missing item). Files: tests/test_daedalus.py, tests/test_daedalus_upgrades.py,
+core_platform/tests/test_daedalus_sota.py, tests/test_ai_platform_links.py,
+tests/test_ai_platform_approval.py (with their .pbd.json manifests regenerated, hash-verified).
+Full suite over the final tree: the failing set is the pre-existing baseline minus these fifteen
+(40 -> 25), with zero new failures.
+
+**Limits recorded, not repaired here.** (1) In production, describe() reports 6 of 26 capabilities
+active against 11 of 26 on the assurance machine: the five capabilities whose probes exercise
+generate()/learn against the production protection state read unavailable live, while every
+temp-state and read-only probe passes in both places — instance-side diagnosis of the production
+protection state directory is the named next step; nothing in this landing changes production
+behavior. (2) The WOTS+ one-time pool holds 32 signatures per seed epoch; signed patrol records
+consume it at the 300-second patrol cadence and exhaustion fails closed with a named error until
+the owner rotates the seed — a design parameter for the Founder, not altered here. (3) His
+PlatformDefinition's repair product (limit recorded in the tranche-1 entry) was amended by the
+platform-finish follow-up and is verified by read-back in the assurance report: his definition now
+carries the global repair product, attributed to the Founder's ruling of 2026-11-26/27.
+
+**Recorded.** Entered into this record on 2026-11-27 as the Daedalus performance-assurance landing
+(founder's ruling of 2026-11-26, 23:59 MST), beside the platform-finish and bloodline entries it
+follows and does not supersede.

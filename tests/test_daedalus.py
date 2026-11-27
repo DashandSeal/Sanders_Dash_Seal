@@ -229,7 +229,7 @@ class TestL15HonestStatus(unittest.TestCase):
     def test_report_marks_not_active(self):
         rep = declared_profile().report()
         self.assertFalse(rep["fully_active"])
-        self.assertEqual(rep["capabilities"]["live_claude_reasoning"], "unavailable")
+        self.assertEqual(rep["capabilities"]["live_native_reasoning"], "unavailable")
         self.assertEqual(rep["capabilities"]["cobol_bridge"], "unavailable")
         self.assertEqual(rep["capabilities"]["onnx_language_classification"], "unavailable")
 
@@ -374,7 +374,9 @@ class TestBuildEngine(unittest.TestCase):
             build_engine(self._config(signing_key=b"short"))
 
     def test_full_chain_fake_transport(self):
-        eng = build_engine(self._config())
+        # The provider chain is exercised through the explicitly
+        # selected Claude tool plug; the default core is native.
+        eng = build_engine(self._config(core="claude"))
         ctx = build_context(operation_id="op-1", platform_id="p", subsystem_id="s",
                             invention_id="inv-1", subject_id="subj-1",
                             location=good_location())
@@ -389,7 +391,7 @@ class TestBuildEngine(unittest.TestCase):
         self.assertFalse(d["fully_active"])
         self.assertFalse(d["capabilities"]["fully_active"])
         self.assertEqual(d["status"],
-                         "rebuild_20261113_integration_contract_not_production_deployment")
+                         "native_core_wired_deterministic_local_reasoning")
         self.assertEqual(d["commercial"]["scenario_status"], "illustrative_not_forecast")
 
 

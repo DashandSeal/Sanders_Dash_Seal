@@ -115,11 +115,15 @@ class NoKeyStatusTest(unittest.TestCase):
                                   "minotaur_sentinel", "sharpshooter",
                                   "twingate"])
 
-    def test_daedalus_is_missing_key_and_names_it(self):
+    def test_daedalus_is_missing_approval_and_names_it(self):
+        # Native-core design (founder ruling, 2026-11-25): Daedalus
+        # needs no provider key or model; with an empty env the one
+        # thing missing is the owner's live-approval flag, named.
         s = self.results["daedalus"]
-        self.assertEqual(s.status, "MISSING_KEY")
-        self.assertIn("ANTHROPIC_API_KEY", s.missing)
-        self.assertIn("DAEDALUS_CLAUDE_MODEL", s.missing)
+        self.assertEqual(s.status, "MISSING_APPROVAL")
+        self.assertTrue(
+            any("SDS_OWNER_APPROVAL_DAEDALUS" in m for m in s.missing),
+            s.missing)
 
     def test_grantwriter_is_linked_after_p1_rebuild(self):
         # P2 adaptation: on the links branch this was BROKEN (SyntaxError
@@ -192,14 +196,19 @@ class FakeKeyTest(unittest.TestCase):
         s = links.check_platform("daedalus", registry=self.registry, env=env,
                                  import_checker=_no_imports)
         self.assertEqual(s.status, "LINKED")
-        self.assertIn("No live call", s.detail)
+        self.assertIn("No external provider is required or called", s.detail)
 
-    def test_daedalus_key_without_model_is_missing_key(self):
+    def test_daedalus_key_without_approval_is_missing_approval(self):
+        # A provider key alone changes nothing under the native
+        # design: no model is required, and the owner's approval
+        # flag is the named missing item.
         env = {"ANTHROPIC_API_KEY": "fake-key-for-test"}
         s = links.check_platform("daedalus", registry=self.registry, env=env,
                                  import_checker=_no_imports)
-        self.assertEqual(s.status, "MISSING_KEY")
-        self.assertIn("DAEDALUS_CLAUDE_MODEL", s.missing)
+        self.assertEqual(s.status, "MISSING_APPROVAL")
+        self.assertTrue(
+            any("SDS_OWNER_APPROVAL_DAEDALUS" in m for m in s.missing),
+            s.missing)
 
     def test_stream_api_fake_secret_without_approval_is_missing_approval(self):
         env = {"STRIPE_WEBHOOK_SECRET": "whsec_fake_for_test",

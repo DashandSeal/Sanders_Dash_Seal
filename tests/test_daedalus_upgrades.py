@@ -43,14 +43,14 @@ class TestObservedProfile(unittest.TestCase):
         profile = observed_profile({})
         self.assertFalse(profile.fully_active)
         self.assertEqual(
-            profile.capability_states["live_claude_reasoning"],
+            profile.capability_states["live_native_reasoning"],
             CapabilityState.UNAVAILABLE)
 
     def test_passing_probe_flips_only_that_capability(self):
         profile = observed_profile(
-            {"live_claude_reasoning": lambda: True})
+            {"live_native_reasoning": lambda: True})
         self.assertEqual(
-            profile.capability_states["live_claude_reasoning"],
+            profile.capability_states["live_native_reasoning"],
             CapabilityState.ACTIVE)
         self.assertEqual(
             profile.capability_states["cobol_bridge"],
@@ -59,9 +59,9 @@ class TestObservedProfile(unittest.TestCase):
 
     def test_require_capability_refuses_unobserved(self):
         with self.assertRaises(RuntimeError):
-            require_capability(declared_profile(), "live_claude_reasoning")
-        profile = observed_profile({"live_claude_reasoning": lambda: True})
-        require_capability(profile, "live_claude_reasoning")  # no raise
+            require_capability(declared_profile(), "live_native_reasoning")
+        profile = observed_profile({"live_native_reasoning": lambda: True})
+        require_capability(profile, "live_native_reasoning")  # no raise
 
 
 class TestRateCardConfig(unittest.TestCase):
