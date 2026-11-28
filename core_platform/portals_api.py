@@ -55,6 +55,7 @@ KIND_BY_SLUG = {
     'contractor-interest': 'CONTRACTOR_INTEREST',
     'spotlight-nomination': 'SPOTLIGHT_NOMINATION',
     'grant-services': 'GRANT_SERVICES',
+    'oikos-programs': 'OIKOS_PROGRAMS',
 }
 
 MAX_BODY = 16 * 1024 * 1024

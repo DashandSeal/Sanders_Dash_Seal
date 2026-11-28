@@ -7488,3 +7488,43 @@ record: classic, upscale, elegant, sophisticated); the intake
 route it will post to is this landing's door. The remaining
 priced platforms plug into the spine in later Track C landings,
 each with its catalog written from its price of record.
+
+## Track C, Landing 2 — Oikos Plugs into the Intake Spine (2026-11-28)
+
+**Source requirement.** The same Commercial Ecosystem order of
+2026-11-28, Track C build order step 3. The Track C census
+verified Oikos as the one deliberation-priced platform with no
+service machinery at all: no service module, no fleet enrollment,
+no dispatcher route. Her prices of record (ruled 2026-11-27):
+Continental Programs from $250,000/yr per continent program;
+Global Humanity Partnerships from $1,000,000/yr. Her structure
+of record: institutions fund the necessities; her served
+populations are never her payers.
+
+**What landed.** Her catalog joins the intake spine
+(`OIKOS_SERVICES` in `core_platform/service_intake.py`), written
+from her price of record with the "from" floors carried as the
+recorded amounts. A public door: `OIKOS_PROGRAMS` joins the
+portals submission kinds (prefix OIK), submittable at
+POST /api/portals/submissions/oikos-programs, born
+AWAITING_HUMAN_REVIEW; the existing approval bridge routes her
+approvals to the spine with no wiring change. Her structural
+rule is enforced at intake (`OIKOS_PAYER_MUST_BE_AN_INSTITUTION`):
+a submission whose client kind is not INSTITUTION opens no
+client and no engagement, and the refusal rides on the review
+result. Her engagements stand RECORDED in the spine — she has
+no case engine yet, and none is claimed; the operator works
+them from the spine's record.
+
+**Acceptance criteria:** the catalog carries exactly her ruled
+figures; an institution's approved intake opens one client and
+one RECORDED engagement at her price of record; a
+non-institution intake is refused by name and opens nothing;
+the suite's failing set is byte-identical to baseline. Tests in
+tests/test_service_intake.py (TestOikosPlug) pin each criterion.
+
+**Not in this landing.** Her own case engine and fleet/dispatcher
+enrollment: enrollment requires a service object to bind, and
+building her engine is a later Track C landing, sequenced after
+the priced platforms with engines plug in. No Stripe product
+(Track B) and no shelf change (Track A) is carried here.

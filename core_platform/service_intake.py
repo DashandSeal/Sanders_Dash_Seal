@@ -98,8 +98,33 @@ GRANT_SERVICES = (
     },
 )
 
+# Oikos's catalog of record (ruled 2026-11-27): institutions fund
+# the necessities of human life across seven continents. Her
+# served populations are never her payers — that principle is
+# written into her structure, and the intake rule below enforces
+# its shape: an Oikos client of record is an institution.
+OIKOS_SERVICES = (
+    {
+        'key': 'CONTINENTAL_PROGRAM',
+        'label': 'Continental Program',
+        'price_text': 'from $250,000/year per continent program',
+        'amount_cents': 25000000,
+        'interval': 'YEAR',
+        'fee_structure': 'PROGRAM_FEE',
+    },
+    {
+        'key': 'GLOBAL_HUMANITY_PARTNERSHIP',
+        'label': 'Global Humanity Partnership',
+        'price_text': 'from $1,000,000/year',
+        'amount_cents': 100000000,
+        'interval': 'YEAR',
+        'fee_structure': 'PARTNERSHIP_FEE',
+    },
+)
+
 CATALOGS = {
     'grantwriter': GRANT_SERVICES,
+    'oikos': OIKOS_SERVICES,
 }
 
 # Portal submission kinds that are commercial service intakes, and
@@ -107,6 +132,25 @@ CATALOGS = {
 # submission and its review; the spine owns what approval opens.
 KIND_PLATFORM = {
     'GRANT_SERVICES': 'grantwriter',
+    'OIKOS_PROGRAMS': 'oikos',
+}
+
+
+def _oikos_intake_rule(fields):
+    """Oikos's structural rule, enforced at intake: her clients
+    of record are institutions — the populations she serves are
+    never her payers."""
+    if str(fields.get('client_kind', '')).strip().upper() != 'INSTITUTION':
+        raise ServiceIntakeDenied(
+            'OIKOS_PAYER_MUST_BE_AN_INSTITUTION: Oikos is funded '
+            'by institutions; her served populations are never '
+            'her payers.')
+
+
+# Per-platform intake rules, checked on the submitted fields
+# before a client record opens.
+INTAKE_RULES = {
+    'oikos': _oikos_intake_rule,
 }
 
 
@@ -375,6 +419,9 @@ class ServiceIntake:
                 parsed = None
             if isinstance(parsed, dict):
                 fields = parsed
+        rule = INTAKE_RULES.get(platform_id)
+        if rule is not None:
+            rule(fields)
         service_key = fields.get('service_key') or case.get('subject', '')
         service_key = str(service_key).strip().upper()
         service_for(platform_id, service_key)  # refuses an unnamed service

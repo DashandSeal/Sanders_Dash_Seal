@@ -236,5 +236,70 @@ class TestPortalRoad(GrantwriterPlugBase):
         self.assertEqual(self.intake.status()['clients'], 0)
 
 
+class TestOikosPlug(SpineBase):
+    """Oikos (Track C landing 2): priced, and until this plug she
+    had no machinery at all. Her engagements stand RECORDED in the
+    spine — no opener is registered for her yet — and her
+    structural rule holds at intake: institutions fund; served
+    populations are never payers."""
+
+    def setUp(self):
+        super().setUp()
+        self.portals = PortalsService(
+            self.tmp / 'portals.db', self.tmp / 'media',
+            operator_verifier=lambda identity: identity == OPERATOR,
+            audit=self.audit,
+            approval_hook=self._hook)
+
+    def _hook(self, identity, case):
+        from core_platform.service_intake import KIND_PLATFORM
+        if case.get('kind') in KIND_PLATFORM:
+            return self.intake.handle_portal_approval(identity, case)
+        return None
+
+    def _submit(self, client_kind='INSTITUTION'):
+        body = json.dumps({
+            'organization': 'Global Relief Consortium',
+            'contact_name': 'Amara Chen',
+            'contact': 'amara@example.org',
+            'seeking': 'Water programs, Oceania',
+            'service_key': 'CONTINENTAL_PROGRAM',
+            'client_kind': client_kind,
+        })
+        return self.portals.submit(
+            'OIKOS_PROGRAMS', 'headquarters',
+            name='Amara Chen', contact='amara@example.org',
+            subject='CONTINENTAL_PROGRAM', body=body)
+
+    def test_catalog_is_the_ruled_figures(self):
+        by_key = {e['key']: e for e in catalog_for('oikos')}
+        self.assertEqual(
+            by_key['CONTINENTAL_PROGRAM']['amount_cents'], 25000000)
+        self.assertEqual(
+            by_key['GLOBAL_HUMANITY_PARTNERSHIP']['amount_cents'],
+            100000000)
+
+    def test_approval_records_engagement_for_institution(self):
+        record = self._submit()
+        self.assertTrue(record['ref'].startswith('OIK-'))
+        result = self.portals.review(OPERATOR, record['ref'], 'APPROVE')
+        engagement = result['intake']
+        self.assertEqual(engagement['platform_id'], 'oikos')
+        self.assertEqual(engagement['status'], 'RECORDED')
+        self.assertEqual(engagement['price_text'],
+                         'from $250,000/year per continent program')
+        client = self.intake.client_view(engagement['client_ref'])
+        self.assertEqual(client['organization'],
+                         'Global Relief Consortium')
+
+    def test_served_population_cannot_be_the_payer(self):
+        record = self._submit(client_kind='SERVED_POPULATION')
+        result = self.portals.review(OPERATOR, record['ref'], 'APPROVE')
+        self.assertIn('intake_error', result)
+        self.assertIn('OIKOS_PAYER_MUST_BE_AN_INSTITUTION',
+                      result['intake_error'])
+        self.assertEqual(self.intake.status()['clients'], 0)
+
+
 if __name__ == '__main__':
     unittest.main()
