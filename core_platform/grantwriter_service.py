@@ -637,7 +637,7 @@ TARGETING_PARAMETERS = {
 
 # The access register: her keys as platform records, one entry
 # per system, in truthful laddered states. Facts verified
-# 2026-11-26 and stated exactly as verified; nothing here is a
+# 2026-11-26 and 2026-11-27 and stated exactly as verified; nothing here is a
 # credential \u2014 the register never holds a password.
 ACCESS_STATES = (
     'KEY_OF_RECORD_ACTIVE', 'VERIFIED', 'SUBMITTED',
@@ -645,16 +645,27 @@ ACCESS_STATES = (
 ACCESS_REGISTER_SEED = (
     {'system': 'JUSTGRANTS',
      'state': 'KEY_OF_RECORD_ACTIVE',
-     'basis': 'Her key of record runs through the '
-              'founder\u2019s activated Entity Administrator '
-              'authority (his DOJ account was activated '
-              '2026-11-26) \u2014 the seat that exists',
-     'detail': 'Own-name seat PENDING: scheduled 2026-11-27 '
-               '(library desktop session); invitee '
-               'daddydik323@gmail.com; application A-547904; '
-               'role to assign: Application Submitter; '
+     'basis': 'Her key of record runs through the founder’s '
+              'activated Entity Administrator authority (his DOJ '
+              'account was activated 2026-11-26), and her own-name '
+              'Application Submitter seat now stands completed and '
+              'verified (2026-11-27)',
+     'detail': 'Own-name seat COMPLETE + VERIFIED 2026-11-27: invite '
+               'sent from the founder’s DIAMD Entity Administrator '
+               'session to daddydik323@gmail.com and activated the '
+               'same day. From the seat’s own JustGrants session, '
+               'Applications – SANDERS HOME HEALTHCARE & CAREGIVERS '
+               'LLC lists GRANT14829509 (NIJ FY 2026 Research on the '
+               'Abuse, Neglect, and Exploitation of Elderly '
+               'Individuals; application A-547904) with Application '
+               'Submitter: ROOSEVELT SANDERS, Status New; the Step 2 '
+               'task "10d Verify & Confirm (Initiate)" stands '
+               'assigned to the seat; package due December 7, 2026 '
+               '8:59:00 PM EST. Participants of record on A-547904: '
+               'ROOSEVELT SANDERS — Entity Administrator and '
+               'ROOSEVELT SANDERS — Application Submitter. '
                'Authorized Representative remains the founder',
-     'verified_on': '2026-11-26'},
+     'verified_on': '2026-11-27'},
     {'system': 'SAM.GOV',
      'state': 'VERIFIED',
      'basis': 'Founder is Administrator (verified in SAM.gov '
@@ -689,18 +700,35 @@ ACCESS_REGISTER_SEED = (
                'need (NIH / eRA Commons)',
      'verified_on': '2026-11-26'},
     {'system': 'HRSA_EHBS',
-     'state': 'NOT_STARTED',
-     'basis': 'Organization registration ahead of need; the '
-              'SAM.gov registration it requires stands Active',
-     'detail': 'Not started \u2014 Tier 2, create ahead of '
-               'need (HRSA Electronic Handbooks)',
-     'verified_on': '2026-11-26'},
+     'state': 'VERIFIED',
+     'basis': 'Her HRSA key is HELD for SANDERS HOME HEALTHCARE & '
+              'CAREGIVERS LLC: the founder’s EHBs profile was '
+              'created 2026-11-27 and the organization stands '
+              'registered from its SAM.gov record — UEI '
+              'QW8BRKNCF573 imported from SAM',
+     'detail': 'HRSA Electronic Handbooks (EHBs): profile of record '
+               'created 2026-11-27 (Roosevelt Sanders, '
+               'rooseveltsanders381@gmail.com); SANDERS HOME '
+               'HEALTHCARE & CAREGIVERS LLC registered in EHBs on '
+               'its Active SAM.gov registration (UEI QW8BRKNCF573). '
+               'EHBs associations for Sanders Senior Living LLC and '
+               'Sanders Legal Helpers LLC await their SAM.gov '
+               'registrations completing (Work In Progress of '
+               'record). The register holds no credential',
+     'verified_on': '2026-11-27'},
     {'system': 'FEMA_GO',
-     'state': 'NOT_STARTED',
-     'basis': 'Organization registration ahead of need',
-     'detail': 'Not started \u2014 Tier 2, create ahead of '
-               'need (FEMA GO)',
-     'verified_on': '2026-11-26'},
+     'state': 'VERIFIED',
+     'basis': 'Her FEMA GO key is HELD: the founder’s FEMA GO '
+              'account was created via Login.gov 2026-11-27 and '
+              'SANDERS HOME HEALTHCARE & CAREGIVERS LLC stands '
+              'auto-attached from its SAM.gov record',
+     'detail': 'FEMA GO (go.fema.gov): account of record created '
+               '2026-11-27 via Login.gov; the organization attached '
+               'automatically from SAM.gov — Active, SAM expiration '
+               '11/10/2027; the Team list of record shows Roosevelt '
+               'Sanders — Authorized Organization Representative, '
+               'All Programs. The register holds no credential',
+     'verified_on': '2026-11-27'},
     {'system': 'GRANTSOLUTIONS',
      'state': 'AT_AWARD',
      'basis': 'Provisioned at award or by agency invitation',
@@ -767,6 +795,34 @@ ACCESS_REGISTER_SEED = (
                'credential is held by the founder alone and '
                'is never recorded here',
      'verified_on': '2026-11-26'},
+    {'system': 'UNRWA',
+     'state': 'VERIFIED',
+     'basis': 'Her UNRWA door stands ACCEPTED: the founder’s UNGM '
+              'supplier application for the United Nations Relief '
+              'and Works Agency for Palestine Refugees in the Near '
+              'East (UNRWA) was accepted 2026-11-27, notified '
+              'through the In-Tend e-tendering portal',
+     'detail': 'UNRWA e-Tendering via In-Tend, reached through the '
+               'UNGM registration of record (UNGM number 1312370): '
+               'acceptance of record 2026-11-27 — SANDERS HOME '
+               'HEALTHCARE & CAREGIVERS LLC may participate in UNRWA '
+               'tender opportunities published under UNGM Tender '
+               'Notices; invitations arrive by email. The register '
+               'holds no credential',
+     'verified_on': '2026-11-27'},
+    {'system': 'FAO',
+     'state': 'VERIFIED',
+     'basis': 'Her FAO door stands REGISTERED: the company details '
+              'of SANDERS HOME HEALTHCARE & CAREGIVERS LLC were '
+              'registered with the Food and Agriculture '
+              'Organization of the United Nations (FAO) electronic '
+              'tendering site via In-Tend 2026-11-27',
+     'detail': 'FAO electronic tendering via In-Tend, reached '
+               'through the UNGM registration of record (UNGM number '
+               '1312370): registration of record 2026-11-27 — UNGM '
+               'portal tender opportunities for FAO are accessible '
+               'to the company. The register holds no credential',
+     'verified_on': '2026-11-27'},
     {'system': 'WORLD_BANK_VMP',
      'state': 'SUBMITTED',
      'basis': 'Her third global key: the founder\u2019s '

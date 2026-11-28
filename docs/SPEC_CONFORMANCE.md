@@ -7099,3 +7099,69 @@ as the first item of tranche 2 per the Headquarters-first rule:
   seal assets; no seal was generated, redrawn, or substituted.
 - **No price was set.** Headquarters holds no platform price of
   record; none was invented in this landing.
+## Grantwriter Register + HLP Corrective Landing — 2026-11-27
+
+Recorded under the Founder's direction, 2026-11-27. Two landings in
+one commit.
+
+### (1) Grantwriter access register — core_platform/grantwriter_service.py
+
+- JUSTGRANTS (state unchanged KEY_OF_RECORD_ACTIVE, verified_on
+  2026-11-27): basis and detail updated to the completed own-name
+  Application Submitter seat — invite sent from the founder's DIAMD
+  Entity Administrator session to daddydik323@gmail.com and activated
+  the same day; from the seat's own JustGrants session, Applications
+  – SANDERS HOME HEALTHCARE & CAREGIVERS LLC lists GRANT14829509
+  (NIJ FY 2026 Research on the Abuse, Neglect, and Exploitation of
+  Elderly Individuals; application A-547904) with Application
+  Submitter: ROOSEVELT SANDERS, Status New; the Step 2 task "10d
+  Verify & Confirm (Initiate)" stands assigned to the seat; package
+  due December 7, 2026 8:59:00 PM EST.
+- HRSA_EHBS: NOT_STARTED → VERIFIED (verified_on 2026-11-27) — her
+  HRSA key is HELD; the founder's EHBs profile was created 2026-11-27
+  and the organization stands registered from its SAM.gov record
+  (UEI QW8BRKNCF573 imported from SAM).
+- FEMA_GO: NOT_STARTED → VERIFIED (verified_on 2026-11-27) — her
+  FEMA GO key is HELD; the founder's FEMA GO account was created via
+  Login.gov 2026-11-27 and SANDERS HOME HEALTHCARE & CAREGIVERS LLC
+  stands auto-attached from its SAM.gov record; the Team list of
+  record shows Roosevelt Sanders — Authorized Organization
+  Representative, All Programs.
+- UNRWA (NEW, after UNGM): VERIFIED (2026-11-27) — her UNRWA door
+  stands ACCEPTED; the founder's UNGM supplier application for the
+  United Nations Relief and Works Agency for Palestine Refugees in
+  the Near East (UNRWA) was accepted 2026-11-27, notified through
+  the In-Tend e-tendering portal (UNGM number 1312370).
+- FAO (NEW, after UNRWA): VERIFIED (2026-11-27) — her FAO door
+  stands REGISTERED; the company details of SANDERS HOME HEALTHCARE
+  & CAREGIVERS LLC were registered with the Food and Agriculture
+  Organization of the United Nations (FAO) electronic tendering site
+  via In-Tend 2026-11-27 (UNGM number 1312370).
+- The register count goes 12 → 14. The seed header now reads "Facts
+  verified 2026-11-26 and 2026-11-27". Prices untouched. Standing
+  authority untouched (no per-case founder gate; ruling 2026-11-26
+  23:23 preserved). Test pins in
+  tests/test_grantwriter_service_jurisdiction.py updated to match
+  (states exact; HRSA detail contains QW8BRKNCF573; FEMA detail
+  contains Authorized Organization Representative; UNRWA basis
+  contains accepted 2026-11-27; FAO basis contains Food and
+  Agriculture Organization).
+
+### (2) HLP correction — core_platform/sanders_sentinel_service.py
+
+Corrective landing owed since the 2026-11-27 00:18 operational
+report. In HLP_PARTS, entry ARCHITECTURE_STATEMENT, the designation
+text only (the ladder derivation in _hlp_part_state is untouched):
+
+- BEFORE: "Nothing external: the statement is the platform's own
+  law. No designation applies."
+- AFTER: "An ACTIVE LIVE designation of record, as the ladder
+  derivation requires of every part: the founder's designation of
+  the statement itself as the platform's own law, held on the
+  platform's internal record. Nothing external is designated."
+
+The BEFORE text contradicted the derivation, under which a part's
+connection is an ACTIVE LIVE designation of record
+(designation['kind'] == 'LIVE') and the entry's designation text is
+surfaced as designation_required. No test pins this text verbatim
+(checked tests/test_sanders_sentinel_human_life_protection.py).

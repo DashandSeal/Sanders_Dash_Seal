@@ -681,13 +681,15 @@ class TestMotherUpgrade(GrantwriterJurisdictionBase):
              'SAM.GOV': 'VERIFIED',
              'GRANTS.GOV': 'VERIFIED',
              'ERA_COMMONS': 'NOT_STARTED',
-             'HRSA_EHBS': 'NOT_STARTED',
-             'FEMA_GO': 'NOT_STARTED',
+             'HRSA_EHBS': 'VERIFIED',
+             'FEMA_GO': 'VERIFIED',
              'GRANTSOLUTIONS': 'AT_AWARD',
              'PMS': 'AT_AWARD',
              'ASAP': 'AT_AWARD',
              'EU_FUNDING_TENDERS_PORTAL': 'VERIFIED',
              'UNGM': 'VERIFIED',
+             'UNRWA': 'VERIFIED',
+             'FAO': 'VERIFIED',
              'WORLD_BANK_VMP': 'SUBMITTED'})
         eu = entries['EU_FUNDING_TENDERS_PORTAL']
         self.assertIn('859635244', eu['basis'])
@@ -709,6 +711,16 @@ class TestMotherUpgrade(GrantwriterJurisdictionBase):
         self.assertIn('A-547904', justgrants['detail'])
         self.assertIn('daddydik323@gmail.com', justgrants['detail'])
         self.assertIn('Application Submitter', justgrants['detail'])
+        hrsa = entries['HRSA_EHBS']
+        self.assertIn('QW8BRKNCF573', hrsa['detail'])
+        fema = entries['FEMA_GO']
+        self.assertIn('Authorized Organization Representative',
+                      fema['detail'])
+        unrwa = entries['UNRWA']
+        self.assertIn('accepted 2026-11-27', unrwa['basis'])
+        fao = entries['FAO']
+        self.assertIn('Food and Agriculture Organization',
+                      fao['basis'])
         sam = entries['SAM.GOV']
         self.assertIn('QW8BRKNCF573', sam['detail'])
         self.assertIn('27KB6', sam['detail'])

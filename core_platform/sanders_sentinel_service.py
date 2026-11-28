@@ -2678,9 +2678,14 @@ HLP_PARTS = (
          'required), verified like every '
          'governed document.'),
      'designation': (
-         'Nothing external: the statement is '
-         'the platform\u2019s own law. No '
-         'designation applies.')},
+         'An ACTIVE LIVE designation of '
+         'record, as the ladder derivation '
+         'requires of every part: the '
+         'founder\u2019s designation of the '
+         'statement itself as the platform\u2019s '
+         'own law, held on the platform\u2019s '
+         'internal record. Nothing external '
+         'is designated.')},
     {'part': 'EXPANDED_THREAT_SCOPE',
      'title': 'Expanded threat scope',
      'mechanism': (
