@@ -1,0 +1,68 @@
+name: Grantwriter register - record UNRWA + FAO receipts (one-off 2026-11-27, follow-up)
+on:
+  workflow_dispatch:
+jobs:
+  record-unrwa-fao:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record the five 2026-11-27 register states; read back receipts
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            echo "=== STEP A: env handoff (values never printed) ==="
+            sudo sh -c 'cat /etc/sanders-dash-seal/environment /etc/sanders-dash-seal/runtime.env > /tmp/sds_env_parsed 2>/dev/null; chown sanders:sanders /tmp/sds_env_parsed; chmod 600 /tmp/sds_env_parsed'
+            echo "=== STEP B: record through production bindings ==="
+            cat > /tmp/gw_records_20261127.json <<'JSONEOF'
+            [{"system": "JUSTGRANTS", "state": "KEY_OF_RECORD_ACTIVE", "basis": "Her key of record runs through the founder\u2019s activated Entity Administrator authority (his DOJ account was activated 2026-11-26), and her own-name Application Submitter seat now stands completed and verified (2026-11-27)", "detail": "Own-name seat COMPLETE + VERIFIED 2026-11-27: invite sent from the founder\u2019s DIAMD Entity Administrator session to daddydik323@gmail.com and activated the same day. From the seat\u2019s own JustGrants session, Applications \u2013 SANDERS HOME HEALTHCARE & CAREGIVERS LLC lists GRANT14829509 (NIJ FY 2026 Research on the Abuse, Neglect, and Exploitation of Elderly Individuals; application A-547904) with Application Submitter: ROOSEVELT SANDERS, Status New; the Step 2 task \"10d Verify & Confirm (Initiate)\" stands assigned to the seat; package due December 7, 2026 8:59:00 PM EST. Participants of record on A-547904: ROOSEVELT SANDERS \u2014 Entity Administrator and ROOSEVELT SANDERS \u2014 Application Submitter. Authorized Representative remains the founder", "verified_on": "2026-11-27"}, {"system": "HRSA_EHBS", "state": "VERIFIED", "basis": "Her HRSA key is HELD for SANDERS HOME HEALTHCARE & CAREGIVERS LLC: the founder\u2019s EHBs profile was created 2026-11-27 and the organization stands registered from its SAM.gov record \u2014 UEI QW8BRKNCF573 imported from SAM", "detail": "HRSA Electronic Handbooks (EHBs): profile of record created 2026-11-27 (Roosevelt Sanders, rooseveltsanders381@gmail.com); SANDERS HOME HEALTHCARE & CAREGIVERS LLC registered in EHBs on its Active SAM.gov registration (UEI QW8BRKNCF573). EHBs associations for Sanders Senior Living LLC and Sanders Legal Helpers LLC await their SAM.gov registrations completing (Work In Progress of record). The register holds no credential", "verified_on": "2026-11-27"}, {"system": "FEMA_GO", "state": "VERIFIED", "basis": "Her FEMA GO key is HELD: the founder\u2019s FEMA GO account was created via Login.gov 2026-11-27 and SANDERS HOME HEALTHCARE & CAREGIVERS LLC stands auto-attached from its SAM.gov record", "detail": "FEMA GO (go.fema.gov): account of record created 2026-11-27 via Login.gov; the organization attached automatically from SAM.gov \u2014 Active, SAM expiration 11/10/2027; the Team list of record shows Roosevelt Sanders \u2014 Authorized Organization Representative, All Programs. The register holds no credential", "verified_on": "2026-11-27"}, {"system": "UNRWA", "state": "VERIFIED", "basis": "Her UNRWA door stands ACCEPTED: the founder\u2019s UNGM supplier application for the United Nations Relief and Works Agency for Palestine Refugees in the Near East (UNRWA) was accepted 2026-11-27, notified through the In-Tend e-tendering portal", "detail": "UNRWA e-Tendering via In-Tend, reached through the UNGM registration of record (UNGM number 1312370): acceptance of record 2026-11-27 \u2014 SANDERS HOME HEALTHCARE & CAREGIVERS LLC may participate in UNRWA tender opportunities published under UNGM Tender Notices; invitations arrive by email. The register holds no credential", "verified_on": "2026-11-27"}, {"system": "FAO", "state": "VERIFIED", "basis": "Her FAO door stands REGISTERED: the company details of SANDERS HOME HEALTHCARE & CAREGIVERS LLC were registered with the Food and Agriculture Organization of the United Nations (FAO) electronic tendering site via In-Tend 2026-11-27", "detail": "FAO electronic tendering via In-Tend, reached through the UNGM registration of record (UNGM number 1312370): registration of record 2026-11-27 \u2014 UNGM portal tender opportunities for FAO are accessible to the company. The register holds no credential", "verified_on": "2026-11-27"}]
+            JSONEOF
+            cat > /tmp/record_20261127.py <<'PYEOF'
+            import json, os
+            with open('/tmp/sds_env_parsed') as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith('#') or '=' not in line:
+                        continue
+                    k, v = line.split('=', 1)
+                    os.environ[k.strip()] = v.strip().strip('"').strip("'")
+            os.environ.setdefault('SANDERS_RUNTIME_FACTORY', 'deploy.production_bindings:create_production_bindings')
+            from deploy.production_bindings import create_production_bindings
+            b = create_production_bindings()
+            gw = b.grantwriter
+            records = json.load(open('/tmp/gw_records_20261127.json'))
+            def compact(entries):
+                return [{'system': e['system'], 'state': e['state'], 'updated_by': e['updated_by'], 'updated_at': e['updated_at']} for e in entries]
+            before_all = gw.access_register()
+            print('REGISTER_BEFORE ' + json.dumps(compact(before_all), default=str))
+            for rec in records:
+                if rec['system'] not in ('UNRWA', 'FAO'):
+                    continue
+                view = gw.record_access_state('RooseveltSanders', rec['system'], rec['state'], basis=rec['basis'], detail=rec['detail'], verified_on=rec['verified_on'])
+                print('RECORDED ' + rec['system'] + ' ' + json.dumps(view, default=str))
+            after_all = gw.access_register()
+            print('REGISTER_AFTER ' + json.dumps(compact(after_all), default=str))
+            for rec in records:
+                after = [e for e in after_all if e['system'] == rec['system']]
+                print('AFTER ' + rec['system'] + ' ' + json.dumps(after, default=str))
+            PYEOF
+            sudo -u sanders bash -c 'cd /opt/Sanders_Dash_Seal && PYTHONPATH=/opt/Sanders_Dash_Seal OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf ./venv/bin/python3 /tmp/record_20261127.py' 2>&1 | grep -E 'REGISTER_BEFORE|RECORDED |ALREADY_CURRENT|REGISTER_AFTER|AFTER |Error|Denied|denied|Traceback' | head -30
+            sudo shred -u /tmp/sds_env_parsed 2>/dev/null || sudo rm -f /tmp/sds_env_parsed
+            rm -f /tmp/record_20261127.py /tmp/gw_records_20261127.json
+            echo "=== STEP C: audit receipt read-back ==="
+            cat > /tmp/read_audit.py <<'PYEOF'
+            import json, sqlite3
+            db = sqlite3.connect('file:/opt/Sanders_Dash_Seal/data/audit.db?mode=ro', uri=True)
+            rows = db.execute("SELECT seq, body, hash FROM receipts WHERE body LIKE '%GRANTWRITER_ACCESS_STATE_RECORDED%' ORDER BY seq DESC LIMIT 8;").fetchall()
+            print('AUDIT_MATCHES', len(rows))
+            for seq, body, h in rows:
+                parsed = json.loads(body)
+                print('AUDIT', seq, h, json.dumps(parsed.get('context'), default=str), parsed.get('timestamp'))
+            PYEOF
+            sudo -u sanders /opt/Sanders_Dash_Seal/venv/bin/python3 /tmp/read_audit.py 2>&1 | head -10
+            rm -f /tmp/read_audit.py
+            echo "GW_20261127_RECORD2_DONE"
