@@ -301,5 +301,71 @@ class TestOikosPlug(SpineBase):
         self.assertEqual(self.intake.status()['clients'], 0)
 
 
+class TestGeneratedCatalogs(SpineBase):
+    """Track C landing 3: every priced platform's catalog of
+    record, generated from the prices of record and merged under
+    the hand-written catalogs. The deliberation platforms' every
+    price line appears verbatim; engagements open RECORDED for
+    platforms whose case opener is not yet plugged."""
+
+    _EXTRACT = ('/home/hatch/workspace/price-landings-work/'
+                'prices_of_record.json')
+
+    @unittest.skipUnless(os.path.exists(_EXTRACT),
+                         'deliberation extract not in this environment')
+    def test_every_priced_platform_has_a_catalog(self):
+        import json as _json
+        from pathlib import Path as _Path
+        por = _json.loads(_Path(self._EXTRACT).read_text())
+        self.assertEqual(len(por['platforms']), 23)
+        for pid in ('sanders_legal_helpers', 'sanders_recon',
+                    'sanders_coordinator', 'sanders_education',
+                    'sanders_logistics', 'sanders_security',
+                    'sanders_energy', 'sanders_communications',
+                    'showtime', 'sanders_patriot_saint',
+                    'sanders_steward_sentinel', 'ai_doctor',
+                    'sanders_ai_psychiatrist', 'lil_mama', 'baby_girl',
+                    'sanders_sentinel', 'sanders_research',
+                    'sanders_ai_research', 'gia_mind',
+                    'sanders_freedom_revolution',
+                    'sanders_ethics_impact_collective',
+                    'sanders_finance', 'sanders_omniconn',
+                    'sanders_home_healthcare', 'sanders_senior_living'):
+            self.assertTrue(catalog_for(pid), pid)
+
+    @unittest.skipUnless(os.path.exists(_EXTRACT),
+                         'deliberation extract not in this environment')
+    def test_deliberation_price_lines_appear_verbatim(self):
+        import json as _json
+        from pathlib import Path as _Path
+        por = _json.loads(_Path(self._EXTRACT).read_text())['platforms']
+        by_name = {}
+        from core_platform.platform_definitions import DEFINITIONS
+        names = {d.name: pid for pid, d in DEFINITIONS.items()}
+        for name, rec in por.items():
+            if name in ('Grantwriter', 'Oikos', 'Daedalus'):
+                continue
+            pid = names.get(name) or names.get('Sanders ' + name)
+            texts = [e['price_text'] for e in catalog_for(pid)]
+            for line in rec['price_lines']:
+                self.assertIn(line, texts, '%s: %s' % (pid, line))
+
+    def test_no_generated_entry_is_percentage_of_award(self):
+        for pid, entries in CATALOGS.items():
+            for entry in entries:
+                self.assertNotEqual(
+                    entry['fee_structure'], 'PERCENTAGE_OF_AWARD', pid)
+
+    def test_engagement_opens_recorded_for_catalog_platform(self):
+        client = self.intake.open_client(
+            OPERATOR, 'lil_mama', organization='The Alvarez Estate',
+            contact_name='Rosa Alvarez', contact='rosa@example.org')
+        engagement = self.intake.engage(
+            OPERATOR, client['client_ref'], 'CONTINUOUS_WATCH_FROM')
+        self.assertEqual(engagement['status'], 'RECORDED')
+        self.assertEqual(engagement['amount_cents'], 99500)
+        self.assertEqual(engagement['interval'], 'MONTH')
+
+
 if __name__ == '__main__':
     unittest.main()

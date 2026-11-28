@@ -7638,3 +7638,53 @@ storefront does; the suite's failing set is byte-identical to
 baseline. Tests in tests/test_product_checkout.py pin all of it
 with fake Stripe clients only — no live key, no network, no
 charge.
+
+## Track C, Landing 3 — Catalogs of Record for Every Priced Platform (2026-11-28)
+
+**Source requirement.** The same Commercial Ecosystem order of
+2026-11-28, Track C build order step 4: machinery for the
+priced platforms in the order they can sell — the
+deliberation-priced first, then the Stripe-backed. Sources of
+record: the deliberation program's structured extract
+(`prices_of_record.json`, final 2026-11-27 as repriced) and the
+platform definitions' `price_of_record` strings.
+
+**What landed.** `core_platform/service_catalogs.py` carries a
+catalog for every remaining priced platform — the 20
+deliberation platforms not hand-written in Landing 1–2, the
+Sanders Ethics & Impact Collective, and the 32 Stripe-backed
+platforms: 53 platforms, 138 entries. The spine merges them
+under its hand-written catalogs (Grantwriter, Oikos), which
+always win. Every entry's `price_text` is a verbatim line of
+record; amounts are machine data parsed from the line's first
+figure, and a line with no chargeable figure (an example line,
+a by-scope line) stands BY_SCOPE at amount 0 — no figure is
+invented, and no tier name is invented (the Collective's
+adopted figures carry no tier names in the record, so her entry
+carries the verbatim string whole). The Stripe-backed figures
+are the design-era amounts of the earlier record, cataloged
+exactly as they stand in the definitions — the deliberation
+program's verdict for the existing shelf was NO RULED PRICE,
+and nothing here relabels them as ruled. Daedalus has no
+catalog: enterprise agreements only, by ruling. Every priced
+platform is now engageable through the spine: a client record
+and an engagement at the price of record, standing RECORDED
+until the platform's own case opener is plugged (Grantwriter's
+is, since Landing 1).
+
+**Acceptance criteria:** every deliberation platform's every
+price line appears verbatim in its catalog; every priced
+platform has a non-empty catalog; no entry anywhere is
+percentage-of-award; an engagement opens RECORDED at the ruled
+amount for a sample catalog platform; the suite's failing set
+is byte-identical to baseline. Tests in
+tests/test_service_intake.py (TestGeneratedCatalogs) pin each
+criterion; the two extract-dependent tests skip where the
+deliberation extract is not present in the environment.
+
+**Not in this landing.** Per-platform case openers beyond
+Grantwriter's (each record-lifecycle service's create_record
+carries domain-required references that must be honored
+platform by platform, not fabricated generically), per-platform
+public portal doors beyond GRANT_SERVICES and OIKOS_PROGRAMS,
+and Stripe products/checkout (Track B).

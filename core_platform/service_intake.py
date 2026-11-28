@@ -127,6 +127,16 @@ CATALOGS = {
     'oikos': OIKOS_SERVICES,
 }
 
+# The remaining priced platforms' catalogs are generated from
+# the prices of record (core_platform/service_catalogs.py) and
+# merged under the hand-written ones, which always win.
+from core_platform.service_catalogs import (
+    CATALOGS as _GENERATED_CATALOGS,
+)
+for _pid, _entries in _GENERATED_CATALOGS.items():
+    CATALOGS.setdefault(_pid, _entries)
+del _pid, _entries
+
 # Portal submission kinds that are commercial service intakes, and
 # the platform each one engages. The portals machinery owns the
 # submission and its review; the spine owns what approval opens.
