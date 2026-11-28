@@ -7278,3 +7278,46 @@ its detail the UEI of record. The state of record is entered
 through the register's operator path by RooseveltSanders, with
 the GRANTWRITER_ACCESS_STATE_RECORDED Glass-Box receipt issued as
 for the keys before it.
+
+---
+
+## Grantwriter — AmeriCorps eGrants Key (2026-11-27)
+
+**Scope.** This entry records the AmeriCorps eGrants key on
+Grantwriter's global register, under the register entries above,
+which it extends and does not supersede. Direction of record: the
+founder, 2026-11-27 — the global key map's Muse-executable
+waves, each completed key handed to Grantwriter and recorded onto
+her register. The access register's governing principle
+(GLOBAL_BY_DESIGN_KEY_REGISTER) keys every jurisdiction's system
+the same way; AmeriCorps eGrants is the US federal national-service
+door of that register.
+
+**The construction.** In core_platform/grantwriter_service.py,
+ACCESS_REGISTER_SEED gains a sixteenth entry, seeded in the same
+idempotent pattern as the fifteen of record: AMERICORPS_EGRANTS
+— VERIFIED, placed after NSF_RESEARCH_GOV at the end of the US
+federal cluster. The facts of record, verified from eGrants' own
+pages on 2026-11-27: SANDERS HOME HEALTHCARE & CAREGIVERS LLC
+stands registered in AmeriCorps eGrants and Roosevelt Sanders has
+access — the portal's confirmation of record reads "Thank You
+— You now have access to eGrants" and the signed-in homepage
+of record reads "Welcome Roosevelt / Welcome to eGrants!". The
+account of record: username RooseveltSanders, email
+rooseveltsanders381@gmail.com. The organization profile stands:
+legal name SANDERS HOME HEALTHCARE & CAREGIVERS LLC (SAM-exact),
+entered under the organization's EIN as 9 digits, UEI
+QW8BRKNCF573, organization type For Profit Organization, address
+8267 Sedgewick Dr, Colorado Springs, CO 80925-9418 (the
+portal-validated ZIP+4), phone 414-502-3325; Rules of Behavior
+accepted; Indirect Cost Rate Record "No". The portal issued no
+account or confirmation number. No grant application was started.
+The register count goes 15 → 16. The fifteen entries of record
+are unchanged, in state, basis and detail. Tests in
+tests/test_grantwriter_service_jurisdiction.py prove the
+register's entries and states exact, now including the AmeriCorps
+entry, and that the AmeriCorps entry's basis carries the portal's
+access confirmation and its detail the UEI of record. The state of
+record is entered through the register's operator path by
+RooseveltSanders, with the GRANTWRITER_ACCESS_STATE_RECORDED
+Glass-Box receipt issued as for the keys before it.

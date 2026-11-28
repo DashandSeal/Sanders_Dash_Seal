@@ -759,6 +759,30 @@ ACCESS_REGISTER_SEED = (
                'requested now that Administrator is held. The '
                'register holds no credential',
      'verified_on': '2026-11-27'},
+    {'system': 'AMERICORPS_EGRANTS',
+     'state': 'VERIFIED',
+     'basis': 'Her AmeriCorps eGrants key is HELD for SANDERS HOME '
+              'HEALTHCARE & CAREGIVERS LLC: the organization stands '
+              'registered in AmeriCorps eGrants and the founder\u2019s '
+              'access stands confirmed \u2014 \u201cThank You \u2014 '
+              'You now have access to eGrants\u201d',
+     'detail': 'AmeriCorps eGrants (egrants.cns.gov): registration '
+               'of record completed 2026-11-27 (username '
+               'RooseveltSanders, rooseveltsanders381@gmail.com); '
+               'the signed-in homepage of record reads \u201cWelcome '
+               'Roosevelt / Welcome to eGrants!\u201d. Organization '
+               'profile: legal name SANDERS HOME HEALTHCARE & '
+               'CAREGIVERS LLC (SAM-exact), entered under the '
+               'organization\u2019s EIN as 9 digits, UEI '
+               'QW8BRKNCF573, organization type For Profit '
+               'Organization, address 8267 Sedgewick Dr, Colorado '
+               'Springs, CO 80925-9418 (portal-validated ZIP+4), '
+               'phone 414-502-3325; Rules of Behavior accepted; '
+               'Indirect Cost Rate Record \u201cNo\u201d. The portal '
+               'issued no account or confirmation number. No grant '
+               'application was started. The register holds no '
+               'credential',
+     'verified_on': '2026-11-27'},
     {'system': 'GRANTSOLUTIONS',
      'state': 'AT_AWARD',
      'basis': 'Provisioned at award or by agency invitation',

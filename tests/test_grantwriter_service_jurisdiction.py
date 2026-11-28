@@ -684,6 +684,7 @@ class TestMotherUpgrade(GrantwriterJurisdictionBase):
              'HRSA_EHBS': 'VERIFIED',
              'FEMA_GO': 'VERIFIED',
              'NSF_RESEARCH_GOV': 'VERIFIED',
+             'AMERICORPS_EGRANTS': 'VERIFIED',
              'GRANTSOLUTIONS': 'AT_AWARD',
              'PMS': 'AT_AWARD',
              'ASAP': 'AT_AWARD',
@@ -721,6 +722,11 @@ class TestMotherUpgrade(GrantwriterJurisdictionBase):
         self.assertIn('0000AB29V', nsf['basis'])
         self.assertIn('QW8BRKNCF573', nsf['detail'])
         self.assertIn('Administrator', nsf['detail'])
+        americorps = entries['AMERICORPS_EGRANTS']
+        self.assertIn('You now have access to eGrants',
+                      americorps['basis'])
+        self.assertIn('QW8BRKNCF573', americorps['detail'])
+        self.assertIn('RooseveltSanders', americorps['detail'])
         unrwa = entries['UNRWA']
         self.assertIn('accepted 2026-11-27', unrwa['basis'])
         fao = entries['FAO']
