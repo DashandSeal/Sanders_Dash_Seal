@@ -186,6 +186,11 @@ from core_platform.fraud_rtsa_service import FraudRtsaService
 from core_platform.operations_rtsa_service import OperationsRtsaService
 from core_platform.surn_service import SurnService
 from core_platform.portals_service import PortalsService
+from core_platform.service_intake import (
+    KIND_PLATFORM as INTAKE_KIND_PLATFORM,
+    ServiceIntake,
+    grantwriter_opener,
+)
 from core_platform.tech_team_dispatch import TechTeamDispatcher
 from core_platform.uptime_agent_service import UptimeAgentService
 from core_platform.application_agent_service import ApplicationAgentService
@@ -725,10 +730,31 @@ def create_production_bindings():
     # receipt on the shared audit chain. The shared ledger path is
     # wired read-only so the how-we're-doing figures can count the
     # appointment case registry from its own record.
+    # The service intake spine (Track C of the Commercial
+    # Ecosystem order, 2026-11-28): client records and engagements
+    # binding a member of the public to a case in a platform's own
+    # machinery. Grantwriter is the first plug — her GRANT_SERVICES
+    # portal intake, approved in the portals review, opens the
+    # client record under PUBLIC_COMMERCIAL and her first
+    # jurisdiction case at PREPARE. The spine is native (its own
+    # SQLite store, the shared Glass-Box audit) and carries the
+    # catalogs of record; other priced platforms plug in by
+    # registering their opener here.
+    service_intake = ServiceIntake(
+        data_dir / 'service_intake.db', audit,
+        operator_verifier=auth.operator_verifier,
+        openers={'grantwriter': grantwriter_opener(grantwriter)})
+
+    def _intake_approval_hook(identity, case):
+        if case.get('kind') in INTAKE_KIND_PLATFORM:
+            return service_intake.handle_portal_approval(
+                identity, case)
+        return None
+
     portals = PortalsService(
         data_dir / 'portals.db', data_dir / 'portals-media',
         operator_verifier=auth.operator_verifier, audit=audit,
-        ledger_db=shared_db)
+        ledger_db=shared_db, approval_hook=_intake_approval_hook)
 
     # AI role workers (founder approval recorded 2026-11-25):
     # the IT AI Manager agent matrix's live dispatch core --
@@ -1426,6 +1452,7 @@ def create_production_bindings():
         operations_rtsa=operations_rtsa,
         surn=surn,
         portals=portals,
+        service_intake=service_intake,
         ai_role_workers=ai_role_workers,
         uptime_agent=uptime_agent,
         application_agent=application_agent,

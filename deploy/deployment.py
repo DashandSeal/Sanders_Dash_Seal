@@ -87,6 +87,7 @@ class RuntimeBindings:
     operations_rtsa: object = None
     surn: object = None
     portals: object = None
+    service_intake: object = None
     ai_role_workers: object = None
     uptime_agent: object = None
     application_agent: object = None

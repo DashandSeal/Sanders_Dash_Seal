@@ -54,6 +54,7 @@ KIND_BY_SLUG = {
     'feedback': 'FEEDBACK',
     'contractor-interest': 'CONTRACTOR_INTEREST',
     'spotlight-nomination': 'SPOTLIGHT_NOMINATION',
+    'grant-services': 'GRANT_SERVICES',
 }
 
 MAX_BODY = 16 * 1024 * 1024

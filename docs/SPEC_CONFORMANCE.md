@@ -7423,3 +7423,68 @@ Finance's card, Daedalus's no-price card, the absence of price
 lines on unpriced cards, and the price-line count against the
 record.
 
+
+## Track C, Landing 1 — The Service Intake Spine and Grantwriter's GRANT_SERVICES Intake (2026-11-28)
+
+**Source requirement.** The founder's Commercial Ecosystem order
+of 2026-11-28: public price visibility, payment integration, and
+service development proceed concurrently, held to completion; the
+objective is a functioning commercial ecosystem capable of
+generating revenue and delivering the services customers purchase.
+For Track C the operative build plan is section 3 of the
+Grantwriter public-business deployment sheet of 2026-11-26
+(client intake born AWAITING_HUMAN_REVIEW; client records under
+PUBLIC_COMMERCIAL; the first jurisdiction case at PREPARE on
+approval), with the prices of the founder's deliberation ruling
+of 2026-11-27 (Lane A: Readiness Review $49 one-time, Essential
+$99/mo; Lane B: full federal proposal $15,000 flat, retainer
+$4,950/mo), which superseded that sheet's section 2 figures. The
+Track C census of 2026-11-28 verified the gap this landing
+closes: the priced platforms' service engines exist, and no
+public intake bound a customer to any of them.
+
+**What landed.** (1) `core_platform/service_intake.py` — the
+reusable native spine: catalogs of record per platform; a client
+record store (the client as its own record scope, standing on
+the CLIENT_AUTHORIZATION basis of record); engagements binding
+client + chosen service + price of record to a case opened by a
+registered platform opener, or standing RECORDED in the spine
+when the platform has no opener yet; idempotency on the portal
+reference, so one approval opens exactly one client and one
+engagement; the percentage-of-award fee bar refused by name at
+the spine, mirroring Grantwriter's own structural bar. Native
+by design: SQLite and the Glass-Box audit only. (2) Grantwriter's
+plug, `grantwriter_opener`: an engagement opens her jurisdiction
+case under PUBLIC_COMMERCIAL in the client's scope, born at
+PREPARE, carrying the catalog's fee structure of record. (3) The
+public door: `GRANT_SERVICES` joins the portals submission kinds
+(prefix GRS), submittable at POST /api/portals/submit/grant-services;
+a submission is born AWAITING_HUMAN_REVIEW like every portal
+case and opens nothing by itself. (4) The bridge: PortalsService
+gains an optional approval hook, invoked only after an APPROVE
+decision is committed; the decision stands on its own record,
+the hook's outcome is carried on the review result and
+receipted either way, and a hook failure can never un-decide a
+review. Production wiring constructs the spine beside the
+portals and routes GRANT_SERVICES approvals to it.
+
+**Acceptance criteria:** a GRANT_SERVICES submission is born
+AWAITING_HUMAN_REVIEW and opens no client; an operator APPROVE
+opens exactly one client record and one engagement, and her
+PUBLIC_COMMERCIAL case stands at PREPARE in the client's scope
+with the catalog fee structure; a REJECT opens nothing; the
+catalog carries exactly the ruled figures and no
+percentage-of-award entry; the suite's failing set is
+byte-identical to baseline. Tests in
+tests/test_service_intake.py pin each criterion, including the
+end-to-end portal road against a real GrantwriterPlatform.
+
+**Not in this landing.** Stripe products and checkout for the
+catalog are Track B's step — an engagement records its price of
+record and stands ready to carry a payment reference when the
+checkout exists; the intake does not wait for it. The public
+Grantwriter page is a surface build (her design identity of
+record: classic, upscale, elegant, sophisticated); the intake
+route it will post to is this landing's door. The remaining
+priced platforms plug into the spine in later Track C landings,
+each with its catalog written from its price of record.

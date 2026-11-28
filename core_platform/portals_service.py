@@ -79,7 +79,7 @@ COMPANIES = frozenset((
 SUBMISSION_KINDS = frozenset((
     'WALL_OF_VALOR', 'SUPPORT', 'COMPLAINT', 'FEEDBACK',
     'CONTRACTOR_INTEREST', 'SPOTLIGHT_NOMINATION',
-    'HANDBOOK_ACKNOWLEDGMENT'))
+    'HANDBOOK_ACKNOWLEDGMENT', 'GRANT_SERVICES'))
 
 REF_PREFIX = {
     'WALL_OF_VALOR': 'WOV',
@@ -89,6 +89,7 @@ REF_PREFIX = {
     'CONTRACTOR_INTEREST': 'INT',
     'SPOTLIGHT_NOMINATION': 'NOM',
     'HANDBOOK_ACKNOWLEDGMENT': 'ACK',
+    'GRANT_SERVICES': 'GRS',
 }
 
 # A case is born AWAITING_HUMAN_REVIEW. The operator's review is the
@@ -124,11 +125,14 @@ class PortalsService:
     """The portals registry: submissions, review, publication, record."""
 
     def __init__(self, db_path, media_dir, operator_verifier, audit,
-                 ledger_db=None, clock=time.time):
+                 ledger_db=None, clock=time.time, approval_hook=None):
         if audit is None:
             raise PortalsDenied('Portals require the Glass-Box audit.')
         if not callable(operator_verifier):
             raise PortalsDenied('Portals require an operator verifier.')
+        if approval_hook is not None and not callable(approval_hook):
+            raise PortalsDenied('An approval hook must be callable.')
+        self.approval_hook = approval_hook
         self.db_path = str(db_path)
         self.media_dir = Path(media_dir)
         self.media_dir.mkdir(parents=True, exist_ok=True)
@@ -354,8 +358,25 @@ class PortalsService:
                        receipt_hash = ?, updated_at = ?
                    WHERE ref = ?;""",
                 (new_status, identity, note, receipt, now, ref))
-        return self.case_status(ref) | {
+        result = self.case_status(ref) | {
             'decision': decision, 'receipt_hash': receipt}
+        if decision == 'APPROVE' and self.approval_hook is not None:
+            # The decision stands on its own record. The hook opens
+            # whatever the approval engages downstream (a service
+            # intake, for a commercial kind); its outcome is carried
+            # on this result and receipted either way — never
+            # silent, and never able to un-decide the review.
+            try:
+                opened = self.approval_hook(identity, self.get_case(ref))
+            except Exception as exc:
+                self._receipt(
+                    'portals.approval_hook_failed', ref=ref,
+                    decided_by=identity, error=str(exc))
+                result['intake_error'] = str(exc)
+            else:
+                if isinstance(opened, dict):
+                    result['intake'] = opened
+        return result
 
     def resolve(self, identity, ref, note=''):
         """Close a worked support or complaint case as RESOLVED, on
