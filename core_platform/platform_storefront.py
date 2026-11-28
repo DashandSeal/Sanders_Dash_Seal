@@ -29,13 +29,16 @@ platform pages (Lil Mama, Baby Girl) do.
 
 ACCESS, stated honestly: where a platform holds a live Stripe product,
 the storefront names the product and its price of record, and the
-purchase door is the house's own — the client portal and appointments
+purchase door is the house’s own — the client portal and appointments
 — because in the examined set no self-serve payment link exists for
-any platform product and the app's checkout is the operator-mediated
-case checkout. Where no price is settled (the 21 designed-figure
-conflicts) or ruled (Grantwriter — her public prices are UNRULED under
-the Founder's affordability standard), the storefront shows no price
-and says why. No price is invented anywhere in this module.
+any platform product and the app’s checkout is the operator-mediated
+case checkout. Where a price of record stands without a Stripe
+product yet (the prices ruled in the Founder’s deliberation program
+of 2026-11-27, whose Stripe products land separately), the storefront
+shows the price of record itself. Where the Founder has ruled no
+shelf price (Daedalus — enterprise agreements only), the storefront
+shows no price and says why. No price is invented anywhere in this
+module.
 """
 
 import html
@@ -129,6 +132,21 @@ def _access_block(defn):
             'is confirmed by a person, and payment runs through the '
             'house\'s own checkout of record.</p>'
         ) % (_esc(stripe), _esc(price))
+    elif price.startswith('OF RECORD'):
+        body = (
+            '<p>This platform\'s price of record: '
+            '<strong>%s</strong>.</p>\n'
+            '<p>Access is completed with the house — book an appointment '
+            'or open the client portal and name this platform; the '
+            'engagement is confirmed by a person, and payment runs '
+            'through the house\'s own checkout of record.</p>'
+        ) % _esc(price)
+    elif price.startswith('ENTERPRISE AGREEMENTS'):
+        body = (
+            '<p><strong>No shelf price is shown for this platform.</'
+            'strong> This platform works under enterprise agreements '
+            'only — engagements are scoped and signed with the house '
+            'directly, and no self-serve price stands.</p>')
     elif price.startswith('NOT SETTLED'):
         body = (
             '<p><strong>No price is shown for this platform yet.</strong> '

@@ -44,19 +44,28 @@ class PlatformStorefrontTest(unittest.TestCase):
         self.assertIn('prod_Vh6YjFk8GUDCRG', page)
         self.assertIn('$7,999,600', page)
 
-    def test_grantwriter_shows_no_price(self):
+    def test_grantwriter_shows_her_ruled_price(self):
+        # Founder ruling 2026-11-27 (deliberation program): her two
+        # lanes are OF RECORD and her storefront shows them.
         status, body = render_storefront('grantwriter')
         page = body.decode('utf-8')
         self.assertEqual(status, '200 OK')
-        self.assertIn('afford', page)
+        self.assertIn('price of record', page)
+        self.assertIn('$49', page)
+        self.assertIn('$99/mo', page)
+        self.assertIn('$15,000', page)
         self.assertNotIn('prod_', page)
-        self.assertNotIn('$', page)
+        self.assertNotIn('%', page)
 
-    def test_conflicted_price_shows_no_price(self):
+    def test_ruled_price_shows_of_record(self):
+        # The designed-figure conflict was ruled in the deliberation
+        # program of 2026-11-27: the storefront now shows the price
+        # of record, and the superseded designed figures stay absent.
         status, body = render_storefront('sanders_sentinel')
         page = body.decode('utf-8')
         self.assertEqual(status, '200 OK')
-        self.assertIn('No price is shown', page)
+        self.assertIn('price of record', page)
+        self.assertIn('$250,000/yr', page)
         self.assertNotIn('$455,000,000', page)
         self.assertNotIn('$7,999,600', page)
 

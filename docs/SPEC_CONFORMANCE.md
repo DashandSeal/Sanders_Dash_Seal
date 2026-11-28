@@ -7197,3 +7197,39 @@ Landed under the Founder's direction and rulings of 2026-11-27: Oikos welcomed a
 **Gaia Mind — name corrected, nothing else touched.** The Founder ruled 2026-11-27 13:10 MST: "It's Gaia mind." The platform's name is corrected to **Gaia Mind** everywhere it appears as a platform name in the records: her definition in `core_platform/platform_definitions.py` (with the correction attributed in her provenance), her built identity record and design record in `core_platform/gia_mind_service.py` (the module's NAME section and design note preserve the history as found — recorded as Gia Mind under D-N2, "Gai Mind" in the grid and Set B not adopted — and state the Founder's 2026-11-27 correction as governing), the prose mention in `core_platform/sanders_wellness_service.py`, and the comment in `deploy/production_bindings.py`. Machine strings are not names and stand unchanged, per the module's own doctrine: the platform id `gia_mind`, the module and class names, the `/api/gia-mind/` routes, and the designed hostname. Her six codes (621330, 621112, 621999, 541618, 541512, 541690) and her price of record (NOT SETTLED — the designed figures conflict) are untouched; her prices are carried by a separate landing.
 
 **Tests.** `tests/test_platform_definitions.py` now pins: 67 identity records and 162 definitions; Oikos's seven in her identity record and definition, her ruled prices, the never-her-payers structure, and her learn-and-grow business model; the codes-shape exception for her seven beside SEIC's eight; and Gaia Mind's corrected name in both her definition and her built identity record, with her codes and unsettled price pinned unchanged.
+---
+
+## Price-of-record landings — the deliberation program of 2026-11-27 (landed 2026-11-27)
+
+Under the Founder's deliberation program of 2026-11-27 (all 20 price
+conflicts ruled, plus Grantwriter and Daedalus settled the same day,
+and the value-repricing pass ruled in full at 12:00 MST superseding
+same-day figures wherever they differ), the prices of record now stand
+in `core_platform/platform_definitions.py` for all 22 platforms whose
+prices were UNRULED or NOT SETTLED, and their storefronts
+(`core_platform/platform_storefront.py`) display them: a price of
+record is printed from the record even where its Stripe product has
+not yet been created (Stripe products land separately; checkout
+remains the house's operator-mediated checkout of record). Daedalus's
+price was ruled as enterprise agreements only — he carries no shelf
+price, his record carries the agreement terms (floor $250,000/yr;
+standard sovereign engagement $495,000/yr; signed repair attestations
+$250 each beyond an included allowance whose size is not yet set), and
+his storefront shows no figure. Grantwriter's two lanes stand of
+record (Lane A: Readiness Review $49 one-time, Essential $99/mo;
+Lane B: full federal proposal $15,000 flat, life-cycle retainer
+$4,950/mo); percentage-of-award pricing is barred and is not encoded
+anywhere. Oikos — welcomed by the Founder on 2026-11-27 as a new
+platform beyond the 140, her name, seven continent codes, and pricing
+ruled the same day — received her definition of record in the Oikos
+landing (commit b48c54f1; 162 definitions); this landing amends only
+her price_of_record to the full ruled text (Continental Programs
+from $250,000/yr; Global Humanity Partnerships from $1,000,000/yr)
+and her structure stands: her served populations are never her payers.
+Disclosed side effect: Sanders Ethics Impact Collective's adopted
+price of record, which stands in its definition with no Stripe
+product, is now also displayed by its storefront under the same
+OF RECORD branch. No price was invented, averaged, or rounded; the
+superseded designed figures (Set B flat / Set C per-year) remain in
+the deliberation sheets of 2026-11-27.
+The storefront test pins that asserted the pre-ruling state (grantwriter shows no price; a conflicted price shows no price) were updated to the ruled state in tests/test_platform_storefront.py, and the Gaia Mind pin in tests/test_platform_definitions.py now records her price as ruled OF RECORD in this same program (her name correction and codes unchanged).

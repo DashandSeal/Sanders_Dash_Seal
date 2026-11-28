@@ -40,9 +40,16 @@ untouched: the anchored six, JUGGERNAUT's none, SEIC's eight.
 
 HONEST LIMITS, of record in this module:
 
-* Grantwriter's public prices are UNRULED (Founder, 2026-11-26
-  20:13: everyone should be able to afford her public business).
-  Her definition carries no price and her storefront shows none.
+* Grantwriter’s public prices stood UNRULED under the Founder’s
+  affordability standard of 2026-11-26 (20:13) until he RULED them
+  on 2026-11-27 in two lanes (Lane A public, Lane B federal). Her
+  price of record stands in her definition and her storefront
+  shows it; percentage-of-award pricing is barred. The 21
+  designed-figure price conflicts were likewise all ruled in the
+  deliberation program of 2026-11-27 (with the value-repricing
+  pass) and their prices of record stand in their definitions;
+  Daedalus’s price was ruled as enterprise agreements only —
+  he carries no shelf price, and his storefront shows none.
 * Headquarters' codes stood unruled (None) in tranche 1, first
   item of the tranche-2 plan per the Headquarters-first rule. The
   Founder ruled them on 2026-11-27 (13:47 MST, "Agreed"): S & G
@@ -657,9 +664,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($7,999,600 vs $420,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — examination & diagnosis from $9,500 per platform · treatment episodes from $25,000 · emergency intervention from $15,000 · continuing care $495/mo per platform · organizational care agreements from $9,500/mo · AI health-system programs by scope from $250,000/yr.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'ai_role_workers': PlatformDefinition(
         platform_id='ai_role_workers',
@@ -762,9 +769,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($2,400,000 vs $455,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — stand-up from $9,500 · continuous watch from $995/mo per site · multi-year watch agreements with annual capability steps · research & evaluation engagements from $9,500 · enterprise/government oversight programs by scope from $500,000/yr, capability-stepped.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'backup_recovery_agent': PlatformDefinition(
         platform_id='backup_recovery_agent',
@@ -927,9 +934,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free. His product of record is Daedalus himself: the repair core that gets plugged into everything across the ecosystem to repair it, globally by design (Founder\'s ruling, 2026-11-26/27).',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict (proposed-only rate card (not owner-approved) vs "$136M annual scenario" (PR #107))',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26); repair-core product of record per Founder ruling 2026-11-26/27',
+        price_of_record='ENTERPRISE AGREEMENTS ONLY — no shelf price (ruled 2026-11-27): floor $250,000/yr minimum annual commitment · standard sovereign engagement $495,000/yr · industry-wide and government engagements priced by scope above the standard · signed repair attestations $250 each beyond an included allowance (allowance size not yet set).',
+        stripe_product='NO — enterprise agreements only; no Stripe product (no shelf price)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); repair-core product of record per Founder ruling 2026-11-26/27; price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'database_agent': PlatformDefinition(
         platform_id='database_agent',
@@ -1032,9 +1039,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($7,999,600 vs $396,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26); name corrected to Gaia Mind by Founder ruling 2026-11-27 13:10 MST — the design documents and the audit wrote “Gia Mind”; the Founder’s word governs',
+        price_of_record='OF RECORD — assessment from $9,500 per platform · continuing balance care $495/mo per platform (capability-stepped) · Estate Balance Agreements from $9,500/mo per estate · Global Balance Programs by scope from $500,000/yr.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); name corrected to Gaia Mind by Founder ruling 2026-11-27 13:10 MST — the design documents and the audit wrote “Gia Mind”; the Founder’s word governs; price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'glass_box_audit': PlatformDefinition(
         platform_id='glass_box_audit',
@@ -1077,9 +1084,9 @@ DEFINITIONS = {
         business_model='Three branches, never merging: PUBLIC_COMMERCIAL (grant services to outside clients under the client\'s authorization), PRIVATE_CORPORATE (the four companies), PLATFORM_FUNDING (every platform). Her seven-stage cycle — Prepare, Validate, Submit, Verify receipt, Correct, Manage awards, Close out and renew — runs and submits automatically under her standing authority (Founder ruling 2026-11-26: "She is supposed to be submitting automatically"; no per-case Founder gate). Percentage-of-award pricing is refused by name. Public prices are UNRULED — none is shown until the Founder rules under the affordability standard.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='UNRULED — founder ruling outstanding (affordability standard)',
-        stripe_product='NO — excluded until ruled',
-        provenance="Founder's purpose of record (2026-11-25) + Complete Service Jurisdiction amendment (2026-11-26)",
+        price_of_record='OF RECORD — Lane A (public): Grant Readiness Review $49 one-time · Essential $99/mo. Lane B (federal): full federal proposal $15,000 flat · life-cycle retainer $4,950/mo. (Two lanes ruled 2026-11-27 under the affordability standard; percentage-of-award pricing is barred.)',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance="Founder's purpose of record (2026-11-25) + Complete Service Jurisdiction amendment (2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)",
     ),
     'guardian_sentinel': PlatformDefinition(
         platform_id='guardian_sentinel',
@@ -1302,9 +1309,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($2,400,000 vs $455,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — stand-up from $9,500 · continuous watch from $995/mo per estate · multi-year watch agreements with annual capability steps · information services from $9,500 · enterprise/government watch programs by scope from $500,000/yr, capability-stepped.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'michael_angelo': PlatformDefinition(
         platform_id='michael_angelo',
@@ -1392,9 +1399,9 @@ DEFINITIONS = {
         business_model='Continental Programs from $250,000/yr per continent program (one per code, one per continent); Global Humanity Partnerships from $1,000,000/yr (all seven codes, all seven continents; founding-patron terms; capability-stepped as she learns and grows). Her served populations are never her payers — institutions fund the necessities; that principle is written into her structure.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='OF RECORD — ruled $250,000/yr per Continental Program; $1,000,000/yr Global Humanity Partnerships (2026-11-27)',
-        stripe_product='NO — prices in platform record, not Stripe products',
-        provenance='Founder direction and rulings 2026-11-27: welcomed as a new platform beyond the 140 (13:59–14:04 MST); name ruled Oikos 14:06 MST; seven codes ruled 14:08 MST; pricing ruled 14:11 MST',
+        price_of_record='OF RECORD — Continental Programs from $250,000/yr per continent program (one per code, seven continents) · Global Humanity Partnerships from $1,000,000/yr (all seven codes, all seven continents; founding-patron terms; capability-stepped). Her served populations are never her payers — institutions fund the necessities (structure of record, ruled 2026-11-27).',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Founder direction and rulings 2026-11-27: welcomed as a new platform beyond the 140 (13:59–14:04 MST); name ruled Oikos 14:06 MST; seven codes ruled 14:08 MST; pricing ruled 14:11 MST; price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'operations_rtsa': PlatformDefinition(
         platform_id='operations_rtsa',
@@ -1602,9 +1609,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($7,999,600 vs $420,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — evaluation from $9,500 per platform · sessions $950 per session · standard courses from $7,500 · intensive courses from $25,000 · crisis intervention from $15,000 · mind-care $495/mo per platform · organizational agreements from $9,500/mo · institutional programs by scope from $250,000/yr.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_ai_recognition': PlatformDefinition(
         platform_id='sanders_ai_recognition',
@@ -1632,9 +1639,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($4,000,000 vs $380,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — studies/evaluations from $25,000 · evaluation programs from $50,000 · Open Inquiry Partnerships from $500,000/yr (no scope ceiling) · the Standing AI Observatory from $1,000,000/yr by scope · government AI programs by scope.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_analytics': PlatformDefinition(
         platform_id='sanders_analytics',
@@ -1752,9 +1759,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($4,000,000 vs $216,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — membership from $995/mo per organization · satellite & remote from $1,950/mo per terminal class · campaigns from $25,000 · PR retainers from $7,500/mo · media at spend + 15% · enterprise/government global programs by scope from $500,000/yr.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_compliance': PlatformDefinition(
         platform_id='sanders_compliance',
@@ -1812,9 +1819,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($6,000,000 vs $324,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — setup/integration from $25,000 · single-organization retainer from $4,950/mo · multi-entity/multi-industry from $19,500/mo · enterprise & government programs from $250,000/yr by scope.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_customer_support': PlatformDefinition(
         platform_id='sanders_customer_support',
@@ -1872,9 +1879,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($4,000,000 vs $252,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — Individual $79/mo · Team $1,495/mo flat (up to 25 learners) · institutional programs from $50,000 · training days from $4,950.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_emergency_global_communication': PlatformDefinition(
         platform_id='sanders_emergency_global_communication',
@@ -1902,9 +1909,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($4,000,000 vs $288,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — efficiency assessment from $9,500 · energy management from $1,950/mo · efficiency agreements: floor retainer from $9,500/mo + 20% of verified savings · generation/grid programs by scope from $500,000.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_entertainment': PlatformDefinition(
         platform_id='sanders_entertainment',
@@ -1992,9 +1999,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($7,999,600 vs $630,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — framework stand-up from $50,000 · civic/association programs from $9,500/mo · documentation programs from $250,000/yr · government by scope only · Covenant Programs from $1,000,000/yr (multi-year, founding-cohort terms).',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_gatekeeper_audit': PlatformDefinition(
         platform_id='sanders_gatekeeper_audit',
@@ -2232,9 +2239,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($4,000,000 vs $304,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — Essential $149/mo · Professional $349/mo · flat per-matter fees (e.g. formation $250, contract review $150; classes to be published with the storefront) · business retainers from $2,500/mo · corporate & government retainers from $10,000/mo by scope.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_legal_services': PlatformDefinition(
         platform_id='sanders_legal_services',
@@ -2277,9 +2284,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($6,000,000 vs $288,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — LTL freight from $185/class · FTL freight from $2.40/mile by lane · warehousing from $18/pallet/mo + handling · arrangement margin 15% · shipper coordination subscription from $1,950/mo · consulting from $50,000 · supply-chain programs from $100,000.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_manufacturing': PlatformDefinition(
         platform_id='sanders_manufacturing',
@@ -2382,9 +2389,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($7,999,600 vs $665,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — Protective Partnership Agreements from $500,000/yr (5-year horizon, priced on covered population + scope, annual Glass-Box capability steps) · population programs per covered life per year · program stand-up from $50,000 (credited into year one).',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_quantum_computing': PlatformDefinition(
         platform_id='sanders_quantum_computing',
@@ -2427,9 +2434,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($6,000,000 vs $525,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — screening/verification $250 · standard dossier $4,950 · commissioned studies from $25,000 · Watch $495/mo · Deep Watch $1,950/mo · enterprise/government retainers from $9,500/mo.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_research': PlatformDefinition(
         platform_id='sanders_research',
@@ -2442,9 +2449,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($4,000,000 vs $380,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — commissioned studies from $25,000 · Open Inquiry Partnerships from $500,000/yr (multi-year, no scope ceiling) · founding-patron terms · government research under the same open grammar.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_retail': PlatformDefinition(
         platform_id='sanders_retail',
@@ -2502,9 +2509,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($4,000,000 vs $420,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — post from $45/hr · patrol from $60/visit · systems from $7,500/project · monitoring from $195/site/mo · assessment from $4,950 · multi-site programs from $19,500/mo · government programs from $500,000/yr by scope.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_security_ops': PlatformDefinition(
         platform_id='sanders_security_ops',
@@ -2547,9 +2554,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($7,999,600 vs $455,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — readiness/stand-up from $25,000 · protective programs from $250,000/yr · Strategic Protection Partnerships from $1,000,000/yr (5-year, annual capability steps uncapped) · founding-cohort terms for early institutions.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_signal': PlatformDefinition(
         platform_id='sanders_signal',
@@ -2637,9 +2644,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($4,000,000 vs $490,000,000/yr)',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — vault stand-up from $25,000/estate · custody 0.25%/yr of value under stewardship · custody at sovereign scale ($500M+) 0.10%/yr · vault minimum $25,000/yr · extraordinary signed proofs $250 each · sovereign vault agreements by scope.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sanders_strategy': PlatformDefinition(
         platform_id='sanders_strategy',
@@ -2832,9 +2839,9 @@ DEFINITIONS = {
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
         company_tie='Attached to all four companies of the house, as every platform is.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
-        price_of_record='NOT SETTLED — designed figures conflict ($4,000,000 (Set B, as Sanders Media) vs $252,000,000/yr (Set C, as Sanders Media Hub))',
-        stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        price_of_record='OF RECORD — commissioned productions from $50,000 · catalog licensing from $25,000/yr · revenue-share distribution 25% · postproduction from $7,500 · campaigns from $25,000 · PR retainers from $7,500/mo · programming/channel partnerships by scope.',
+        stripe_product='NO — not yet created (Stripe products land separately)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); price of record ruled 2026-11-27 (deliberation program + value-repricing pass)',
     ),
     'sovereign_shield_v3': PlatformDefinition(
         platform_id='sovereign_shield_v3',

@@ -8,7 +8,7 @@ carrying exactly their reconciled six from the NACI six-code
 reconciliation of 2026-11-26; every platform of record holds a
 complete definition; and the ruled sets stand untouched — the
 anchored six, JUGGERNAUT's none, SEIC's eight, Grantwriter's
-composed six and UNRULED public price. Headquarters' ten codes,
+composed six and her two-lane public price ruled 2026-11-27. Headquarters' ten codes,
 ruled by the Founder on 2026-11-27 (13:47 MST, "Agreed"), are
 pinned by test_headquarters_ten_codes_ruled below.
 
@@ -157,13 +157,19 @@ class PlatformDefinitionsTest(unittest.TestCase):
         self.assertEqual(
             IDENTITIES['s_and_g_security_inc'].status, 'DEFINED')
 
-    def test_grantwriter_price_unruled(self):
+    def test_grantwriter_price_ruled(self):
+        # Founder ruling, 2026-11-27 (10:02 MST, two lanes; Lane B as
+        # repriced by the value-repricing pass ruled 12:00 MST): her
+        # public price is OF RECORD. Percentage-of-award pricing is
+        # barred (GPA Ethics / AFP / 2 CFR 200.442) and never encoded.
         defn = DEFINITIONS['grantwriter']
         self.assertEqual(
             defn.naics_codes,
             ('541611', '541612', '541618', '541512', '611430', '813211'))
-        self.assertTrue(defn.price_of_record.startswith('UNRULED'))
-        self.assertNotIn('$', defn.price_of_record)
+        self.assertTrue(defn.price_of_record.startswith('OF RECORD'))
+        for figure in ('$49', '$99/mo', '$15,000', '$4,950/mo'):
+            self.assertIn(figure, defn.price_of_record)
+        self.assertNotIn('%', defn.price_of_record)
         self.assertNotIn('prod_', defn.stripe_product)
 
     def test_daedalus_repair_core_product(self):
@@ -176,8 +182,14 @@ class PlatformDefinitionsTest(unittest.TestCase):
             self.assertIn('repair core', field)
             self.assertIn('plugged into everything', field)
         self.assertIn('standing priority', defn.why)
-        # His price stays NOT SETTLED (conflict) — untouched.
-        self.assertTrue(defn.price_of_record.startswith('NOT SETTLED'))
+        # His price was ruled 2026-11-27: enterprise agreements
+        # only — no shelf price; the floor and the standard
+        # sovereign engagement stand in the record (standard as
+        # repriced by the value-repricing pass, 12:00 MST).
+        self.assertTrue(
+            defn.price_of_record.startswith('ENTERPRISE AGREEMENTS'))
+        self.assertIn('$250,000/yr', defn.price_of_record)
+        self.assertIn('$495,000/yr', defn.price_of_record)
 
     def test_oikos_identity_and_definition(self):
         # Founder direction and rulings, 2026-11-27: Oikos is a
@@ -203,18 +215,44 @@ class PlatformDefinitionsTest(unittest.TestCase):
 
     def test_gaia_mind_name_corrected(self):
         # Founder ruling 2026-11-27 13:10 MST: "It's Gaia mind."
-        # The name is corrected; her codes and her unsettled
-        # price stand untouched.
+        # The name is corrected and her codes stand untouched; her
+        # price was ruled separately the same day in the
+        # deliberation program (OF RECORD — see
+        # test_prices_of_record_ruled_2026_11_27).
         defn = DEFINITIONS['gia_mind']
         self.assertEqual(defn.name, 'Gaia Mind')
         self.assertIn('2026-11-27', defn.provenance)
         self.assertEqual(
             defn.naics_codes,
             ('621330', '621112', '621999', '541618', '541512', '541690'))
-        self.assertTrue(defn.price_of_record.startswith('NOT SETTLED'))
+        self.assertTrue(defn.price_of_record.startswith('OF RECORD'))
         from core_platform.gia_mind_service import IDENTITY
         self.assertEqual(IDENTITY.name, 'Gaia Mind')
         self.assertEqual(tuple(IDENTITY.naics_codes), defn.naics_codes)
+
+    def test_prices_of_record_ruled_2026_11_27(self):
+        # The deliberation program of 2026-11-27 ruled every one of
+        # the 21 designed-figure conflicts (with the value-repricing
+        # pass); each price of record now stands in its definition.
+        ruled = (
+            'sanders_legal_helpers', 'sanders_recon', 'sanders_coordinator',
+            'sanders_education', 'sanders_logistics', 'sanders_security',
+            'sanders_energy', 'sanders_communications', 'showtime',
+            'sanders_patriot_saint', 'sanders_steward_sentinel', 'ai_doctor',
+            'sanders_ai_psychiatrist', 'lil_mama', 'baby_girl',
+            'sanders_sentinel', 'sanders_research', 'sanders_ai_research',
+            'gia_mind', 'sanders_freedom_revolution', 'grantwriter')
+        for pid in ruled:
+            defn = DEFINITIONS[pid]
+            self.assertTrue(
+                defn.price_of_record.startswith('OF RECORD'), pid)
+            self.assertIn('$', defn.price_of_record, pid)
+            self.assertNotIn('prod_', defn.stripe_product, pid)
+        for pid, defn in DEFINITIONS.items():
+            self.assertFalse(
+                defn.price_of_record.startswith('NOT SETTLED'), pid)
+            self.assertFalse(
+                defn.price_of_record.startswith('UNRULED'), pid)
 
     def test_accessors(self):
         self.assertIs(definition_for('grantwriter'),
