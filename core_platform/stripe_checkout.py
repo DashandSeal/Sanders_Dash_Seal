@@ -38,6 +38,7 @@ from .stripe_payments import (
     PaymentDenied,
     PaymentLedger,
     checkout_parameters,
+    product_checkout_parameters,
     verify_stripe_webhook,
 )
 
@@ -123,6 +124,49 @@ class StripeCheckout:
             "currency": currency.lower(),
         }
 
+    def create_product_checkout_session(
+        self,
+        *,
+        purchase_ref: str,
+        record: dict[str, Any],
+        success_url: str,
+        cancel_url: str,
+    ) -> dict[str, Any]:
+        """Create a product-keyed Checkout Session (Track B, 2026-11-28).
+
+        The line item is the catalog record's Stripe price of record
+        (``product_checkout_parameters`` validates it); the amount a
+        customer can be charged is whatever that price stands at in
+        Stripe — this method never composes an amount. Same live
+        gate as every session from this adapter: the gate was
+        enforced at construction, before any session can be created.
+        Registration in the caller's ledger happens in
+        :func:`create_product_and_register`.
+        """
+        params = product_checkout_parameters(
+            purchase_ref, record, success_url, cancel_url
+        )
+        session = self._client.checkout.Session.create(**params)
+        session_id = session.get("id") if isinstance(session, dict) else getattr(
+            session, "id", None
+        )
+        session_url = session.get("url") if isinstance(session, dict) else getattr(
+            session, "url", None
+        )
+        if not session_id or not session_url:
+            raise PaymentDenied("Stripe returned a Checkout Session without id/url")
+        return {
+            "id": session_id,
+            "url": session_url,
+            "mode": self.mode,
+            "purchase_ref": purchase_ref,
+            "platform_id": record.get("platform_id"),
+            "stripe_product_id": record.get("stripe_product_id"),
+            "stripe_price_id": record.get("stripe_price_id"),
+            "amount_cents": record.get("amount_cents"),
+            "currency": (record.get("currency") or "").lower(),
+        }
+
 
 def create_and_register(
     *,
@@ -151,6 +195,47 @@ def create_and_register(
     )
     ledger.register_checkout(
         case_id, session["id"], amount_cents, currency
+    )
+    return session
+
+
+def create_product_and_register(
+    *,
+    checkout: StripeCheckout,
+    ledger: PaymentLedger,
+    purchase_ref: str,
+    record: dict[str, Any],
+    success_url: str,
+    cancel_url: str,
+) -> dict[str, Any]:
+    """Create a product Checkout Session and register the purchase.
+
+    Two ledger writes, both only after Stripe (or the fake) returns
+    a session id, so a failed creation leaves nothing dangling: the
+    case-shaped registration (keyed by the purchase reference) that
+    the existing webhook amount validation reads, and the
+    product-shaped registration that names the platform, product
+    and price.
+    """
+    session = checkout.create_product_checkout_session(
+        purchase_ref=purchase_ref,
+        record=record,
+        success_url=success_url,
+        cancel_url=cancel_url,
+    )
+    ledger.register_checkout(
+        purchase_ref, session["id"],
+        record["amount_cents"], record["currency"],
+    )
+    ledger.register_product_checkout(
+        purchase_ref,
+        record.get("platform_id"),
+        record.get("item_key"),
+        record.get("stripe_product_id"),
+        record.get("stripe_price_id"),
+        session["id"],
+        record["amount_cents"],
+        record["currency"],
     )
     return session
 
@@ -197,6 +282,7 @@ __all__ = [
     "LIVE_VERIFIED_ENV",
     "StripeCheckout",
     "create_and_register",
+    "create_product_and_register",
     "verify_then_record",
     "checkout_status",
 ]

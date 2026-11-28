@@ -51,6 +51,23 @@ class PaymentLedger:
                 type TEXT NOT NULL,
                 processed_at INTEGER NOT NULL
             );""")
+            # Product-shaped purchase records (Track B, 2026-11-28):
+            # one row per self-serve product purchase, keyed by the
+            # purchase reference that also keys its stripe_cases row.
+            db.execute("""CREATE TABLE IF NOT EXISTS stripe_product_purchases (
+                purchase_ref TEXT PRIMARY KEY,
+                platform_id TEXT,
+                item_key TEXT,
+                stripe_product_id TEXT,
+                stripe_price_id TEXT,
+                session_id TEXT UNIQUE,
+                amount INTEGER,
+                currency TEXT,
+                state TEXT NOT NULL,
+                payment_intent TEXT,
+                created_at INTEGER NOT NULL,
+                updated_at INTEGER NOT NULL
+            );""")
 
     def _connect(self):
         return sqlite3.connect(self.self_path, timeout=10, isolation_level='DEFERRED')
@@ -89,6 +106,130 @@ class PaymentLedger:
         with self._connect() as conn:
             insert(conn)
             conn.commit()
+
+    def register_product_checkout(self, purchase_ref, platform_id, item_key,
+                                  product_id, price_id, session_id, amount,
+                                  currency, *args, **kwargs):
+        """Register a self-serve product purchase as PENDING.
+
+        The product-shaped companion to register_checkout: the same
+        purchase_ref also keys a stripe_cases row (registered by the
+        caller through register_checkout) so the existing amount
+        validation in record_event / fulfill_checkout covers product
+        sessions unchanged. This row carries the product shape —
+        platform, Stripe product and price — that the case row does
+        not. Same connection rule as register_checkout: a caller
+        inside its own transaction passes its connection and owns
+        the commit.
+        """
+        if not all(isinstance(v, str) and v for v in
+                   (purchase_ref, item_key, product_id, price_id,
+                    session_id, currency)):
+            raise PaymentDenied(
+                'Invalid product checkout registration parameter footprint.')
+        if platform_id is not None and not isinstance(platform_id, str):
+            raise PaymentDenied(
+                'Invalid product checkout registration parameter footprint.')
+        if type(amount) is not int or amount < 0:
+            raise PaymentDenied(
+                'Invalid product checkout registration amount.')
+        if not re.fullmatch(r'[A-Za-z]{3}', currency.lower()):
+            raise PaymentDenied('Invalid currency format')
+        clock = int(time.time())
+
+        def insert(connection):
+            self._ensure_tables(connection)
+            try:
+                connection.execute(
+                    'INSERT INTO stripe_product_purchases (purchase_ref, '
+                    'platform_id, item_key, stripe_product_id, '
+                    'stripe_price_id, session_id, amount, currency, state, '
+                    'payment_intent, created_at, updated_at) VALUES '
+                    '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
+                    (purchase_ref, platform_id, item_key, product_id,
+                     price_id, session_id, amount, currency.lower(),
+                     'PENDING', None, clock, clock)
+                )
+            except sqlite3.IntegrityError as exc:
+                raise PaymentDenied(
+                    'Product purchase or session already registered') from exc
+
+        passed = kwargs.get('connection')
+        if passed is not None:
+            insert(passed)
+            return
+        with self._connect() as conn:
+            insert(conn)
+            conn.commit()
+
+    def _record_product_purchase(self, conn, session, state, clock):
+        """Settle the product-shaped row for a product checkout session.
+
+        Called from record_event and fulfill_checkout with the
+        caller's connection (the caller owns the transaction). A
+        session whose metadata does not mark it as a product purchase
+        is a no-op (returns None), so case checkouts are untouched.
+        Idempotent by purchase_ref: a replay updates the same row.
+        """
+        if not isinstance(session, dict):
+            return None
+        metadata = session.get('metadata')
+        if not isinstance(metadata, dict) \
+                or metadata.get('kind') != 'product_purchase':
+            return None
+        purchase_ref = session.get('client_reference_id') \
+            or metadata.get('case_id')
+        product_id = metadata.get('stripe_product_id')
+        price_id = metadata.get('stripe_price_id')
+        if not all(isinstance(v, str) and v
+                   for v in (purchase_ref, product_id, price_id)):
+            raise PaymentDenied('Invalid product purchase metadata footprint.')
+        platform_id = metadata.get('platform_id') or None
+        item_key = metadata.get('item_key') or None
+        session_id = session.get('id')
+        amount = session.get('amount_total')
+        currency = session.get('currency')
+        if isinstance(currency, str):
+            currency = currency.lower()
+        payment_intent = session.get('payment_intent')
+        self._ensure_tables(conn)
+        row = conn.execute(
+            'SELECT state FROM stripe_product_purchases '
+            'WHERE purchase_ref = ?;', (purchase_ref,)).fetchone()
+        if row is None:
+            conn.execute(
+                'INSERT INTO stripe_product_purchases (purchase_ref, '
+                'platform_id, item_key, stripe_product_id, '
+                'stripe_price_id, session_id, amount, currency, state, '
+                'payment_intent, created_at, updated_at) VALUES '
+                '(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);',
+                (purchase_ref, platform_id, item_key, product_id, price_id,
+                 session_id, amount, currency, state, payment_intent,
+                 clock, clock)
+            )
+            return 'RECORDED'
+        conn.execute(
+            'UPDATE stripe_product_purchases SET state = ?, '
+            'session_id = COALESCE(?, session_id), '
+            'payment_intent = COALESCE(?, payment_intent), '
+            'updated_at = ? WHERE purchase_ref = ?;',
+            (state, session_id, payment_intent, clock, purchase_ref)
+        )
+        return 'UPDATED'
+
+    def product_purchase_status(self, purchase_ref, connection=None):
+        """State of a product purchase by reference, or 'UNKNOWN'."""
+        if connection is not None:
+            row = connection.execute(
+                'SELECT state FROM stripe_product_purchases '
+                'WHERE purchase_ref = ?;', (purchase_ref,)).fetchone()
+            return row[0] if row else 'UNKNOWN'
+        with self._connect() as db:
+            self._ensure_tables(db)
+            row = db.execute(
+                'SELECT state FROM stripe_product_purchases '
+                'WHERE purchase_ref = ?;', (purchase_ref,)).fetchone()
+            return row[0] if row else 'UNKNOWN'
 
     def record_event(self, event, now=None):
         if not isinstance(event, dict) or not isinstance(event.get('id'), str):
@@ -134,6 +275,11 @@ class PaymentLedger:
                     'INSERT INTO stripe_events (event_id, event_type, case_id, payment_id, recorded_at) VALUES (?, ?, ?, ?, ?);',
                     (event_id, event_type, case_id, payment_id, clock)
                 )
+                # Product-shaped recording (Track B, 2026-11-28): a
+                # product checkout session settles its product row in
+                # the same transaction; other sessions no-op.
+                self._record_product_purchase(
+                    db, event_data_obj, state_target, clock)
                 db.commit()
                 return 'RECORDED'
 
@@ -260,6 +406,20 @@ class PaymentLedger:
             type TEXT NOT NULL,
             processed_at INTEGER NOT NULL
         );""")
+        db.execute("""CREATE TABLE IF NOT EXISTS stripe_product_purchases (
+            purchase_ref TEXT PRIMARY KEY,
+            platform_id TEXT,
+            item_key TEXT,
+            stripe_product_id TEXT,
+            stripe_price_id TEXT,
+            session_id TEXT UNIQUE,
+            amount INTEGER,
+            currency TEXT,
+            state TEXT NOT NULL,
+            payment_intent TEXT,
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+        );""")
         db.execute("""CREATE TABLE IF NOT EXISTS stripe_subscriptions (
             subscription_id TEXT PRIMARY KEY,
             customer_id TEXT,
@@ -365,6 +525,10 @@ class PaymentLedger:
                     raise PaymentDenied(
                         "Payment rate, session, or balance value anomaly.")
                 if row[3] == "PAID":
+                    self._record_product_purchase(
+                        conn, session, "PAID", int(time.time()))
+                    if own:
+                        conn.commit()
                     return "ALREADY_FULFILLED"
                 conn.execute(
                     "UPDATE stripe_cases SET state = ?, payment_intent = ? "
@@ -390,6 +554,11 @@ class PaymentLedger:
                         "VALUES (?, ?, ?, ?, ?, ?)",
                         (case_id, session_id, amount, currency, "PAID",
                          payment_intent))
+            # Product-shaped recording (Track B, 2026-11-28): a
+            # product checkout session settles its product row in the
+            # caller's transaction; other sessions no-op.
+            self._record_product_purchase(
+                conn, session, "PAID", int(time.time()))
             if own:
                 conn.commit()
             return "FULFILLED"
@@ -627,3 +796,60 @@ def checkout_parameters(case_id, amount_cents, currency, service_label, success_
         'cancel_url': cancel_url,
         'metadata': {'case_id': case_id}
     }
+
+def product_checkout_parameters(purchase_ref, record, success_url, cancel_url):
+    """Stripe Checkout parameters for a self-serve PRODUCT purchase.
+
+    The product-keyed sibling of checkout_parameters: the line item
+    names a Stripe price of record from the product catalog
+    (core_platform/product_catalog.py), never an amount composed at
+    call time, so what a customer is charged is exactly the price
+    that stands in Stripe for that product. The session mode follows
+    the price — 'subscription' for a recurring price, 'payment' for
+    a one-time price. The purchase reference rides as
+    client_reference_id and as metadata.case_id so the existing
+    ledger paths (record_event / fulfill_checkout) associate the
+    session unchanged; the remaining metadata marks the session as a
+    product purchase and names the platform, product and price for
+    the product-shaped ledger row. For subscriptions the same
+    metadata is set on the subscription itself, so renewal invoices
+    carry the purchase reference the subscription ledger keys on.
+    """
+    if not all(isinstance(v, str) and v for v in
+               (purchase_ref, success_url, cancel_url)):
+        raise PaymentDenied('Invalid product checkout parameters footprint.')
+    if not isinstance(record, dict):
+        raise PaymentDenied('Invalid product checkout record footprint.')
+    product_id = record.get('stripe_product_id')
+    price_id = record.get('stripe_price_id')
+    mode = record.get('mode')
+    if not (isinstance(product_id, str) and product_id.startswith('prod_')):
+        raise PaymentDenied('Product checkout requires a Stripe product of record.')
+    if not (isinstance(price_id, str) and price_id.startswith('price_')):
+        raise PaymentDenied('Product checkout requires a Stripe price of record.')
+    if mode not in ('payment', 'subscription'):
+        raise PaymentDenied('Product checkout requires a payment or subscription mode.')
+    if record.get('purchasable') is not True:
+        raise PaymentDenied('Product is not purchasable in the catalog of record.')
+    if not (success_url.startswith('https://') and cancel_url.startswith('https://')):
+        raise PaymentDenied('Secure transport vectors required for redirection.')
+
+    metadata = {
+        'case_id': purchase_ref,
+        'kind': 'product_purchase',
+        'platform_id': record.get('platform_id') or '',
+        'item_key': record.get('item_key') or '',
+        'stripe_product_id': product_id,
+        'stripe_price_id': price_id,
+    }
+    params = {
+        'mode': mode,
+        'client_reference_id': purchase_ref,
+        'line_items': [{'price': price_id, 'quantity': 1}],
+        'success_url': success_url,
+        'cancel_url': cancel_url,
+        'metadata': metadata,
+    }
+    if mode == 'subscription':
+        params['subscription_data'] = {'metadata': dict(metadata)}
+    return params
