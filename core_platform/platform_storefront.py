@@ -28,14 +28,17 @@ module only references the served originals, exactly as the existing
 platform pages (Lil Mama, Baby Girl) do.
 
 ACCESS, stated honestly: where a platform holds a live Stripe product,
-the storefront names the product and its price of record, and the
-purchase door is the house’s own — the client portal and appointments
-— because in the examined set no self-serve payment link exists for
-any platform product and the app’s checkout is the operator-mediated
-case checkout. Where a price of record stands without a Stripe
-product yet (the prices ruled in the Founder’s deliberation program
-of 2026-11-27, whose Stripe products land separately), the storefront
-shows the price of record itself. Where the Founder has ruled no
+the storefront names the product and its price of record, and offers
+both doors of the house — the client portal and appointments, and
+(since Track B, 2026-11-28) the self-serve checkout: a buy form in
+the Access panel, rendered only where the product catalog of record
+(core_platform/product_catalog.py) carries the platform's Stripe
+product as purchasable, posting to the app's /api/checkout door.
+Where a price of record stands without a Stripe product yet (the
+prices ruled in the Founder’s deliberation program of 2026-11-27,
+whose Stripe products land separately), the storefront shows the
+price of record itself and no buy form — no checkout is offered for
+a product that does not exist. Where the Founder has ruled no
 shelf price (Daedalus — enterprise agreements only), the storefront
 shows no price and says why. No price is invented anywhere in this
 module.
@@ -157,6 +160,31 @@ def _price_line(defn):
     return None
 
 
+def _buy_form(defn):
+    """The self-serve buy form for a platform whose Stripe product
+    stands in the product catalog as purchasable (Track B,
+    2026-11-28). Rendered only from the catalog of record
+    (core_platform/product_catalog.py): a platform with no
+    purchasable record gets no form, so no storefront can offer a
+    checkout that does not exist. The form posts to the house's own
+    /api/checkout door; the word on the button follows the price —
+    Subscribe for a recurring price, Buy now for a one-time price."""
+    from .product_catalog import platform_product
+
+    record = platform_product(defn.platform_id)
+    if record is None or record.get('purchasable') is not True:
+        return ''
+    label = ('Subscribe' if record.get('mode') == 'subscription'
+             else 'Buy now')
+    return (
+        '<form method="post" action="/api/checkout" class="buy-form">\n'
+        '  <input type="hidden" name="platform_id" value="%s">\n'
+        '  <button type="submit" class="button gold">%s \u2014 '
+        'self-serve checkout</button>\n'
+        '</form>'
+    ) % (_esc(defn.platform_id), label)
+
+
 def _access_block(defn):
     branch, price, stripe = _price_branch(defn)
     if branch == 'live':
@@ -166,8 +194,12 @@ def _access_block(defn):
             '<p>Access is completed with the house — book an appointment or '
             'open the client portal and name this platform; the engagement '
             'is confirmed by a person, and payment runs through the '
-            'house\'s own checkout of record.</p>'
+            'house\'s own checkout of record — or buy directly through '
+            'the self-serve checkout below.</p>'
         ) % (_esc(stripe), _esc(price))
+        form = _buy_form(defn)
+        if form:
+            body = body + '\n' + form
     elif branch == 'of_record':
         body = (
             '<p>This platform\'s price of record: '
