@@ -729,6 +729,36 @@ ACCESS_REGISTER_SEED = (
                'Sanders — Authorized Organization Representative, '
                'All Programs. The register holds no credential',
      'verified_on': '2026-11-27'},
+    {'system': 'NSF_RESEARCH_GOV',
+     'state': 'VERIFIED',
+     'basis': 'Her NSF key is HELD for SANDERS HOME HEALTHCARE & '
+              'CAREGIVERS LLC: the founder’s NSF Research.gov '
+              'account stands registered and activated (NSF ID '
+              '0000AB29V) and his Administrator role for the '
+              'organization stands GRANTED and ACTIVE',
+     'detail': 'NSF Research.gov (research.gov): account of record '
+               'created and activated 2026-11-27 (Roosevelt Sanders, '
+               'rooseveltsanders381@gmail.com; NSF ID 0000AB29V). '
+               'The organization was found by UEI QW8BRKNCF573 '
+               '\u2014 NSF displays SANDERS HOME HEALTHCARE & '
+               'CAREGIVERS LLC; it was not previously registered '
+               'with NSF, and as the SAM point of contact the founder '
+               'was required to obtain the Administrator role through '
+               'this process. Organization record: short name '
+               '"Sanders Home Healthcare & Caregivers", type Small '
+               'Business, time zone America/Denver, phone '
+               '414-502-3325, email rooseveltsanders381@gmail.com, no '
+               'fax. View My Roles of record: Administrator (Admin) '
+               'under Active Role(s) \u2014 the role includes '
+               'Sponsored Projects Officer (SPO) and View Only; '
+               'granted on submission, no Requested Roles pending; '
+               'NSF displays Date Added 11/28/2026 (UTC) for the grant '
+               'made the evening of November 27, 2026 MST. Authorized '
+               'Organizational Representative is not a separate '
+               'selectable role in this flow; further roles may be '
+               'requested now that Administrator is held. The '
+               'register holds no credential',
+     'verified_on': '2026-11-27'},
     {'system': 'GRANTSOLUTIONS',
      'state': 'AT_AWARD',
      'basis': 'Provisioned at award or by agency invitation',

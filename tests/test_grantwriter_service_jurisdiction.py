@@ -683,6 +683,7 @@ class TestMotherUpgrade(GrantwriterJurisdictionBase):
              'ERA_COMMONS': 'NOT_STARTED',
              'HRSA_EHBS': 'VERIFIED',
              'FEMA_GO': 'VERIFIED',
+             'NSF_RESEARCH_GOV': 'VERIFIED',
              'GRANTSOLUTIONS': 'AT_AWARD',
              'PMS': 'AT_AWARD',
              'ASAP': 'AT_AWARD',
@@ -716,6 +717,10 @@ class TestMotherUpgrade(GrantwriterJurisdictionBase):
         fema = entries['FEMA_GO']
         self.assertIn('Authorized Organization Representative',
                       fema['detail'])
+        nsf = entries['NSF_RESEARCH_GOV']
+        self.assertIn('0000AB29V', nsf['basis'])
+        self.assertIn('QW8BRKNCF573', nsf['detail'])
+        self.assertIn('Administrator', nsf['detail'])
         unrwa = entries['UNRWA']
         self.assertIn('accepted 2026-11-27', unrwa['basis'])
         fao = entries['FAO']

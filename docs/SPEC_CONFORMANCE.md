@@ -7233,3 +7233,48 @@ OF RECORD branch. No price was invented, averaged, or rounded; the
 superseded designed figures (Set B flat / Set C per-year) remain in
 the deliberation sheets of 2026-11-27.
 The storefront test pins that asserted the pre-ruling state (grantwriter shows no price; a conflicted price shows no price) were updated to the ruled state in tests/test_platform_storefront.py, and the Gaia Mind pin in tests/test_platform_definitions.py now records her price as ruled OF RECORD in this same program (her name correction and codes unchanged).
+
+---
+
+## Grantwriter — NSF Research.gov Key (2026-11-27)
+
+**Scope.** This entry records the NSF key on Grantwriter's global
+register, under the register entries above, which it extends and
+does not supersede. Direction of record: the founder, 2026-11-27
+— the global key map's Muse-executable waves, each completed
+key handed to Grantwriter and recorded onto her register. The
+access register's governing principle (GLOBAL_BY_DESIGN_KEY_REGISTER)
+keys every jurisdiction's system the same way; NSF Research.gov is
+the US federal research door of that register.
+
+**The construction.** In core_platform/grantwriter_service.py,
+ACCESS_REGISTER_SEED gains a fifteenth entry, seeded in the same
+idempotent pattern as the fourteen of record: NSF_RESEARCH_GOV
+— VERIFIED, placed after FEMA_GO at the end of the US federal
+cluster. The facts of record, verified from Research.gov's own
+pages on 2026-11-27: the founder's NSF account stands registered
+and activated (Roosevelt Sanders, rooseveltsanders381@gmail.com;
+NSF ID 0000AB29V — an account identifier, not a credential);
+SANDERS HOME HEALTHCARE & CAREGIVERS LLC was found by UEI
+QW8BRKNCF573 and was not previously registered with NSF; as the
+SAM point of contact the founder was required to obtain the
+Administrator role through the registration process; the
+Administrator role was GRANTED on submission and stands ACTIVE
+(View My Roles: Active Role(s) — Administrator (Admin), which
+includes Sponsored Projects Officer (SPO) and View Only; no
+Requested Roles pending; NSF displays Date Added 11/28/2026 (UTC)
+for the grant made the evening of November 27, 2026 MST). The
+organization record stands: short name "Sanders Home Healthcare
+& Caregivers", type Small Business, time zone America/Denver,
+phone 414-502-3325, email rooseveltsanders381@gmail.com, no fax.
+Authorized Organizational Representative is not a separate
+selectable role in this flow; further roles may be requested now
+that Administrator is held. The register count goes 14 → 15.
+The fourteen entries of record are unchanged, in state, basis and
+detail. Tests in tests/test_grantwriter_service_jurisdiction.py
+prove the register's entries and states exact, now including the
+NSF entry, and that the NSF entry's basis carries the NSF ID and
+its detail the UEI of record. The state of record is entered
+through the register's operator path by RooseveltSanders, with
+the GRANTWRITER_ACCESS_STATE_RECORDED Glass-Box receipt issued as
+for the keys before it.
