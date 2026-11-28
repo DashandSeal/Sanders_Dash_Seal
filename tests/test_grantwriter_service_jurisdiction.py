@@ -692,6 +692,7 @@ class TestMotherUpgrade(GrantwriterJurisdictionBase):
              'UNGM': 'VERIFIED',
              'UNRWA': 'VERIFIED',
              'FAO': 'VERIFIED',
+             'UNOPS_ESOURCING': 'VERIFIED',
              'WORLD_BANK_VMP': 'SUBMITTED'})
         eu = entries['EU_FUNDING_TENDERS_PORTAL']
         self.assertIn('859635244', eu['basis'])
@@ -732,6 +733,11 @@ class TestMotherUpgrade(GrantwriterJurisdictionBase):
         fao = entries['FAO']
         self.assertIn('Food and Agriculture Organization',
                       fao['basis'])
+        unops = entries['UNOPS_ESOURCING']
+        self.assertIn('United Nations Office for Project '
+                      'Services', unops['basis'])
+        self.assertIn('1312370', unops['detail'])
+        self.assertIn('esourcing.unops.org', unops['detail'])
         sam = entries['SAM.GOV']
         self.assertIn('QW8BRKNCF573', sam['detail'])
         self.assertIn('27KB6', sam['detail'])

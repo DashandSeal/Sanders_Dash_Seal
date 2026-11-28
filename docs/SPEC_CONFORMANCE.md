@@ -7321,3 +7321,50 @@ access confirmation and its detail the UEI of record. The state of
 record is entered through the register's operator path by
 RooseveltSanders, with the GRANTWRITER_ACCESS_STATE_RECORDED
 Glass-Box receipt issued as for the keys before it.
+
+---
+
+## Grantwriter — UNOPS eSourcing Key (2026-11-27)
+
+**Scope.** This entry records the UNOPS eSourcing key on
+Grantwriter's global register, under the register entries above,
+which it extends and does not supersede. Direction of record: the
+founder, 2026-11-27 — the global key map's Muse-executable
+waves, each completed key handed to Grantwriter and recorded onto
+her register. The access register's governing principle
+(GLOBAL_BY_DESIGN_KEY_REGISTER) keys every jurisdiction's system
+the same way; UNOPS eSourcing is the UN procurement door of that
+register, activated inside the held UNGM vendor account rather
+than by a separate registration.
+
+**The construction.** In core_platform/grantwriter_service.py,
+ACCESS_REGISTER_SEED gains a seventeenth entry, seeded in the same
+idempotent pattern as the sixteen of record: UNOPS_ESOURCING
+— VERIFIED, placed after FAO at the end of the UN cluster. The
+facts of record, verified from UNGM's and UNOPS eSourcing's own
+pages on 2026-11-27: the UNGM vendor registration of record
+(number 1312370) stands for SANDERS HOME HEALTHCARE &
+CAREGIVERS LLC with all six Basic-level sections complete —
+"The registration at Basic level has been submitted" — and
+the profile registered with 25 Organizations. UNOPS was already
+flagged among them: "My Submission Statuses" of record lists
+"UNOPS • United Nations Office for Project Services —
+Basic level: Registered" (Dashboard: Basic level, Registered,
+26-Nov-2026). Nothing was added or changed. Entry to
+esourcing.unops.org stands confirmed the same evening: the
+founder signed in with the UNGM login and the logged-in home
+("MY TENDERS", account rooseveltsanders381@gmail.com, 0 Draft /
+0 Submitted) loaded with full tender details viewable. No tender
+response or expression of interest was submitted. Goods and
+services of record on the profile: UNSPSC 85101508, 85101600,
+91111600, 91111900; Declaration of Eligibility checked. The
+register count goes 16 → 17. The sixteen entries of record are
+unchanged, in state, basis and detail. Tests in
+tests/test_grantwriter_service_jurisdiction.py prove the
+register's entries and states exact, now including the UNOPS
+entry, and that the UNOPS entry's basis carries the agency's full
+name and its detail the UNGM number of record and the eSourcing
+host. The state of record is entered through the register's
+operator path by RooseveltSanders, with the
+GRANTWRITER_ACCESS_STATE_RECORDED Glass-Box receipt issued as for
+the keys before it.

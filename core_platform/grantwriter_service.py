@@ -877,6 +877,37 @@ ACCESS_REGISTER_SEED = (
                'portal tender opportunities for FAO are accessible '
                'to the company. The register holds no credential',
      'verified_on': '2026-11-27'},
+    {'system': 'UNOPS_ESOURCING',
+     'state': 'VERIFIED',
+     'basis': 'Her UNOPS eSourcing key stands ACTIVATED inside '
+              'the held UNGM vendor account: UNOPS \u2014 the United '
+              'Nations Office for Project Services \u2014 was already '
+              'flagged on the UNGM registration of record for '
+              'SANDERS HOME HEALTHCARE & CAREGIVERS LLC, and the '
+              'founder\u2019s signed-in entry to UNOPS eSourcing '
+              'stands confirmed 2026-11-27',
+     'detail': 'UNOPS eSourcing (esourcing.unops.org), reached '
+               'through the UNGM registration of record (UNGM '
+               'number 1312370): all six Basic-level sections of '
+               'the UNGM profile stand complete \u2014 \u201cThe '
+               'registration at Basic level has been '
+               'submitted\u201d; \u201cMy Submission Statuses\u201d of '
+               'record lists \u201cUNOPS \u2022 United Nations Office '
+               'for Project Services \u2014 Basic level: '
+               'Registered\u201d (Dashboard: Basic level, Registered, '
+               '26-Nov-2026); the supplier profile is registered '
+               'with 25 Organizations. Nothing was added or '
+               'changed. eSourcing entry of record 2026-11-27: '
+               'the founder signed in with the UNGM login and the '
+               'logged-in home (\u201cMY TENDERS\u201d, account '
+               'rooseveltsanders381@gmail.com, 0 Draft / 0 '
+               'Submitted) loaded with full tender details '
+               'viewable. No tender response or expression of '
+               'interest was submitted. Goods and services of '
+               'record on the profile: UNSPSC 85101508, 85101600, '
+               '91111600, 91111900; Declaration of Eligibility '
+               'checked. The register holds no credential',
+     'verified_on': '2026-11-27'},
     {'system': 'WORLD_BANK_VMP',
      'state': 'SUBMITTED',
      'basis': 'Her third global key: the founder\u2019s '
