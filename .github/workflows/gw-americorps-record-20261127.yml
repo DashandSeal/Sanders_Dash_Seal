@@ -1,0 +1,66 @@
+name: Grantwriter register - record AmeriCorps eGrants receipt (one-off 2026-11-27)
+on:
+  workflow_dispatch:
+jobs:
+  record-americorps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record the AmeriCorps eGrants register state; read back receipt
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 20m
+          script: |
+            set +e
+            echo "=== STEP A: env handoff (values never printed) ==="
+            sudo sh -c 'cat /etc/sanders-dash-seal/environment /etc/sanders-dash-seal/runtime.env > /tmp/sds_env_parsed 2>/dev/null; chown sanders:sanders /tmp/sds_env_parsed; chmod 600 /tmp/sds_env_parsed'
+            echo "=== STEP B: record through production bindings ==="
+            cat > /tmp/gw_record_americorps.json <<'JSONEOF'
+            [{"system": "AMERICORPS_EGRANTS", "state": "VERIFIED", "basis": "Her AmeriCorps eGrants key is HELD for SANDERS HOME HEALTHCARE & CAREGIVERS LLC: the organization stands registered in AmeriCorps eGrants and the founder\u2019s access stands confirmed \u2014 \u201cThank You \u2014 You now have access to eGrants\u201d", "detail": "AmeriCorps eGrants (egrants.cns.gov): registration of record completed 2026-11-27 (username RooseveltSanders, rooseveltsanders381@gmail.com); the signed-in homepage of record reads \u201cWelcome Roosevelt / Welcome to eGrants!\u201d. Organization profile: legal name SANDERS HOME HEALTHCARE & CAREGIVERS LLC (SAM-exact), entered under the organization\u2019s EIN as 9 digits, UEI QW8BRKNCF573, organization type For Profit Organization, address 8267 Sedgewick Dr, Colorado Springs, CO 80925-9418 (portal-validated ZIP+4), phone 414-502-3325; Rules of Behavior accepted; Indirect Cost Rate Record \u201cNo\u201d. The portal issued no account or confirmation number. No grant application was started. The register holds no credential", "verified_on": "2026-11-27"}]
+            JSONEOF
+            cat > /tmp/record_americorps.py <<'PYEOF'
+            import json, os
+            with open('/tmp/sds_env_parsed') as fh:
+                for line in fh:
+                    line = line.strip()
+                    if not line or line.startswith('#') or '=' not in line:
+                        continue
+                    k, v = line.split('=', 1)
+                    os.environ[k.strip()] = v.strip().strip('"').strip("'")
+            os.environ.setdefault('SANDERS_RUNTIME_FACTORY', 'deploy.production_bindings:create_production_bindings')
+            from deploy.production_bindings import create_production_bindings
+            b = create_production_bindings()
+            gw = b.grantwriter
+            records = json.load(open('/tmp/gw_record_americorps.json'))
+            def compact(entries):
+                return [{'system': e['system'], 'state': e['state'], 'updated_by': e['updated_by'], 'updated_at': e['updated_at']} for e in entries]
+            before_all = gw.access_register()
+            print('REGISTER_BEFORE ' + json.dumps(compact(before_all), default=str))
+            for rec in records:
+                view = gw.record_access_state('RooseveltSanders', rec['system'], rec['state'], basis=rec['basis'], detail=rec['detail'], verified_on=rec['verified_on'])
+                print('RECORDED ' + rec['system'] + ' ' + json.dumps(view, default=str))
+            after_all = gw.access_register()
+            print('REGISTER_AFTER ' + json.dumps(compact(after_all), default=str))
+            for rec in records:
+                after = [e for e in after_all if e['system'] == rec['system']]
+                print('AFTER ' + rec['system'] + ' ' + json.dumps(after, default=str))
+            PYEOF
+            sudo -u sanders bash -c 'cd /opt/Sanders_Dash_Seal && PYTHONPATH=/opt/Sanders_Dash_Seal OPENSSL_CONF=/etc/pki/tls/sanders_fips.cnf ./venv/bin/python3 /tmp/record_americorps.py' 2>&1 | grep -E 'REGISTER_BEFORE|RECORDED |ALREADY_CURRENT|REGISTER_AFTER|AFTER |Error|Denied|denied|Traceback' | head -30
+            sudo shred -u /tmp/sds_env_parsed 2>/dev/null || sudo rm -f /tmp/sds_env_parsed
+            rm -f /tmp/record_americorps.py /tmp/gw_record_americorps.json
+            echo "=== STEP C: audit receipt read-back ==="
+            cat > /tmp/read_audit.py <<'PYEOF'
+            import json, sqlite3
+            db = sqlite3.connect('file:/opt/Sanders_Dash_Seal/data/audit.db?mode=ro', uri=True)
+            rows = db.execute("SELECT seq, body, hash FROM receipts WHERE body LIKE '%GRANTWRITER_ACCESS_STATE_RECORDED%' ORDER BY seq DESC LIMIT 8;").fetchall()
+            print('AUDIT_MATCHES', len(rows))
+            for seq, body, h in rows:
+                parsed = json.loads(body)
+                print('AUDIT', seq, h, json.dumps(parsed.get('context'), default=str), parsed.get('timestamp'))
+            PYEOF
+            sudo -u sanders /opt/Sanders_Dash_Seal/venv/bin/python3 /tmp/read_audit.py 2>&1 | head -10
+            rm -f /tmp/read_audit.py
+            echo "GW_AMERICORPS_RECORD_DONE"
