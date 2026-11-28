@@ -7165,3 +7165,24 @@ connection is an ACTIVE LIVE designation of record
 (designation['kind'] == 'LIVE') and the entry's designation text is
 surfaced as designation_required. No test pins this text verbatim
 (checked tests/test_sanders_sentinel_human_life_protection.py).
+## HQ Website Ten Codes — 2026-11-27
+
+Follow-up to the Headquarters ten-codes landing (commit a35b3cb9):
+S & G Security Inc.'s ten ruled codes — 551114, 561612, 561621,
+541611, 541512, 541618, 523999, 541219, 561110, 561410, in ruling
+order — now stand on the Headquarters company website pages,
+matching the industries presentation of the other company websites
+(the home-healthcare services page's code-card pattern: eyebrow,
+cards carrying each code as the fact line, the industry name, and
+its line of record):
+
+- web/headquarters-headquarters.html (Headquarters first)
+- web/headquarters-services.html
+- web/sg-security-headquarters.html
+- web/sg-security-services.html
+- web/sg-security-industries-served.html
+
+Each page gains an "Its Ten Industries" section with all ten codes
+in ruling order. No "Greer" appears in any added text. No seal was
+generated, redrawn, or approximated: the pages carry only the
+pre-existing served original seal assets they already held.
