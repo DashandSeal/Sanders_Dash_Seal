@@ -7058,3 +7058,44 @@ always be a deliberate operator act? Interim default: deliberate.
 
 **Recorded.** Entered into this record on 2026-11-27 as the second half of the Daedalus
 baseline-drift repair, beside the companion re-pin entry it follows and does not supersede.
+
+
+---
+
+## Platform finish, tranche 2 item 1 — Headquarters' ten codes (2026-11-27)
+
+Under the Founder's ruling of 2026-11-27 (13:47 MST, "Agreed"), made
+as the first item of tranche 2 per the Headquarters-first rule:
+
+- **Headquarters' ten NACI codes are of record.** S & G Security Inc.
+  holds ten codes, not the platforms' six — its span is the whole
+  house: 551114 (Corporate/Subsidiary/Regional Managing Offices),
+  561612 (Security Guards & Patrol Services), 561621 (Security
+  Systems Services), 541611 (Administrative Management & General
+  Management Consulting), 541512 (Computer Systems Design Services),
+  541618 (Other Management Consulting Services), 523999
+  (Miscellaneous Financial Investment Activities — Bozly, CFO),
+  541219 (Other Accounting Services — Bozly, integrity witness),
+  561110 (Office Administrative Services — the Corporate Secretary),
+  561410 (Document Preparation Services — the Corporate Secretary,
+  the record itself). This supersedes the audit's carried-None and
+  tranche 1's unruled (None) placeholder; no codes were composed —
+  the ten are the Founder's, exactly as ruled.
+- **Identity record.** `core_platform/platform_definitions.py` now
+  carries a first-class `PlatformIdentity` for
+  `s_and_g_security_inc` (status DEFINED) holding the ten, alongside
+  the 65 records of tranche 1 (66 in total), and Headquarters'
+  `PlatformDefinition` carries the same ten, a completed
+  who/why in Headquarters' own terms, and a ten-line service suite
+  keyed to the ten codes.
+- **Storefront completion.** Headquarters' platform storefront
+  (`/platforms/s_and_g_security_inc`, rendered by
+  `core_platform/platform_storefront.py`) now renders all ten codes
+  under an honest count ("Its Ten Industries" — the eyebrow is
+  count-aware: Six for the six-code platforms, Eight for SEIC, Ten
+  for Headquarters), the full ten-line suite, and the completed
+  definition. The unruled-codes placeholder text is gone. The
+  storefront references only the app's pre-existing served original
+  seal assets; no seal was generated, redrawn, or substituted.
+- **No price was set.** Headquarters holds no platform price of
+  record; none was invented in this landing.

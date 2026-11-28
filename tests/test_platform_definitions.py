@@ -8,8 +8,9 @@ carrying exactly their reconciled six from the NACI six-code
 reconciliation of 2026-11-26; every platform of record holds a
 complete definition; and the ruled sets stand untouched — the
 anchored six, JUGGERNAUT's none, SEIC's eight, Grantwriter's
-composed six and UNRULED public price, and Headquarters' codes
-standing unruled (None) rather than composed.
+composed six and UNRULED public price. Headquarters' ten codes,
+ruled by the Founder on 2026-11-27 (13:47 MST, "Agreed"), are
+pinned by test_headquarters_ten_codes_ruled below.
 """
 
 import unittest
@@ -41,6 +42,7 @@ EXPECTED_SIXES = {
     'money_factory_legal_aid': ('541110', '541199', '541512', '518210', '561499', '519190'),
     'platform1_33_ship_it_stub_collective': ('541511', '541512', '541513', '541519', '518210', '541690'),
     'police_men': ('561612', '561611', '541512', '541199', '561621', '541690'),
+    's_and_g_security_inc': ('551114', '561612', '561621', '541611', '541512', '541618', '523999', '541219', '561110', '561410'),
     'sanders_advanced_academics': ('611110', '611310', '611430', '541618', '541512', '541511'),
     'sanders_ai_lab': ('541715', '541714', '541713', '541519', '541618', '541690'),
     'sanders_ai_recognition': ('541512', '541511', '541513', '541519', '541618', '541690'),
@@ -90,8 +92,8 @@ ANCHORED = ('621610', '624120', '485991', '532283', '423450', '492110')
 
 class PlatformDefinitionsTest(unittest.TestCase):
 
-    def test_sixty_five_new_identity_records(self):
-        self.assertEqual(len(IDENTITIES), 65)
+    def test_sixty_six_new_identity_records(self):
+        self.assertEqual(len(IDENTITIES), 66)
         for pid, identity in IDENTITIES.items():
             self.assertEqual(identity.status, 'DEFINED')
             self.assertEqual(identity.platform_id, pid)
@@ -118,13 +120,27 @@ class PlatformDefinitionsTest(unittest.TestCase):
             elif pid == 'sanders_ethics_impact_collective':
                 self.assertEqual(len(defn.naics_codes), 8, pid)
             elif pid == 's_and_g_security_inc':
-                self.assertIsNone(defn.naics_codes, pid)
+                self.assertEqual(len(defn.naics_codes), 10, pid)
             else:
                 self.assertEqual(len(defn.naics_codes), 6, pid)
         self.assertEqual(
             DEFINITIONS['uncle_nickey_mao'].naics_codes, ANCHORED)
         self.assertEqual(
             DEFINITIONS['sanders_home_healthcare'].naics_codes, ANCHORED)
+
+    def test_headquarters_ten_codes_ruled(self):
+        # Founder ruling, 2026-11-27 13:47 MST ("Agreed"):
+        # Headquarters holds TEN NACI codes, not six — its span is
+        # the whole house. They stand identically in Headquarters'
+        # identity record and its definition.
+        ten = ('551114', '561612', '561621', '541611', '541512',
+               '541618', '523999', '541219', '561110', '561410')
+        self.assertEqual(
+            tuple(IDENTITIES['s_and_g_security_inc'].naics_codes), ten)
+        self.assertEqual(
+            DEFINITIONS['s_and_g_security_inc'].naics_codes, ten)
+        self.assertEqual(
+            IDENTITIES['s_and_g_security_inc'].status, 'DEFINED')
 
     def test_grantwriter_price_unruled(self):
         defn = DEFINITIONS['grantwriter']

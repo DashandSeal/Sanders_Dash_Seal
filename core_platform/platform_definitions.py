@@ -9,12 +9,15 @@ with its own storefront opening into its full service suite.
 
 WHAT THIS MODULE IS
 
-* IDENTITIES — first-class PlatformIdentity records for the 65
+* IDENTITIES — first-class PlatformIdentity records for the 66
   platforms that held no built identity record in this repository
   (the lock-in report of 2026-11-26: 12 registry-row-only + 53 with
-  no record). Each carries its reconciled six exactly as locked in
-  on 2026-11-26 and stands at status DEFINED — defined, not built;
-  no service is claimed for them beyond this record.
+  no record, plus Headquarters). Each of the 65 carries its
+  reconciled six exactly as locked in on 2026-11-26 and stands at
+  status DEFINED — defined, not built; no service is claimed for
+  them beyond this record. Headquarters (S & G Security Inc.)
+  carries TEN codes, not six, under the Founder's ruling of
+  2026-11-27 — see the honest-limits note below.
 * DEFINITIONS — a structured PlatformDefinition for every
   platform of record (161 rows: the reconciliation's 155, the five
   ruled records outside it, and Headquarters). For the 95 platforms
@@ -36,11 +39,13 @@ HONEST LIMITS, of record in this module:
 * Grantwriter's public prices are UNRULED (Founder, 2026-11-26
   20:13: everyone should be able to afford her public business).
   Her definition carries no price and her storefront shows none.
-* Headquarters (S & G Security Inc.) holds a definition here, but
-  its six NACI codes are NOT of record in any examined source and
-  are not composed in this program — naics_codes is None for
-  Headquarters alone, awaiting the Founder's ruling. First item
-  of the tranche-2 plan, per the Headquarters-first rule.
+* Headquarters' codes stood unruled (None) in tranche 1, first
+  item of the tranche-2 plan per the Headquarters-first rule. The
+  Founder ruled them on 2026-11-27 (13:47 MST, "Agreed"): S & G
+  Security Inc. holds TEN NACI codes — 551114, 561612, 561621,
+  541611, 541512, 541618, 523999, 541219, 561110, 561410 — its span
+  being the whole house. They stand in its identity record and its
+  definition below, and its storefront renders all ten.
 * Prices are stated only where a price of record exists. No price
   was invented, averaged, or rounded for any platform.
 """
@@ -56,7 +61,8 @@ class PlatformDefinition:
     it exists, whom it serves, its six NACI codes, its service suite,
     its public-facing business model, and its ties to the four
     companies. naics_codes is None only where no codes are of record
-    (Headquarters — see the module docstring)."""
+    (no platform of record stands in that position since the
+    Founder's Headquarters ruling of 2026-11-27)."""
 
     platform_id: str
     name: str
@@ -91,7 +97,7 @@ class PlatformDefinition:
         }
 
 
-# -- Identity records for the 65 platforms that held none -------------
+# -- Identity records for the 66 platforms that held none -------------
 
 IDENTITIES = {
     'ai_role_workers': validate_identity(PlatformIdentity(
@@ -275,6 +281,14 @@ IDENTITIES = {
         name='The Police Men',
         legal_entities=(),
         naics_codes=('561612', '561611', '541512', '541199', '561621', '541690'),
+        authorized_regions=('US-CO', 'US-WI'),
+        status='DEFINED',
+    )),
+    's_and_g_security_inc': validate_identity(PlatformIdentity(
+        platform_id='s_and_g_security_inc',
+        name='S & G Security Inc.',
+        legal_entities=(),
+        naics_codes=('551114', '561612', '561621', '541611', '541512', '541618', '523999', '541219', '561110', '561410'),
         authorized_regions=('US-CO', 'US-WI'),
         status='DEFINED',
     )),
@@ -1493,17 +1507,17 @@ DEFINITIONS = {
     's_and_g_security_inc': PlatformDefinition(
         platform_id='s_and_g_security_inc',
         name='S & G Security Inc.',
-        who='S & G Security Inc.',
-        why="S & G Security Inc. — a platform of the Sanders ecosystem. Its six industries form one whole: its record carries the six below. It stands defined here under the Founder's directive of 2026-11-26 so that it is never again a name without a purpose.",
+        who='S & G Security Inc. — Headquarters of the Sanders house: the first company the Founder ever declared, and the corporate headquarters for all four companies and every platform of the ecosystem. Its span is the whole house, and its record carries ten NACI codes, not six — ruled by the Founder on 2026-11-27.',
+        why="Headquarters holds the whole house. Corporate management of the companies and the platforms (551114); the security trades it was founded in — guards and patrol (561612) and security systems (561621); management and systems counsel for the house (541611, 541512, 541618); the office of Bozly, Headquarters' CFO and integrity witness (523999, 541219); and the office of the Corporate Secretary — the glue that holds the house together, and the record itself (561110, 561410). The Founder ruled its ten codes on 2026-11-27 ('Agreed'), defining Headquarters globally and for generations.",
         serves='Serves the public, its clients, and the four companies — globally, by design.',
-        naics_codes=None,
-        service_suite=('Its service suite stands in its own platform record; this definition carries its identity and purpose.',),
+        naics_codes=('551114', '561612', '561621', '541611', '541512', '541618', '523999', '541219', '561110', '561410'),
+        service_suite=('551114 — corporate, subsidiary and regional managing offices: Headquarters governs the whole house', '561612 — security guards and patrol services: the founding trade — officers and patrols', '561621 — security systems services: systems designed, installed and watched', '541611 — administrative management and general management consulting for the house', '541512 — computer systems design services: the house\'s systems, designed natively', '541618 — other management consulting services', '523999 — miscellaneous financial investment activities: Bozly, Headquarters\' CFO', '541219 — other accounting services: Bozly as integrity witness — signed receipts, and claim checks against the recorded transaction', '561110 — office administrative services: the Corporate Secretary, the glue that holds the house together', '561410 — document preparation services: the Corporate Secretary — the record itself'),
         business_model='Sells access to its full service suite globally, by monthly subscription, under the Sanders Royal Enterprise Standard — premium, at what the market can bear; no tier is free.',
-        company_tie='Attached to all four companies of the house, as every platform is.',
+        company_tie='Headquarters itself: S & G Security Inc. is the corporate headquarters for all four companies of the house — the other three are attached to it, and it to them.',
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
         price_of_record='NO platform price of record in examined set',
         stripe_product='NO',
-        provenance="COMPOSED 2026-11-27 under the Founder's 2026-11-26 directive (no purpose of record found in the examined set)",
+        provenance="FOUNDER RULING 2026-11-27 13:47 MST — Headquarters' ten NACI codes ruled ('Agreed'); identity record and definition completed under that ruling (tranche 2, item 1). Supersedes the COMPOSED 2026-11-27 placeholder, whose codes stood unruled (None).",
     ),
     'sanders_advanced_academics': PlatformDefinition(
         platform_id='sanders_advanced_academics',

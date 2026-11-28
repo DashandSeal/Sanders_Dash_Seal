@@ -159,6 +159,19 @@ def _access_block(defn):
     ) % body
 
 
+_NUMBER_WORDS = {6: 'Six', 8: 'Eight', 10: 'Ten'}
+
+
+def _industries_eyebrow(defn):
+    """The industries eyebrow, honest about the count: most
+    platforms carry six codes; SEIC carries eight; Headquarters
+    carries ten (Founder ruling, 2026-11-27)."""
+    n = len(defn.naics_codes) if defn.naics_codes else 0
+    if n in _NUMBER_WORDS:
+        return 'Its %s Industries' % _NUMBER_WORDS[n]
+    return 'Its Industries'
+
+
 def render_storefront(platform_id):
     """Render one platform's storefront.
 
@@ -171,9 +184,9 @@ def render_storefront(platform_id):
                 b'No platform of record stands under that name.\n')
     if defn.naics_codes is None:
         codes_html = (
-            '<p>The six NACI industries of Headquarters are the '
-            'Founder\'s to rule; none is composed for Headquarters in '
-            'this record, and none is shown until he rules.</p>')
+            '<p>The NACI industries of this platform are the '
+            'Founder\'s to rule; none is composed in this record, '
+            'and none is shown until he rules.</p>')
     elif len(defn.naics_codes) == 0:
         codes_html = (
             '<p>This platform carries no NACI codes, as ruled \u2014 its '
@@ -206,8 +219,8 @@ def render_storefront(platform_id):
         '  <p>%s</p>\n'
         '  <p>%s</p>\n'
         '</section>\n' % (_esc(defn.why), _esc(defn.serves)),
-        '<section id="industries" class="section">\n'
-        '  <p class="eyebrow">Its Six Industries</p>\n'
+        '<section id="industries" class="section">\n',
+        '  <p class="eyebrow">%s</p>\n' % _industries_eyebrow(defn),
         '  <h2>Built by NACI codes.</h2>\n'
         '  %s\n'
         '</section>\n' % codes_html,

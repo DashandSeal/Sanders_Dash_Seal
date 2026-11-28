@@ -60,11 +60,18 @@ class PlatformStorefrontTest(unittest.TestCase):
         self.assertNotIn('$455,000,000', page)
         self.assertNotIn('$7,999,600', page)
 
-    def test_headquarters_codes_unruled_not_composed(self):
+    def test_headquarters_ten_codes_render(self):
+        # Founder ruling, 2026-11-27: Headquarters holds ten codes;
+        # its storefront renders all ten and says so.
         status, body = render_storefront('s_and_g_security_inc')
         page = body.decode('utf-8')
         self.assertEqual(status, '200 OK')
-        self.assertIn("Founder's to rule", page.replace('&#x27;', "'"))
+        for code in ('551114', '561612', '561621', '541611', '541512',
+                     '541618', '523999', '541219', '561110', '561410'):
+            self.assertIn(code, page)
+        self.assertIn('Its Ten Industries', page)
+        self.assertNotIn("Founder's to rule",
+                         page.replace('&#x27;', "'"))
 
     def test_juggernaut_ruled_none(self):
         status, body = render_storefront('juggernaut')
