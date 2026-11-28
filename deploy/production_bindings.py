@@ -915,7 +915,7 @@ def create_production_bindings():
     sanders_omniconn = SandersOmniconnService(
         data_dir / 'sanders_omniconn.db',
         operator_verifier=auth.operator_verifier, audit=audit)
-    # Gia Mind platform (Q52, RTSA Build Program tranche
+    # Gaia Mind platform (Q52, RTSA Build Program tranche
     # 13): governed ethics and system-balance review
     # records over her own store — she reviews and
     # records only; she overrides no decision and

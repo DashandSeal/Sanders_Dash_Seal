@@ -3,7 +3,7 @@
         "schema": 1,
         "platform": "Sanders Dash & Seal",
         "artifact": "core_platform/gia_mind_service.py",
-        "payload_hash": "7928b180a1161bc734a296e9af419750196e057638a9daa2c16b366d6a6e75a2",
+        "payload_hash": "e14bb1505d78dc45ca5f4b368e810a20e56dc4111096bbff7eea368b54cccbdf",
         "scope": "source-manifest",
         "signatures": {},
         "status": "UNSIGNED_SOURCE_MANIFEST"

@@ -1,21 +1,25 @@
-"""Gia Mind — the ethical AI and system-balance platform.
+"""Gaia Mind — the ethical AI and system-balance platform.
 
-The production build-out of the Gia Mind design
+The production build-out of the Gaia Mind design
 (canonical catalog row #60, Band 2D), built whole as its
 own platform service over the shared RTSA foundation
 (RTSA Build Program Q52).
 
 NAME — verified before building, per the name law: the
 canonical catalog (row #60) and the owner's recorded
-ruling D-N2 name this platform **Gia Mind** (full form
-per Set A: Sanders Gia Mind). The master grid
-(deploy/oracle/sanders_master_grid.json id 5) and Set B
-(the schema seed row) carry the spelling "Gai Mind" —
-recorded here exactly as found and NOT adopted: D-N2
-rules the canonical name, and this build corrects the
-pre-existing registry entry's name in place under that
-ruling (the entry's machine id, gai_mind, is retained as
-a machine string; machine strings are not names).
+ruling D-N2 named this platform **Gaia Mind** as then
+recorded (full form per Set A: Sanders Gaia Mind). The
+master grid (deploy/oracle/sanders_master_grid.json
+id 5) and Set B (the schema seed row) carry the
+spelling "Gai Mind" — recorded here exactly as found
+and NOT adopted. NAME CORRECTED — Founder ruling
+2026-11-27 13:10 MST ("It’s Gaia mind"): the name of
+record is **Gaia Mind** (full form: Sanders Gaia
+Mind), and this build carries the corrected name from
+that ruling forward. The pre-existing registry
+entry’s name was corrected in place under D-N2 (the
+entry’s machine id, gai_mind, is retained as a machine
+string; machine strings are not names).
 PERSONA — D-N2 leaves her persona open: the sources'
 persona and nickname attributions conflict and none is
 ruled. NO persona is adopted, carried, or presented
@@ -42,11 +46,11 @@ this platform carries is the decision-support facet of
 that design, recorded as governed review records. The
 grid endpoint the records carry (a Google Cloud host,
 :3005) is a file claim, not a verified live check, and
-the grid file is truncated at id 28; no Gia Mind module
+the grid file is truncated at id 28; no Gaia Mind module
 existed in any examined source.
 
 REBUILT (everything executable in this module): the
-governed platform below — Gia Mind's own identity and
+governed platform below — Gaia Mind's own identity and
 store, carrying ethics and system-balance review records
 over subjects and review evidence presented by
 reference:
@@ -69,7 +73,7 @@ reference:
   refused on it — no evidence was presented to determine
   from; INCONCLUSIVE, which asserts nothing, records
   against evidence.
-- **The review discipline, enforced**: Gia Mind reviews
+- **The review discipline, enforced**: Gaia Mind reviews
   and records. She overrides no decision, rebalances no
   live system, directs no AI, and modifies no knowledge
   base: a balance finding is a record placed before
@@ -81,7 +85,7 @@ reference:
   model state, no decision stream, and no live-system
   state. (Its own record store is its own — it is not a
   window into any operational system.)
-- **Separation**: Gia Mind is its own platform. She is
+- **Separation**: Gaia Mind is its own platform. She is
   not Sanders Omniconn (oversight and coordination —
   a different designed purpose), not CHORUS (Q31), not
   Sanders AI Research or Sanders Research (D-N11 keeps
@@ -131,7 +135,7 @@ from .rtsa_foundation import (
 
 IDENTITY = validate_identity(PlatformIdentity(
     platform_id='gia_mind',
-    name='Gia Mind',
+    name='Gaia Mind',
     legal_entities=('s_and_g_security_inc',),
     naics_codes=('621330', '621112', '621999', '541618', '541512', '541690'),
     authorized_regions=('US-CO', 'US-WI'),
@@ -158,7 +162,7 @@ MAX_REFS = 100
 
 
 class GiaMindDenied(Exception):
-    """The requested Gia Mind operation is not
+    """The requested Gaia Mind operation is not
     allowed."""
 
 
@@ -167,14 +171,14 @@ class GiaMindForbidden(Exception):
 
 
 class GiaMindService:
-    """Gia Mind: governed ethics and system-balance
+    """Gaia Mind: governed ethics and system-balance
     review records under the ethics-review records discipline."""
 
     def __init__(self, database_path, *, operator_verifier, audit,
                  clock=time.time):
         if audit is None or not callable(getattr(audit, 'preserve', None)):
             raise GiaMindDenied(
-                'Gia Mind requires a working'
+                'Gaia Mind requires a working'
                 ' Glass-Box audit adapter')
         self._path = Path(database_path)
         self._path.parent.mkdir(parents=True, exist_ok=True)
@@ -278,7 +282,7 @@ class GiaMindService:
             ],
             'discipline': DISCIPLINE,
             'record_operations': list(RECORD_OPERATIONS),
-            'note': 'Gia Mind is the ethical AI and'
+            'note': 'Gaia Mind is the ethical AI and'
                     ' system-balance platform: she carries'
                     ' ethics and balance review records over'
                     ' subjects and review evidence presented'
@@ -294,11 +298,14 @@ class GiaMindService:
                     ' declared with no review evidence'
                     ' stands NO_EVIDENCE_SUBMITTED and no'
                     ' determination can be recorded on it.'
-                    ' The name is Gia Mind per owner ruling'
-                    ' D-N2 (full form: Sanders Gia Mind);'
-                    ' the "Gai Mind" spelling carried by'
-                    ' the grid and Set B is recorded as'
-                    ' found and is not adopted. Her persona'
+                    ' The name is Gaia Mind, corrected by'
+                    ' the Founder’s ruling of 2026-11-27'
+                    ' (13:10 MST); it stood recorded as'
+                    ' Gaia Mind per owner ruling D-N2 (full'
+                    ' form: Sanders Gaia Mind), and the'
+                    ' "Gai Mind" spelling carried by the'
+                    ' grid and Set B is recorded as found'
+                    ' and is not adopted. Her persona'
                     ' is unruled under D-N2 \u2014 no persona'
                     ' is adopted, carried, or presented by'
                     ' this build. Her designed hostname'
@@ -306,7 +313,7 @@ class GiaMindService:
                     ' under the unowned parent'
                     ' sandersglobal.com; it is recorded as'
                     ' the designed address and nothing is'
-                    ' served there. Gia Mind is distinct'
+                    ' served there. Gaia Mind is distinct'
                     ' from Sanders Omniconn, from CHORUS,'
                     ' from Sanders AI Research and Sanders'
                     ' Research, and from the watchdogs'
@@ -324,7 +331,7 @@ class GiaMindService:
         if operation in EXECUTION_OPERATIONS:
             raise GiaMindDenied(
                 f'Operation {operation!r} is an execution'
-                ' operation: Gia Mind reviews and records'
+                ' operation: Gaia Mind reviews and records'
                 ' only and holds no authority to override a'
                 ' decision, rebalance a system, direct an'
                 ' AI, or modify a knowledge base'

@@ -11,6 +11,15 @@ anchored six, JUGGERNAUT's none, SEIC's eight, Grantwriter's
 composed six and UNRULED public price. Headquarters' ten codes,
 ruled by the Founder on 2026-11-27 (13:47 MST, "Agreed"), are
 pinned by test_headquarters_ten_codes_ruled below.
+
+Landing of 2026-11-27 (Oikos + Gaia Mind): Oikos joins the
+record by the Founder’s direction — a further identity record
+(the 67th, Headquarters having landed first) and a 162nd
+definition, carrying her seven ruled codes (one per continent)
+as a named exception beside SEIC’s eight; and the gia_mind
+definition carries the corrected name Gaia Mind under the
+Founder’s ruling of 2026-11-27 13:10 MST, her codes and her
+unsettled price untouched.
 """
 
 import unittest
@@ -92,19 +101,23 @@ ANCHORED = ('621610', '624120', '485991', '532283', '423450', '492110')
 
 class PlatformDefinitionsTest(unittest.TestCase):
 
-    def test_sixty_six_new_identity_records(self):
-        self.assertEqual(len(IDENTITIES), 66)
+    def test_sixty_seven_new_identity_records(self):
+        # The 65 of the reconciliation, plus Headquarters (ten
+        # codes ruled 2026-11-27) and Oikos — the 67th identity
+        # record, added by Founder direction 2026-11-27.
+        self.assertEqual(len(IDENTITIES), 67)
         for pid, identity in IDENTITIES.items():
             self.assertEqual(identity.status, 'DEFINED')
             self.assertEqual(identity.platform_id, pid)
 
     def test_identity_sixes_match_the_reconciliation(self):
-        self.assertEqual(set(EXPECTED_SIXES), set(IDENTITIES))
+        self.assertEqual(set(EXPECTED_SIXES) | {'oikos'},
+                         set(IDENTITIES))
         for pid, six in EXPECTED_SIXES.items():
             self.assertEqual(tuple(IDENTITIES[pid].naics_codes), six, pid)
 
     def test_every_platform_of_record_is_defined(self):
-        self.assertEqual(len(DEFINITIONS), 161)
+        self.assertEqual(len(DEFINITIONS), 162)
         for pid, defn in DEFINITIONS.items():
             self.assertTrue(defn.who.strip(), pid)
             self.assertTrue(defn.why.strip(), pid)
@@ -119,6 +132,8 @@ class PlatformDefinitionsTest(unittest.TestCase):
                 self.assertEqual(defn.naics_codes, (), pid)
             elif pid == 'sanders_ethics_impact_collective':
                 self.assertEqual(len(defn.naics_codes), 8, pid)
+            elif pid == 'oikos':
+                self.assertEqual(len(defn.naics_codes), 7, pid)
             elif pid == 's_and_g_security_inc':
                 self.assertEqual(len(defn.naics_codes), 10, pid)
             else:
@@ -163,6 +178,43 @@ class PlatformDefinitionsTest(unittest.TestCase):
         self.assertIn('standing priority', defn.why)
         # His price stays NOT SETTLED (conflict) — untouched.
         self.assertTrue(defn.price_of_record.startswith('NOT SETTLED'))
+
+    def test_oikos_identity_and_definition(self):
+        # Founder direction and rulings, 2026-11-27: Oikos is a
+        # new platform beyond the 140 — humanity's Home, seven
+        # codes, one per continent; institutions fund the
+        # necessities and her served populations are never her
+        # payers.
+        seven = ('621610', '111998', '541715', '221118',
+                 '236220', '221310', '541690')
+        identity = identity_for('oikos')
+        self.assertIsNotNone(identity)
+        self.assertEqual(identity.status, 'DEFINED')
+        self.assertEqual(tuple(identity.naics_codes), seven)
+        defn = DEFINITIONS['oikos']
+        self.assertEqual(defn.name, 'Oikos')
+        self.assertEqual(tuple(defn.naics_codes), seven)
+        self.assertEqual(len(defn.service_suite), 7)
+        self.assertIn('$250,000', defn.price_of_record)
+        self.assertIn('$1,000,000', defn.price_of_record)
+        self.assertIn('never her payers', defn.business_model)
+        self.assertIn('never her payers', defn.serves)
+        self.assertIn('learns and grows', defn.business_model)
+
+    def test_gaia_mind_name_corrected(self):
+        # Founder ruling 2026-11-27 13:10 MST: "It's Gaia mind."
+        # The name is corrected; her codes and her unsettled
+        # price stand untouched.
+        defn = DEFINITIONS['gia_mind']
+        self.assertEqual(defn.name, 'Gaia Mind')
+        self.assertIn('2026-11-27', defn.provenance)
+        self.assertEqual(
+            defn.naics_codes,
+            ('621330', '621112', '621999', '541618', '541512', '541690'))
+        self.assertTrue(defn.price_of_record.startswith('NOT SETTLED'))
+        from core_platform.gia_mind_service import IDENTITY
+        self.assertEqual(IDENTITY.name, 'Gaia Mind')
+        self.assertEqual(tuple(IDENTITY.naics_codes), defn.naics_codes)
 
     def test_accessors(self):
         self.assertIs(definition_for('grantwriter'),

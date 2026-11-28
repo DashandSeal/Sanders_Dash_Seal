@@ -15,7 +15,7 @@ record all name this platform **Sanders Wellness**
 exactly. The nickname "Balance+" (the grid and the
 Set B seed agree) is recorded here exactly as
 found and is not adopted as the platform's name;
-it is a near-duplicate of Gia Mind's grid nickname
+it is a near-duplicate of Gaia Mind's grid nickname
 "Balance" — recorded as found, never harmonized.
 Set C carries no platform entry under this name
 (verified by direct read — the slug appears only

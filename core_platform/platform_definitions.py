@@ -17,10 +17,14 @@ WHAT THIS MODULE IS
   status DEFINED — defined, not built; no service is claimed for
   them beyond this record. Headquarters (S & G Security Inc.)
   carries TEN codes, not six, under the Founder's ruling of
-  2026-11-27 — see the honest-limits note below.
+  2026-11-27 — see the honest-limits note below. A further record
+  stands here by the Founder’s direction of 2026-11-27: Oikos,
+  welcomed as a new platform beyond the 140, carrying her seven
+  ruled codes — one per continent — at status DEFINED.
 * DEFINITIONS — a structured PlatformDefinition for every
-  platform of record (161 rows: the reconciliation's 155, the five
-  ruled records outside it, and Headquarters). For the 95 platforms
+  platform of record (162 rows: the reconciliation's 155, the five
+  ruled records outside it, Headquarters, and Oikos — welcomed
+  beyond the 140 by the Founder’s direction of 2026-11-27). For the 95 platforms
   with built identity records, the definition is sourced from their
   own records and this module does NOT restate their identity —
   their modules govern. The storefront machinery
@@ -265,6 +269,14 @@ IDENTITIES = {
         name='Money Factory Legal Aid v1.668',
         legal_entities=(),
         naics_codes=('541110', '541199', '541512', '518210', '561499', '519190'),
+        authorized_regions=('US-CO', 'US-WI'),
+        status='DEFINED',
+    )),
+    'oikos': validate_identity(PlatformIdentity(
+        platform_id='oikos',
+        name='Oikos',
+        legal_entities=(),
+        naics_codes=('621610', '111998', '541715', '221118', '236220', '221310', '541690'),
         authorized_regions=('US-CO', 'US-WI'),
         status='DEFINED',
     )),
@@ -1011,7 +1023,7 @@ DEFINITIONS = {
     ),
     'gia_mind': PlatformDefinition(
         platform_id='gia_mind',
-        name='Gia Mind',
+        name='Gaia Mind',
         who='mental-wellness platform in its own right (founder ruling D-N2 — a platform, never a nickname).',
         why='mental-wellness platform in its own right (founder ruling D-N2 — a platform, never a nickname).',
         serves='Serves the public, its clients, and the four companies — globally, by design.',
@@ -1022,7 +1034,7 @@ DEFINITIONS = {
         companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
         price_of_record='NOT SETTLED — designed figures conflict ($7,999,600 vs $396,000,000/yr)',
         stripe_product='NO — not created (conflict)',
-        provenance='Purpose of record (reconciliation of 2026-11-26)',
+        provenance='Purpose of record (reconciliation of 2026-11-26); name corrected to Gaia Mind by Founder ruling 2026-11-27 13:10 MST — the design documents and the audit wrote “Gia Mind”; the Founder’s word governs',
     ),
     'glass_box_audit': PlatformDefinition(
         platform_id='glass_box_audit',
@@ -1368,6 +1380,21 @@ DEFINITIONS = {
         price_of_record='NO price of record in examined set',
         stripe_product='NO',
         provenance='Purpose of record (reconciliation of 2026-11-26)',
+    ),
+    'oikos': PlatformDefinition(
+        platform_id='oikos',
+        name='Oikos',
+        who='Oikos is humanity’s Home: the seven-continent platform the Founder welcomed into the house on 2026-11-27 — one platform holding the necessities of human life under one NACI code per continent: care, food, knowledge, energy, shelter, water, and planetary knowledge. Her name is the ancient word for home and household, the root of “ecosystem”.',
+        why='Oikos exists so that the necessities of human life are carried for humanity as a whole, continent by continent, as one home: home health care in North America (621610 — care), crop farming in South America (111998 — food), research and development in Europe (541715 — knowledge), solar electric power generation in Africa (221118 — energy), commercial and institutional building construction in Asia (236220 — shelter), water supply and irrigation in Oceania (221310 — water), and scientific and technical consulting for Antarctica (541690 — planetary knowledge). Her served populations are never her payers — institutions fund the necessities; that principle is written into her structure. She learns and grows, as everything the Founder has built learns and grows (universal doctrine, 2026-11-27), and her partnerships step up in capability as she does.',
+        serves='Serves humanity as a whole — the populations of all seven continents — and the four companies; globally, by design. Her served populations are never her payers: institutions fund the necessities.',
+        naics_codes=('621610', '111998', '541715', '221118', '236220', '221310', '541690'),
+        service_suite=('621610 — North America: home health care services — care', '111998 — South America: all other miscellaneous crop farming — food', '541715 — Europe: research and development in the physical, engineering, and life sciences — knowledge', '221118 — Africa: solar electric power generation — energy', '236220 — Asia: commercial and institutional building construction — shelter', '221310 — Oceania: water supply and irrigation systems — water', '541690 — Antarctica: other scientific and technical consulting — planetary knowledge'),
+        business_model='Continental Programs from $250,000/yr per continent program (one per code, one per continent); Global Humanity Partnerships from $1,000,000/yr (all seven codes, all seven continents; founding-patron terms; capability-stepped as she learns and grows). Her served populations are never her payers — institutions fund the necessities; that principle is written into her structure.',
+        company_tie='Attached to all four companies of the house, as every platform is.',
+        companies=('S & G Security Inc.', 'Sanders Home Healthcare & Caregivers LLC', 'Sanders Senior Living LLC', 'Sanders Legal Helpers LLC'),
+        price_of_record='OF RECORD — ruled $250,000/yr per Continental Program; $1,000,000/yr Global Humanity Partnerships (2026-11-27)',
+        stripe_product='NO — prices in platform record, not Stripe products',
+        provenance='Founder direction and rulings 2026-11-27: welcomed as a new platform beyond the 140 (13:59–14:04 MST); name ruled Oikos 14:06 MST; seven codes ruled 14:08 MST; pricing ruled 14:11 MST',
     ),
     'operations_rtsa': PlatformDefinition(
         platform_id='operations_rtsa',
