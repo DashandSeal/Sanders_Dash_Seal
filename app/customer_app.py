@@ -9,9 +9,14 @@ The auth application owns OIDC/session cookies, login CSRF and logout behavior.
 import json
 import re
 from pathlib import Path
-from urllib.parse import urlparse
+from urllib.parse import parse_qs, urlparse
 from core_platform.appointments import AppointmentDenied, IDENT
 from core_platform.cases import CaseDenied
+from core_platform.product_checkout import (
+    ProductCheckoutService,
+    ProductNotPurchasable,
+    UnknownProduct,
+)
 from core_platform.provider_workflows import (
     ProviderRequestConflict,
     ProviderUnavailable,
@@ -756,7 +761,7 @@ BOZLY_MACHINE_EVENT_ROUTE = re.compile(r'^/api/bozly-cfo/machine-events/([A-Za-z
 BOZLY_OFFICER_RECEIPT_ROUTE = re.compile(r'^/api/bozly-cfo/officer-actions/([A-Za-z0-9_-]{1,128})$')
 
 
-def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, surn=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None, sanders_sports=None, sanders_wellness=None, sanders_steward_sentinel=None, sanders_patriot_saint=None, sanders_freedom_revolution=None, sanders_strategy_hub=None, sanders_global_freedom=None, sanders_coordinator=None, sanders_intelligence=None, sanders_ai_research=None, sanders_research=None, sanders_communications=None, sanders_banking_hub=None, sanders_legal_services=None, sanders_strategy_intel=None, sanders_analytics=None, sanders_innovation_lab=None, sanders_supply_chain=None, sanders_logical_framework=None, sanders_infrastructure=None, sanders_technology=None, sanders_cloud_services=None, showtime=None, sanders_marketing=None, sanders_sales=None, sanders_customer_support=None, sanders_human_resources=None, sanders_security_ops=None, sanders_global_relations=None, sanders_healthcare=None, the_godfather=None, sanders_ethics_impact_collective=None):
+def create_customer_app(appointments, authenticate, payments, auth_app, site_origin, *, release_verifier=lambda: False, allowed_origins=None, provider_workflows=None, provider_gate=None, native_bridge=None, native_gate=None, rooms=None, uncle_nickey_mao=None, carehive_os=None, home_healthcare=None, grantwriter=None, pbd_validation=None, pbd_manifest_generator=None, vault=None, pbd_sentinel=None, it_ai_manager=None, twin_gate=None, sharpshooter=None, labyrinth_shield=None, minotaur=None, glass_box_audit=None, architect=None, archimedes=None, promethean=None, hydra_q=None, labyrinth=None, cerberus=None, chorus=None, cobol_synthetic_ai=None, juggernaut=None, bozly=None, fraud_rtsa=None, operations_rtsa=None, surn=None, uptime_agent=None, application_agent=None, database_agent=None, deployment_agent=None, infrastructure_agent=None, integration_agent=None, performance_agent=None, backup_recovery_agent=None, observability_agent=None, quality_agent=None, configuration_agent=None, it_support_agent=None, sanders_sentinel=None, lil_mama=None, baby_girl=None, sanders_omniconn=None, gia_mind=None, ai_doctor=None, sanders_ai_psychiatrist=None, sanders_recon=None, sanders_senior_living=None, sanders_legal_helpers=None, sanders_education=None, sanders_finance=None, sanders_retail=None, sanders_logistics=None, sanders_security=None, sanders_real_estate=None, sanders_energy=None, sanders_transportation=None, sanders_agriculture=None, sanders_manufacturing=None, sanders_consulting=None, sanders_hospitality=None, sanders_entertainment=None, sanders_sports=None, sanders_wellness=None, sanders_steward_sentinel=None, sanders_patriot_saint=None, sanders_freedom_revolution=None, sanders_strategy_hub=None, sanders_global_freedom=None, sanders_coordinator=None, sanders_intelligence=None, sanders_ai_research=None, sanders_research=None, sanders_communications=None, sanders_banking_hub=None, sanders_legal_services=None, sanders_strategy_intel=None, sanders_analytics=None, sanders_innovation_lab=None, sanders_supply_chain=None, sanders_logical_framework=None, sanders_infrastructure=None, sanders_technology=None, sanders_cloud_services=None, showtime=None, sanders_marketing=None, sanders_sales=None, sanders_customer_support=None, sanders_human_resources=None, sanders_security_ops=None, sanders_global_relations=None, sanders_healthcare=None, the_godfather=None, sanders_ethics_impact_collective=None, product_checkout=None):
     # allowed_origins: every origin a browser may POST from. The app serves
     # two domains from one process (canonical + aliases); the POST Origin
     # check previously compared against the canonical origin only, so every
@@ -771,6 +776,20 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
         
     root = Path(__file__).resolve().parent.parent / 'web'
 
+    # Self-serve product checkout (Track B, 2026-11-28): the service
+    # is injected by the deployment bindings when present; otherwise
+    # it is built once, lazily, from the environment (house ledger +
+    # shared Stripe connection) on the first checkout request.
+    _product_checkout_holder = {}
+
+    def _product_checkout_service():
+        if product_checkout is not None:
+            return product_checkout
+        if 'service' not in _product_checkout_holder:
+            _product_checkout_holder['service'] = \
+                ProductCheckoutService.from_env(site_origin)
+        return _product_checkout_holder['service']
+
     def respond(start_response, status, data, content_type='application/json'):
         body = data if isinstance(data, bytes) else json.dumps(data).encode()
         start_response(status, [
@@ -783,6 +802,101 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
             ('X-Content-Type-Options', 'nosniff')
         ])
         return [body]
+
+    def _redirect(start, location):
+        start('303 See Other', [
+            ('Location', location),
+            ('Content-Length', '0'),
+            ('Cache-Control', 'no-store'),
+            ('X-Content-Type-Options', 'nosniff'),
+        ])
+        return [b'']
+
+    def _handle_product_checkout(env, start):
+        """POST /api/checkout — the public self-serve product door.
+
+        Public like the storefronts it serves (it sits with them,
+        ahead of the sign-in wall): the money gate is the Stripe
+        adapter's own, not a session. Two request shapes: a JSON
+        body (API callers) answered with JSON, and a form body (the
+        storefront Access panel's buy form, no script) answered
+        with a redirect to the Checkout Session — or back to the
+        product's page with the outcome in the query when the
+        purchase cannot start. Origin and body discipline mirror
+        the authenticated POST path below.
+        """
+        if env.get('REQUEST_METHOD', '') != 'POST':
+            return respond(start, '405 Method Not Allowed',
+                           {'error': 'method_not_allowed'})
+        if env.get('HTTP_ORIGIN') not in allowed_origins:
+            return respond(start, '403 Forbidden', {'error': 'origin_denied'})
+        content_type = env.get('CONTENT_TYPE', '').split(';')[0].strip().lower()
+        is_form = content_type == 'application/x-www-form-urlencoded'
+        if content_type != 'application/json' and not is_form:
+            return respond(start, '415 Unsupported Media Type',
+                           {'error': 'json_required'})
+        try:
+            length = env.get('CONTENT_LENGTH', '')
+            if not isinstance(length, str) or not length.isdigit() \
+                    or not 0 < int(length) <= 4096:
+                raise ValueError('length')
+            raw = env['wsgi.input'].read(int(length))
+            if len(raw) != int(length):
+                raise ValueError('short body')
+            if is_form:
+                fields = parse_qs(raw.decode('utf-8'))
+                data = {key: values[0] for key, values in fields.items()}
+                if 'dry_run' in data:
+                    data['dry_run'] = data['dry_run'].strip().lower() in (
+                        '1', 'true', 'yes')
+            else:
+                data = json.loads(raw)
+                if not isinstance(data, dict):
+                    raise ValueError('object required')
+        except (ValueError, UnicodeError, KeyError, TypeError,
+                json.JSONDecodeError):
+            return respond(start, '400 Bad Request',
+                           {'error': 'invalid_request'})
+        if not set(data) <= {'platform_id', 'product_id', 'dry_run'}:
+            return respond(start, '400 Bad Request',
+                           {'error': 'invalid_request'})
+        platform_id = data.get('platform_id')
+        product_id = data.get('product_id')
+        dry_run = data.get('dry_run', False)
+        named = [v for v in (platform_id, product_id)
+                 if isinstance(v, str) and v]
+        if len(named) != 1 or (dry_run is not True and dry_run is not False):
+            return respond(start, '400 Bad Request',
+                           {'error': 'invalid_request'})
+        back = ('/platforms/' + platform_id) if platform_id else '/platforms'
+        try:
+            result = _product_checkout_service().start(
+                platform_id=platform_id if isinstance(platform_id, str) else None,
+                product_id=product_id if isinstance(product_id, str) else None,
+                dry_run=dry_run)
+        except UnknownProduct:
+            if is_form:
+                return _redirect(start, back + '?checkout=unknown_product')
+            return respond(start, '404 Not Found', {'error': 'unknown_product'})
+        except ProductNotPurchasable as exc:
+            if is_form:
+                return _redirect(start, back + '?checkout=not_purchasable')
+            return respond(start, '409 Conflict',
+                           {'error': 'not_purchasable', 'detail': str(exc)})
+        except PaymentDenied as exc:
+            if is_form:
+                return _redirect(start, back + '?checkout=unavailable')
+            return respond(start, '503 Service Unavailable',
+                           {'error': 'checkout_unavailable',
+                            'detail': str(exc)})
+        except Exception:
+            if is_form:
+                return _redirect(start, back + '?checkout=unavailable')
+            return respond(start, '503 Service Unavailable',
+                           {'error': 'checkout_unavailable'})
+        if is_form and not dry_run:
+            return _redirect(start, result['checkout_url'])
+        return respond(start, '200 OK', {'checkout': result})
 
     def app(env, start):
         path, method = env.get('PATH_INFO', ''), env.get('REQUEST_METHOD', '')
@@ -799,7 +913,13 @@ def create_customer_app(appointments, authenticate, payments, auth_app, site_ori
                 path[len('/platforms/'):].strip('/'))
             return respond(start, status, body,
                            'text/html; charset=utf-8')
-            
+
+        if path == '/api/checkout':
+            # The self-serve product door (Track B, 2026-11-28):
+            # public, with the storefronts — the Stripe adapter's
+            # live gate, not a sign-in, is what guards the money.
+            return _handle_product_checkout(env, start)
+
         try:
             if release_verifier() is not True:
                 return respond(start, '503 Service Unavailable', {'error': 'appointments_unavailable'})
