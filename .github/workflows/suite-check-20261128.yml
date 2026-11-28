@@ -1,0 +1,36 @@
+name: Test suite failing-set check (one-time, 2026-11-28)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  suite-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pytest
+          if [ -f "requirements.txt" ]; then pip install -r requirements.txt; fi
+          if [ -f "requirements-dev.txt" ]; then pip install -r requirements-dev.txt; fi
+          if [ -f "money_factory_legal_aid_v1_668/requirements.txt" ]; then pip install -r money_factory_legal_aid_v1_668/requirements.txt; fi
+
+      - name: Run suite and print sorted failing set
+        run: |
+          set +e
+          python -m pytest tests/ -q -rf -p no:cacheprovider > /tmp/pytest-out.txt 2>&1
+          echo "PYTEST_RC=$?"
+          tail -3 /tmp/pytest-out.txt
+          grep -E "^(FAILED|ERROR)" /tmp/pytest-out.txt | sed 's/ - .*//' | sort > /tmp/failing.txt || true
+          echo "FAILING_COUNT=$(grep -c . /tmp/failing.txt)"
+          echo "=== FAILING SET (sorted) ==="
+          cat /tmp/failing.txt
+          echo "=== END FAILING SET ==="
