@@ -7368,3 +7368,58 @@ host. The state of record is entered through the register's
 operator path by RooseveltSanders, with the
 GRANTWRITER_ACCESS_STATE_RECORDED Glass-Box receipt issued as for
 the keys before it.
+
+## The Shelf, Step 1 — Prices on the Platform Directory (2026-11-28)
+
+**Scope.** Step 1 of the shelf build (plan of record:
+shelf-build-plan-2026-11-28), under the Founder's priority of
+2026-11-28: products publicly visible WITH their prices — a
+customer must be able to see what is sold, what it costs, and
+where to buy it. Before this landing the directory at /platforms
+rendered each platform's name and who-line only; prices stood
+one click deep, in the Access panel of each platform's own
+storefront page. This landing puts the price on the directory
+card itself. Display only: no data changes, no route changes,
+no price created, relabeled, or repriced.
+
+**The construction.** In core_platform/platform_storefront.py:
+(1) `_price_branch(defn)` extracts the prefix logic the Access
+panel has always used (live Stripe product / OF RECORD /
+ENTERPRISE AGREEMENTS / NOT SETTLED / UNRULED / none) into one
+helper, and `_access_block` now branches on it — every
+storefront's rendered bytes are unchanged (verified identical
+for all 162 platforms against the pre-change head). (2)
+`_price_line(defn)` derives the card's price line from the same
+branch: for a live or of-record platform, the platform's own
+price_of_record string, exactly as its Access panel prints it;
+for Daedalus, "Enterprise agreements only — no shelf price."
+(her agreement terms stand on her own page, as before); for a
+platform with no price of record, no line at all — no price is
+invented for the shelf. (3) `render_directory()` adds that line
+to the card. The optional Access-panel tier split from the plan
+was not taken in this step.
+
+**Truth discipline.** The 32 Stripe-backed platforms' figures
+are the design-era amounts of the earlier record — the
+deliberation program's verdict for the existing shelf was NO
+RULED PRICE — and they are displayed exactly as the Access
+panel already displayed them, with no new label claiming a
+ruling. The 23 deliberation platforms show their OF RECORD
+strings as already rendered. Daedalus shows no shelf price, by
+her ruling. The directory now carries 56 price lines: 32 live,
+23 of record, and Daedalus's no-shelf-price line; the other 106
+platforms stand honestly unpriced until the Founder rules.
+
+**Acceptance criteria:** /platforms shows a price line on the
+card of every platform whose price of record stands, in the
+same string its storefront Access panel prints; Daedalus's
+card states enterprise agreements only and shows no price; no
+unpriced platform's card carries a price line; every individual
+storefront renders byte-identical to before; the suite's
+failing set is byte-identical to baseline. Tests in
+tests/test_platform_storefront.py pin the shelf: the ruled
+price on Grantwriter's card, the live-product price on Sanders
+Finance's card, Daedalus's no-price card, the absence of price
+lines on unpriced cards, and the price-line count against the
+record.
+

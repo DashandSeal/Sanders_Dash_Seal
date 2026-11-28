@@ -94,6 +94,65 @@ class PlatformStorefrontTest(unittest.TestCase):
         for pid in DEFINITIONS:
             self.assertIn('href="/platforms/%s"' % pid, page)
 
+    def _card(self, page, pid):
+        start = page.index('<article class="card"><h3>'
+                           '<a href="/platforms/%s">' % pid)
+        return page[start:page.index('</article>', start)]
+
+    def test_directory_shows_ruled_price_on_the_card(self):
+        # The shelf (Founder priority, 2026-11-28): a platform's
+        # price of record stands on its directory card itself, in
+        # the same string its Access panel prints — not one click
+        # deep. Grantwriter is a deliberation-ruled platform.
+        page = render_directory().decode('utf-8')
+        defn = DEFINITIONS['grantwriter']
+        self.assertIn(html.escape(defn.price_of_record),
+                      self._card(page, 'grantwriter'))
+        self.assertIn('$49', self._card(page, 'grantwriter'))
+        self.assertIn('$99/mo', self._card(page, 'grantwriter'))
+
+    def test_directory_shows_live_product_price_on_the_card(self):
+        # A Stripe-backed platform's card carries the same price
+        # string its Access panel shows today — displayed as it
+        # already appears, with no new label on it.
+        page = render_directory().decode('utf-8')
+        defn = DEFINITIONS['sanders_finance']
+        self.assertIn(html.escape(defn.price_of_record),
+                      self._card(page, 'sanders_finance'))
+        self.assertIn('$7,999,600', self._card(page, 'sanders_finance'))
+
+    def test_directory_daedalus_card_shows_no_shelf_price(self):
+        # Daedalus stands under enterprise agreements only (ruled
+        # 2026-11-27): her card states that and shows no price.
+        page = render_directory().decode('utf-8')
+        card = self._card(page, 'daedalus')
+        self.assertIn('Enterprise agreements only', card)
+        self.assertIn('no shelf price', card)
+        self.assertNotIn('$', card)
+
+    def test_directory_unpriced_platform_shows_no_price_line(self):
+        # No price is invented for the shelf: a platform with no
+        # price of record carries no price line on its card.
+        page = render_directory().decode('utf-8')
+        unpriced = [pid for pid, d in DEFINITIONS.items()
+                    if not (d.stripe_product or '').startswith('YES')
+                    and not (d.price_of_record or '').startswith(
+                        ('OF RECORD', 'ENTERPRISE AGREEMENTS'))]
+        self.assertTrue(unpriced)
+        for pid in unpriced:
+            self.assertNotIn('price-line', self._card(page, pid), pid)
+
+    def test_directory_price_line_count_matches_the_record(self):
+        # One price line per priced platform of record, plus
+        # Daedalus's no-shelf-price line — and no others.
+        page = render_directory().decode('utf-8')
+        priced = sum(
+            1 for d in DEFINITIONS.values()
+            if (d.stripe_product or '').startswith('YES')
+            or (d.price_of_record or '').startswith(
+                ('OF RECORD', 'ENTERPRISE AGREEMENTS')))
+        self.assertEqual(page.count('class="price-line"'), priced)
+
 
 if __name__ == '__main__':
     unittest.main()

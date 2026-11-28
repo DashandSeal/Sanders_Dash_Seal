@@ -120,10 +120,46 @@ def _footer():
     ) % (seals, _esc(_COMPANIES_LINE))
 
 
-def _access_block(defn):
+def _price_branch(defn):
+    """The price branch of a definition, by the prefix logic the
+    Access panel has always used — shared here so the directory
+    shelf and the storefront Access panel can never disagree about
+    which branch a platform stands on. Returns (branch, price,
+    stripe): branch is one of 'live', 'of_record', 'enterprise',
+    'not_settled', 'unruled', or 'none'."""
     price = defn.price_of_record or ''
     stripe = defn.stripe_product or ''
     if stripe.startswith('YES'):
+        return ('live', price, stripe)
+    if price.startswith('OF RECORD'):
+        return ('of_record', price, stripe)
+    if price.startswith('ENTERPRISE AGREEMENTS'):
+        return ('enterprise', price, stripe)
+    if price.startswith('NOT SETTLED'):
+        return ('not_settled', price, stripe)
+    if price.startswith('UNRULED'):
+        return ('unruled', price, stripe)
+    return ('none', price, stripe)
+
+
+def _price_line(defn):
+    """The directory card's price line, or None where no price
+    line stands. The string shown is the platform's own price of
+    record, exactly as its Access panel prints it — nothing is
+    relabeled, repriced, or invented here. Daedalus carries no
+    shelf price by ruling; her card says so instead. A platform
+    with no price of record shows no price line at all."""
+    branch, price, _stripe = _price_branch(defn)
+    if branch in ('live', 'of_record'):
+        return price
+    if branch == 'enterprise':
+        return 'Enterprise agreements only \u2014 no shelf price.'
+    return None
+
+
+def _access_block(defn):
+    branch, price, stripe = _price_branch(defn)
+    if branch == 'live':
         body = (
             '<p>This platform\'s access is a live product of record: '
             '<strong>%s</strong>, at <strong>%s</strong>.</p>\n'
@@ -132,7 +168,7 @@ def _access_block(defn):
             'is confirmed by a person, and payment runs through the '
             'house\'s own checkout of record.</p>'
         ) % (_esc(stripe), _esc(price))
-    elif price.startswith('OF RECORD'):
+    elif branch == 'of_record':
         body = (
             '<p>This platform\'s price of record: '
             '<strong>%s</strong>.</p>\n'
@@ -141,19 +177,19 @@ def _access_block(defn):
             'engagement is confirmed by a person, and payment runs '
             'through the house\'s own checkout of record.</p>'
         ) % _esc(price)
-    elif price.startswith('ENTERPRISE AGREEMENTS'):
+    elif branch == 'enterprise':
         body = (
             '<p><strong>No shelf price is shown for this platform.</'
             'strong> This platform works under enterprise agreements '
             'only — engagements are scoped and signed with the house '
             'directly, and no self-serve price stands.</p>')
-    elif price.startswith('NOT SETTLED'):
+    elif branch == 'not_settled':
         body = (
             '<p><strong>No price is shown for this platform yet.</strong> '
             'Two designed figures stand in conflict in its record, and the '
             'Founder\'s ruling settles it. Until he rules, access is '
             'arranged with the house directly.</p>')
-    elif price.startswith('UNRULED'):
+    elif branch == 'unruled':
         body = (
             '<p><strong>No price is shown for this platform.</strong> Her '
             'public prices are the Founder\'s to rule, under his standard '
@@ -266,14 +302,20 @@ def render_storefront(platform_id):
 
 
 def render_directory():
-    """Render the directory of every platform of record."""
+    """Render the directory of every platform of record. Each card
+    is the shelf: the platform's name, who it is, and its price
+    line where a price of record stands (Founder priority,
+    2026-11-28 — products publicly visible with their prices)."""
     cards = []
     for pid in sorted(DEFINITIONS):
         defn = DEFINITIONS[pid]
+        line = _price_line(defn)
+        price_html = ('<p class="price-line">%s</p>' % _esc(line)
+                      if line is not None else '')
         cards.append(
             '      <article class="card"><h3><a href="/platforms/%s">%s</a>'
-            '</h3><p>%s</p></article>'
-            % (_esc(pid), _esc(defn.name), _esc(defn.who)))
+            '</h3><p>%s</p>%s</article>'
+            % (_esc(pid), _esc(defn.name), _esc(defn.who), price_html))
     body = ''.join((
         _head('Platforms | Sanders Dash & Seal',
               'Every platform of the Sanders house, each opening into '
