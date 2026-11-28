@@ -1,0 +1,152 @@
+name: Expand certificate to add the three company subdomains (one-time, 2026-11-28)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  expand-cert-company-subdomains:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Expand Let's Encrypt certificate to 17 names and serve the company subdomains
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 25m
+          script: |
+            set +e
+            NEW1=sandgsecurityinc.sanderslegalhelpersllc.com
+            NEW2=sandershomehealthcareandcaregiversllc.sanderslegalhelpersllc.com
+            NEW3=sandersseniorlivingllc.sanderslegalhelpersllc.com
+            CERT=/etc/letsencrypt/live/sandersdashandseal.com/cert.pem
+            if [ -x /usr/local/bin/certbot ]; then CERTBOT=/usr/local/bin/certbot; else CERTBOT=certbot; fi
+            echo "certbot: $CERTBOT"
+            if ! command -v "$CERTBOT" >/dev/null 2>&1 && [ ! -x "$CERTBOT" ]; then echo "CERTBOT_NOT_INSTALLED: stopping, no changes attempted"; exit 1; fi
+            echo "=== STEP 1: CURRENT CERTIFICATE ==="
+            sudo "$CERTBOT" certificates 2>/dev/null | grep -E "Certificate Name|Domains|Expiry" | head -20
+            CURRENT_SAN=$(sudo openssl x509 -in "$CERT" -noout -ext subjectAltName 2>/dev/null)
+            echo "$CURRENT_SAN"
+            CURRENT_NAMES=$(echo "$CURRENT_SAN" | grep -o 'DNS:[^,]*' | sed 's/DNS://' | sort -u)
+            echo "CURRENT_NAMES:"
+            echo "$CURRENT_NAMES"
+            echo "=== STEP 2: DNS FROM INSTANCE ==="
+            DNSFAIL=0
+            for n in $NEW1 $NEW2 $NEW3; do echo -n "$n: "; getent hosts "$n" || echo "NO_RESOLUTION"; getent hosts "$n" | grep -q "129.146.111.166" || DNSFAIL=1; done
+            if [ "$DNSFAIL" -ne 0 ]; then echo "DNS_NOT_POINTED_AT_INSTANCE: stopping before any change"; exit 1; fi
+            echo "=== STEP 3: BACKUP ==="
+            sudo mkdir -p /tmp/cert-expand-company-subdomains-20261128
+            sudo cp -a /etc/nginx/conf.d /tmp/cert-expand-company-subdomains-20261128/conf.d.bak
+            sudo cp -a /etc/nginx/nginx.conf /tmp/cert-expand-company-subdomains-20261128/nginx.conf.bak
+            sudo cp -a /tmp/sds-app/deploy/deployment.py /tmp/cert-expand-company-subdomains-20261128/deployment.py.bak
+            echo "backup done"
+            echo "=== STEP 4: NGINX SERVER NAMES (idempotent) ==="
+            sudo python3 - <<'PYEOF'
+            import glob, pathlib
+            new_names = ['sandgsecurityinc.sanderslegalhelpersllc.com', 'sandershomehealthcareandcaregiversllc.sanderslegalhelpersllc.com', 'sandersseniorlivingllc.sanderslegalhelpersllc.com']
+            targets = ['/etc/nginx/nginx.conf'] + glob.glob('/etc/nginx/conf.d/*.conf')
+            for t in targets:
+                p = pathlib.Path(t)
+                if not p.exists():
+                    continue
+                lines = p.read_text().splitlines()
+                changed = False
+                out = []
+                for line in lines:
+                    if 'server_name' in line and 'sandersdashandseal.com' in line and 'sandersemergencyglobalcommunication.com' in line:
+                        stripped = line.rstrip()
+                        for name in new_names:
+                            if name not in stripped:
+                                if stripped.endswith(';'):
+                                    stripped = stripped[:-1] + ' ' + name + ';'
+                                    changed = True
+                        line = stripped
+                    out.append(line)
+                if changed:
+                    p.write_text('\n'.join(out) + '\n')
+                    print('updated', t)
+                else:
+                    print('no change', t)
+            PYEOF
+            echo "--- server_name lines after edit ---"
+            sudo grep -R "server_name" /etc/nginx | grep "sandgsecurityinc" | cut -c1-160
+            echo "=== STEP 5: APP ALIAS_HOSTS (idempotent) ==="
+            sudo python3 - <<'PYEOF'
+            import pathlib, re
+            p = pathlib.Path('/tmp/sds-app/deploy/deployment.py')
+            text = p.read_text()
+            new_names = ['sandgsecurityinc.sanderslegalhelpersllc.com', 'sandershomehealthcareandcaregiversllc.sanderslegalhelpersllc.com', 'sandersseniorlivingllc.sanderslegalhelpersllc.com']
+            m = re.search(r"^ALIAS_HOSTS = \{([^}]*)\}", text, re.M)
+            if not m:
+                print('ALIAS_HOSTS_NOT_FOUND')
+                raise SystemExit(1)
+            existing = re.findall(r"'([^']+)'", m.group(1))
+            merged = existing + [n for n in new_names if n not in existing]
+            newline = "ALIAS_HOSTS = {" + ", ".join("'%s'" % n for n in merged) + "}"
+            text = text[:m.start()] + newline + text[m.end():]
+            p.write_text(text)
+            print('ALIAS_HOSTS updated')
+            PYEOF
+            sudo python3 -m py_compile /tmp/sds-app/deploy/deployment.py && echo "py_compile OK" || { echo "PY_COMPILE_FAILED: stopping"; exit 1; }
+            echo "=== STEP 6: NGINX TEST AND RELOAD ==="
+            sudo nginx -t
+            NGRC=$?
+            echo "nginx -t rc=$NGRC"
+            if [ "$NGRC" -ne 0 ]; then echo "NGINX_TEST_FAILED: restoring backups"; sudo rm -rf /etc/nginx/conf.d; sudo cp -a /tmp/cert-expand-company-subdomains-20261128/conf.d.bak /etc/nginx/conf.d; sudo cp -a /tmp/cert-expand-company-subdomains-20261128/nginx.conf.bak /etc/nginx/nginx.conf; sudo cp -a /tmp/cert-expand-company-subdomains-20261128/deployment.py.bak /tmp/sds-app/deploy/deployment.py; sudo nginx -t || true; exit 1; fi
+            sudo systemctl reload nginx
+            echo "reload rc=$?"
+            echo "=== STEP 7: CERTBOT EXPAND ==="
+            PLANNED=$(printf "%s\n%s\n%s\n%s\n" "$CURRENT_NAMES" "$NEW1" "$NEW2" "$NEW3" | sort -u)
+            echo "PLANNED_NAMES:"
+            echo "$PLANNED"
+            COUNT=$(echo "$PLANNED" | grep -c .)
+            echo "PLANNED_COUNT=$COUNT"
+            if [ "$COUNT" -ne 17 ]; then echo "UNEXPECTED_NAME_COUNT: expected 17 (14 existing + 3 new) - stopping"; exit 1; fi
+            ARGS=""
+            for n in $PLANNED; do ARGS="$ARGS -d $n"; done
+            echo "CERTBOT_ARGS:$ARGS"
+            sudo "$CERTBOT" certonly --nginx --cert-name sandersdashandseal.com --expand --non-interactive --agree-tos -m rooseveltsanders381@gmail.com $ARGS
+            CBRC=$?
+            echo "CERTBOT_RC=$CBRC"
+            if [ "$CBRC" -ne 0 ]; then echo "CERTBOT_FAILED: certbot exited $CBRC - stopping"; exit 1; fi
+            echo "=== STEP 8: NGINX TEST AND RELOAD AFTER CERT ==="
+            sudo nginx -t || { echo "NGINX_TEST_FAILED_AFTER_CERT"; exit 1; }
+            sudo systemctl reload nginx
+            echo "reload rc=$?"
+            sleep 2
+            echo "=== STEP 9: GUNICORN RELOAD FOR ALIAS_HOSTS ==="
+            MASTER=""
+            for p in $(pgrep -f 'gunicorn wsgi:application'); do if [ "$(awk '{print $4}' /proc/$p/stat)" = "1" ]; then MASTER=$p; fi; done
+            echo "gunicorn master pid: $MASTER"
+            if [ -z "$MASTER" ]; then echo "NO_GUNICORN_MASTER_FOUND"; exit 1; fi
+            sudo kill -HUP "$MASTER"
+            echo "HUP sent, waiting 10s"
+            sleep 10
+            FAIL=0
+            for h in $NEW1 $NEW2 $NEW3 sandersdashandseal.com www.sandersdashandseal.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: $h" http://127.0.0.1:8000/healthz); echo "loopback Host $h -> $CODE"; if [ "$CODE" != "200" ]; then FAIL=1; fi; done
+            if [ "$FAIL" -ne 0 ]; then
+              echo "=== HUP DID NOT TAKE EFFECT, FULL RESTART ==="
+              sudo kill -TERM "$MASTER" || true
+              for i in $(seq 1 15); do if ! sudo ss -ltnp 2>/dev/null | grep -q ":8000"; then echo "port 8000 closed after ${i}s"; break; fi; sleep 1; done
+              cd /tmp/sds-app
+              sudo -u ocarun nohup /tmp/sds-venv/bin/gunicorn wsgi:application --bind 0.0.0.0:8000 --timeout 75 > /tmp/sds-app-restart-20261128.log 2>&1 &
+              disown || true
+              echo "restart launched, waiting 10s"
+              sleep 10
+              FAIL=0
+              for h in $NEW1 $NEW2 $NEW3 sandersdashandseal.com www.sandersdashandseal.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: $h" http://127.0.0.1:8000/healthz); echo "loopback Host $h -> $CODE"; if [ "$CODE" != "200" ]; then FAIL=1; fi; done
+              if [ "$FAIL" -ne 0 ]; then echo "LOOPBACK_VERIFICATION_FAILED"; exit 1; fi
+            fi
+            echo "=== STEP 10: NEW CERTIFICATE READBACK ==="
+            sudo openssl x509 -in "$CERT" -noout -subject -dates -ext subjectAltName
+            echo "=== STEP 11: STRICT HTTPS VERIFICATION (curl without -k) ==="
+            FAIL=0
+            for n in sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com sandersnexusshield.com www.sandersnexusshield.com sanderssixindustry.com www.sanderssixindustry.com $NEW1 $NEW2 $NEW3; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/healthz"); echo "https://$n/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/healthz returned $CODE"; FAIL=1; fi; done
+            for n in $NEW1 $NEW2 $NEW3 sandersdashandseal.com sanderslegalhelpersllc.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/"); echo "https://$n/ -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/ returned $CODE"; FAIL=1; fi; done
+            T=$(curl -s "https://$NEW1/" | grep -i -o '<title[^>]*>[^<]*</title>' | head -n 1); echo "TITLE $NEW1: $T"; echo "$T" | grep -q "G Security Inc." || { echo "FAIL: title on $NEW1 is not the S & G Security Inc. site"; FAIL=1; }
+            T=$(curl -s "https://$NEW2/" | grep -i -o '<title[^>]*>[^<]*</title>' | head -n 1); echo "TITLE $NEW2: $T"; echo "$T" | grep -q "Sanders Home Healthcare" || { echo "FAIL: title on $NEW2 is not the Home Healthcare site"; FAIL=1; }
+            T=$(curl -s "https://$NEW3/" | grep -i -o '<title[^>]*>[^<]*</title>' | head -n 1); echo "TITLE $NEW3: $T"; echo "$T" | grep -q "Sanders Senior Living" || { echo "FAIL: title on $NEW3 is not the Senior Living site"; FAIL=1; }
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" "http://$NEW1/healthz"); echo "http://$NEW1/healthz -> $CODE (informational)"
+            if [ "$FAIL" -ne 0 ]; then echo "CHECKS_FAILED"; exit 1; fi
+            echo "ALL_CHECKS_PASSED"

@@ -1,0 +1,58 @@
+name: Verify company subdomain publication (one-time, 2026-11-28)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  verify-company-subdomains:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Read back certificate, nginx and strict HTTPS state on Oracle instance
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SCS_OCI_HOST }}
+          username: ${{ secrets.SCS_OCI_USER }}
+          key: ${{ secrets.SCS_OCI_SSH_KEY }}
+          port: 22
+          command_timeout: 15m
+          script: |
+            set +e
+            NEW1=sandgsecurityinc.sanderslegalhelpersllc.com
+            NEW2=sandershomehealthcareandcaregiversllc.sanderslegalhelpersllc.com
+            NEW3=sandersseniorlivingllc.sanderslegalhelpersllc.com
+            CERT=/etc/letsencrypt/live/sandersdashandseal.com/cert.pem
+            if [ -x /usr/local/bin/certbot ]; then CERTBOT=/usr/local/bin/certbot; else CERTBOT=certbot; fi
+            echo "=== CERTBOT CERTIFICATES ==="
+            sudo "$CERTBOT" certificates 2>/dev/null | grep -E "Certificate Name|Domains|Expiry" | head -20
+            echo "=== CERT FILE READBACK ==="
+            sudo openssl x509 -in "$CERT" -noout -subject -dates -ext subjectAltName
+            SAN=$(sudo openssl x509 -in "$CERT" -noout -ext subjectAltName 2>/dev/null)
+            NAMES=$(echo "$SAN" | grep -o 'DNS:[^,]*' | sed 's/DNS://' | sort -u)
+            echo "SAN_COUNT=$(echo "$NAMES" | grep -c .)"
+            FAIL=0
+            if [ "$(echo "$NAMES" | grep -c .)" -ne 17 ]; then echo "FAIL: SAN_COUNT is not 17"; FAIL=1; fi
+            for n in $NEW1 $NEW2 $NEW3; do echo "$NAMES" | grep -qx "$n" && echo "SAN contains $n" || { echo "FAIL: SAN missing $n"; FAIL=1; }; done
+            echo "=== NGINX TEST ==="
+            sudo nginx -t
+            echo "nginx -t rc=$?"
+            sudo systemctl is-active nginx
+            echo "=== SERVER_NAME LINES WITH NEW NAMES ==="
+            sudo grep -R "server_name" /etc/nginx | grep "sandgsecurityinc" | cut -c1-160
+            echo "=== ALIAS_HOSTS LIVE ==="
+            grep -n "^ALIAS_HOSTS" /tmp/sds-app/deploy/deployment.py | cut -c1-300
+            grep -n "COMPANY_HOST_HOMES" /tmp/sds-app/deploy/deployment.py | head -3 | cut -c1-160
+            echo "=== LOOPBACK HOST GATE ==="
+            for h in sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com sandersnexusshield.com www.sandersnexusshield.com sanderssixindustry.com www.sanderssixindustry.com $NEW1 $NEW2 $NEW3; do CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: $h" http://127.0.0.1:8000/healthz); echo "loopback Host $h -> $CODE"; if [ "$CODE" != "200" ]; then FAIL=1; fi; done
+            echo "=== LOOPBACK COMPANY ROOTS (Host header, port 8000) ==="
+            T=$(curl -s -H "Host: $NEW1" http://127.0.0.1:8000/ | grep -i -o '<title[^>]*>[^<]*</title>' | head -n 1); echo "ROOT TITLE $NEW1: $T"; echo "$T" | grep -q "G Security Inc." || { echo "FAIL: loopback root on $NEW1 is not the S & G site"; FAIL=1; }
+            T=$(curl -s -H "Host: $NEW2" http://127.0.0.1:8000/ | grep -i -o '<title[^>]*>[^<]*</title>' | head -n 1); echo "ROOT TITLE $NEW2: $T"; echo "$T" | grep -q "Sanders Home Healthcare" || { echo "FAIL: loopback root on $NEW2 is not the Home Healthcare site"; FAIL=1; }
+            T=$(curl -s -H "Host: $NEW3" http://127.0.0.1:8000/ | grep -i -o '<title[^>]*>[^<]*</title>' | head -n 1); echo "ROOT TITLE $NEW3: $T"; echo "$T" | grep -q "Sanders Senior Living" || { echo "FAIL: loopback root on $NEW3 is not the Senior Living site"; FAIL=1; }
+            echo "=== STRICT HTTPS VERIFICATION (curl without -k) ==="
+            for n in sandersdashandseal.com www.sandersdashandseal.com sanderslegalhelpersllc.com www.sanderslegalhelpersllc.com sanderssixshield.com www.sanderssixshield.com sanderssecurestack.com www.sanderssecurestack.com sandersemergencyglobalcommunication.com www.sandersemergencyglobalcommunication.com sandersnexusshield.com www.sandersnexusshield.com sanderssixindustry.com www.sanderssixindustry.com $NEW1 $NEW2 $NEW3; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/healthz"); echo "https://$n/healthz -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/healthz returned $CODE"; FAIL=1; fi; done
+            for n in $NEW1 $NEW2 $NEW3 sandersdashandseal.com sanderslegalhelpersllc.com; do CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://$n/"); echo "https://$n/ -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: https://$n/ returned $CODE"; FAIL=1; fi; done
+            T=$(curl -s "https://$NEW1/" | grep -i -o '<title[^>]*>[^<]*</title>' | head -n 1); echo "TITLE $NEW1: $T"; echo "$T" | grep -q "G Security Inc." || { echo "FAIL: title on $NEW1 is not the S & G Security Inc. site"; FAIL=1; }
+            T=$(curl -s "https://$NEW2/" | grep -i -o '<title[^>]*>[^<]*</title>' | head -n 1); echo "TITLE $NEW2: $T"; echo "$T" | grep -q "Sanders Home Healthcare" || { echo "FAIL: title on $NEW2 is not the Home Healthcare site"; FAIL=1; }
+            T=$(curl -s "https://$NEW3/" | grep -i -o '<title[^>]*>[^<]*</title>' | head -n 1); echo "TITLE $NEW3: $T"; echo "$T" | grep -q "Sanders Senior Living" || { echo "FAIL: title on $NEW3 is not the Senior Living site"; FAIL=1; }
+            CODE=$(curl -s -o /dev/null -w "%{http_code}" "https://sandersdashandseal.com/platforms"); echo "https://sandersdashandseal.com/platforms -> $CODE"; if [ "$CODE" != "200" ]; then echo "FAIL: /platforms returned $CODE"; FAIL=1; fi
+            if [ "$FAIL" -ne 0 ]; then echo "CHECKS_FAILED"; exit 1; fi
+            echo "ALL_CHECKS_PASSED"

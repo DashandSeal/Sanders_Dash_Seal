@@ -19,13 +19,24 @@ from core_platform.pipeline_api import create_pipeline_app, TransactionStore
 from core_platform.stream_api import create_stream_app
 
 CANONICAL_HOST = 'sandersdashandseal.com'
-ALIAS_HOSTS = {'www.sandersdashandseal.com', 'sanderslegalhelpersllc.com', 'www.sanderslegalhelpersllc.com', 'sanderssixshield.com', 'www.sanderssixshield.com', 'sanderssecurestack.com', 'www.sanderssecurestack.com', 'sandersemergencyglobalcommunication.com', 'www.sandersemergencyglobalcommunication.com', 'sandersnexusshield.com', 'www.sandersnexusshield.com', 'sanderssixindustry.com', 'www.sanderssixindustry.com'}
+ALIAS_HOSTS = {'www.sandersdashandseal.com', 'sanderslegalhelpersllc.com', 'www.sanderslegalhelpersllc.com', 'sanderssixshield.com', 'www.sanderssixshield.com', 'sanderssecurestack.com', 'www.sanderssecurestack.com', 'sandersemergencyglobalcommunication.com', 'www.sandersemergencyglobalcommunication.com', 'sandersnexusshield.com', 'www.sandersnexusshield.com', 'sanderssixindustry.com', 'www.sanderssixindustry.com', 'sandgsecurityinc.sanderslegalhelpersllc.com', 'sandershomehealthcareandcaregiversllc.sanderslegalhelpersllc.com', 'sandersseniorlivingllc.sanderslegalhelpersllc.com'}
 ORIGIN = 'https://' + CANONICAL_HOST
 # Every origin a browser may POST from: the canonical host plus every alias
 # host. The customer app and the session auth both check POST Origins
 # against this set; checking only the canonical origin 403d every POST
 # from an alias host (sign-in, appointment request, quote, checkout).
 SITE_ORIGINS = frozenset({ORIGIN} | {'https://' + host for host in ALIAS_HOSTS})
+
+# Company subdomains (founder ruling 2026-11-26 21:33 MST, full business
+# names, never shortened; publication approved 2026-11-28): each company's
+# own subdomain serves that company's own website at its root -- the same
+# home page the flagship serves at the company's route -- as an
+# independent site, not a redirect. Headquarters first.
+COMPANY_HOST_HOMES = {
+    'sandgsecurityinc.sanderslegalhelpersllc.com': '/sg-security',
+    'sandershomehealthcareandcaregiversllc.sanderslegalhelpersllc.com': '/home-healthcare',
+    'sandersseniorlivingllc.sanderslegalhelpersllc.com': '/senior-living',
+}
 FACTORY = re.compile(r'([A-Za-z_]\w*)(?:\.([A-Za-z_]\w*))*(?::([A-Za-z_]\w*))?', re.ASCII)
 WEB_ROOT = Path(__file__).resolve().parent.parent / 'web'
 
@@ -1434,6 +1445,13 @@ def create_application(bindings=None):
             start('308 Permanent Redirect', [('Location', ORIGIN + '/'),
                                                ('Content-Length', '0'), ('Cache-Control', 'no-store')])
             return [b'']
+
+        # Company subdomains: the root of each company's own subdomain
+        # serves that company's own website home (see COMPANY_HOST_HOMES).
+        # Every other path is served by the customer app unchanged, so the
+        # company's pages and the platform routes work identically there.
+        if host in COMPANY_HOST_HOMES and path == '/' and method in ('GET', 'HEAD'):
+            env = dict(env, PATH_INFO=COMPANY_HOST_HOMES[host])
 
         return customer(env, start)
 
