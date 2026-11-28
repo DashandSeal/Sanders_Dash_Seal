@@ -7528,3 +7528,113 @@ enrollment: enrollment requires a service object to bind, and
 building her engine is a later Track C landing, sequenced after
 the priced platforms with engines plug in. No Stripe product
 (Track B) and no shelf change (Track A) is carried here.
+## Payment Integration, Track B — Self-Serve Product Checkout (2026-11-28)
+
+**Source requirement.** The Founder's Commercial Ecosystem order of
+2026-11-28 (08:45 MST): "Proceed with public price visibility,
+payment integration and service development concurrently... The
+objective is not merely a directory displaying prices. It is a
+functioning commercial ecosystem capable of generating revenue and
+delivering the services customers purchase." Track B is the payment
+integration track; Track A (the shelf) landed the same morning, and
+its plan (~/workspace/your_files/shelf-build-plan-2026-11-28.md §4)
+named the checkout gap this landing closes for the products that
+exist.
+
+**What was built.**
+
+(1) `core_platform/product_catalog.py` — the structured
+product-to-price map. PLATFORM_PRODUCTS: the 32 platforms whose
+Stripe products already exist, each with its Stripe product id, its
+default Stripe price id, and amount/interval AS READ BACK FROM
+STRIPE on 2026-11-28 (live account, read-only) — checked against
+the definitions: the amount parsed from every price-of-record
+string equals its Stripe unit_amount, 32 of 32, zero mismatches.
+FLAGSHIP_PRODUCTS: the six flagship service products ($150 / $250 /
+$499 / $500 / $5,000 / $20,000), read back the same way.
+RULED_NOT_IN_STRIPE: the 23 ruled platforms (deliberation program
+of 2026-11-27 plus the Sanders Ethics & Impact Collective),
+structured tier by tier from the prices of record, every record
+purchasable: False with blocked_reason
+'stripe_product_not_created'. Daedalus is absent by ruling
+(enterprise agreements only). The metered umbrella product is
+excluded (a metered price cannot be sold as quantity 1), as are
+the three inactive duplicate products in Stripe.
+
+(2) `core_platform/stripe_payments.py` — product_checkout_parameters
+(the product-keyed sibling of checkout_parameters: line item is the
+catalog's Stripe price id, mode follows the price, subscription
+metadata carries the purchase reference for renewal recording) and
+the product-shaped ledger: a stripe_product_purchases table,
+register_product_checkout, product_purchase_status, and
+_record_product_purchase, called from both settlement paths
+(record_event and fulfill_checkout) in the caller's transaction —
+a product session settles its product row beside its case row;
+other sessions are untouched (a case session leaves no product
+row).
+
+(3) `core_platform/stripe_checkout.py` —
+StripeCheckout.create_product_checkout_session and
+create_product_and_register, under the adapter's unchanged
+test-mode-first live gate (STRIPE_LIVE_VERIFIED).
+
+(4) `core_platform/product_checkout.py` — ProductCheckoutService:
+resolves a platform id or Stripe product id in the catalog, refuses
+unknown names (UnknownProduct) and ruled-but-uncreated products
+(ProductNotPurchasable naming the boundary), builds return URLs on
+the house origin, creates the session, registers both ledger
+shapes, and supports dry_run — the exact session parameters with
+no Stripe call and no ledger write, the zero-risk probe.
+
+(5) `app/customer_app.py` — POST /api/checkout, public with the
+storefronts ahead of the sign-in wall (the Stripe gate, not a
+session, guards the money). JSON requests are answered with JSON
+(200 session / 404 unknown / 409 not purchasable / 503 gate or
+service unavailable); form requests from the storefront buy form
+are answered with a 303 to the Checkout Session, or back to the
+product's page with the outcome in the query. Origin and body
+discipline mirror the authenticated POST path. The service is an
+injected binding (product_checkout kwarg) or built lazily from the
+environment against the house ledger file (data/ledger.db — the
+file wsgi.py's webhook engine settles into).
+
+(6) `core_platform/platform_storefront.py` — the buy form in the
+Access panel's live branch, rendered only where the catalog
+carries the platform's product as purchasable: Subscribe for a
+recurring price, Buy now for a one-time price. Ruled-but-uncreated
+and enterprise platforms render no form.
+
+**The exact boundary.** The 51 staged Stripe products for the 23
+ruled platforms were never created, and creating them remains
+blocked on the Stripe write path: the Stripe connector's writes
+are refused (HTTP 403, verified repeatedly 2026-11-27) and the
+direct-API vault slot holds an API key ID, not a secret. This
+landing builds everything that does not depend on creating Stripe
+objects; the moment a write path exists, Step 3 of the shelf plan
+creates those products/prices, their price ids are recorded into
+RULED_NOT_IN_STRIPE's records (flipping purchasable), and the same
+route sells them with no further code change. No founder key
+request is made by this work — that route is parked by the
+Founder's direction.
+
+**Truth discipline.** No price is invented, composed, or relabeled:
+checkout charges exactly the Stripe price of record; the 32
+design-era figures are not presented as deliberation-ruled;
+Daedalus never gets a buy form; Grantwriter's percentage-of-award
+bar is untouched (she is not purchasable here at all — her Lane A
+$49/$99 are among the blocked ruled tiers, awaiting her Stripe
+products).
+
+**Acceptance criteria:** the catalog resolves all 32 platform
+products and the flagship six as purchasable with amounts equal to
+Stripe's read-back and to the definitions' prices of record; the
+23 ruled platforms resolve as not purchasable naming
+stripe_product_not_created; POST /api/checkout creates a session
+only for purchasable records and registers PENDING rows in both
+ledger shapes; a verified checkout.session.completed settles both
+rows to PAID on either webhook path; the storefront of every
+Stripe-backed platform carries the buy form and no other
+storefront does; the suite's failing set is byte-identical to
+baseline. Tests in tests/test_product_checkout.py pin all of it
+with fake Stripe clients only — no live key, no network, no
+charge.
